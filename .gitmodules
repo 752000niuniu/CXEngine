@@ -1,0 +1,39 @@
+[submodule "internals/NESupport"]
+	path = internals/NESupport
+	url = git@github.com:oceancx/NESupport.git
+[submodule "internals/nlohmann"]
+	path = internals/nlohmann
+	url = git@github.com:oceancx/nlohmann.git
+[submodule "internals/cxbase"]
+	path = internals/cxbase
+	url = git@github.com:oceancx/cxbase.git
+[submodule "internals/ezio-cmake"]
+	path = internals/ezio-cmake
+	url = git@github.com:oceancx/ezio-cmake.git
+[submodule "internals/imgui"]
+	path = internals/imgui
+	url = git@github.com:oceancx/imgui.git
+[submodule "internals/kbase-cmake"]
+	path = internals/kbase-cmake
+	url = git@github.com:oceancx/kbase-cmake.git
+[submodule "internals/lua-cmake"]
+	path = internals/lua-cmake
+	url = git@github.com:oceancx/lua-cmake.git
+[submodule "internals/luacjson-cmake"]
+	path = internals/luacjson-cmake
+	url = git@github.com:oceancx/luacjson-cmake.git
+[submodule "externals/glew-cmake"]
+	path = externals/glew-cmake
+	url = git@github.com:oceancx/glew-cmake.git
+[submodule "externals/glm"]
+	path = externals/glm
+	url = git@github.com:oceancx/glm.git
+[submodule "externals/freetype"]
+	path = externals/freetype
+	url = git@github.com:oceancx/freetype.git
+[submodule "externals/glfw"]
+	path = externals/glfw
+	url = git@github.com:oceancx/glfw.git
+[submodule "externals/SOIL"]
+	path = externals/SOIL
+	url = git@github.com:oceancx/SOIL.git

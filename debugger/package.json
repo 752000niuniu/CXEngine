@@ -1,0 +1,67 @@
+{
+	"name": "cxluadbg",
+	"displayName": "LuaDebugger",
+	"version": "0.1.0",
+	"publisher": "oceancx",
+	"author": {
+		"name": "oceancx"
+	},
+	"license": "MIT",
+	"scripts": {},
+	"engines": {
+		"vscode": "^1.0.0",
+        "node": "^4.1.1"
+	},
+	"categories": [
+		"Debuggers"
+	],
+	"private": true,
+	"devDependencies": {},
+	"contributes": {
+		"debuggers": [
+			{
+				"type": "luadbg",
+				"label": "LuaDebugger",
+				"enableBreakpointsFor": {
+					"languageIds": [
+						"lua"
+					]
+				},
+				"program": "Debug/debugger.exe",
+				"configurationAttributes": {
+					"launch": {
+						"required": [
+						],
+						"properties": {
+							"executable": {
+								"type": "string",
+								"description": "Absolute path to a .exe file."
+							},
+							"stopOnEntry": {
+								"type": "boolean",
+								"description": "Automatically stop after launch.",
+								"default": true
+							},
+							"cwd" :{
+								"type": "string"
+							}
+						}
+					}
+				},
+				"initialConfigurations": [
+					{
+						"type": "luadbg",
+						"request": "launch",
+						"executable": ".exe",
+						"name":"luadebug",
+						"stopOnEntry": true,
+						"cwd":"{workspaceRoot}"
+					}
+				],
+				"configurationSnippets": [{
+
+				}]
+			}
+		]
+	}
+}

@@ -1,0 +1,42 @@
+{
+	// 使用 IntelliSense 了解相关属性。 
+	// 悬停以查看现有属性的描述。
+	// 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "mock",
+			"request": "launch",
+			"name": "mock",
+			"program": "${workspaceFolder}/${command:AskForProgramName}",
+			"stopOnEntry": true,
+			"debugServer": 4711
+		},
+		{
+			"type": "luadbg",
+			"name": "SimpleEngine",
+			"request": "launch",
+			"executable": "SimpleEngine.exe",
+			"stopOnEntry": true,
+			"cwd": "D:\\Github\\SimpleEngine\\bin\\Debug",
+			"args":[
+				"--debug_port=4679",
+				"--LE=CRLF"
+			],
+			"debugServer": 4712
+		},
+		{
+			"type": "luadbg",
+			"name": "SimpleEngineAttach",
+			"request": "attach",
+			"executable": "SimpleEngine.exe",
+			"stopOnEntry": true,
+			"cwd": "D:\\Github\\SimpleEngine\\bin\\Debug",
+			"args": [
+				"--debug_port=4679",
+				"--LE=CRLF"
+			],
+			"debugServer": 4712
+		}
+	]
+}
