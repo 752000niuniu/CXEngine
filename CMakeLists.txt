@@ -3,7 +3,7 @@ project (SimpleEngineAll)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 list(INSERT CMAKE_PREFIX_PATH 0  ${CMAKE_SOURCE_DIR}/internals)
-list(INSERT CMAKE_PREFIX_PATH 0  ${CMAKE_SOURCE_DIR}/external/dist)
+list(INSERT CMAKE_PREFIX_PATH 0  ${CMAKE_SOURCE_DIR}/externals/dist)
 
 add_subdirectory(internals)
 
