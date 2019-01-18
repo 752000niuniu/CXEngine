@@ -31,12 +31,12 @@
 			"request": "attach",
 			"executable": "SimpleEngine.exe",
 			"stopOnEntry": true,
-			"cwd": "D:\\Github\\SimpleEngine\\bin\\Debug",
+			"cwd": "E:\\Github\\SimpleEngine\\bin\\Debug",
 			"args": [
 				"--debug_port=4679",
 				"--LE=CRLF"
 			],
-			"debugServer": 4712
+			"debugServer": 4711
 		}
 	]
 }

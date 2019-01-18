@@ -22,7 +22,7 @@ target_include_directories(debugger
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
-target_compile_definitions(debugger PRIVATE -DWORKSPACE_ROOT="${PROJECT_SOURCE_DIR}")
+target_compile_definitions(debugger PRIVATE -DWORKSPACE_ROOT="${ENGINE_DIR}")
 target_link_libraries(debugger
   PUBLIC CXBase::CXBase
 )

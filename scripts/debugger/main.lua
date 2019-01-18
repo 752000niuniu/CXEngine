@@ -1,4 +1,4 @@
-package.path = 'E:\\Github\\SimpleEngine\\debugger\\scripts\\?.lua'
+package.path = 'E:\\Github\\SimpleEngine\\scripts\\debugger\\?.lua'
 --print(package.path)
 --print(package.cpath)
 

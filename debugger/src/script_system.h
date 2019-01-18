@@ -3,9 +3,6 @@
 #include "any.h"
 #include "lua_bind.h"
 
-#define script_system_register_function(L,fn) lua_register_function(L,fn)
-#define script_system_register_luac_function(L,fn) (lua_pushcfunction(L, (fn)), lua_setglobal(L, #fn)) 
-#define script_system_call_function(fn,...) call_lua_function(script_system_get_luastate(), fn, __VA_ARGS__ )
 
 void script_system_prepare_init();
 

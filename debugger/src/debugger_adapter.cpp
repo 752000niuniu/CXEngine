@@ -47,7 +47,7 @@ void debugger_adapter_init(int argc, char* argv[])
 
 String get_lua_path(const char* name)
 {
-	return string_format("%s/scripts/%s.lua", WORKSPACE_ROOT, name);
+	return string_format("%s/scripts/debugger/%s.lua", WORKSPACE_ROOT, name);
 }
 
 NetThreadQueue g_VscodeQueue;
@@ -217,7 +217,7 @@ int debugger_adapter_run()
 	ezio::IOServiceContext::Init();
 
 	thread_set.resize(2);
-	thread_set[0] = new std::thread(VscodeThreadFunc, 4712);
+	thread_set[0] = new std::thread(VscodeThreadFunc, 4711);
 
 	lua_State* L = luaL_newstate();
 	luaL_openlibs(L);
