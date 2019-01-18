@@ -1,5 +1,5 @@
 #pragma once
-#include "defines.h"
+
 #include "core/Texture.h"
 #include "mesh.h"
 class Model

@@ -1,5 +1,5 @@
 #pragma once
-#include "defines.h"
+
 
 
 void script_system_read_config(int argc, char** argv);

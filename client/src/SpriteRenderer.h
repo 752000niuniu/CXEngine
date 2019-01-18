@@ -8,7 +8,7 @@
  ******************************************************************/
 #pragma once
 
-#include "defines.h"
+
 #include "core/Texture.h"
 #include "core/Shader.h"
 

@@ -3,6 +3,13 @@
 		"vector": "cpp",
 		"functional": "cpp",
 		"thread": "cpp",
-		"lua.h": "c"
+		"lua.h": "c",
+		"memory": "cpp",
+		"type_traits": "cpp",
+		"typeinfo": "cpp",
+		"string": "cpp",
+		"sstream": "cpp",
+		"iostream": "cpp",
+		"iosfwd": "cpp"
 	}
 }

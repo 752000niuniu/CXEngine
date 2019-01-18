@@ -1,6 +1,6 @@
 #pragma once 
 
-#include "defines.h"
+
 #include "core/Texture.h"
 #include "TextureManager.h"
 #include <vector>

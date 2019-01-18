@@ -1,6 +1,6 @@
 #pragma once
-#include "defines.h"
-#include "defineTypes.h"
+
+#include "define_types.h"
 
 
 class Actor 

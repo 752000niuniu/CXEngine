@@ -1,7 +1,7 @@
 #pragma once
-#include "defines.h"
-#include "defineTypes.h"
-#include "defines.h"
+
+#include "define_types.h"
+
 
 #include "../IUpdateDraw.h"
 #include "../Event/Event.h"

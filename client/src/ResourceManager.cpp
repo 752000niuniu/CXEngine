@@ -12,6 +12,7 @@
 #include "profile.h"
 #include "ne_wrapper.h"
 #include <string>
+#include "Logger.h"
 
 
 

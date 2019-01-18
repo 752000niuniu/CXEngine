@@ -1,5 +1,5 @@
 #pragma once
-#include "defines.h"
+
 #include "Game.h"
 #include "Singleton.h"
 

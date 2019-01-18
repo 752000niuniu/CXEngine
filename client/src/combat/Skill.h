@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../defines.h"
-#include "../defineTypes.h"
+
+#include "define_types.h"
 #include "../actor/Player.h"
 #include "../animation/FrameAnimation.h"
 #include "cxrandom.h"

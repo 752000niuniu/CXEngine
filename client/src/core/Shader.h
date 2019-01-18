@@ -1,6 +1,6 @@
 #pragma once
 
-#include "defines.h"
+
 
 /*
 封装OpenGL内部的Shader

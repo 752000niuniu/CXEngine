@@ -3,6 +3,7 @@
 #include "Window.h"
 #include "SceneManager.h"
 #include "../server/src/file_system.h"
+#include "utils.h"
 
 static std::vector<uint32> s_WASIDs;
 static std::map<uint32,String> s_WASIDStrings;

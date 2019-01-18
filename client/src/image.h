@@ -6,7 +6,7 @@
 //  Copyright (c) 2016年 oceancx. All rights reserved.
 //
 #pragma once
-
+#include "define_types.h"
 
 #pragma pack(2)
 typedef struct tagBITMAP_FILEHEADER{

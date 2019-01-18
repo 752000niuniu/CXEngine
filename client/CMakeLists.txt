@@ -1,5 +1,6 @@
 cmake_minimum_required (VERSION 3.10)
 project (SimpleEngine)
+
 find_package(CXBase)
 find_package(SOIL)
 find_package(GLEW CONFIG)
@@ -125,6 +126,9 @@ target_compile_definitions(SimpleEngine
     -D_WIN32_WINNT=0x0501
 )
 endif(WIN32)
+
+set_target_properties(SimpleEngine PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "src/pch/precompile.h")
+cotire(SimpleEngine)
 
 target_link_libraries(SimpleEngine
   PRIVATE 

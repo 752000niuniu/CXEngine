@@ -1,6 +1,6 @@
 #pragma once
 
-#include "defines.h"
+
 #include "Singleton.h"
 #include "core/Shader.h"
 #include <array>

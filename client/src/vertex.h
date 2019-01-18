@@ -1,5 +1,5 @@
 #pragma once
-#include "defines.h"
+
 
 class VertexFactory : public Singleton<VertexFactory>
 {

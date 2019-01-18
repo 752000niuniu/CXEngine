@@ -1,7 +1,7 @@
 #pragma once
 
-#include "defines.h"
-#include "defineTypes.h"
+
+#include "define_types.h"
 
 #define BITMAPFILE_ID  0x4D42
 #define BITMAPFILE_PAL_SIZE  256

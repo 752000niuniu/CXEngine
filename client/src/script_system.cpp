@@ -1,6 +1,6 @@
 #include "script_system.h"
 
-#include "defineTypes.h"
+#include "define_types.h"
 #include "Singleton.h"
 #include "file_system.h" 
 #include "Logger.h"

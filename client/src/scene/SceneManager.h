@@ -1,6 +1,6 @@
 #pragma once
-#include "defines.h"
-#include "defineTypes.h"
+
+#include "define_types.h"
 #include "tsv.h"
 #include "actor/Player.h"
 
