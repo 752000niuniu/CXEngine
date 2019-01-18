@@ -18,7 +18,6 @@ end
 function SetHook()
     print('Run()')
     debug.sethook(debug_hook, "lcr")
-
 end
 
 function SetTrapWait(bWait)
@@ -54,10 +53,7 @@ function OnGameUpdate()
     local c = 3
     local d = 1
     local e = 4
-
     TestStep()
-
-
 end
 
 function DoSomething()
