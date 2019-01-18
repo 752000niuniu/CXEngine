@@ -2,13 +2,18 @@ cmake_minimum_required (VERSION 3.10)
 project (SimpleEngine)
 find_package(CXBase)
 find_package(SOIL)
-find_package(NESupport)
 find_package(GLEW CONFIG)
 find_package(glfw3)
 find_package(freetype CONFIG)
 find_package(IMGui)
 
+file(GLOB_RECURSE  SOURCES_CPP "src/*.cpp")
+file(GLOB_RECURSE  SOURCES_HEADER_PRI "src/*.h" )
 file(GLOB_RECURSE  PRIVATE_HEADERS "src/*.h" "src/*.hpp" "src/*.inl")
+
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "Source Files"  FILES ${SOURCES_CPP})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "Header Files"  FILES ${SOURCES_HEADER_PRI})
+
 add_executable(SimpleEngine
     ${PRIVATE_HEADERS}
     src/actor/action.cpp
@@ -39,15 +44,10 @@ add_executable(SimpleEngine
     src/Entity.cpp
     src/file_system.cpp
     src/Game.cpp
-    src/GMath.cpp
     src/ImageLoader.cpp
     src/imgui_impl_glfw.cpp
     src/imgui_impl_opengl3.cpp
     src/InputManager.cpp
-    src/kbase/error_exception_util.cpp
-    src/kbase/string_encoding_conversions.cpp
-    src/kbase/string_format.cpp
-    src/kbase/string_util.cpp
     src/Logger.cpp
     #src/material.cpp
     #src/mesh.cpp
@@ -58,8 +58,7 @@ add_executable(SimpleEngine
     src/Objects/MapObject.cpp
     src/Objects/Object.cpp
     src/profile.cpp
-    src/program.cpp
-    src/Random.cpp
+    src/main.cpp
     src/Resource.cpp
     src/ResourceManager.cpp
     src/scene/BaseScene.cpp
@@ -81,17 +80,17 @@ add_executable(SimpleEngine
     src/Time/Timer.cpp
     src/Time/TimerManager.cpp
     src/tiny_thread_pool.cpp
-    src/tsv.cpp
     src/ui.cpp
     src/vertex.cpp
     src/Window.cpp
 )
 
-file(GLOB_RECURSE  SOURCES_CPP "src/*.cpp")
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "Source Files"  FILES ${SOURCES_CPP})
-
-file(GLOB_RECURSE  SOURCES_HEADER_PUB "src/*.h" )
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "Header Files"  FILES ${SOURCES_HEADER_PUB})
+if(MSVC)
+    target_compile_options(SimpleEngine PRIVATE /wd4819 )
+#   target_compile_options(SimpleEngine PRIVATE /W4 /WX /wd4324 /wd4201 /wd4819 /wd4267)
+else()
+  target_compile_options(SimpleEngine PRIVATE -Wall -Wextra -pedantic -Werror)
+endif(MSVC)
 
 target_include_directories(SimpleEngine
     PUBLIC
@@ -113,7 +112,8 @@ target_compile_definitions(SimpleEngine
     -DGLEW_STATIC
     -D_CRT_SECURE_NO_WARNINGS
 	-DIMGUI_IMPL_OPENGL_LOADER_GLEW
-	-DWORK_DIR="${ENGINE_DIR}"
+    -DWORK_DIR="${ENGINE_DIR}"
+    -DNODEFAULTLIB
 )
 if(WIN32)
 target_compile_definitions(SimpleEngine 
@@ -126,7 +126,6 @@ target_compile_definitions(SimpleEngine
 )
 endif(WIN32)
 
-target_compile_options(SimpleEngine PRIVATE /wd4002 /wd4819)
 target_link_libraries(SimpleEngine
   PRIVATE 
     glfw
@@ -134,7 +133,6 @@ target_link_libraries(SimpleEngine
     SOIL
     freetype
     CXBase::CXBase
-    NESupport::NESupport
     IMGui::IMGui
 )
 

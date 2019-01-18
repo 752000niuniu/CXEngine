@@ -1,11 +1,10 @@
 #include "script_system.h"
 
-#include "defineTypes.h"
 #include "Singleton.h"
 #include "file_system.h" 
 #include "Logger.h"
 #include "scene/SceneManager.h"
-#include "debugger.h"
+//#include "debugger.h"
 
 static lua_State* L = nullptr;
 
@@ -72,22 +71,22 @@ std::string script_system_get_config(std::string key)
 
 void script_system_init()
 {
-	script_system_call_function("on_script_system_init");
+	script_system_call_function(script_system_get_luastate(),"on_script_system_init");
 }
 
 void script_system_update()
 {
-	script_system_call_function("on_script_system_update");
+	script_system_call_function(script_system_get_luastate(),"on_script_system_update");
 }
 
 void script_system_draw()
 {
-	script_system_call_function("on_script_system_draw");
+	script_system_call_function(script_system_get_luastate(),"on_script_system_draw");
 }
 
 void script_system_deinit()
 {
-	script_system_call_function("on_script_system_deinit");
+	script_system_call_function(script_system_get_luastate(),"on_script_system_deinit");
 }
 
 lua_State* script_system_get_luastate ()

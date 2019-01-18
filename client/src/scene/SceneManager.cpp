@@ -1,5 +1,5 @@
 #include "SceneManager.h"
-#include "../Random.h"
+#include "cxrandom.h"
 #include "SplashScene.h"
 #include "WASViewerScene.h"
 #include "UIScene.h"
@@ -9,7 +9,8 @@
 #include "Scene.h"
 #include "InputManager.h"
 #include "Game.h"
-#include "GMath.h"
+#include "cxmath.h"
+#include "file_system.h"
 
 static bool s_DrawMask(true), s_DrawStrider(true), s_DrawCell(false), s_DrawMap(true), s_DrawAnnouncement(true), s_AutoRun(false);
 bool g_IsMouseInImGui = false;
@@ -73,7 +74,7 @@ SceneManager::~SceneManager()
 
 void SceneManager::Init() 
 {
-	script_system_call_function("on_scene_manager_init");
+	script_system_call_function(script_system_get_luastate(),"on_scene_manager_init");
 };
 
 void SceneManager::SwitchScene(String name)
@@ -201,7 +202,7 @@ void SceneManager::Update()
 			{
 				if (m_PlayerEnterX != 0 && m_PlayerEnterY != 0)
 				{
-					m_pCurrentScene->GetLocalPlayer()->SetPos(m_PlayerEnterX, m_PlayerEnterY);
+					m_pCurrentScene->GetLocalPlayer()->SetPos((float)m_PlayerEnterX, (float)m_PlayerEnterY);
 				}
 			}
 		}
@@ -211,7 +212,7 @@ void SceneManager::Update()
 	{
 		if (m_pCurrentScene)
 		{
-			script_system_call_function("on_scene_manager_update");
+			script_system_call_function(script_system_get_luastate(),"on_scene_manager_update");
 			m_pCurrentScene->Update();
 		}
 	}
@@ -313,7 +314,7 @@ void SceneManager::DrawImGUI()
 			{
 				if (m_Player != nullptr)
 				{
-					m_Player->SetActionID(i);
+					m_Player->SetActionID((int)i);
 				}
 			}
 			if (i != s_ActionSet.size() - 1) ImGui::SameLine();
@@ -345,7 +346,7 @@ void SceneManager::Draw()
 	if (m_SwitchingScene)return;
 	if(m_pCurrentScene)
 	{
-		script_system_call_function("on_scene_manager_draw");
+		script_system_call_function(script_system_get_luastate(),"on_scene_manager_draw");
 		m_pCurrentScene->Draw();
 		DrawImGUI();
 	}
@@ -391,7 +392,7 @@ void scene_add_npc(const char* player_name, int  x, int  y, int dir, int role_id
 	BaseScene* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
 	if (scene)
 	{
-		scene->AddNpc(player_name, x, y,dir, role_id, action_id, msg);
+		scene->AddNpc(player_name, (float)x, (float)y,dir, role_id, action_id, msg);
 	}
 }
 

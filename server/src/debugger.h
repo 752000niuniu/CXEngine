@@ -1,6 +1,4 @@
 #pragma once
-#include "defines.h"
-#include "defineTypes.h"
 
 #include "kbase/at_exit_manager.h"
 #include "ezio/io_context.h"

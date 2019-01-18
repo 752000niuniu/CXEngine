@@ -1,6 +1,7 @@
 #include "Object.h"
 #include "../Logger.h"
 #include "../Components/TransformComponent.h"
+#include "utils.h"
 
 Object::Object()
 :Object("")

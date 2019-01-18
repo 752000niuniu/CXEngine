@@ -1,9 +1,9 @@
 #pragma once
 
-#include "defines.h"
-#include "defineTypes.h"
 
-
+#include <string>
+#include <vector>
+using String = std::string;
 class FileSystem 
 {
 public:

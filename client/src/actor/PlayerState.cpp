@@ -2,9 +2,9 @@
 #include "Player.h"
 #include "../combat/Skill.h"
 #include "Window.h"
-#include "GMath.h"
+#include "cxmath.h"
 #include "ResourceManager.h"
-#include "Random.h"
+#include "cxrandom.h"
 
 void BasePlayerCombatState::Enter(Player* )
 {

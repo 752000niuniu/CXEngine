@@ -4,7 +4,7 @@
 #include "../defineTypes.h"
 #include "../actor/Player.h"
 #include "../animation/FrameAnimation.h"
-#include "Random.h"
+#include "cxrandom.h"
 
 class SkillManager : public Singleton<SkillManager>
 {

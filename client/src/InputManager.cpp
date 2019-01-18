@@ -1,6 +1,6 @@
 #include "InputManager.h"
 #include "script_system.h"
-#include "GMath.h"
+#include "cxmath.h"
 #include "scene/SceneManager.h"
 #include "Window.h"
 
@@ -92,7 +92,7 @@ void InputManager::MouseButtonCallback(GLFWwindow* window, int button, int actio
 					it->SetPressed(false, -1);
 					if (utils::BoundHitTest(bound, pos))
 					{
-						it->OnClick(button, pos.x, pos.y);
+						it->OnClick(button, (int)pos.x, (int)pos.y);
 
 						m_Keys[button] = false;
 						return;

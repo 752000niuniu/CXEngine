@@ -7,10 +7,10 @@
 #include "profile.h"
 #include "ne_wrapper.h"
 #include "NESupport.h"
-#include "Random.h"
+#include "cxrandom.h"
 #include "file_system.h"
 #include "SpriteRenderer.h"
-#include "GMath.h"
+#include "cxmath.h"
 
 GameMap::GameMap(uint32 mapID)
 	:m_XyqMap(nullptr)

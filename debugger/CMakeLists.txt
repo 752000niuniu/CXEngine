@@ -11,11 +11,7 @@ add_executable(debugger
   src/debugger_adapter.cpp
   src/script_system.cpp
 )
-file(GLOB_RECURSE  SOURCES_CPP "src/*.cpp")
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "Source Files"  FILES ${SOURCES_CPP})
 
-file(GLOB_RECURSE  SOURCES_HEADER_PUB "src/*.h" )
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "Header Files"  FILES ${SOURCES_HEADER_PUB})
 
 target_include_directories(debugger
     PUBLIC

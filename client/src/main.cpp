@@ -15,7 +15,7 @@ int main(int argc,char** argv)
 
 	script_system_dofile("main.lua");
 	
-	script_system_call_function("main");
+	script_system_call_function(script_system_get_luastate(),"main");
 	
 	return 0;
 }

@@ -47,8 +47,8 @@ void SpriteRenderer::DrawTexture(Texture* texture, glm::vec2 position, glm::vec2
 {
 	if (size.x == 0 &&size.y == 0)
 	{
-		size.x = texture->GetWidth();
-		size.y = texture->GetHeight();
+		size.x = (float)texture->GetWidth();
+		size.y = (float)texture->GetHeight();
 	}
 
 	DrawFrameSprite(texture, position, size);

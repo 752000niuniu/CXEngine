@@ -4,12 +4,12 @@
 #include "../core/Graphics2D.h"
 #include "../core/Renderer.h"
 #include "ResourceManager.h"
-#include "Random.h"
+#include "cxrandom.h"
 #include "profile.h"
 #include "Time/Time.h"
 #include "Bitmap.h"
 #include "InputManager.h"
-#include "GMath.h"
+#include "cxmath.h"
 #include "core/Object2D.h"
 
 

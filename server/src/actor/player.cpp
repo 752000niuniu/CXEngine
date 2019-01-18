@@ -1,6 +1,7 @@
 ﻿#include "player.h"
-#include "GMath.h"
+#include "cxmath.h"
 #include "action.h"
+#include "utils.h"
 
 Player::Player(int roleID) :
 	m_RoleID(roleID),
@@ -156,6 +157,7 @@ Player* actor_manager_create_player(int role_id,const char* name)
 		g_PlayerSet.insert({ pname,player });
 		return player;
 	}
+	return nullptr;
 }
 
 Player* actor_manager_find_player_by_name(const char* name)

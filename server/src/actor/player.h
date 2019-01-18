@@ -1,5 +1,4 @@
 #pragma once
-#include "defines.h"
 #include "Pos.h"
 #include "scene/GameMap.h"
 

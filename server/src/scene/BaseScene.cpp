@@ -1,6 +1,8 @@
 #include "BaseScene.h"
 #include "Scene.h"
 #include "actor/action.h"
+#include "utils.h"
+using String = std::string;
 BaseScene::BaseScene(int id, String name)
 :m_Name(name),
 m_SceneID(id),

@@ -1,9 +1,10 @@
 #pragma once
-#include "defines.h"	
+#include "lua_bind.h"
 #include <iostream>
 #include <string>
 #include <cstdio>
 #include <cstdarg>
+#include "singleton.h"
 class Logger final : public Singleton<Logger>
 {
 public:

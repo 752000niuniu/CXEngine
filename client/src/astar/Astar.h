@@ -3,7 +3,7 @@
 #include <list>
 #include "Heap.h"
 #include <map>
-#include "../Pos.h"
+#include "pos.h"
 /*
 纯算法实现 不包含输入输出
 */

@@ -1,6 +1,4 @@
 #pragma once
-#include "defines.h"
-#include "defineTypes.h"
 #include "GameMap.h"
 #include "actor/Player.h"
 
@@ -8,10 +6,11 @@
 场景对象的基类
 可以拆分出SplashScene , UIScene , Scene（游戏场景）
 */
+
 class BaseScene
 {
 public:
-	BaseScene(int sceneID, String sceneName);
+	BaseScene(int sceneID, std::string sceneName);
 
 	virtual ~BaseScene();
 

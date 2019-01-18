@@ -1,6 +1,6 @@
 #pragma once
-#include "defines.h"
-
+#include <stdint.h>
+#include "NESupport.h"
 #include "../astar/Heap.h"
 #include "../astar/Astar.h"
 
@@ -12,7 +12,7 @@
 class GameMap  
 {
 public:
-	GameMap(uint32 mapID);
+	GameMap(uint32_t mapID);
 	
 	~GameMap();
 

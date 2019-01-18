@@ -1,6 +1,6 @@
 #include "Astar.h"
 #include <fstream>
-#include "GMath.h"
+#include "cxmath.h"
 
 // N E S W N_E S_E S_W N_W
 //int dir_x[8] = { 0, 1, 0, -1, 1, 1, -1, -1 };

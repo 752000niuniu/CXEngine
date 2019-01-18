@@ -1,13 +1,13 @@
 #pragma once
-#include "defines.h"
-#include "defineTypes.h"
 #include "tsv.h"
-
+#include "singleton.h"
 /*
 负责场景切换，添加 移除 等等
 */
 class Scene;
 class BaseScene;
+
+using String = std::string;
 
 struct TransportStation
 {

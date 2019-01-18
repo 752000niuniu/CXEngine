@@ -68,15 +68,6 @@ extern "C" {
 //#include <assimp/scene.h>
 //#include <assimp/postprocess.h>
 
-template <typename T>
-inline void SafeDelete(T * &pointer)
-{
-	if(pointer != nullptr)
-	{
-		delete pointer;
-		pointer = nullptr;
-	}
-}
 
 
 #ifndef TGA_FILE_HEADER_H

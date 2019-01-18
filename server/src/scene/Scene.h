@@ -1,12 +1,10 @@
 #pragma once
-#include "defines.h"
-#include "defineTypes.h"
 
 #include "GameMap.h"
 #include "../actor/Player.h"
 #include "BaseScene.h"
 
-
+using String = std::string;
 /*
 场景对象对应一张大地图
 场景加载的时候应该加载player ， npc ，场景物件 等等

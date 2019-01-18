@@ -1,5 +1,4 @@
 #pragma once
-#include "defines.h"
 #include "Singleton.h"
 #include "ezio/event_loop.h"
 #include "kbase/basic_macros.h"

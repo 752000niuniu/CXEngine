@@ -1,10 +1,10 @@
 #include "Scene.h"
 
 #include "Logger.h"
-#include "Random.h"
+#include "cxrandom.h"
 #include "script_system.h"
 #include "SceneManager.h"
-#include "GMath.h"
+#include "cxmath.h"
 #include <corecrt_io.h>
 #include "actor/action.h"
 #include <algorithm>
@@ -44,7 +44,7 @@ void Scene::OnLoad()
 	
 	m_ShowSmap = false;
 
-	script_system_call_function("on_scene_init");
+	script_system_call_function(script_system_get_luastate(),"on_scene_init");
 
 
 }
@@ -68,7 +68,7 @@ void Scene::OnSmapClick(float x, float y, float w, float h)
 
 void Scene::Update()
 {
-	script_system_call_function("on_scene_update");
+	script_system_call_function(script_system_get_luastate(),"on_scene_update");
 	
 	float dt = GAME_INSTANCE->GetDeltaTime();
 	for (auto* player: m_Players)
@@ -118,7 +118,7 @@ BattleScene::~BattleScene()
 
 void BattleScene::OnLoad()
 {
-	script_system_call_function("on_battle_scene_init");
+	script_system_call_function(script_system_get_luastate(),"on_battle_scene_init");
 }
 
 void BattleScene::OnUnLoad()

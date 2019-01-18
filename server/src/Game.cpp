@@ -4,6 +4,7 @@
 #include "scene/BaseScene.h"
 #include "file_system.h"
 #include "actor/Action.h"
+#include <stdint.h>
 Game::Game()
 {
 
@@ -90,7 +91,7 @@ uint32_t Game::GetActionWasID(int type, int roleID, int actionID)
 	{
 		return-1;
 	}
-	uint32 wasID = std::stoul(wasIDstr, 0, 16);
+	uint32_t wasID = std::stoul(wasIDstr, 0, 16);
 	return wasID;
 }
 
@@ -112,7 +113,7 @@ uint32_t Game::GetWeaponWasID(int weaponID, int actionID)
 		wasIDstr = s_AvatarWeapon90Table.Rows[weaponID][s_ActionSet[actionID]];
 	}
 	if (wasIDstr == "")return-1;
-	uint32 wasID = std::stoul(wasIDstr, 0, 16);
+	uint32_t wasID = std::stoul(wasIDstr, 0, 16);
 	return wasID;
 }
 
@@ -139,7 +140,7 @@ int Game::GetRoleIDByName(int actorType, const char* templ_name)
 		auto& row = rowTable->Rows[i];
 		if (row["ID"] == templ_name)
 		{
-			return i;
+			return (int)i;
 		}
 	}
 	return 0;

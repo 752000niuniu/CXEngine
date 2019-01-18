@@ -8,8 +8,8 @@
 #include "core/Renderer.h"
 #include "SpriteRenderer.h"
 #include "TextureManager.h"
-#include "Random.h"
-#include "GMath.h"
+#include "cxrandom.h"
+#include "cxmath.h"
 #include "Bitmap.h"
 #include "scene/SceneManager.h"
 #include "net.h"
@@ -360,8 +360,8 @@ struct TurtorialLight
 		s_LightShader->SetVec3("objectColor", 1.0f, 0.5f, 0.31f);
 		s_LightShader->SetVec3("lightColor", 1.0f, 1.0f, 1.0f);
 
-		float screenWidth = WINDOW_INSTANCE->GetWidth();
-		float screenHeight = WINDOW_INSTANCE->GetHeight();
+		float screenWidth = (float)WINDOW_INSTANCE->GetWidth();
+		float screenHeight = (float)WINDOW_INSTANCE->GetHeight();
 		// view/projection transformations
 		glm::mat4 projection = glm::perspective(glm::radians(s_Camera->Zoom), screenWidth / screenHeight, 0.1f, 100.0f);
 		glm::mat4 view = s_Camera->GetViewMatrix();
@@ -414,7 +414,7 @@ void TestNetScene::Reset()
 void TestNetScene::Update()
 {
 	float dt = WINDOW_INSTANCE->GetDeltaTime();
-	script_system_call_function("on_test_scene_update", dt);
+	script_system_call_function(script_system_get_luastate(),"on_test_scene_update", dt);
 }
 
 void TestNetScene::Draw()

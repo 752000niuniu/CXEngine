@@ -3,6 +3,7 @@
 #include "Window.h"
 #include "scene/SceneManager.h"
 #include "scene/BaseScene.h"
+#include "../server/src/file_system.h"
 
 Game::Game()
 {
@@ -139,7 +140,7 @@ int Game::GetRoleIDByName(int actorType, const char* templ_name)
 		auto& row = rowTable->Rows[i];
 		if (row["ID"] == templ_name)
 		{
-			return i;
+			return (int)i;
 		}
 	}
 	return 0;

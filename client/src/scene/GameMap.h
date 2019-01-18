@@ -5,7 +5,7 @@
 #include "../astar/Astar.h"
 
 #include "../image.h"
-#include "../Pos.h"
+#include "pos.h"
 #include "core/Texture.h"
 
 /*

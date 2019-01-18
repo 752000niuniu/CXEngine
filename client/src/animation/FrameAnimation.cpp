@@ -11,11 +11,11 @@ std::map<float,float> bezier_map_array;
 
 int uniform_speed_interpolate(float total_frame_time,int total_frame,float current_time)
 {
-	int current_frame = std::floor(current_time / total_frame_time * total_frame);
+	int current_frame = (int)std::floor(current_time / total_frame_time * total_frame);
 	return current_frame;
 }
 
-float bezier_p1_x = 0.17;
+float bezier_p1_x = 0.17f;
 float bezier_p1_y = 0.67f;
 float bezier_p2_x = 0.83f;
 float bezier_p2_y = 0.67f;
@@ -71,7 +71,7 @@ int uniform_bezier_interpolate(float total_frame_time, int total_frame, float cu
 			break;
 		}
 	}
-	return std::floor(y*total_frame);
+	return (int)std::floor(y*total_frame);
 }
 
 FrameAnimation::FrameAnimation(uint64_t resoureID)

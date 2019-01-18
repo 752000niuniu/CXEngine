@@ -40,31 +40,7 @@ function on_scene_manager_init()
     
 end
 
-local t123 = {asd='qwe', sadsa='qweqwe'}
-local t2343 = {asd='qwe', sadsa='qweqwe', tasd= {asd = 'asdasd', asdqweqwe='asdlkjjasljd'}}
-
-local function test()
-    local a1  = 11
-    local b1  = 21
-    local c2 = 'sasd '
-    local t2 = {asd='qwe', sadsa='qweqwe'}
-    local t3 = {asd='qwe', sadsa='qweqwe'}
-    local t4 = {asd='qwe', sadsa='qweqwe'}
-    local t2343123 = {asd='qwe', sadsa='qweqwe', tasd= {asd = 'asdasd', asdqweqwe='asdlkjjasljd'}}
-end
-local wthat = '1'
-local xx = 'qwelk jqwlke '
-local first_gen = true
 function on_scene_manager_update()
-    local a  = 1
-    local b  = 2
-    local c = 's '
-    local sum = a + b
-    local t = {asd='qwe', sadsa='qweqwe'}
-    test()
-    if first_gen then
-        
-    end
 
 end
 

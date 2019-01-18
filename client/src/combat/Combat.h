@@ -3,7 +3,7 @@
 #include "../defines.h"
 #include "../defineTypes.h"
 #include "../actor/Player.h"
-#include "../Singleton.h"
+#include "singleton.h"
 
 
 class CombatSystem : public Singleton<CombatSystem>

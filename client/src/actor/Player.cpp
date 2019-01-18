@@ -4,7 +4,7 @@
 #include "../Message.h"
 #include "../combat/Combat.h"
 #include "../combat/Skill.h"
-#include "../Random.h"
+#include "cxrandom.h"
 #include "../Engine.h"
 #include "../animation/FrameAnimation.h"
 #include "PlayerState.h"
@@ -13,9 +13,10 @@
 #include "ne_wrapper.h"
 #include "scene/SceneManager.h"
 #include "scene/Scene.h"
-#include "GMath.h"
+#include "cxmath.h"
 #include "InputManager.h"
 #include "Game.h"
+#include "utils.h"
 
 
 Player::Player(int roleID):
@@ -300,8 +301,8 @@ void Player::OnDraw(GameMap* gameMapPtr)
 		{
 			auto green = glm::vec3(115 / 255.0f, 1.0f, 137 / 255.0f);
 			TextRenderer::GetInstance()->DrawTextC(m_NickName.c_str(),
-				(pos.x + 11),
-				(pos.y + 20),
+				((int)pos.x + 11),
+				((int)pos.y + 20),
 				TextRenderer::CENTER
 			);
 		}
@@ -589,14 +590,14 @@ float Player::GetWidth()
 {
 	auto* player = GetCurrentPlayerFrame();
 	if (player == nullptr) return 0;
-	return player->GetWidth();
+	return (float)player->GetWidth();
 }
 
 float Player::GetHeight()
 {
 	auto* player = GetCurrentPlayerFrame();
 	if (player == nullptr) return 0;
-	return player->GetHeight();
+	return (float)player->GetHeight();
 }
 
 Bound Player::GetScreenBound()

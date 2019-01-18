@@ -10,6 +10,7 @@
 #include "Window.h"
 #include "scene/SceneManager.h"
 #include "scene/Scene.h"
+#include "utils.h"
 
 void TextView::OnCharacterInput(uint32_t charcode)
 {
@@ -261,8 +262,8 @@ void ImageView::OnUpdate()
 		Background = new Texture(frame.width, frame.height, true, (uint8*)frame.src.data());
 		Width = frame.width;
 		Height = frame.height;
-		X = WINDOW_INSTANCE->GetCenterX() - Width / 2;
-		Y = WINDOW_INSTANCE->GetCenterY() - Height/ 2;;
+		X = (int) WINDOW_INSTANCE->GetCenterX() - Width / 2;
+		Y = (int)WINDOW_INSTANCE->GetCenterY() - Height/ 2;;
 	}
 }
 
@@ -279,7 +280,7 @@ void ImageView::OnDraw()
 void ImageView::OnClick(int button, int x, int y)
 {
 	dynamic_cast<Scene*>(SCENE_MANAGER_INSTANCE->GetCurrentScene())->
-		OnSmapClick(m_HoverX, m_HoverY, Width - 18 * 2, Height - 15 * 2);
+		OnSmapClick(m_HoverX, m_HoverY, (float)Width - 18.f * 2,( float)Height - 15.f * 2);
 }
 
 Bound ImageView::GetViewBounds()

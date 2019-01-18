@@ -1,9 +1,9 @@
 #include "SceneManager.h"
-#include "../Random.h"
+#include "cxrandom.h"
 #include "script_system.h"
 #include "Scene.h"
 #include "Game.h"
-#include "GMath.h"
+#include "cxmath.h"
 #include "actor/action.h"
 #include "file_system.h"
 static bool s_DrawMask(true), s_DrawStrider(true), s_DrawCell(false), s_DrawMap(true), s_DrawAnnouncement(true), s_AutoRun(false);
@@ -63,7 +63,7 @@ SceneManager::~SceneManager()
 
 void SceneManager::Init() 
 {
-	script_system_call_function("on_scene_manager_init");
+	script_system_call_function(script_system_get_luastate(),"on_scene_manager_init");
 };
 
 void SceneManager::SwitchScene(String name)
@@ -162,7 +162,7 @@ void SceneManager::Update()
 	{
 		if (m_pCurrentScene)
 		{
-			script_system_call_function("on_scene_manager_update");
+			script_system_call_function(script_system_get_luastate(),"on_scene_manager_update");
 			m_pCurrentScene->Update();
 		}
 	}

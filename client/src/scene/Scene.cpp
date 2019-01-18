@@ -2,7 +2,7 @@
 
 #include "../animation/FrameAnimation.h"
 #include "Logger.h"
-#include "Random.h"
+#include "cxrandom.h"
 #include "../core/Renderer.h"
 #include "../global.h"
 #include "../combat/Combat.h"
@@ -10,7 +10,7 @@
 #include "profile.h"
 #include "SceneManager.h"
 #include "InputManager.h"
-#include "GMath.h"
+#include "cxmath.h"
 #include <corecrt_io.h>
 #include "actor/action.h"
 #include "combat/Skill.h"
@@ -19,6 +19,7 @@
 #include <algorithm>
 #include "net.h"
 #include "script_system.h"
+#include "utils.h"
 
 bool s_IsCombat = true;
 TextView* s_Announcement;
@@ -88,7 +89,7 @@ void Scene::OnLoad()
 	
 	m_ShowSmap = false;
 
-	script_system_call_function("on_scene_init");
+	script_system_call_function(script_system_get_luastate(),"on_scene_init");
 
 	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_MOUSE_BUTTON_LEFT, [this]() {
 		if (SCENE_MANAGER_INSTANCE->IsHoverImGui()) return;
@@ -98,7 +99,7 @@ void Scene::OnLoad()
 			auto mouseX = INPUT_MANAGER_INSTANCE->GetMouseX();
 			auto mouseY = INPUT_MANAGER_INSTANCE->GetMouseY();
 			Pos dest = GAME_INSTANCE->ScreenPosToMapPos({ mouseX, mouseY });
-			m_LocalPlayer->MoveTo(m_Map, dest.x, dest.y);
+			m_LocalPlayer->MoveTo(m_Map,(int) dest.x, (int)dest.y);
 
 			net_send_move_to_pos_message(m_LocalPlayer->GetNickName(), dest.x, dest.y);
 		}
@@ -163,13 +164,13 @@ void Scene::OnSmapClick(float x, float y, float w, float h)
 		y = std::min(h, std::max(0.f, y));
 		float dx = x / w * m_Map->GetMapWidth();
 		float dy = y / h * m_Map->GetMapHeight();
-		m_LocalPlayer->MoveTo(m_Map, dx, dy);
+		m_LocalPlayer->MoveTo(m_Map, (int)dx, (int)dy);
 	}
 }
 
 void Scene::Update()
 {
-	script_system_call_function("on_scene_update");
+	script_system_call_function(script_system_get_luastate(),"on_scene_update");
 	
 	float dt = WINDOW_INSTANCE->GetDeltaTime();
 
@@ -257,7 +258,7 @@ void Scene::ProcessInput()
 
 void Scene::Draw()
 {
-	script_system_call_function("on_scene_draw");
+	script_system_call_function(script_system_get_luastate(),"on_scene_draw");
 	
 	//先画一遍地图
 	if (SCENE_MANAGER_INSTANCE->IsDrawMap()&& m_Map)
@@ -275,7 +276,7 @@ void Scene::Draw()
 	{
 		auto* info = SCENE_MANAGER_INSTANCE->GetTransportStationInfo(it.first);
 		auto* frame = it.second;
-		Pos pos = GAME_INSTANCE->MapPosToScreenPos(Pos(info->cx, info->cy));
+		Pos pos = GAME_INSTANCE->MapPosToScreenPos(Pos((float)info->cx, (float)info->cy));
 		int _px = (int)pos.x - frame->GetWidth() / 2;
 		int _py = (int)pos.y - frame->GetHeight() / 2;
 		frame->SetPos({ _px,_py });
@@ -421,7 +422,7 @@ BattleScene::~BattleScene()
 
 void BattleScene::OnLoad()
 {
-	script_system_call_function("on_battle_scene_init");
+	script_system_call_function(script_system_get_luastate(),"on_battle_scene_init");
 }
 
 void BattleScene::OnUnLoad()
@@ -472,7 +473,7 @@ void BattleScene::Update()
 					enemy->SetCombatPos(enemy->GetPos());
 
 					
-					self->SetTargetID(enemy->GetID());
+					self->SetTargetID((int)enemy->GetID());
 					self->GetFSM()->ChangeState(PlayerCombatMoveState::GetInstance());
 
 				}
@@ -519,7 +520,7 @@ void BattleScene::Draw()
 	for (auto* player : m_Players)
 	{
 		auto& pos = player->GetCombatPos();
-		player->OnDraw(pos.x, pos.y);
+		player->OnDraw((int)pos.x, (int)pos.y);
 	}
 }
 
@@ -528,7 +529,7 @@ void scene_send_login_message(const char* account , const char* pos_x_y)
 	MSGC2SLogin msg;
 	std::string pname(account);
 	msg.type = PTO_C2S_LOGIN;
-	msg.namelen = pname.length();
+	msg.namelen = (int)pname.length();
 	msg.name = pname;
 	msg.scene_id = 1070;
 	msg.dir = 1;

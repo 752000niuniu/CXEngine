@@ -9,7 +9,7 @@
 #include "core/Transform.h"
 #include "Object2D.h"
 #include "Graphics2D.h"
-#include "../Singleton.h"
+#include "singleton.h"
 
 #define RENDER_VERTEX_ARRAY_GEN(VBO,VAO) \
 	glGenBuffers(1, &VBO); \

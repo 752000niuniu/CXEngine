@@ -1,9 +1,5 @@
 #pragma once
-#include "defines.h"
-
-#define script_system_register_function(L,fn) lua_register_function(L,fn)
-#define script_system_register_luac_function(L,fn) (lua_pushcfunction(L, (fn)), lua_setglobal(L, #fn)) 
-#define script_system_call_function(...) call_lua_function(script_system_get_luastate(), __VA_ARGS__ )
+#include "lua_bind.h"
 
 void script_system_read_config(int argc, char** argv);
 

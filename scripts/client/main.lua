@@ -13,7 +13,7 @@ IsCombat = false
 -- DefaultSceneName = "门派_方寸山全景"
 -- DefaultSceneName = "UIScene"
 -- DefaultSceneName = "WASViewer"
-DefaultSceneName = "门派_方寸山全景"
+DefaultSceneName = "TestNetScene"
 
 --聊天背景框 wzife 39D3BD99 
 function main()

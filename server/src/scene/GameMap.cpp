@@ -3,10 +3,11 @@
 #include <functional>
 #include <thread>
 #include "../file_system.h"
-#include "../GMath.h"
-#include "../Random.h"
+#include "cxmath.h"
+#include "cxrandom.h"
+#include <stdint.h>
 
-GameMap::GameMap(uint32 mapID)
+GameMap::GameMap(uint32_t mapID)
 	:m_XyqMap(nullptr)
 {
 	m_MapID = mapID;

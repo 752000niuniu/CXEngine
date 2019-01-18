@@ -1,6 +1,6 @@
 #include "Logger.h"
 #include "script_system.h"
-#include "kbase/string_util.h"
+#include "utils.h"
 
 void log_print(const char *str) 
 {

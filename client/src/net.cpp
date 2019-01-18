@@ -40,7 +40,7 @@ public:
 
 	void SendMSGC2SChat(MSGC2SChat * msg);
 
-	void SendMessageToGame(char* buf, int len);
+	void SendMessageToGame(char* buf, size_t len);
 
 	void Disconnect() { m_Client.Disconnect(); };
 
@@ -88,7 +88,7 @@ void NetClient::SendMSGC2SLogin(MSGC2SLogin* msg)
 	buf.Write(msg->weapon_id);
 	buf.Write(msg->pos_x);
 	buf.Write(msg->pos_y);
-	int cnt = buf.readable_size();
+	int cnt = (int)buf.readable_size();
 	buf.Prepend(cnt);
 	auto sv = kbase::StringView(buf.Peek(), buf.readable_size());
 	auto str = sv.ToString();
@@ -108,7 +108,7 @@ void NetClient::SendMSGC2SChat(MSGC2SChat * msg)
 	}
 }
 
-void NetClient::SendMessageToGame(char* buf, int len)
+void NetClient::SendMessageToGame(char* buf, size_t len)
 {
 	if (m_Client.connection() != nullptr && m_Client.connection()->connected())
 	{
@@ -228,7 +228,7 @@ void NetThread::Update()
 			msg.is_local = pt->ReadAsInt32();
 
 			if (scene_find_player(msg.name.c_str()))return;
-			scene_add_player(msg.name.c_str(), msg.pos_x, msg.pos_y, msg.dir, msg.role_id, msg.weapon_id);
+			scene_add_player(msg.name.c_str(), (int)msg.pos_x, (int)msg.pos_y, msg.dir, msg.role_id, msg.weapon_id);
 			if (msg.is_local)
 			{
 				scene_set_player(msg.name.c_str());
@@ -297,7 +297,7 @@ void net_send_login_message(MSGC2SLogin* msg)
 	buf.Write(msg->weapon_id);
 	buf.Write(msg->pos_x);
 	buf.Write(msg->pos_y);
-	int cnt = buf.readable_size();
+	int cnt = (int)buf.readable_size();
 	buf.Prepend(cnt);
 	g_Client->SendMessageToGame((char*)buf.Peek(), buf.readable_size());
 
