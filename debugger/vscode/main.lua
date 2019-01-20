@@ -1,21 +1,21 @@
-package.path = 'E:\\Github\\SimpleEngine\\scripts\\debugger\\?.lua'
---print(package.path)
---print(package.cpath)
 function dump_table(t)
     for k,v in pairs(t) do 
         print(k,v)
     end
 end
 
+function lua_split(str, cut)
+    str = str..cut
+    local pattern  = '(.-)'..cut
+    local res = {}
+    for w in string.gmatch(str, pattern) do
+        table.insert(res,w)
+        --print(w)
+    end
+    return res
+end
+
 local cjson = require 'cjson'
-
-local LINE_ENDING = '\r\n'
-local INPUT_MODE_STDIO = 1
-local INPUT_MODE_TCPIP = 2
-local INPUT_MODE = nil
-
--- dump_table(package)
-
 function final_send(netq, js)
     if not netq then
         print('not netq')    
@@ -27,7 +27,7 @@ function final_send(netq, js)
     table.insert(buf,"Content-Length: "..js:len())
     table.insert(buf,"")
     table.insert(buf,js)
-    local sent = table.concat(buf,LINE_ENDING)
+    local sent = table.concat(buf,get_line_ending_in_c())
     print(sent)
     netq:push_back(1,sent)
 end
@@ -145,39 +145,21 @@ function Initialize(netq, req, runtime_netq)
     send_event(netq,req,'initialized')
 end 
 
-
-function lua_split(str, cut)
-    str = str..cut
-    local pattern  = '(.-)'..cut
-    local res = {}
-    for w in string.gmatch(str, pattern) do
-        table.insert(res,w)
-        --print(w)
-    end
-    return res
-end
-
-
 function Launch(netq, req, runtime_netq)
     local arguments = req.arguments
-    local program = arguments.executable
-    local cwd = arguments.cwd
-    local arg = arguments.args[1]
-    local tokens = lua_split(arg,'=')
-    local port = math.tointeger(tokens[2])
-    local launch_cmd = 'start '..cwd..'/'..program..' '..arg..' --debug=1 --LE='..(LINE_ENDING=='\n\n' and 'LF' or 'CRLF')..' --server-ip=127.0.0.1 --server_port=45000  --debugPort='..port
-    vscode_on_launch_cmd(launch_cmd,'127.0.0.1',port)
+    local ip = arguments.ip
+    local port = math.tointeger(arguments.port)
+    local cmd = arguments.launchcmd
+
+    vscode_on_launch_cmd('start '..cmd,ip,port)
     final_send(runtime_netq,cjson.encode(req))
 end 
 
 function Attach(netq, req, runtime_netq)
     local arguments = req.arguments
-    local program = arguments.executable
-    local cwd = arguments.cwd
-    local arg = arguments.args[1]
-    local tokens = lua_split(arg,'=')
-    local port = math.tointeger(tokens[2])
-    vscode_on_attach_cmd('127.0.0.1',port)
+    local ip = arguments.ip
+    local port = math.tointeger(arguments.port)
+    vscode_on_attach_cmd(ip,port)
     final_send(runtime_netq,cjson.encode(req))
 end 
 
@@ -292,31 +274,3 @@ end
 function LoadedSources(netq, req, runtime_netq)
     send_response(netq,req)
 end 
-
-
-function tostringex(v)
-    if type(v) == 'table' then
-        local count = 0
-        for _ in pairs(v) do count = count + 1 end
-        return string.format('table(%i)', count)
-    else return tostring(v) end
-end
-
-function fetch_locals(lv)
-    print("level:"..tostring(lv))
-    local i = 1
-    local locals = {}
-    while true do
-        local k,v = debug.getlocal(lv,i)
-        if not k then i = 1 ; break end
-        if k:sub(1,1) ~= '(' then table.insert(locals, {type(k),k,tostringex(v),type(v)}) end
-        i = i + 1
-    end
-    while true do
-        local k, v = debug.getlocal(lv, -i)
-        if not k then break end
-        table.insert(locals, {type(k), k, tostringex(v), type(v)})
-        i = i + 1
-    end
-    return cjson.encode(locals)
-end

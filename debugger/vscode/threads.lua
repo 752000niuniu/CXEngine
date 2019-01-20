@@ -22,6 +22,7 @@ function create_on_message_parser()
                     if not LINE_ENDING then
                         local s,e = preview:find("\r\n")
                         LINE_ENDING = s and "\r\n" or "\n"
+                        set_line_ending_in_c(LINE_ENDING)
                     end
                     local line = buf:readstring(e)
                     local match = line:gmatch("Content%-Length: (%d*)")()

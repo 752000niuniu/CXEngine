@@ -15,7 +15,7 @@ IsCombat = false
 -- DefaultSceneName = "WASViewer"
 DefaultSceneName = "TestNetScene"
 
-debugger_start_session(4679)
+debugger_start_session(9527)
 
 --聊天背景框 wzife 39D3BD99 
 function main()

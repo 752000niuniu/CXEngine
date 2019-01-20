@@ -1,6 +1,6 @@
 {
-	"name": "cxluadbg",
-	"displayName": "LuaDebugger",
+	"name": "luadbgadapter",
+	"displayName": "CXLuaDebuggerAdapter",
 	"version": "0.1.0",
 	"publisher": "oceancx",
 	"author": {
@@ -20,47 +20,58 @@
 	"contributes": {
 		"debuggers": [
 			{
-				"type": "luadbg",
-				"label": "LuaDebugger",
+				"type": "cxlua",
+				"label": "CXLua",
 				"enableBreakpointsFor": {
 					"languageIds": [
 						"lua"
 					]
 				},
-				"program": "Debug/debugger.exe",
+				"program": "./vsdbgadapter.exe",
+				"initialConfigurations": [
+					{
+						"name" : "Launch",
+						"type": "cxlua",
+						"request": "launch",
+						"ip" :"127.0.0.1",
+						"port" : 9527,
+						"launchcmd": ".exe"
+					},
+					{
+						"name" : "Attach",
+						"type": "cxlua",
+						"request": "attach",
+						"ip" :"127.0.0.1",
+						"port" : 9527
+					}
+				],
 				"configurationAttributes": {
 					"launch": {
-						"required": [
-						],
+						"required": ["launchcmd","port"],
 						"properties": {
-							"executable": {
-								"type": "string",
-								"description": "Absolute path to a .exe file."
-							},
-							"stopOnEntry": {
-								"type": "boolean",
-								"description": "Automatically stop after launch.",
-								"default": true
-							},
-							"cwd" :{
+							"launchcmd": {
 								"type": "string"
+							},
+							"ip":{
+								"type": "string"
+							},
+							"port":{
+								"type": "integer"
+							}
+						}
+					},
+					"attach" :{
+						"required": ["port"],
+						"properties": {
+							"ip":{
+								"type": "string"
+							},
+							"port": {
+								"type": "number"
 							}
 						}
 					}
-				},
-				"initialConfigurations": [
-					{
-						"type": "luadbg",
-						"request": "launch",
-						"executable": ".exe",
-						"name":"luadebug",
-						"stopOnEntry": true,
-						"cwd":"{workspaceRoot}"
-					}
-				],
-				"configurationSnippets": [{
-
-				}]
+				}
 			}
 		]
 	}
