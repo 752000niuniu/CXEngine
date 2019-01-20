@@ -6,11 +6,9 @@
 #include "ezio/tcp_server.h"
 #include "ezio/tcp_client.h"
 #include "kbase/string_util.h"
-#include <regex>
- #include "lua_net.h"
+#include "lua_net.h"
 #include "net_thread_queue.h"
 
-#include "vsdbgadapter.inl"
 
 #define luaL_requirelib(L,name,fn) (luaL_requiref(L, name, fn, 1),lua_pop(L, 1))
 
@@ -31,11 +29,6 @@ enum EDebugProtocolMode
 	eMode_STDIO = 0,
 	eMode_TCP,
 };
-
-std::string read_line_from_vscode()
-{
-	return "";
-}
 
 EDebugAdapterLaunchMode g_LaunchMode;
 EDebugProtocolMode g_Mode;
@@ -275,5 +268,13 @@ int debugger_adapter_run()
 	}
 	thread_set.clear();
 
+	return 0;
+}
+
+int main(int argc, char* argv[])
+{
+	kbase::AtExitManager exit_manager;
+	debugger_adapter_init(argc, argv);
+	debugger_adapter_run();
 	return 0;
 }
