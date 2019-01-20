@@ -37,3 +37,6 @@
 [submodule "externals/SOIL"]
 	path = externals/SOIL
 	url = git@github.com:oceancx/SOIL.git
+[submodule "internals/cxlua"]
+	path = internals/cxlua
+	url = git@github.com:oceancx/cxlua.git
