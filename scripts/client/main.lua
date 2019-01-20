@@ -7,7 +7,7 @@ script_system_dofile 'utils.lua'
 script_system_dofile 'scene_manager.lua'
 script_system_dofile 'scene.lua'
 script_system_dofile 'table_template.lua'
-script_system_dofile 'debugger.lua'
+--script_system_dofile 'debugger.lua'
 
 IsCombat = false
 -- DefaultSceneName = "门派_方寸山全景"
@@ -15,15 +15,17 @@ IsCombat = false
 -- DefaultSceneName = "WASViewer"
 DefaultSceneName = "TestNetScene"
 
+debugger_start_session(4679)
+
 --聊天背景框 wzife 39D3BD99 
 function main()
     window_system_init(SCREEN_WIDTH,SCREEN_HEIGHT)
     window_system_show()	
 end
 
+
 function on_script_system_init()
     -- generate_avatar_role_tsv()
-    debugger_start_session()
     net_manager_init()
     text_renderer_init()
     timer_manager_init()

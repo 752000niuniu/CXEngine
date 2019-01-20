@@ -1,6 +1,5 @@
 #include "debugger.h"
-#include <lualib.h>
-#include <lauxlib.h>
+#include "cxlua.h"
 
 #include <functional>
 
@@ -15,12 +14,7 @@
 #include "ezio/acceptor.h"
 #include "ezio/connector.h"
 
-
-#include "script_system.h"
-#include "debug_protocol.h"
-#include "net_thread_queue.h"
-#include "lua_net.h"
-#include "file_system.h"
+#include "debugger.inl"
 
 using namespace ezio;
 
@@ -34,7 +28,6 @@ const char* get_line_ending_in_c()
 	return LINES_ENDING.c_str();
 }
 
-void debugger_update_session();
 
 std::thread* debuggee_thread;
 NetThreadQueue g_DebugAdapterQueue;
@@ -59,7 +52,7 @@ void DebuggeeThreadFunc(int port)
 
 	script_system_register_function(L, set_line_ending_in_c);
 
-	int res = luaL_loadfile(L, FileSystem::GetLuaPath("debuggee.lua").c_str());
+	int res = luaL_loadbuffer(L, debuggee_code,strlen(debuggee_code),"__debuggee__");
 	check_lua_error(L, res);
 	lua_pushstring(L, "debuggee");
 	res = lua_pcall(L, 1, LUA_MULTRET, 0);
@@ -112,16 +105,24 @@ void DebuggeeThreadFunc(int port)
 
 	
 	loop.Run();
+
+	lua_close(L);
 }
 
-void debugger_start_session()
+int debugger_start_session(lua_State* L)
 {
-	auto portstr = script_system_get_config("--debug_port");
-	if (strcmp(portstr, "") != 0)
+	int port = (int)lua_tointeger(L, 1);
+	if (port > 0)
 	{
-		int port = std::stoi(portstr);
+		int res = luaL_loadbuffer(L, debugger_code, strlen(debugger_code), "__debugger__");
+		check_lua_error(L, res);
+		lua_pushstring(L, "debugger");
+		res = lua_pcall(L, 1, LUA_MULTRET, 0);
+		check_lua_error(L, res);
+
 		debuggee_thread = new std::thread(DebuggeeThreadFunc, port);
 	}
+	return 0;
 }
 
 void debugger_stop_session()
@@ -133,17 +134,10 @@ void debugger_stop_session()
 	{
 		debuggee_thread->join();
 		delete debuggee_thread;
+		debuggee_thread = nullptr;
 	}
 }
 
-void debugger_update_session()
-{
-	lua_State* L = script_system_get_luastate();
-	lua_getglobal(L, "lua_debugger_update_session");
-	lua_push_net_thread_queue(L, &g_DebugAdapterQueue);
-	int res = lua_pcall(L, 1, 0, 0);
-	check_lua_error(L, res);
-}
 
 void debugger_sleep(int s)
 {
@@ -175,8 +169,7 @@ bool debugger_is_connected()
 
 void luaopen_debugger(lua_State* L)
 {
-	script_system_register_function(L, debugger_start_session);
-	script_system_register_function(L, debugger_update_session);
+	script_system_register_luac_function(L, debugger_start_session);
 	script_system_register_function(L, debugger_stop_session);
 	script_system_register_function(L, debugger_sleep);
 

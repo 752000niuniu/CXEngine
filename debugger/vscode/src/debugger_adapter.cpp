@@ -6,15 +6,14 @@
 #include "ezio/tcp_server.h"
 #include "ezio/tcp_client.h"
 #include "kbase/string_util.h"
-#include "nlohmann\json.hpp"
 #include <regex>
-#include "debug_protocol.h"
-#include "string_utils.h"
-#include "script_system.h"
  #include "lua_net.h"
 #include "net_thread_queue.h"
 
+#include "vsdbgadapter.inl"
+
 #define luaL_requirelib(L,name,fn) (luaL_requiref(L, name, fn, 1),lua_pop(L, 1))
+
 extern "C" int luaopen_cjson(lua_State *L);
 
 std::string LINES_ENDING = "";
@@ -45,10 +44,6 @@ void debugger_adapter_init(int argc, char* argv[])
 	
 }
 
-String get_lua_path(const char* name)
-{
-	return string_format("%s/scripts/debugger/%s.lua", WORKSPACE_ROOT, name);
-}
 
 NetThreadQueue g_VscodeQueue;
 NetThreadQueue g_RuntimeQueue;
@@ -67,7 +62,7 @@ void VscodeThreadFunc(int port)
 	luaopen_netlib(L);
 	luaopen_net_thread_queue(L);
 
-	int res = luaL_loadfile(L, get_lua_path("common").c_str());
+	int res = luaL_loadfile(L, "threads.lua");
 	check_lua_error(L, res);
 	lua_pushstring(L, "vscode");
 	res = lua_pcall(L, 1, LUA_MULTRET, 0);
@@ -112,6 +107,7 @@ void VscodeThreadFunc(int port)
 	}, TimeDuration(1));
 
 	loop.Run();
+	lua_close(L);
 }
 
 void RuntimeThreadFunc(const char* ip,int port)
@@ -122,7 +118,7 @@ void RuntimeThreadFunc(const char* ip,int port)
 	luaopen_netlib(L);
 	luaopen_net_thread_queue(L);
 
-	int res = luaL_loadfile(L, get_lua_path("common").c_str());
+	int res = luaL_loadfile(L, "threads.lua");
 	check_lua_error(L, res);
 	lua_pushstring(L, "runtime");
 	res = lua_pcall(L, 1, LUA_MULTRET, 0);
@@ -166,6 +162,7 @@ void RuntimeThreadFunc(const char* ip,int port)
 	}, TimeDuration(1));
 
 	loop.Run();
+	lua_close(L);
 }
 
 bool g_debugger_adapter_run = false;
@@ -232,7 +229,7 @@ int debugger_adapter_run()
 	script_system_register_luac_function(L, fetch_vscode_handler);
 	script_system_register_function(L, set_line_ending_in_c);
 
-	int res = luaL_dofile(L, get_lua_path("main").c_str());
+	int res = luaL_dofile(L, "main.lua");
 	check_lua_error(L, res);
 
 	g_debugger_adapter_run = true;
@@ -266,6 +263,7 @@ int debugger_adapter_run()
 			check_lua_error(L, res);
 		}
 	}
+	lua_close(L);
 
 	for (auto* t : thread_set)
 	{

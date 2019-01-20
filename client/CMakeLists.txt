@@ -7,6 +7,7 @@ find_package(GLEW CONFIG)
 find_package(glfw3)
 find_package(freetype CONFIG)
 find_package(IMGui)
+find_package(luadbg)
 
 file(GLOB_RECURSE  SOURCES_CPP "src/*.cpp")
 file(GLOB_RECURSE  SOURCES_HEADER_PRI "src/*.h" )
@@ -38,7 +39,7 @@ add_executable(SimpleEngine
     src/core/Texture.cpp
     src/core/Transform.cpp
     src/CubeBatch.cpp
-    src/debugger.cpp
+    #src/debugger.cpp
     src/demo_scene.cpp
     src/editor/resource_viewer.cpp
     src/Engine.cpp
@@ -138,6 +139,7 @@ target_link_libraries(SimpleEngine
     freetype
     CXBase::CXBase
     IMGui::IMGui
+    luadbg
 )
 
 # if (BZIP2_FOUND)

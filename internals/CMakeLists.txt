@@ -9,5 +9,6 @@ add_subdirectory(lua-cmake)
 add_subdirectory(luacjson-cmake)
 add_subdirectory(NESupport)
 add_subdirectory(imgui)
+add_subdirectory(cxlua)
 add_subdirectory(cxbase)
 

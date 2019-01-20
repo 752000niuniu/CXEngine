@@ -14,7 +14,6 @@
 
 
 #include "script_system.h"
-#include "debug_protocol.h"
 #include "net_thread_queue.h"
 #include "lua_net.h"
 #include "file_system.h"

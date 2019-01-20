@@ -1,5 +1,13 @@
---this file is only used debuggee thread
-cjson = require 'cjson'
+--此文件只能包含函数，可能有不同的luastate dofile这个文件，只执行某一个函数
+
+
+local thread_name = ...
+
+function dump_table(t)
+    for k,v in pairs(t) do 
+        print(k,v)
+    end
+end
 
 function create_on_message_parser()
     local parsed_len = -1
@@ -14,7 +22,6 @@ function create_on_message_parser()
                     if not LINE_ENDING then
                         local s,e = preview:find("\r\n")
                         LINE_ENDING = s and "\r\n" or "\n"
-                        set_line_ending_in_c(LINE_ENDING)
                     end
                     local line = buf:readstring(e)
                     local match = line:gmatch("Content%-Length: (%d*)")()
@@ -50,12 +57,27 @@ function create_on_message_parser()
     end
 end
 
-function debuggee_on_connection(conn,netq)
-    print('[debuggee]' ..conn:tohostport().. ' ' ..(conn:connected() and 'connected' or 'disconnected'))
-    netq:push_back(0,cjson.encode({ type='debuggee', event='connection_state', connected = conn:connected(), addr = conn:tohostport()  }))
+if thread_name == 'vscode' then
+
+function vscode_on_connection(conn)
+     print('[vscode]' ..conn:tohostport().. ' ' ..(conn:connected() and 'true' or 'false'))
 end
 
-local debuggee_on_message_parser = create_on_message_parser()
-function debuggee_on_message(conn,buf,netq)
-    debuggee_on_message_parser(conn,buf,netq)
+local vscode_on_message_parser = create_on_message_parser()
+function vscode_on_message(conn,buf,netq)
+    vscode_on_message_parser(conn,buf,netq)
 end
+
+elseif thread_name =='runtime' then
+
+function runtime_on_connection(conn)
+    print('[runtime]' ..conn:tohostport().. ' ' ..(conn:connected() and 'true' or 'false'))
+end
+
+local runtime_on_message_parser = create_on_message_parser()
+function runtime_on_message(conn,buf,netq)
+    runtime_on_message_parser(conn,buf,netq)
+end
+
+end
+
