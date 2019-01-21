@@ -1,5 +1,6 @@
+print = dbg_trace
 function dump_table(t)
-    for k,v in pairs(t) do 
+    for k,v in pairs(t) do
         print(k,v)
     end
 end
@@ -18,11 +19,11 @@ end
 local cjson = require 'cjson'
 function final_send(netq, js)
     if not netq then
-        print('not netq')    
+        print('not netq')
         print(debug.traceback())
     end
-    print('-->finalsend')
-   
+    print('-->finalsend ')
+
     local buf = {}
     table.insert(buf,"Content-Length: "..js:len())
     table.insert(buf,"")
@@ -39,10 +40,10 @@ function send_response(netq, req)
     resp.command = req.command
     resp.request_seq = req.seq
     resp.success = true
-    resp.body = req.body 
+    resp.body = req.body
     resp.seq = message_seq
     message_seq = message_seq + 1
-    
+
     final_send(netq,cjson.encode(resp))
 end
 
@@ -52,10 +53,10 @@ function send_event(netq, req, ev)
     event.event = ev
     event.seq = message_seq
     message_seq = message_seq + 1
-    
+
     final_send(netq,cjson.encode(event))
-end          
-  
+end
+
 
 function dispatch_runtime_message(netq,js,vscode_netq)
     print('-->dispatch_runtime_message')
@@ -68,8 +69,8 @@ function dispatch_vscode_message(netq,js,runtime_netq)
     print(js)
     local req = cjson.decode(js)
     if req.type == 'request' then
-        local cmd = req.command 
-        if cmd == "initialize" then        
+        local cmd = req.command
+        if cmd == "initialize" then
             Initialize(netq, req, runtime_netq)
         elseif cmd == "launch" then
             Launch(netq, req, runtime_netq)
@@ -143,7 +144,7 @@ function Initialize(netq, req, runtime_netq)
     }
     send_response(netq,req)
     send_event(netq,req,'initialized')
-end 
+end
 
 function Launch(netq, req, runtime_netq)
     local arguments = req.arguments
@@ -153,7 +154,7 @@ function Launch(netq, req, runtime_netq)
 
     vscode_on_launch_cmd('start '..cmd,ip,port)
     final_send(runtime_netq,cjson.encode(req))
-end 
+end
 
 function Attach(netq, req, runtime_netq)
     local arguments = req.arguments
@@ -161,116 +162,116 @@ function Attach(netq, req, runtime_netq)
     local port = math.tointeger(arguments.port)
     vscode_on_attach_cmd(ip,port)
     final_send(runtime_netq,cjson.encode(req))
-end 
+end
 
 function Disconnect(netq, req, runtime_netq)
     final_send(runtime_netq,cjson.encode(req))
-end 
+end
 
 function Restart(netq, req, runtime_netq)
     send_response(netq,req)
-end 
+end
 
 function SetBreakpoints(netq, req, runtime_netq)
     final_send(runtime_netq,cjson.encode(req))
-end 
+end
 
 function SetFunctionBreakpoints(netq, req, runtime_netq)
 
-end 
+end
 
 function SetExceptionBreakpoints(netq, req, runtime_netq)
     send_response(netq,req)
-end 
+end
 
 function ConfigurationDone(netq, req, runtime_netq)
     final_send(runtime_netq,cjson.encode(req))
-end 
+end
 
 function Continue(netq, req, runtime_netq)
     final_send(runtime_netq,cjson.encode(req))
-end 
+end
 
 function Next(netq, req, runtime_netq)
     final_send(runtime_netq,cjson.encode(req))
-end 
+end
 
 function StepIn(netq, req, runtime_netq)
     final_send(runtime_netq,cjson.encode(req))
-end 
+end
 
 function StepOut(netq, req, runtime_netq)
     final_send(runtime_netq,cjson.encode(req))
-end 
+end
 
 function StepOver(netq, req, runtime_netq)
     final_send(runtime_netq,cjson.encode(req))
-end 
+end
 
 function StepBack(netq, req, runtime_netq)
 
-end 
+end
 
 function ReverseContinue(netq, req, runtime_netq)
 
-end 
+end
 
 function RestartFrame(netq, req, runtime_netq)
 
-end 
+end
 
 function Goto(netq, req, runtime_netq)
 
-end 
+end
 
 function Pause(netq, req, runtime_netq)
     final_send(runtime_netq,cjson.encode(req))
-end 
+end
 
 function StackTrace(netq, req, runtime_netq)
     final_send(runtime_netq,cjson.encode(req))
-end 
+end
 
 function Scopes(netq, req, runtime_netq)
     final_send(runtime_netq,cjson.encode(req))
-end 
+end
 
 function Variables(netq, req, runtime_netq)
     final_send(runtime_netq,cjson.encode(req))
-end 
+end
 
 function SetVariable(netq, req, runtime_netq)
 
-end 
+end
 
 function Source(netq, req, runtime_netq)
 
-end 
+end
 
 function Threads(netq, req, runtime_netq)
     final_send(runtime_netq,cjson.encode(req))
-end 
+end
 
 function Evaluate(netq, req, runtime_netq)
     final_send(runtime_netq,cjson.encode(req))
-end 
+end
 
 function StepInTargets(netq, req, runtime_netq)
 
-end 
+end
 
 function GotoTargets(netq, req, runtime_netq)
 
-end 
+end
 
 function Completions(netq, req, runtime_netq)
 
-end 
+end
 
 function ExceptionInfo(netq, req, runtime_netq)
 
-end 
+end
 
 function LoadedSources(netq, req, runtime_netq)
     send_response(netq,req)
-end 
+end

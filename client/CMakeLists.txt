@@ -1,13 +1,13 @@
 cmake_minimum_required (VERSION 3.10)
 project (SimpleEngine)
 
+find_package(luadbg)
 find_package(CXBase)
 find_package(SOIL)
 find_package(GLEW CONFIG)
 find_package(glfw3)
 find_package(freetype CONFIG)
 find_package(IMGui)
-find_package(luadbg)
 
 file(GLOB_RECURSE  SOURCES_CPP "src/*.cpp")
 file(GLOB_RECURSE  SOURCES_HEADER_PRI "src/*.h" )

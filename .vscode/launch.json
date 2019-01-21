@@ -10,7 +10,7 @@
             "request": "launch",
             "ip": "127.0.0.1",
             "port": 9527,
-            "launchcmd": "D:\\Github\\SimpleEngine\\bin\\Debug\\SimpleEngine.exe ",
+            "launchcmd": "E:\\Github\\SimpleEngine\\bin\\Debug\\SimpleEngine.exe"
         },
         {
             "name": "Attach",

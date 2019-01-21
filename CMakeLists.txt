@@ -10,7 +10,7 @@ list(INSERT CMAKE_PREFIX_PATH 0  ${CMAKE_SOURCE_DIR}/externals/dist)
 add_subdirectory(internals)
 
 set(ENGINE_DIR ${PROJECT_SOURCE_DIR})
-add_subdirectory(client)
 add_subdirectory(debugger)
+add_subdirectory(client)
 add_subdirectory(server)
 

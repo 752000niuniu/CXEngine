@@ -1,9 +1,11 @@
 # CMake entry point
 cmake_minimum_required (VERSION 3.10)
 project (vsdbgadapter)
+set(extentiondir E:/Github/vscode-mock-debug) #${CMAKE_SOURCE_DIR}/bin/Debug
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $<1:${extentiondir}>)
 
 find_package(CXLua)
-
 file(GLOB_RECURSE  SOURCES_CPP "src/*.cpp")
 file(GLOB_RECURSE  SOURCES_HEADER_RPI "src/*.h"  "src/*.inl")
 
@@ -27,5 +29,6 @@ target_link_libraries(vsdbgadapter
   PUBLIC CXLua::CXLua
 )
 
-configure_file(main.lua  ${CMAKE_SOURCE_DIR}/bin/Debug/main.lua COPYONLY)
-configure_file(threads.lua     ${CMAKE_SOURCE_DIR}/bin/Debug/threads.lua COPYONLY)
+configure_file(main.lua  ${extentiondir}/main.lua COPYONLY)
+configure_file(threads.lua     ${extentiondir}/threads.lua COPYONLY)
+configure_file(package.json     ${extentiondir}/package.json COPYONLY)
