@@ -22,14 +22,14 @@ function final_send(netq, js)
         print('not netq')
         print(debug.traceback())
     end
-    print('-->finalsend ')
+    -- print('-->finalsend ')
 
     local buf = {}
     table.insert(buf,"Content-Length: "..js:len())
     table.insert(buf,"")
     table.insert(buf,js)
     local sent = table.concat(buf,get_line_ending_in_c())
-    print(sent)
+    -- print(sent)
     netq:push_back(1,sent)
 end
 
@@ -274,4 +274,58 @@ end
 
 function LoadedSources(netq, req, runtime_netq)
     send_response(netq,req)
+end
+
+
+
+local parsed_len = -1
+local readstate = 1
+function stdio_on_message(buf,netq, runtime_netq)
+    while buf:readablesize() > 0 do
+        local preview = buf:preview(buf:readablesize())
+        -- dbg_trace('preview..' ..preview)
+        if readstate == 1 then
+            local s,e = preview:find("\n")
+            if s then
+                if not LINE_ENDING then
+                    local s,e = preview:find("\r\n")
+                    LINE_ENDING = s and "\r\n" or "\n"
+                    set_line_ending_in_c(LINE_ENDING)
+                end
+                local line = buf:readstring(e)
+                local match = line:gmatch("Content%-Length: (%d*)")()
+                if tonumber(match) then
+                    parsed_len = tonumber(match)
+                    -- dbg_trace("parsed_len "..tostring(parsed_len))
+                    readstate = readstate + 1
+                else
+                    break
+                end
+            else
+                break
+            end
+        elseif readstate == 2 then
+            local s,e = preview:find("\n")
+            if s then
+                local line = buf:readstring(e)
+                -- dbg_trace(line)
+                readstate = readstate+1
+            else
+                break
+            end
+        elseif readstate == 3 then
+            if buf:readablesize() >= parsed_len then
+                local js  = buf:readstring(parsed_len)
+                -- dbg_trace('\n----stdio read-----\n'..js)
+                readstate = 1
+                -- netq:push_back(0,js)
+
+                dispatch_vscode_message(netq,js,runtime_netq)
+            else
+                break
+            end
+        else
+            break
+        end
+    end
 end

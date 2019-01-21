@@ -1,7 +1,7 @@
 # CMake entry point
 cmake_minimum_required (VERSION 3.10)
 project (vsdbgadapter)
-set(extentiondir E:/Github/vscode-mock-debug) #${CMAKE_SOURCE_DIR}/bin/Debug
+set(extentiondir ${CMAKE_SOURCE_DIR}/../vscode-mock-debug) #${CMAKE_SOURCE_DIR}/bin/Debug
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $<1:${extentiondir}>)
 
