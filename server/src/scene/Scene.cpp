@@ -5,7 +5,6 @@
 #include "script_system.h"
 #include "SceneManager.h"
 #include "cxmath.h"
-#include <corecrt_io.h>
 #include "actor/action.h"
 #include <algorithm>
 #include "Game.h"

@@ -53,18 +53,6 @@ Window::Window()
 :m_Width(0),m_Height(0),m_FPS(MS_PER_UPDATE)
 {
 	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-#ifdef __APPLE__
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);	
-	
-	auto floatConfig = script_system_get_config("window_float");
-	glfwWindowHint(GLFW_FLOATING, strcmp(floatConfig , "1")==0);
 }
 
 Window::~Window()
@@ -74,6 +62,25 @@ Window::~Window()
 
 void Window::Init(int w,int h)
 {
+#if __APPLE__
+    // GL 3.2 + GLSL 150
+    const char* glsl_version = "#version 150";
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // Required on Mac
+#else
+    // GL 3.0 + GLSL 130
+    const char* glsl_version = "#version 130";
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
+    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
+#endif
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);	
+	auto floatConfig = script_system_get_config("window_float");
+	glfwWindowHint(GLFW_FLOATING, strcmp(floatConfig , "1")==0);
+
 	m_Width = w;
 	m_Height = h;
 	
@@ -88,6 +95,23 @@ void Window::Init(int w,int h)
 	glfwMakeContextCurrent(m_pWindow);
 	glfwSwapInterval(1); // Enable vsync
 
+	//glewExperimental = GL_TRUE;
+	glewInit();
+
+	ImGui::CreateContext();
+
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       																
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         
+																
+	ImGui_ImplGlfw_InitForOpenGL(m_pWindow,true);
+	ImGui_ImplOpenGL3_Init(glsl_version);
+
+	// Setup style
+	ImGui::GetStyle().WindowRounding = 0.0f;
+	ImGui::StyleColorsDark();
+	//ImGui::StyleColorsClassic();
 
 	glfwSetFramebufferSizeCallback(m_pWindow, glfw_framebuffer_size_callback);
 	glfwSetCursorPosCallback(m_pWindow, glfw_mouse_callback);
@@ -98,28 +122,7 @@ void Window::Init(int w,int h)
 	glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
 	glViewport(0, 0, m_Width, m_Height);
-
-	glewExperimental = GL_TRUE;
-	glewInit();
-
-	ImGui::CreateContext();
-
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
-																//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
-																//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
-																//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
-																// GL 3.0 + GLSL 130
-	const char* glsl_version = "#version 130";
-	ImGui_ImplGlfw_InitForOpenGL(m_pWindow,false);
-	ImGui_ImplOpenGL3_Init(glsl_version);
-
-	// Setup style
-	ImGui::GetStyle().WindowRounding = 0.0f;
-	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsClassic();
+	
 }
 
 void Window::Show()
@@ -189,7 +192,6 @@ float Window::GetDeltaTime()
 	return m_FPS;
 }
 
-// เล
 
 float Window::GetDeltaTimeMilliseconds()
 {

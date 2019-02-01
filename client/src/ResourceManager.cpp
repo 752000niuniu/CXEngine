@@ -176,7 +176,7 @@ namespace utils
 		}
 		else
 		{
-			LOG_ERR("GetPathByPackID error!");
+			printf("GetPathByPackID error!\n");
 			return "";
 		}
 	}

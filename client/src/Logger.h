@@ -35,9 +35,9 @@ public:
 
 #define LOG_INFO(format,...) Logger::GetInstance()->Print(format,__VA_ARGS__)
 
-#define LOG_ERR(format,...) Logger::GetInstance()->Print(format,__VA_ARGS__)
+#define LOG_ERR(format,...) Logger::GetInstance()->Print(format,"")
 
-#define LOG_WARN(format,...) Logger::GetInstance()->Print(format,__VA_ARGS__)
+#define LOG_WARN(format,...) Logger::GetInstance()->Print(format,"")
 
 enum struct LogLevel : int
 {

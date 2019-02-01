@@ -103,9 +103,9 @@ public:
 	std::vector<Player*> GetTargets() { return m_Targets; }
 	void ClearTargets() { m_Targets.clear(); }
 
-	void Player::ChangeAction(int actionID) { m_ActionID = actionID; }
-	void Player::ChangeWeapon(int WeaponID) { m_WeaponID = WeaponID; }
-	void Player::ChangeRole(int roleID) { m_RoleID = roleID; }
+	void ChangeAction(int actionID) { m_ActionID = actionID; }
+	void ChangeWeapon(int WeaponID) { m_WeaponID = WeaponID; }
+	void ChangeRole(int roleID) { m_RoleID = roleID; }
 protected:
 	bool m_IsAutoRun;
 	int m_ActorID;

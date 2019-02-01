@@ -2,7 +2,7 @@
 #include "script_system.h"
 #include "utils.h"
 
-void log_print(const char *str) 
+void log_print( char *str) 
 {
 	printf("%s\n", utils::Utf8ToGB2312(str).c_str());
 }

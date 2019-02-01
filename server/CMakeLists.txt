@@ -29,9 +29,9 @@ add_executable(GameServer
 )
 
 if(MSVC)
-  # target_compile_options(game_server PRIVATE /W4 /WX /wd4324 /wd4201 /wd4819  )
+  target_compile_options(game_server PRIVATE /W4 /WX /wd4324 /wd4201 /wd4819  )
 else()
-  target_compile_options(GameServer PRIVATE -Wall -Wextra -pedantic -Werror)
+  # target_compile_options(GameServer PRIVATE -Wall -Wextra -pedantic -Werror)
 endif(MSVC)
 
 target_include_directories(GameServer
@@ -43,7 +43,6 @@ target_include_directories(GameServer
         ${CMAKE_CURRENT_SOURCE_DIR}/../common
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
-target_compile_options(GameServer PRIVATE /wd4819)
 target_compile_definitions(GameServer PRIVATE -DWORK_DIR="${ENGINE_DIR}/")
 
 set_target_properties(GameServer PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "src/pch/precompile.h")

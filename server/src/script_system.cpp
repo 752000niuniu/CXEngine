@@ -51,7 +51,7 @@ void script_system_dofile(const char* file)
 	if (luaL_dofile(L, FileSystem::GetLuaPath(file).c_str()) != LUA_OK)
 	{
 		const char* msg = lua_tostring(L, -1);
-		LOG_ERR(msg);
+		printf(msg);
 		return;
 	}
 }

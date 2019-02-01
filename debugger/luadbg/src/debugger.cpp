@@ -2,6 +2,7 @@
 #include "cxlua.h"
 
 #include <functional>
+#include <thread>
 
 #include "kbase/at_exit_manager.h"
 #include "ezio/io_context.h"
@@ -141,7 +142,11 @@ void debugger_stop_session()
 
 void debugger_sleep(int s)
 {
+#if defined(_WIN32)
 	Sleep(s);
+#else
+    sleep(s);
+#endif
 }
 
 const char* debugger_fetch_message()

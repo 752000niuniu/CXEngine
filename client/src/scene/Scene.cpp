@@ -11,7 +11,6 @@
 #include "SceneManager.h"
 #include "InputManager.h"
 #include "cxmath.h"
-#include <corecrt_io.h>
 #include "actor/action.h"
 #include "combat/Skill.h"
 #include "ResourceManager.h"
@@ -454,7 +453,7 @@ void BattleScene::Update()
 						self = m_Player;
 					}
 					Pos targetPos = enemy->GetCombatPos();
-					Pos& selfPos = self->GetCombatPos();
+					Pos selfPos = self->GetCombatPos();
 					if (targetPos.x > selfPos.x && targetPos.y > selfPos.y)
 					{
 						
@@ -519,7 +518,7 @@ void BattleScene::Draw()
 
 	for (auto* player : m_Players)
 	{
-		auto& pos = player->GetCombatPos();
+		auto pos = player->GetCombatPos();
 		player->OnDraw((int)pos.x, (int)pos.y);
 	}
 }

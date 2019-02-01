@@ -1,7 +1,5 @@
 #include "net.h"
 
-#include <winsock2.h>
-#include <ws2tcpip.h>
 #include <stdio.h>
 #include "script_system.h"
 #include "kbase/at_exit_manager.h"

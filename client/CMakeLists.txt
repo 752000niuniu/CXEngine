@@ -91,7 +91,7 @@ if(MSVC)
     target_compile_options(SimpleEngine PRIVATE /wd4819 )
 #   target_compile_options(SimpleEngine PRIVATE /W4 /WX /wd4324 /wd4201 /wd4819 /wd4267)
 else()
-  target_compile_options(SimpleEngine PRIVATE -Wall -Wextra -pedantic -Werror)
+#   target_compile_options(SimpleEngine PRIVATE -Wall -Wextra -pedantic -Werror)
 endif(MSVC)
 
 target_include_directories(SimpleEngine
@@ -141,103 +141,3 @@ target_link_libraries(SimpleEngine
     IMGui::IMGui
     luadbg
 )
-
-# if (BZIP2_FOUND)
-#   include_directories(${BZIP2_INCLUDE_DIR}) 
-#   list(APPEND LIBS ${BZIP2_LIBRARIES} ) 
-# endif ()
-
-# if (PNG_FOUND)
-#   add_definitions(${PNG_DEFINITIONS})
-#   include_directories(${PNG_INCLUDE_DIRS})
-#   list(APPEND LIBS ${PNG_LIBRARIES}) 
-# endif ()
-
-# if (GZIP_FOUND)
-#   add_definitions(${GZIP_DEFINITIONS})
-#   include_directories(${GZIP_INCLUDE_DIRS})
-#   list(APPEND LIBS ${GZIP_LIBRARIES}) 
-# endif ()
-
-# if(APPLE)
-#   find_package(BZip2 QUIET REQUIRED)
-#   find_package(PNG QUIET REQUIRED)
-# endif(APPLE)
-
-# if( MSVC )
-#   # in order to prevent DLL hell, each of the DLLs have to be suffixed with the major version and msvc prefix
-#   if( MSVC70 OR MSVC71 )
-#     set(MSVC_PREFIX "vc70")
-#   elseif( MSVC80 )
-#     set(MSVC_PREFIX "vc80")
-#   elseif( MSVC90 )
-#     set(MSVC_PREFIX "vc90")
-#   elseif( MSVC10 )
-#     set(MSVC_PREFIX "vc100")
-#   elseif( MSVC11 )
-#     set(MSVC_PREFIX "vc110")
-#   elseif( MSVC12 )
-#     set(MSVC_PREFIX "vc120")
-#   elseif( MSVC14 )
-#     set(MSVC_PREFIX "vc140")
-#   else()
-#     set(MSVC_PREFIX "vc150")
-#   endif()
-#   set(ASSIMP_LIB "assimp-${MSVC_PREFIX}-mt" )
-# else()
-#   set(ASSIMP_LIB assimp)
-# endif()
-
-
-
-
-
-# if(WIN32)
-#   find_package(OpenGL REQUIRED)
-#   list(APPEND LIBS opengl32) 
-#   list(APPEND LIBS ${COMMON_LIBS}) 
-#   list(APPEND LIBS ${OPENGL_LIBRARY}) 
-#   list(APPEND LIBS ${ASSIMP_LIB}) 
-#   list(APPEND LIBS IrrXML) 
-#   list(APPEND LIBS zlibstaticd) 
-# elseif(UNIX)
-#   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
-#   find_package(OpenGL REQUIRED)
-#   list(APPEND LIBS ${OPENGL_gl_LIBRARY})
-#   list(APPEND LIBS ${COMMON_LIBS}) 
-#   add_definitions(${OPENGL_DEFINITIONS})
-#   find_package(X11 REQUIRED)
-#   list(APPEND LIBS ${X11_Xrandr_LIB} ${X11_Xxf86vm_LIB} ${X11_Xinerama_LIB} ${X11_Xi_LIB} ${X11_Xcursor_LIB})
-#   find_package(Threads REQUIRED)
-#   list(APPEND LIBS ${CMAKE_THREAD_LIBS_INIT})
-# else()
-#   set(LIBS )
-# endif(WIN32)
-
-# # Because we use glfw3 we need to link the application with Cocoa
-# IF(APPLE)
-#   INCLUDE_DIRECTORIES(/System/Library/Frameworks)
-#   FIND_LIBRARY(Cocoa_LIBRARY Cocoa)
-#   FIND_LIBRARY(OpenGL_LIBRARY OpenGL)
-#   FIND_LIBRARY(IOKit_LIBRARY IOKit)
-#   FIND_LIBRARY(CoreVideo_LIBRARY CoreVideo)
-#   MARK_AS_ADVANCED(Cocoa_LIBRARY OpenGL_LIBRARY)
-#   SET(APPLE_LIBS ${Cocoa_LIBRARY} ${IOKit_LIBRARY} ${OpenGL_LIBRARY} ${CoreVideo_LIBRARY})
-#   set(LIBS ${LIBS} ${APPLE_LIBS})
-# ENDIF(APPLE)
-
-
-
-
-
-
-#set_target_properties(${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_CONFIGURATION_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
-
-# Xcode and Visual working directories
-
-#create_target_launcher(${PROJECT_NAME} WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}/")
-#create_default_target_launcher(${PROJECT_NAME} WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}/")
-
-#add_subdirectory(src)
-
-
