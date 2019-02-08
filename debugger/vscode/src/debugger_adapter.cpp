@@ -16,8 +16,14 @@
 
 extern "C" int luaopen_cjson(lua_State *L);
 
-
-#define EXTENSION_DIR(file) "D:\\Github\\vscode-mock-debug\\"##file
+#define MOCK_DEBUG_DIR	"/Users/oceancx/Github/vscode-mock-debug/"
+const char* EXTENSION_DIR(const char* dir)
+{
+	static std::string s_dir;
+	s_dir = MOCK_DEBUG_DIR;
+	s_dir.append(dir);
+	return s_dir.c_str();
+}
 using namespace ezio;
 
 enum EDebugAdapterLaunchMode
