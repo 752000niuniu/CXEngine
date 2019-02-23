@@ -10,3 +10,4 @@ endif()
 
 add_subdirectory(luadbg)
 add_subdirectory(vscode)
+add_subdirectory(test)

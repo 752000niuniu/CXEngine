@@ -110,8 +110,11 @@ void DebuggeeThreadFunc(int port)
 	lua_close(L);
 }
 
+kbase::AtExitManager exit_manager;
 int debugger_start_session(lua_State* L)
 {
+	ezio::IOServiceContext::Init();
+
 	int port = (int)lua_tointeger(L, 1);
 	if (port > 0)
 	{
