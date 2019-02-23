@@ -161,9 +161,10 @@ void StdioVscodeThreadFunc(int port)
 			auto msg = g_VscodeQueue.Front(NetThreadQueue::Write);
 			g_VscodeQueue.PopFront(NetThreadQueue::Write);
 			//	g_VscodeHandler->Send(msg);
-			dbg_trace("vscode respone: ");
+			dbg_trace("vscode respone: \n");
 			dbg_trace(msg.c_str());
 			std::cout.write(msg.data(), msg.size());
+			std::cout.flush();
 		}
 	}
 }
