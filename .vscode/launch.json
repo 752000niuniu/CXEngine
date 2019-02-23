@@ -5,20 +5,27 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "mock",
+            "request": "launch",
+            "name": "Ask for file name",
+            "program": "${workspaceFolder}/${command:AskForProgramName}",
+            "stopOnEntry": true,
+            "debugServer": 4711
+        },
+        {
             "name": "Launch",
             "type": "cxlua",
             "request": "launch",
             "ip": "127.0.0.1",
             "port": 9527,
-            "launchcmd": "E:\\Github\\SimpleEngine\\bin\\Debug\\SimpleEngine.exe"
+            "launchcmd": "D:\\Github\\SimpleEngine\\SimpleEngine.exe"
         },
         {
             "name": "Attach",
             "type": "cxlua",
             "request": "attach",
             "ip": "127.0.0.1",
-            "port": 9527,
-            "debugServer": 4711
+            "port": 9527
         }
     ]
 }

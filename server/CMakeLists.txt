@@ -29,7 +29,7 @@ add_executable(GameServer
 )
 
 if(MSVC)
-  target_compile_options(GameServer PRIVATE /W4 /WX /wd4324 /wd4201 /wd4819  )
+  target_compile_options(GameServer PRIVATE /wd4324 /wd4201 /wd4819  )
 else()
   # target_compile_options(GameServer PRIVATE -Wall -Wextra -pedantic -Werror)
 endif(MSVC)

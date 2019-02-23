@@ -233,7 +233,7 @@ function debugger_fetch_stacks(start,lv)
             else
                 frame.source = {
                     adapterData = 'C',
-                    path = 'C:/virtual.lua',
+                    path = 'D:/x.lua',
                     name =  '[C]',
                     sourceReference = 0
                 }

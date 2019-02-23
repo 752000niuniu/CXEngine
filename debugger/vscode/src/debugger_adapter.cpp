@@ -16,11 +16,14 @@
 
 extern "C" int luaopen_cjson(lua_State *L);
 
-#define MOCK_DEBUG_DIR	"/Users/oceancx/Github/vscode-mock-debug/"
+std::string CWD = "";
+int port = 4711;
+//#define MOCK_DEBUG_DIR	"/Users/oceancx/Github/vscode-mock-debug/"
+
 const char* EXTENSION_DIR(const char* dir)
 {
 	static std::string s_dir;
-	s_dir = MOCK_DEBUG_DIR;
+	s_dir = CWD;
 	s_dir.append(dir);
 	return s_dir.c_str();
 }
@@ -46,8 +49,19 @@ void debugger_adapter_init(int argc, char* argv[])
 {
 	for(int i=0;i<argc;i++)
 	{
-		//std::cerr << argv[i] << std::endl;
+		std::string param = argv[i];
+		
+		if (param.find("--port=") != std::string::npos) {
+			std::string str = param.substr(param.find_last_of("=")+1);
+			port = std::stoi(str);
+		}
+		else if (param.find("--cwd=") != std::string::npos) {
+			std::string str = param.substr(param.find_last_of("=")+1);
+			CWD = str;
+		}
+		std::cerr << "arg " << i <<  ":" << argv[i] << std::endl;
 	}
+	std::cerr << "workdir = " << CWD << "   port = " << port << std::endl;
 }
 
 std::string LINES_ENDING = "";
@@ -376,9 +390,6 @@ int debugger_adapter_run(int port)
 			lua_push_net_thread_queue(L, &g_RuntimeQueue);
 			int res = lua_pcall(L, 3, 0, 0);
 			check_lua_error(L, res);
-
-		
-
 		}
 		lua_close(L);
 
@@ -405,13 +416,7 @@ int main(int argc, char* argv[])
 {
 	kbase::AtExitManager exit_manager;
 	debugger_adapter_init(argc, argv);
-	if (argc == 1)
-	{
-		debugger_adapter_run(0); // 4711
-	}
-	else
-	{
-		debugger_adapter_run(4711); 
-	}
+	debugger_adapter_run(port);
+	
 	return 0;
 }
