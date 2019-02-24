@@ -223,21 +223,12 @@ function debugger_fetch_stacks(start,lv)
         src_path = format_path(src_path)
         local name = extract_file_name(src_path) 
         if name ~= '__debugger__' then
-            if info.what == 'Lua' then
-                frame.source = {
-                    adapterData = 'Lua',
-                    path = src_path,
-                    name = name,
-                    sourceReference = 0
-                }
-            else
-                frame.source = {
-                    adapterData = 'C',
-                    path = 'D:/x.lua',
-                    name =  '[C]',
-                    sourceReference = 0
-                }
-            end
+            frame.source = {
+                adapterData = info.what,
+                path = src_path,
+                name = name,
+                sourceReference = 0
+            }
             table.insert(stackFrames, frame)
         end
     end

@@ -1,16 +1,39 @@
-
 debugger_start_session(9527)
 
-function  what_the_f1()
-    local a = 1
-    local b = 2
-    local c = a + b
+
+ma = require("a")
+local function utils_dump_table(t)
+
+    if not t or type(t)~='table' then return end
+   
+    local count = 1 
+    local next_layer = {}
+    table.insert(next_layer, t)
+    while true do 
+        if #next_layer == 0 then break end
+        local next_t = table.remove(next_layer,1)
+        for k,v in pairs(next_t) do 
+            if type(v) == 'table' then
+                if count > 5 then break end
+                count = count + 1
+                table.insert(next_layer, v)
+            else
+                print(k,v)
+            end
+        end    
+    end
+end
+function debugger_hook_new2( event, line)
+    if event == 'line' then
+        local info = debug.getinfo(2)  
+        
+        if info.what ~= 'main' then
+            utils_dump_table(info)
+        end
+    end
 end
 
-function  what_the_f2()
-    what_the_f1()
-end
-
+-- debug.sethook(debugger_hook_new2,'lcr')
 do
     local last_time = os.time()
     while true do 
@@ -18,7 +41,7 @@ do
         if now_time - last_time >= 1 then
             debugger_update_session_new()
             
-            what_the_f2()
+            ma.what_the_f2()
         end
         last_time = now_time
     end
