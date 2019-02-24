@@ -16,9 +16,9 @@
 
 extern "C" int luaopen_cjson(lua_State *L);
 
+std::string PATH_SEP("");
 std::string CWD = "";
 int port = 4711;
-//#define MOCK_DEBUG_DIR	"/Users/oceancx/Github/vscode-mock-debug/"
 
 const char* EXTENSION_DIR(const char* dir)
 {
@@ -45,6 +45,9 @@ EDebugAdapterLaunchMode g_LaunchMode;
 EDebugProtocolMode g_Mode;
 
 bool g_debugger_adapter_run = false;
+
+
+
 void debugger_adapter_init(int argc, char* argv[])
 {
 	for(int i=0;i<argc;i++)
@@ -55,9 +58,16 @@ void debugger_adapter_init(int argc, char* argv[])
 			std::string str = param.substr(param.find_last_of("=")+1);
 			port = std::stoi(str);
 		}
-		else if (param.find("--cwd=") != std::string::npos) {
-			std::string str = param.substr(param.find_last_of("=")+1);
-			CWD = str;
+		else if (i == 0) {
+			if (param.find_last_of("\\")!= std::string::npos ) {
+				PATH_SEP = "\\";
+			}
+			else if (param.find_last_of("/") != std::string::npos)
+			{
+				PATH_SEP = "/";
+			}
+			std::string str = param.substr(0, param.find_last_of(PATH_SEP));
+			CWD = str + PATH_SEP;
 		}
 		std::cerr << "arg " << i <<  ":" << argv[i] << std::endl;
 	}

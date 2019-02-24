@@ -28,7 +28,7 @@
 					]
 				},
 				"program": "./vsdbgadapter.exe",
-				"args": ["--port=0","--cwd=D:/Github/SimpleEngine/debugger/vscode/"],
+				"args": ["--port=0"],
 				"initialConfigurations": [
 					{
 						"name" : "Launch",
