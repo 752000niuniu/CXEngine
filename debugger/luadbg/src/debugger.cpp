@@ -177,6 +177,8 @@ bool debugger_is_connected()
 
 void luaopen_debugger(lua_State* L)
 {
+	luaL_requirelib(L, "cjson", luaopen_cjson);
+	
 	script_system_register_luac_function(L, debugger_start_session);
 	script_system_register_function(L, debugger_stop_session);
 	script_system_register_function(L, debugger_sleep);
