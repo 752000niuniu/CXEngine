@@ -40,3 +40,6 @@
 [submodule "internals/cxlua"]
 	path = internals/cxlua
 	url = git@github.com:oceancx/cxlua.git
+[submodule "externals/luadebugger"]
+	path = externals/luadebugger
+	url = git@github.com:oceancx/luadebugger.git
