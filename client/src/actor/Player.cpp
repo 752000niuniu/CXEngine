@@ -183,6 +183,7 @@ void Player::OnUpdate(float dt)
 		if (playerFrameWasID != -1) {
 			m_PlayerFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(ShapeWDF, playerFrameWasID)));
 			m_PlayerFrames[m_ActionID]->ResetAnim(m_Dir);
+			m_PlayerFrames[m_ActionID]->SetFrameTimeBase(m_FrameSpeed);
 			if (m_ActionID == Action::Clps)
 			{
 				m_PlayerFrames[m_ActionID]->SetPlayLoop(false);
@@ -191,8 +192,10 @@ void Player::OnUpdate(float dt)
 			if (m_WeaponFrames.find(m_ActionID) != m_WeaponFrames.end())
 			{
 				m_WeaponFrames[m_ActionID]->ResetAnim(m_Dir);
-				int groupCount = m_PlayerFrames[m_ActionID]->GetGroupFrameCount();
-				m_WeaponFrames[m_ActionID]->ResetFrameTimeByGroupCount(groupCount);
+				m_WeaponFrames[m_ActionID]->SetFrameTimeBase(m_FrameSpeed);
+				int groupCount = m_WeaponFrames[m_ActionID]->GetGroupFrameCount();
+				m_PlayerFrames[m_ActionID]->ResetFrameTimeByGroupCount(groupCount);
+				
 			}
 		}
 	}
@@ -207,6 +210,7 @@ void Player::OnUpdate(float dt)
 		if (weaponFrameWasID != -1) {
 			m_WeaponFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(ShapeWDF, weaponFrameWasID)));
 			m_WeaponFrames[m_ActionID]->ResetAnim(m_Dir);
+			m_WeaponFrames[m_ActionID]->SetFrameTimeBase(m_FrameSpeed);
 			if (m_ActionID == Action::Clps)
 			{
 				m_WeaponFrames[m_ActionID]->SetPlayLoop(false);
@@ -214,6 +218,7 @@ void Player::OnUpdate(float dt)
 			if (m_PlayerFrames.find(m_ActionID) != m_PlayerFrames.end())
 			{
 				m_PlayerFrames[m_ActionID]->ResetAnim(m_Dir);
+				m_PlayerFrames[m_ActionID]->SetFrameTimeBase(m_FrameSpeed);
 				auto groupCount = m_PlayerFrames[m_ActionID]->GetGroupFrameCount();
 				m_WeaponFrames[m_ActionID]->ResetFrameTimeByGroupCount(groupCount);
 			}
@@ -793,8 +798,27 @@ luaL_Reg mt_actor[] = {
 };
 
 
+void player_set_frame_speed(int frame_speed)
+{
+	Player* player = SCENE_MANAGER_INSTANCE->GetCurrentScene()->GetLocalPlayer();
+	if (player) {
+		player->SetFrameSpeed(frame_speed);
+	}
+}
+
+void player_set_move_speed(int move_speed)
+{
+	Player* player = SCENE_MANAGER_INSTANCE->GetCurrentScene()->GetLocalPlayer();
+	if (player) {
+		player->SetVelocity(move_speed);
+	}
+}
+
+
 void luaopen_actor(lua_State* L)
 {
+	script_system_register_function(L, player_set_frame_speed);
+	script_system_register_function(L ,player_set_move_speed);
 	if (luaL_newmetatable(L, "mt_actor")) {
 		luaL_setfuncs(L, mt_actor, 0);
 		lua_setfield(L, -1, "__index");

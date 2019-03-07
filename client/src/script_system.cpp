@@ -47,6 +47,7 @@ void script_system_prepare_init()
 {
 	L = luaL_newstate();
 	luaL_openlibs(L);
+	luaopen_luadbg(L);
 	luaL_requirelib(L, "cjson", luaopen_cjson);
 	luaopen_script_system(L);
 	luaopen_imgui(L);
@@ -66,7 +67,7 @@ void script_system_prepare_init()
 	luaopen_net_thread_queue(L);
 	luaopen_netlib(L);
 	luaopen_net(L);
-	luaopen_luadbg(L);
+	luaopen_actor(L);
 }
 
 void script_system_dofile(const char* file)

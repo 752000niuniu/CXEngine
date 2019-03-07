@@ -240,7 +240,7 @@ void FrameAnimation::OnUpdate()
 			m_KeyY = m_pSprite->mKeyY;
 			m_Width = m_pSprite->mWidth;
 			m_Height = m_pSprite->mHeight;
-			m_FrameTime = m_FrameTimeBase;
+			//m_FrameTime = m_FrameTimeBase;
 			m_CurrentFrame = m_CurrentGroup * m_GroupFrameCount;
 			m_bVisible = true;
 		}

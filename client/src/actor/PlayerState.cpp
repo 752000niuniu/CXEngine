@@ -133,7 +133,7 @@ void PlayerCombatMoveState::Enter(Player* player)
     
 	float dist_sqr = player->GetCombatDistSquare();
 	float d = std::sqrt(dist_sqr) *1.0f / playerFrame->GetGroupFrameCount();
-	player->SetVelocity(1100);
+	//player->SetVelocity(1100);
 	float localVelocity = player->GetVelocity();
 	playerFrame->SetFrameTimeBase(d/localVelocity);
 	weaponFrame->SetFrameTimeBase(d/localVelocity);
@@ -155,14 +155,14 @@ void PlayerCombatMoveState::Execute(Player* player)
 	}
 	else
 	{
-		player->SetVelocity(400);
+		//player->SetVelocity(400);
 		player->GetFSM()->ChangeState(PlayerCombatAttackState::GetInstance());
 	}
 }
 
 bool PlayerCombatMoveState::OnMessage(Player* player, const Telegram& msg) 
 {
-	player->SetVelocity(400);
+	//player->SetVelocity(400);
 	player->GetFSM()->ChangeState(PlayerCombatAttackState::GetInstance());
 	return true;
 };
@@ -205,7 +205,7 @@ void PlayerCombatBackState::Enter(Player* player)
 	if (!weaponFrame)return;
 	float dist_sqr = player->GetCombatDistSquare() ;
 	float d = std::sqrt(dist_sqr) *1.0f / playerFrame->GetGroupFrameCount();
-	player->SetVelocity(950);
+	//player->SetVelocity(950);
 	float localVelocity = player->GetVelocity();
 	playerFrame->SetFrameTimeBase(d/localVelocity);
 	weaponFrame->SetFrameTimeBase(d/localVelocity);

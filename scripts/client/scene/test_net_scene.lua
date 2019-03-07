@@ -8,6 +8,9 @@ end
 local s_Account = 'oceancx11'
 local s_Password ='200,2790'
 local TextBuffSize = 1024
+
+local move_speed = 400
+local frame_speed = 0
 function on_test_scene_update(dt)
     local res, text 
 	imgui.Text("Nickname   :");
@@ -44,4 +47,8 @@ function on_test_scene_update(dt)
     if imgui.Button('printEnv') then
         utils_dump_table(_ENV)
     end
+
+   
+
+
 end 

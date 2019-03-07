@@ -141,6 +141,9 @@ public:
 
 	void SetLocalPlayer(bool local) { m_IsLocalPlayer = local; }
 	bool IsLocalPlayer() { return m_IsLocalPlayer; }
+
+	float GetFrameSpeed() { return m_FrameSpeed; };
+	void SetFrameSpeed(float frame_speed) { m_FrameSpeed = frame_speed; };
 protected:
 	void LoadRoleFrame();
 	void LoadWeaponFrame();
@@ -149,6 +152,7 @@ protected:
 	int m_ActorID;
 	int m_RoleID;				//current role
 
+	float m_FrameSpeed;
 	int m_ActorType;
 	std::string m_NickName;
 	// bool m_HasWeapon;
