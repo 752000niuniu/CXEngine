@@ -141,3 +141,8 @@ target_link_libraries(SimpleEngine
     IMGui::IMGui
     luadbg
 )
+
+add_custom_command(TARGET SimpleEngine
+    PRE_LINK
+    COMMAND ${CMAKE_COMMAND} -E copy ${ENGINE_DIR}/externals/dist/bin/luadbg.dll ${ENGINE_DIR}/bin/$<CONFIG>/
+)

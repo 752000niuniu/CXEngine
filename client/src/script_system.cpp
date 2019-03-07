@@ -11,11 +11,11 @@
 #include "TextRenderer.h"
 #include "InputManager.h"
 #include "net.h"
-#include "debugger.h"
 #include "wrap_imgui_impl.h"
 #include "net_thread_queue.h"
 #include "lua_net.h"
 #include "scene/Scene.h"
+#include "luadbg.h"
 
 static lua_State* L = nullptr;
 void luaopen_script_system(lua_State* L);
@@ -66,7 +66,7 @@ void script_system_prepare_init()
 	luaopen_net_thread_queue(L);
 	luaopen_netlib(L);
 	luaopen_net(L);
-	luaopen_debugger(L);
+	luaopen_luadbg(L);
 }
 
 void script_system_dofile(const char* file)

@@ -11,7 +11,6 @@
 #include "script_system.h"
 #include "InputManager.h"
 #include "ne_wrapper.h"
-#include "debugger.h"
 
 static const float MS_PER_UPDATE = 1000 / 60.f / 1000;
 

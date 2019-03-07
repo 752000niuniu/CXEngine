@@ -15,7 +15,7 @@ IsCombat = false
 -- DefaultSceneName = "WASViewer"
 DefaultSceneName = "TestNetScene"
 
-debugger_start_session(9527)
+luadbg_start(9527)
 
 --聊天背景框 wzife 39D3BD99 
 function main()
@@ -37,7 +37,7 @@ function on_script_system_init()
 end
 
 function on_script_system_update()
-    debugger_update_session_new()
+    luadbg_update()
     net_manager_update()
     timer_manager_update()
     resource_manager_update()
@@ -49,7 +49,7 @@ function on_script_system_draw()
 end
 
 function on_script_system_deinit()
-    -- debugger_stop_session()
+    luadbg_stop()
     net_manager_deinit()
     timer_manager_deinit()
     input_manager_deinit()

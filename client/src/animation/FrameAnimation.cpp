@@ -4,7 +4,7 @@
 #include "Window.h"
 #include "ResourceManager.h"
 
-#define  FRAME_TIME_BASE_DEFAULT (1.0f/60*4)
+#define  FRAME_TIME_BASE_DEFAULT (1.0f/60*8)
 
 
 std::map<float,float> bezier_map_array;
@@ -225,7 +225,7 @@ void FrameAnimation::SetCurrentGroup(int group)
 }
 
 
-void FrameAnimation::OnUpdateOld()
+void FrameAnimation::OnUpdate()
 {
 	if (m_pSprite == nullptr)
 	{
@@ -297,7 +297,7 @@ void FrameAnimation::OnUpdateOld()
 	
 }
 
-void FrameAnimation::OnUpdate()
+void FrameAnimation::OnUpdateOld()
 {
 	if (m_pSprite == nullptr)
 	{
@@ -322,7 +322,7 @@ void FrameAnimation::OnUpdate()
 		if (m_CurrentFrame < 0 || m_CurrentFrame >= m_TotalFrameCount) return;
 
 		float dt = WINDOW_INSTANCE->GetDeltaTime();
-		
+
 		m_DeltaTime += dt;
 		if (m_DeltaTime >= bezier_total_frame_time)
 		{
@@ -334,15 +334,15 @@ void FrameAnimation::OnUpdate()
 		}
 		int newframe = uniform_bezier_interpolate(bezier_total_frame_time, m_GroupFrameCount, m_DeltaTime);
 		m_bIsNextFrameRestart = newframe == m_GroupFrameCount;
-		
+
 		int oldframe = m_CurrentFrame % m_GroupFrameCount;
 		m_bCurrentFrameChangedInUpdate = newframe != oldframe;
-		
+
 		if (m_bIsNextFrameRestart)
 		{
 			if (m_bLoop)
 			{
-				m_CurrentFrame = m_CurrentGroup * m_GroupFrameCount ;
+				m_CurrentFrame = m_CurrentGroup * m_GroupFrameCount;
 				m_LastFrame = m_CurrentGroup * m_GroupFrameCount + oldframe;
 			}
 			else

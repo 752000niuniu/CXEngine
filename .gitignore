@@ -22,3 +22,5 @@ server/bin
 external/dist
 Debug/
 res/data
+*.exe
+*.log
