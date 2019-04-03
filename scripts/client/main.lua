@@ -4,6 +4,10 @@ SCREEN_HEIGHT = 600
 DefaultMapID = 1001
 
 script_system_dofile 'utils.lua'
+
+script_system_dofile('scene/test_net_scene.lua')
+script_system_dofile('scene/animation_editor.lua')
+
 script_system_dofile 'scene_manager.lua'
 script_system_dofile 'scene.lua'
 script_system_dofile 'table_template.lua'

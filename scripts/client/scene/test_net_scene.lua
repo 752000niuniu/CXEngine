@@ -31,6 +31,10 @@ function on_test_scene_update(dt)
         scene_manager_switch_scene_by_name('门派_方寸山全景')
     end
 
+    if imgui.Button("AnimationEditor") then
+        scene_manager_switch_scene_by_name('AnimationEditor')
+    end
+
     if (imgui.Button("EnterBattle")) then 
         scene_manager_switch_scene_by_name('BattleScene')
     end
@@ -47,8 +51,4 @@ function on_test_scene_update(dt)
     if imgui.Button('printEnv') then
         utils_dump_table(_ENV)
     end
-
-   
-
-
 end 

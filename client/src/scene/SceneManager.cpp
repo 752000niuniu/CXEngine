@@ -60,6 +60,8 @@ m_SwitchingScene(false)
 	AddScene(new UIScene(-102, "UIScene"));
 	AddScene(new TestScene(-103, "TestScene"));
 	AddScene(new TestNetScene(-104, "TestNetScene"));
+
+	AddScene(new AnimationEditorScene(-105, "AnimationEditor"));
 }
 
 SceneManager::~SceneManager()
@@ -339,7 +341,6 @@ void SceneManager::DrawImGUI()
 	g_IsMouseInImGui = utils::BoundHitTest(bound, Pos{ mouseX, mouseY });
 	ImGui::End();
 }
-
 
 void SceneManager::Draw() 
 {

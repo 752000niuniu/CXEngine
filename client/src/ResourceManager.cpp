@@ -1,11 +1,3 @@
-/*******************************************************************
- ** This code is part of Breakout.
- **
- ** Breakout is free software: you can redistribute it and/or modify
- ** it under the terms of the CC BY 4.0 license as published by
- ** Creative Commons, either version 4 of the License, or (at your
- ** option) any later version.
- ******************************************************************/
 #include "ResourceManager.h"
 #include "image.h"
 #include "file_system.h"
@@ -15,15 +7,15 @@
 #include "Logger.h"
 
 
-
-
 static std::vector<String> s_PackToName = { "addon.wdf","atom.wdf","chat.wdf","firework.wdf","goods.wdf","item.wdf","magic.wdf","mapani.wdf","mhimage.wdf","misc.wdf","music.wdf","scene.wdf","shape.wd1","shape.wd2","shape.wd3","shape.wd4","shape.wd5","shape.wd6","shape.wd7","shape.wdf","smap.wdf","sound.wdf","stock.wdf","waddon.wdf","wzife.wd1","wzife.wdf","wzimage.wdf" };
 static std::map<uint32_t, NE::WDF*> s_Loaders;
 
 ResourceManager::ResourceManager()
 	:Singleton<ResourceManager>()
 {
+
 }
+
 ResourceManager::~ResourceManager()
 {
 
@@ -111,9 +103,7 @@ void ResourceManager::OnUpdate()
 
 void resource_manager_init()
 {
-	
 	RESOURCE_MANAGER_INSTANCE;
-	
 }
 
 void resource_manager_update()

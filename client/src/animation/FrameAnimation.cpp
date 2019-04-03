@@ -4,7 +4,7 @@
 #include "Window.h"
 #include "ResourceManager.h"
 
-#define  FRAME_TIME_BASE_DEFAULT (1.0f/60*8)
+#define  FRAME_TIME_BASE_DEFAULT (1.0f/60*4)
 
 
 std::map<float,float> bezier_map_array;
@@ -240,9 +240,10 @@ void FrameAnimation::OnUpdate()
 			m_KeyY = m_pSprite->mKeyY;
 			m_Width = m_pSprite->mWidth;
 			m_Height = m_pSprite->mHeight;
-			//m_FrameTime = m_FrameTimeBase;
+			m_FrameTime = m_FrameTimeBase;
 			m_CurrentFrame = m_CurrentGroup * m_GroupFrameCount;
 			m_bVisible = true;
+			m_DeltaTime = 0;
 		}
 	}
 	else
@@ -260,7 +261,7 @@ void FrameAnimation::OnUpdate()
 		if (m_DeltaTime >= m_FrameTime)
 		{
 			m_bCurrentFrameChangedInUpdate = true;
-			m_DeltaTime = m_DeltaTime - m_FrameTime;
+			m_DeltaTime = m_DeltaTime - std::floor(m_DeltaTime / m_FrameTime)*m_FrameTime;
 
 			m_LastFrame = m_CurrentFrame;
 			if (!m_pSprite->mFrames[m_LastFrame].IsBlank)
@@ -297,7 +298,7 @@ void FrameAnimation::OnUpdate()
 	
 }
 
-void FrameAnimation::OnUpdateOld()
+void FrameAnimation::OnUpdateNew()
 {
 	if (m_pSprite == nullptr)
 	{
@@ -461,10 +462,9 @@ int frame_animation_method_get_property(lua_State* L)
 
 luaL_Reg mt_frame_animation[] = {
 	{ "SetProperty",frame_animation_method_set_property },
-{ "GetProperty",frame_animation_method_get_property },
-{ NULL, NULL }
+	{ "GetProperty",frame_animation_method_get_property },
+	{ NULL, NULL }
 };
-
 
 
 void frame_animation_set_bezier_curve_p1_p2(float total_frame_time ,float p1_x, float p1_y, float p2_x, float p2_y)
@@ -491,3 +491,88 @@ void luaopen_frame_animation(lua_State* L)
 	init_bezier_float_array();
 }
 
+
+String UtilsGetFramePath(Sprite* m_pSprite, int index)
+{
+	if (m_pSprite)
+	{
+		return m_pSprite->mPath + std::string("/" + std::to_string(index));
+	}
+	return "";
+}
+
+Texture* UtilsGetFrameTexture(Sprite* m_pSprite, int index)
+{
+	if (!m_pSprite)return nullptr;
+	if (index >= m_pSprite->mFrameSize * m_pSprite->mGroupSize)return nullptr;
+	auto path = UtilsGetFramePath(m_pSprite, index);
+	auto* texture = TextureManager::GetInstance()->GetTexture(path);
+	if (texture)
+	{
+		return texture;
+	}
+	else
+	{
+		auto& frame = m_pSprite->mFrames[index];
+		return TextureManager::GetInstance()->LoadTexture(path, frame.width, frame.height, true, (uint8_t*)frame.src.data());
+	}
+}
+
+BaseSprite::BaseSprite(uint64_t resoureID)
+{
+	 m_pSprite = RESOURCE_MANAGER_INSTANCE->LoadWASSpriteByID(resoureID, true);
+	 Width = m_pSprite->mWidth;
+	 Height = m_pSprite->mHeight;
+	 KeyX = m_pSprite->mKeyX;
+	 KeyY = m_pSprite->mKeyY;
+
+	 CurrentFrame = 0;
+	 for (int i = 0; i < m_pSprite->mFrameSize*m_pSprite->mGroupSize; i++)
+	 {
+		 UtilsGetFrameTexture(m_pSprite, i);
+	 }
+	 Pos = { 0,0 };
+	 FrameInterval = 0.064f;
+	 PlayTime = 0.f;
+	 Dir = 0;
+}
+
+BaseSprite::BaseSprite(uint32_t pkg, uint32_t wasID) :BaseSprite(RESOURCE_MANAGER_INSTANCE->EncodeWAS(pkg, wasID))
+{
+
+}
+
+BaseSprite::~BaseSprite()
+{
+
+}
+
+
+void BaseSprite::Update()
+{
+	float dt = WINDOW_INSTANCE->GetDeltaTime();
+	PlayTime = PlayTime + dt;
+	if (PlayTime >= FrameInterval)
+	{
+		PlayTime = (PlayTime - std::floor(PlayTime / FrameInterval)*FrameInterval) ;
+		CurrentFrame= CurrentFrame + 1;
+		if (CurrentFrame == m_pSprite->mFrameSize) {
+			CurrentFrame = 0;
+		}
+	}
+}
+
+
+void BaseSprite::Draw()
+{
+	auto* texture = UtilsGetFrameTexture(m_pSprite, Dir*m_pSprite->mFrameSize+ CurrentFrame);
+	if (texture)
+	{
+		auto& frame = m_pSprite->mFrames[Dir*m_pSprite->mFrameSize + CurrentFrame];
+		int kx = (m_pSprite->mKeyX- frame.key_x);
+		int ky = (m_pSprite->mKeyY- frame.key_y);
+		SPRITE_RENDERER_INSTANCE->DrawFrameSprite(texture,
+			glm::vec2(Pos.x+ kx, Pos.y +ky),
+			glm::vec2(frame.width, frame.height), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+	}
+}

@@ -65,7 +65,7 @@ public:
 		m_Pos.y = static_cast<int>(pos.y - m_Height / 2.f);
 	}
 	void OnUpdate();
-	void OnUpdateOld();
+	void OnUpdateNew();
 	void Draw();
 	void DrawCenter(float x, float y);
 	bool IsNextFrameRestart(){return m_bIsNextFrameRestart;};
@@ -101,7 +101,47 @@ private:
 	float m_FrameTime;
 	Sprite* m_pSprite;
 	uint64_t m_ResourceID;
+};
 
+
+class BaseSprite
+{
+
+public:
+	struct Frame
+	{
+		int KeyX;
+		int KeyY;
+		int Width;
+		int Height;
+	};
+	using FrameVector = std::vector<Frame>;
+
+	BaseSprite(uint64_t resoureID = 0);
+	BaseSprite(uint32_t pkg, uint32_t wasID);
+	~BaseSprite();
+	
+	void Update();
+	
+	void Draw();
+
+	int DirCnt;
+	int TotalFrames;
+	int CurrentFrame;
+	int GroupFrameCount;
+	int GroupCount;
+	
+	int Width;
+	int Height;
+	int KeyX;
+	int KeyY;
+
+	int Dir;
+	Pos Pos;
+	FrameVector Frames;
+	Sprite* m_pSprite;
+	float FrameInterval;
+	float PlayTime;
 };
 
 void lua_push_frame_animation(lua_State*L, FrameAnimation* frame_anim);

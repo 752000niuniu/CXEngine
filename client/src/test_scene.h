@@ -30,3 +30,19 @@ public:
 };
 
 
+
+class AnimationEditorScene : public BaseScene
+{
+public:
+	AnimationEditorScene(int id, String name);
+	virtual ~AnimationEditorScene();
+	void OnLoad() override {};
+	void OnUnLoad() override {};
+	void Update() override;
+	void Draw() override;
+	void Reset();
+
+};
+
+
+

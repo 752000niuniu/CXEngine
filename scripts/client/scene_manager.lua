@@ -34,10 +34,6 @@ function on_scene_manager_init()
     -- scene_set_player("oceancx",10,10,3,15)
     -- 3200 1692 
     -- 66 67
-
-    
-    script_system_dofile('scene/test_net_scene.lua')
-    
 end
 
 function on_scene_manager_update()
