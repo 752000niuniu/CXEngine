@@ -137,3 +137,15 @@ std::vector<std::string> FileSystem::ListAllFiles(std::string path)
     return {};
 #endif
 }
+
+
+std::string fs_get_tsv_path(const char* name)
+{
+	return FileSystem::GetTSVPath(name);
+}
+
+void luaopen_filesystem(lua_State*L)
+{
+	script_system_register_function(L, fs_get_tsv_path);
+
+}

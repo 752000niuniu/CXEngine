@@ -16,7 +16,27 @@ local scene_lua_files =
     {name='test_net' ,          file= 'scene/test_net_scene.lua'}
 }
 
+local scene_list = {}
+local current_scene_name = 'default'
+
+    
 function on_scene_manager_init()
+    local parsed_tsv = utils_parse_tsv_file_as_table(fs_get_tsv_path('map'),false)
+    for i,row in ipairs(parsed_tsv) do
+        scene_manager_add_scene(tonumber( row.ID), row.name)
+    end
+
+    scene_manager_add_scene(-1, "BattleScene");
+	scene_manager_add_scene(-100, "Splash");
+	scene_manager_add_scene(-101, "WASViewer");
+	scene_manager_add_scene(-102, "UIScene");
+	scene_manager_add_scene(-103, "TestScene");
+	scene_manager_add_scene(-104, "default");
+    scene_manager_add_scene(-105, "AnimationEditor");
+
+
+    -- m_MapTSV(utils::tsv(FileSystem::GetTSVPath("map"))),
+
     -- for i=1,10,1 do
     --     scene_add_npc(19,0x49386FCE , s.. tostring(i), x,y,0,3,15, sayings[i])
     -- end
@@ -38,12 +58,12 @@ function on_scene_manager_init()
 
         local fun,err = loadfile(path,'bt',module)
         if fun then
-            local res = fun()
-            local x = 'xx'
+            fun()
+            scene_list[v.name] = module
         end
     end
 
-    -- scene_manager_switch_scene_by_name(DefaultSceneName)
+    scene_manager_switch_scene_by_name(current_scene_name)
 end
 
 function on_scene_manager_update()
@@ -52,4 +72,17 @@ end
 
 function on_scene_manager_draw()
     
+end
+
+
+function on_scene_init()
+    scene_list[current_scene_name].on_scene_init()
+end
+
+function on_scene_update()
+    scene_list[current_scene_name].on_scene_update()
+end 
+
+function on_scene_draw()
+    scene_list[current_scene_name].on_scene_draw()
 end

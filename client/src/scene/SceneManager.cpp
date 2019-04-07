@@ -42,26 +42,6 @@ m_SwitchingScene(false)
 		station.was = std::stoul(row.at("was"), 0, 16);
 		m_TransportStations.insert({ station.uuid, station });
 	}
-
-	//TODO move this to lua
-	for (const auto& row : m_MapTSV.Rows)
-	{
-		int id = std::stoi(row.at("ID"));
-		String name = row.at("name");
-		Scene* scene = new Scene(id, name);
-		scene->ApplyTemplate(row);
-		AddScene(scene);
-	}
-
-	
-	AddScene(new BattleScene(-1, "BattleScene"));
-	AddScene(new SplashScene(-100, "Splash"));
-	AddScene(new WASViewerScene(-101, "WASViewer"));
-	AddScene(new UIScene(-102, "UIScene"));
-	AddScene(new TestScene(-103, "TestScene"));
-	AddScene(new TestNetScene(-104, "TestNetScene"));
-
-	AddScene(new AnimationEditorScene(-105, "AnimationEditor"));
 }
 
 SceneManager::~SceneManager()
@@ -490,13 +470,46 @@ void scene_manager_switch_scene_by_name(const char* name)
 {
 	SCENE_MANAGER_INSTANCE->SwitchScene(name);
 }
+
+void scene_manager_add_scene(int id , const char* name)
+{
+	SCENE_MANAGER_INSTANCE->AddScene(new Scene( id , name ));
+}
+
+void scene_manager_add_custom_scene(const char* type, int id, const char* name)
+{
+	if (strcmp(type, "BattleScene") == 0) {
+		SCENE_MANAGER_INSTANCE->AddScene(new BattleScene(id, name));
+	}
+	else if (strcmp(type, "Splash") == 0) {
+		SCENE_MANAGER_INSTANCE->AddScene(new SplashScene(id, name));
+	}
+	else if (strcmp(type, "WASViewer") == 0) {
+		SCENE_MANAGER_INSTANCE->AddScene(new WASViewerScene(id, name));
+	}
+	else if (strcmp(type, "UIScene") == 0) {
+		SCENE_MANAGER_INSTANCE->AddScene(new UIScene(id, name));
+	}
+	else if (strcmp(type, "TestScene") == 0) {
+		SCENE_MANAGER_INSTANCE->AddScene(new TestScene(id, name));
+	}
+	else if (strcmp(type, "TestNetScene") == 0) {
+		SCENE_MANAGER_INSTANCE->AddScene(new TestNetScene(id, name));
+	}
+	else if (strcmp(type, "AnimationEditor") == 0) {
+		SCENE_MANAGER_INSTANCE->AddScene(new AnimationEditorScene(id, name));
+	}
+}
+
+
 void luaopen_scene_manager(lua_State* L)
 {
 	script_system_register_function(L, scene_manager_init);
 	script_system_register_function(L, scene_manager_update);
 	script_system_register_function(L, scene_manager_draw);
 	script_system_register_function(L, scene_manager_deinit);
-
+	script_system_register_function(L, scene_manager_add_scene);
+	
 	script_system_register_function(L, scene_manager_switch_scene_by_name);
 
 	script_system_register_function(L, scene_set_player);

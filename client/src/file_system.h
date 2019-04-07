@@ -27,3 +27,4 @@ public:
 	static std::vector<std::string> ListAllFiles(std::string path);
 };
 
+void luaopen_filesystem(lua_State*L);

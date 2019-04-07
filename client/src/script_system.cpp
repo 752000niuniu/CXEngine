@@ -50,6 +50,7 @@ void script_system_prepare_init()
 	luaopen_luadbg(L);
 	luaL_requirelib(L, "cjson", luaopen_cjson);
 	luaopen_script_system(L);
+	luaopen_filesystem(L);
 	luaopen_imgui(L);
 	luaopen_logger(L);
 	luaopen_ne_support(L);
