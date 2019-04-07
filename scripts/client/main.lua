@@ -4,22 +4,14 @@ SCREEN_HEIGHT = 600
 DefaultMapID = 1001
 
 script_system_dofile 'utils.lua'
-
-script_system_dofile('scene/test_net_scene.lua')
-script_system_dofile('scene/animation_editor.lua')
-
 script_system_dofile 'scene_manager.lua'
-script_system_dofile 'scene.lua'
 script_system_dofile 'table_template.lua'
 --script_system_dofile 'debugger.lua'
 
 IsCombat = false
--- DefaultSceneName = "门派_方寸山全景"
--- DefaultSceneName = "UIScene"
--- DefaultSceneName = "WASViewer"
-DefaultSceneName = "TestNetScene"
 
-luadbg_start(9527)
+
+luadbg_listen(9527)
 
 --聊天背景框 wzife 39D3BD99 
 function main()
@@ -41,7 +33,6 @@ function on_script_system_init()
 end
 
 function on_script_system_update()
-    luadbg_update()
     net_manager_update()
     timer_manager_update()
     resource_manager_update()

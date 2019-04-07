@@ -5,7 +5,7 @@
 
 
 CubeBatch::CubeBatch()
-	:Singleton<CubeBatch>()
+	:Singleton<CubeBatch>() 
 	, m_CubeQueue()
 	, m_pShader(nullptr)
 	, vertices3D({{

@@ -126,8 +126,17 @@ any script_system_get_globle(const char* name)
 	return v;
 }
 
+const char* lua_file_path(const char* luafile)
+{
+	static std::string v;
+	v = FileSystem::GetLuaPath(luafile);
+	return v.c_str();
+}
+
 void luaopen_script_system(lua_State* L)
 {
 	script_system_register_function(L, script_system_dofile);
 	script_system_register_function(L, script_system_get_config);
+
+	script_system_register_function(L, lua_file_path);
 }

@@ -449,11 +449,7 @@ void scene_add_player_by_templ_name(const char* templ_name, int actorType)
 void scene_manager_init()
 {
 	SCENE_MANAGER_INSTANCE->Init();
-	const char* defaultSceneName = script_system_get_globle<const char* >("DefaultSceneName");
-	if (defaultSceneName)
-	{
-		SCENE_MANAGER_INSTANCE->SwitchScene(defaultSceneName);
-	}
+	
 }
 
 void scene_manager_update()

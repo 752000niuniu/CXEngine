@@ -37,11 +37,10 @@ m_bSkillFrameShow(false),
 m_SkillFrame(nullptr),
 m_IsLocalPlayer(false),
 m_IsAutoRun(false),
-m_FrameSpeed(0.128f)
+m_FrameSpeed(0.080f)
 {
 	m_ActorType = ACTOR_TYPE_PLAYER;
 	
-
 	m_pFSM = new StateMachine<Player>(this);
 	m_pFSM->SetCurrentState(PlayerIdleState::GetInstance());
 	m_pFSM->SetGlobalState(PlayerCombatGlobalState::GetInstance());

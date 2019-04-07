@@ -393,7 +393,7 @@ function _parse_npc_row(strs,WASID)
     local row = find_avatar_table_row(avatar_npc_table,"NPC_".._name)
     row.name = _name
     row.ID = "NPC_".._name
-    local action_key = find_action_key(_action)
+    local action_key = find_action_key(_action) 
     if action_key then
         row[action_key] = WASID
         return true    

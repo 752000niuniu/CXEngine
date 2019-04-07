@@ -2,6 +2,9 @@ local cjson = require("cjson")
 local imgui = require("imgui")
 
 --local map_tsv_json = utils_parse_tsv_file("map")
+exports.what = function()
+    print('what')
+end
 
 function on_scene_init()
     local s  = "Ocean藏心"
@@ -93,10 +96,8 @@ local s_Account = 'oceancx11'
 local PosXY = '200,2790'
 function on_scene_update()
     -- imgui.Text("TestImGUI")
-
     -- imgui.Begin("[Scene22]", 0, 0);
 
-	
 	imgui.Text("Nickname   :");
 	imgui.SameLine();
 	s_Account = imgui.InputText("##account", s_Account, 1024);
@@ -135,11 +136,6 @@ function on_scene_update()
     if old_speed~= move_speed then
         player_set_move_speed(move_speed)
     end
-
-    print('frame', frame_speed, ' move', move_speed)
-
-
-    
 
 end 
 

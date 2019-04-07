@@ -24,3 +24,5 @@ Debug/
 res/data
 *.exe
 *.log
+.vscode/ipch
+

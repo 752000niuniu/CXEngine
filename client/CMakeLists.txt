@@ -10,11 +10,11 @@ find_package(freetype CONFIG)
 find_package(IMGui)
 
 file(GLOB_RECURSE  SOURCES_CPP "src/*.cpp")
-file(GLOB_RECURSE  SOURCES_HEADER_PRI "src/*.h" )
+file(GLOB_RECURSE  SOURCES_HEADER_PRI "src/*.h"  "src/*.hpp" "src/*.inl")
 file(GLOB_RECURSE  PRIVATE_HEADERS "src/*.h" "src/*.hpp" "src/*.inl")
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "Source Files"  FILES ${SOURCES_CPP})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "Header Files"  FILES ${SOURCES_HEADER_PRI})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "Source Files"  FILES ${SOURCES_HEADER_PRI})
 
 add_executable(SimpleEngine
     ${PRIVATE_HEADERS}
