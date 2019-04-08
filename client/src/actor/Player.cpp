@@ -19,24 +19,10 @@
 
 
 Player::Player(int roleID):
+Actor(roleID),
 BaseGameEntity(),
-m_RoleID(roleID),
-m_NickName(""),
-m_WeaponID(-1),
-m_ActionID(Action::Idle),
 m_pFSM(nullptr),
-m_Pos(0,0),
-m_MoveToPos(0,0),
-m_Dir(Direction::S),
-m_IsMove(false),
-m_MoveVelocity(150),
-m_bInCombat(false),
-m_TargetID(-1),
-m_bSkillFrameShow(false),
-m_SkillFrame(nullptr),
-m_IsLocalPlayer(false),
-m_IsAutoRun(false),
-m_FrameSpeed(0.080f)
+m_SkillFrame(nullptr)
 {
 	m_ActorType = ACTOR_TYPE_PLAYER;
 	
@@ -383,18 +369,12 @@ void Player::OnDraw(int px,int py)
 
 			m_SayWidget->X = px - bgWidth / 2 +10 ;
 			m_SayWidget->Y = py - player.GetHeight() + 20 - bgHeight ;
-
-
 		}
 		m_SayWidget->OnDraw();
 	}
 }
 
-void Player::SetPos(float x, float y)
-{
-	m_Pos.x = x;
-	m_Pos.y = y;
-}
+
 
 void Player::SetBox()
 {
@@ -765,63 +745,4 @@ Pet::~Pet()
 
 }
 
-void lua_push_actor(lua_State*L, Player* actor)
-{
-	Player** ptr = (Player**)lua_newuserdata(L, sizeof(Player*));
-	*ptr = actor;
-	luaL_setmetatable(L, "mt_actor");
-}
 
-Player* lua_check_actor(lua_State*L, int index)
-{
-	Player** ptr = (Player**)lua_touserdata(L, index);
-	return *ptr;
-}
-
-
-int actor_method_set_property(lua_State* L)
-{
-	return 0;
-}
-
-int actor_method_get_property(lua_State* L)
-{
-	return 0;
-}
-
-luaL_Reg mt_actor[] = {
-	{ "SetProperty",actor_method_set_property },
-	{ "GetProperty",actor_method_get_property },
-	{ NULL, NULL }
-};
-
-
-void player_set_frame_speed(int frame_speed)
-{
-	Player* player = SCENE_MANAGER_INSTANCE->GetCurrentScene()->GetLocalPlayer();
-	if (player) {
-		player->SetFrameSpeed(frame_speed);
-	}
-}
-
-void player_set_move_speed(int move_speed)
-{
-	Player* player = SCENE_MANAGER_INSTANCE->GetCurrentScene()->GetLocalPlayer();
-	if (player) {
-		player->SetVelocity(move_speed);
-	}
-}
-
-
-void luaopen_actor(lua_State* L)
-{
-	script_system_register_function(L, player_set_frame_speed);
-	script_system_register_function(L ,player_set_move_speed);
-	if (luaL_newmetatable(L, "mt_actor")) {
-		luaL_setfuncs(L, mt_actor, 0);
-		lua_setfield(L, -1, "__index");
-	}
-	else {
-		std::cout << "associate mt_net_thread_queue error!" << std::endl;
-	}
-}

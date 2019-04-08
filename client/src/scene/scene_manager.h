@@ -2,13 +2,7 @@
 
 #include "define_types.h"
 #include "tsv.h"
-#include "actor/Player.h"
-
-/*
-负责场景切换，添加 移除 等等
-*/
-class Scene;
-class BaseScene;
+#include "scene.h"
 
 struct TransportStation
 {
