@@ -633,7 +633,6 @@ void Player::LoadRoleFrame()
 			else
 			{
 				delete it->second;
-
 			}
 		}
 	}

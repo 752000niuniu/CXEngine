@@ -286,7 +286,6 @@ void SceneManager::DrawImGUI()
 	}
 	ImGui::SameLine();
 	ImGui::SliderInt("##actor_type", &s_copy_actor_type,1,3);
-	
 
 	if (ImGui::CollapsingHeader("PlayAction"))
 	{
@@ -476,27 +475,27 @@ void scene_manager_add_scene(int id , const char* name)
 	SCENE_MANAGER_INSTANCE->AddScene(new Scene( id , name ));
 }
 
-void scene_manager_add_custom_scene(const char* type, int id, const char* name)
+void scene_manager_add_custom_scene(int id, const char* name)
 {
-	if (strcmp(type, "BattleScene") == 0) {
+	if (strcmp(name, "BattleScene") == 0) {
 		SCENE_MANAGER_INSTANCE->AddScene(new BattleScene(id, name));
 	}
-	else if (strcmp(type, "Splash") == 0) {
+	else if (strcmp(name, "Splash") == 0) {
 		SCENE_MANAGER_INSTANCE->AddScene(new SplashScene(id, name));
 	}
-	else if (strcmp(type, "WASViewer") == 0) {
+	else if (strcmp(name, "WASViewer") == 0) {
 		SCENE_MANAGER_INSTANCE->AddScene(new WASViewerScene(id, name));
 	}
-	else if (strcmp(type, "UIScene") == 0) {
+	else if (strcmp(name, "UIScene") == 0) {
 		SCENE_MANAGER_INSTANCE->AddScene(new UIScene(id, name));
 	}
-	else if (strcmp(type, "TestScene") == 0) {
+	else if (strcmp(name, "TestScene") == 0) {
 		SCENE_MANAGER_INSTANCE->AddScene(new TestScene(id, name));
 	}
-	else if (strcmp(type, "TestNetScene") == 0) {
+	else if (strcmp(name, "TestNetScene") == 0) {
 		SCENE_MANAGER_INSTANCE->AddScene(new TestNetScene(id, name));
 	}
-	else if (strcmp(type, "AnimationEditor") == 0) {
+	else if (strcmp(name, "AnimationEditor") == 0) {
 		SCENE_MANAGER_INSTANCE->AddScene(new AnimationEditorScene(id, name));
 	}
 }
@@ -509,7 +508,8 @@ void luaopen_scene_manager(lua_State* L)
 	script_system_register_function(L, scene_manager_draw);
 	script_system_register_function(L, scene_manager_deinit);
 	script_system_register_function(L, scene_manager_add_scene);
-	
+	script_system_register_function(L, scene_manager_add_custom_scene);
+
 	script_system_register_function(L, scene_manager_switch_scene_by_name);
 
 	script_system_register_function(L, scene_set_player);

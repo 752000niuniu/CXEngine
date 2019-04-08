@@ -12,6 +12,7 @@
 		"iostream": "cpp",
 		"iosfwd": "cpp",
 		"map": "cpp",
-		"deque": "cpp"
+		"deque": "cpp",
+		"xstring": "cpp"
 	}
 }

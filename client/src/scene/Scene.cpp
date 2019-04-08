@@ -257,6 +257,7 @@ void Scene::ProcessInput()
 
 void Scene::Draw()
 {
+	if (m_Map== NULL)return;
 	script_system_call_function(script_system_get_luastate(),"on_scene_draw");
 	
 	//先画一遍地图

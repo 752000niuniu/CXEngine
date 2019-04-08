@@ -13,7 +13,6 @@ local PosXY = '200,2790'
 function on_scene_update()
     -- imgui.Text("TestImGUI")
     -- imgui.Begin("[Scene22]", 0, 0);
-
 	imgui.Text("Nickname   :");
 	imgui.SameLine();
 	s_Account = imgui.InputText("##account", s_Account, 1024);
@@ -27,6 +26,7 @@ function on_scene_update()
     end
 
     if (imgui.Button("EnterGame")) then 
+        scene_manager_switch_scene_by_name(DefaultSceneName)
 		scene_send_login_message(s_Account,PosXY)
     end
 		
