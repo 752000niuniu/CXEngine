@@ -1,13 +1,13 @@
 #include "Engine.h"	
 #include "core/Texture.h"
-#include "SpriteBatch.h"
-#include "CubeBatch.h"
-#include "InputManager.h"
+#include "sprite_batch.h"
+#include "cube_batch.h"
+#include "input_manager.h"
 #include "script_system.h"
-#include "scene/SceneManager.h"
-#include "scene/SplashScene.h"
+#include "scene/scene_manager.h"
+#include "scene/splash_scene.h"
 #include "Window.h"
-#include "ResourceManager.h"
+#include "resource_manager.h"
 
 Engine::Engine()
 :m_DeltaTime(0),m_LastTime(0)

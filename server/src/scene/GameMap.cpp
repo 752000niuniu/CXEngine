@@ -1,4 +1,4 @@
-#include "GameMap.h"
+#include "game_map.h"
 
 #include <functional>
 #include <thread>

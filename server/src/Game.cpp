@@ -1,7 +1,7 @@
 #include "Game.h"	
 #include "script_system.h"
-#include "scene/SceneManager.h"
-#include "scene/BaseScene.h"
+#include "scene/scene_manager.h"
+#include "scene/base_scene.h"
 #include "file_system.h"
 #include "actor/Action.h"
 #include <stdint.h>

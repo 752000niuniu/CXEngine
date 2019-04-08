@@ -1,8 +1,8 @@
 #pragma once
 
-#include "GameMap.h"
+#include "game_map.h"
 #include "../actor/Player.h"
-#include "BaseScene.h"
+#include "base_scene.h"
 
 using String = std::string;
 /*

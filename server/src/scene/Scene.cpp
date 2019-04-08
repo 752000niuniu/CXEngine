@@ -3,7 +3,7 @@
 #include "Logger.h"
 #include "cxrandom.h"
 #include "script_system.h"
-#include "SceneManager.h"
+#include "scene_manager.h"
 #include "cxmath.h"
 #include "actor/action.h"
 #include <algorithm>

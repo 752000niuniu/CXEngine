@@ -2,11 +2,11 @@
 #include "../Engine.h"
 #include "../global.h"
 #include "../Message.h"
-#include "../animation/FrameAnimation.h"
+#include "../animation/frame_animation.h"
 #include "Skill.h"
-#include "../actor/PlayerState.h"
+#include "../actor/player_state.h"
 #include "../core/Renderer.h"
-#include "InputManager.h"
+#include "input_manager.h"
 
 static	FrameAnimation* s_CombatBG;
 CombatSystem::CombatSystem()

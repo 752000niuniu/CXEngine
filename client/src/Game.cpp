@@ -1,8 +1,8 @@
 #include "Game.h"	
 #include "script_system.h"
 #include "Window.h"
-#include "scene/SceneManager.h"
-#include "scene/BaseScene.h"
+#include "scene/scene_manager.h"
+#include "scene/base_scene.h"
 #include "../server/src/file_system.h"
 
 Game::Game()

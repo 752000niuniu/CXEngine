@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../Entity.h"
-#include "../Components/BaseComponent.h"
-#include "../Components/TransformComponent.h"
+#include "../Components/base_component.h"
+#include "../Components/transform_component.h"
 
 class BaseComponent;
 

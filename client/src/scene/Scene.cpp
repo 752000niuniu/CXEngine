@@ -1,6 +1,6 @@
 #include "Scene.h"
 
-#include "../animation/FrameAnimation.h"
+#include "../animation/frame_animation.h"
 #include "Logger.h"
 #include "cxrandom.h"
 #include "../core/Renderer.h"
@@ -8,13 +8,13 @@
 #include "../combat/Combat.h"
 #include "script_system.h"
 #include "profile.h"
-#include "SceneManager.h"
-#include "InputManager.h"
+#include "scene_manager.h"
+#include "input_manager.h"
 #include "cxmath.h"
 #include "actor/action.h"
 #include "combat/Skill.h"
-#include "ResourceManager.h"
-#include "actor/PlayerState.h"
+#include "resource_manager.h"
+#include "actor/player_state.h"
 #include <algorithm>
 #include "net.h"
 #include "script_system.h"
@@ -88,7 +88,7 @@ void Scene::OnLoad()
 	
 	m_ShowSmap = false;
 
-	script_system_call_function(script_system_get_luastate(),"on_scene_init");
+	
 
 	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_MOUSE_BUTTON_LEFT, [this]() {
 		if (SCENE_MANAGER_INSTANCE->IsHoverImGui()) return;
@@ -169,8 +169,6 @@ void Scene::OnSmapClick(float x, float y, float w, float h)
 
 void Scene::Update()
 {
-	script_system_call_function(script_system_get_luastate(),"on_scene_update");
-	
 	float dt = WINDOW_INSTANCE->GetDeltaTime();
 
 	for (auto& it : s_TranportCircles)
@@ -258,7 +256,6 @@ void Scene::ProcessInput()
 void Scene::Draw()
 {
 	if (m_Map== NULL)return;
-	script_system_call_function(script_system_get_luastate(),"on_scene_draw");
 	
 	//先画一遍地图
 	if (SCENE_MANAGER_INSTANCE->IsDrawMap()&& m_Map)

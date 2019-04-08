@@ -3,7 +3,7 @@
 #include "Singleton.h"
 #include "file_system.h" 
 #include "Logger.h"
-#include "scene/SceneManager.h"
+#include "scene/scene_manager.h"
 //#include "debugger.h"
 
 static lua_State* L = nullptr;

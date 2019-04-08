@@ -14,9 +14,9 @@
 #include "ezio/connector.h"
 #include "ezio/tcp_client.h"
 
-#include "scene/BaseScene.h"
+#include "scene/base_scene.h"
 #include "kbase/pickle.h"
-#include "scene/SceneManager.h"
+#include "scene/scene_manager.h"
 
 using namespace ezio;
 

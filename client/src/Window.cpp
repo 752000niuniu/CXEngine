@@ -3,14 +3,14 @@
 #include "global.h"
 #include "core/Shader.h"
 #include "file_system.h"
-#include "InputManager.h"
+#include "input_manager.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "Time/Time.h"
 #include "script_system.h"
-#include "InputManager.h"
-#include "ne_wrapper.h"
+#include "input_manager.h"
+#include "file_loading.h"
 
 static const float MS_PER_UPDATE = 1000 / 60.f / 1000;
 
@@ -220,9 +220,16 @@ void window_system_set_floating(int opt, int value)
 	WINDOW_INSTANCE;
 	glfwWindowHint(opt, value);
 }
+
+float window_system_get_dt()
+{
+	return WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
+}
+
 void luaopen_window(lua_State* L)
 {
 	script_system_register_function(L, window_system_init);
 	script_system_register_function(L, window_system_show);
 	script_system_register_function(L, window_system_set_floating);
+	script_system_register_function(L, window_system_get_dt);
 }

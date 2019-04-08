@@ -2,8 +2,8 @@
 
 
 #include "Singleton.h"
-#include "IUpdateDraw.h"
-#include "Time/TimerManager.h"
+#include "i_update_draw.h"
+#include "time/timer_manager.h"
 
 class Engine : public Singleton<Engine>
 {

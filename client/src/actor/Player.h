@@ -2,14 +2,14 @@
 
 
 #include "Pos.h"
-#include "../scene/GameMap.h"
+#include "../scene/game_map.h"
 #include "tsv.h"
 #include "Logger.h"
 #include "../animation/animation_database.h"
-#include "../animation/FrameAnimation.h"
+#include "../animation/frame_animation.h"
 #include "../State.h"
 #include "ui.h"
-#include "ResourceManager.h"
+#include "resource_manager.h"
 
 #include "action.h"
 

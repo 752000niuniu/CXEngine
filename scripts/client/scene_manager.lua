@@ -54,24 +54,18 @@ function on_scene_manager_init()
     end
 
     scene_manager_switch_scene_by_name(current_scene_name)
-end
-
-function on_scene_manager_update()
-
-end
-
-function on_scene_manager_draw()
     
 end
 
-function on_scene_init()
-    scene_list[current_scene_name].on_scene_init()
+function on_scene_manager_init_scene()
+    scene_list[current_scene_name].OnSceneInit() 
 end
 
-function on_scene_update()
-    scene_list[current_scene_name].on_scene_update()
-end 
-
-function on_scene_draw()
-    scene_list[current_scene_name].on_scene_draw()
+function on_scene_manager_update()
+    scene_list[current_scene_name].OnSceneUpdate()
 end
+
+function on_scene_manager_draw()
+    scene_list[current_scene_name].OnSceneDraw()
+end
+

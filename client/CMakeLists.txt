@@ -19,72 +19,65 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "Source Files"  FILES $
 add_executable(SimpleEngine
     ${PRIVATE_HEADERS}
     src/actor/action.cpp
-    src/actor/Actor.cpp
-    src/actor/ActorManager.cpp
-    src/actor/Player.cpp
-    src/actor/PlayerState.cpp
+    src/actor/actor.cpp
+    src/actor/actor_manager.cpp
+    src/actor/player.cpp
+    src/actor/player_state.cpp
     src/algorithm.cpp
-    src/animation/FrameAnimation.cpp
-    src/astar/Astar.cpp
-    src/Bitmap.cpp
+    src/animation/frame_animation.cpp
+    src/astar/astar.cpp
+    src/bitmap.cpp
     src/camera.cpp
-    src/combat/Combat.cpp
-    src/combat/Skill.cpp
-    src/Components/BaseComponent.cpp
-    src/Components/TransformComponent.cpp
-    src/core/Graphics2D.cpp
-    src/core/Object2D.cpp
-    src/core/Renderer.cpp
-    src/core/Shader.cpp
-    src/core/Texture.cpp
-    src/core/Transform.cpp
-    src/CubeBatch.cpp
-    #src/debugger.cpp
+    src/combat/combat.cpp
+    src/combat/skill.cpp
+    src/components/base_component.cpp
+    src/components/transform_component.cpp
+    src/core/graphics_2d.cpp
+    src/core/object_2d.cpp
+    src/core/renderer.cpp
+    src/core/shader.cpp
+    src/core/texture.cpp
+    src/core/transform.cpp
+    src/cube_batch.cpp
     src/demo_scene.cpp
-    src/editor/resource_viewer.cpp
-    src/Engine.cpp
-    src/Entity.cpp
+    src/engine.cpp
+    src/entity.cpp
     src/file_system.cpp
-    src/Game.cpp
-    src/ImageLoader.cpp
+    src/game.cpp
     src/imgui_impl_glfw.cpp
     src/imgui_impl_opengl3.cpp
-    src/InputManager.cpp
-    src/Logger.cpp
-    #src/material.cpp
-    #src/mesh.cpp
-    src/Message.cpp
-    #src/model.cpp
+    src/input_manager.cpp
+    src/logger.cpp
+    src/message.cpp
     src/net.cpp
-    src/ne_wrapper.cpp
-    src/Objects/MapObject.cpp
-    src/Objects/Object.cpp
+    src/file_loading.cpp
+    src/objects/map_object.cpp
+    src/objects/object.cpp
     src/profile.cpp
     src/main.cpp
-    src/Resource.cpp
-    src/ResourceManager.cpp
-    src/scene/BaseScene.cpp
-    src/scene/GameMap.cpp
-    src/scene/Scene.cpp
-    src/scene/SceneManager.cpp
-    src/scene/SplashScene.cpp
-    src/scene/UIScene.cpp
-    src/scene/WASViewerScene.cpp
+    src/resource_manager.cpp
+    src/scene/base_scene.cpp
+    src/scene/game_map.cpp
+    src/scene/scene.cpp
+    src/scene/scene_manager.cpp
+    src/scene/splash_scene.cpp
+    src/scene/ui_scene.cpp
+    src/scene/was_viewer_scene.cpp
     src/script_system.cpp
-    src/SpriteBatch.cpp
-    src/SpriteRenderer.cpp
-    src/State.cpp
+    src/sprite_batch.cpp
+    src/sprite_renderer.cpp
+    src/state.cpp
     src/test_scene.cpp
-    src/TextRenderer.cpp
-    src/TextureManager.cpp
-    src/Time/Time.cpp
-    src/Time/TimeManager.cpp
-    src/Time/Timer.cpp
-    src/Time/TimerManager.cpp
+    src/text_renderer.cpp
+    src/texture_manager.cpp
+    src/time/time.cpp
+    src/time/time_manager.cpp
+    src/time/timer.cpp
+    src/time/timer_manager.cpp
     src/tiny_thread_pool.cpp
     src/ui.cpp
     src/vertex.cpp
-    src/Window.cpp
+    src/window.cpp
 )
 
 if(MSVC)

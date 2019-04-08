@@ -1,5 +1,5 @@
-#include "BaseScene.h"
-#include "Scene.h"
+#include "base_scene.h"
+#include "scene.h"
 #include "actor/action.h"
 #include "utils.h"
 using String = std::string;

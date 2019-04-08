@@ -2,12 +2,12 @@
 
 #include "define_types.h"
 
-#include "../IUpdateDraw.h"
+#include "../i_update_draw.h"
 #include "../Event/Event.h"
 #include "core/Texture.h"
-#include "GameMap.h"
+#include "game_map.h"
 #include "../actor/Player.h"
-#include "BaseScene.h"
+#include "base_scene.h"
 
 
 /*

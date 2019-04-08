@@ -1,17 +1,24 @@
 
-function on_test_scene_load()
-end
-
-function on_test_scene_unload()
-end
-
 local s_Account = 'oceancx11'
 local s_Password ='200,2790'
 local TextBuffSize = 1024
 
 local move_speed = 400
 local frame_speed = 0
-function on_test_scene_update(dt)
+
+function OnSceneInit()
+    scene_set_announcement(
+        [[项目地址：github.com/oceancx/SimpleEngine
+        C++/OpenGL/Lua纯手工游戏编程
+        有问题随时提问，QQ群：465885387]])
+    scene_set_chat(
+        [[游戏程序员下班日常#109]]
+    )
+    
+end
+
+function OnSceneUpdate()
+    local dt = window_system_get_dt()
     local res, text 
 	imgui.Text("Nickname   :");
     imgui.SameLine();
@@ -51,4 +58,8 @@ function on_test_scene_update(dt)
     if imgui.Button('printEnv') then
         utils_dump_table(_ENV)
     end
-end 
+end
+
+function OnSceneDraw()
+
+end

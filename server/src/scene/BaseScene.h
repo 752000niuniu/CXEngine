@@ -1,6 +1,6 @@
 #pragma once
-#include "GameMap.h"
-#include "actor/Player.h"
+#include "game_map.h"
+#include "actor/player.h"
 
 /*
 场景对象的基类

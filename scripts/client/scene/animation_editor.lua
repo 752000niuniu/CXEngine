@@ -1,11 +1,12 @@
 
-function on_animation_editor_scene_init()
+function OnSceneInit()
 
 end
 
-function on_animation_editor_scene_update()
+function OnSceneUpdate()
     
-    imgui.Button('fuck')
+end
 
+function OnSceneDraw()
 
 end

@@ -1,19 +1,17 @@
 local cjson = require("cjson")
 local imgui = require("imgui")
 
---local map_tsv_json = utils_parse_tsv_file("map")
-function on_scene_init()
-end
 
+function OnSceneInit()
+
+end
 
 local move_speed = 400.0
 local frame_speed = 0.0
 local s_Account = 'oceancx11'
 local PosXY = '200,2790'
-function on_scene_update()
-    -- imgui.Text("TestImGUI")
-    -- imgui.Begin("[Scene22]", 0, 0);
-	imgui.Text("Nickname   :");
+function OnSceneUpdate()
+    imgui.Text("Nickname   :");
 	imgui.SameLine();
 	s_Account = imgui.InputText("##account", s_Account, 1024);
 	imgui.Text("Pos :");
@@ -52,9 +50,9 @@ function on_scene_update()
     if old_speed~= move_speed then
         player_set_move_speed(move_speed)
     end
+end
 
-end 
-
-function on_scene_draw()
+function OnSceneDraw()
 
 end
+

@@ -3,7 +3,7 @@
 
 #include "define_types.h"
 #include "../actor/Player.h"
-#include "../animation/FrameAnimation.h"
+#include "../animation/frame_animation.h"
 #include "cxrandom.h"
 
 class SkillManager : public Singleton<SkillManager>

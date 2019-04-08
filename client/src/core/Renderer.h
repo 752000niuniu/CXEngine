@@ -7,8 +7,8 @@
 #include "file_system.h"
 #include "Window.h"
 #include "core/Transform.h"
-#include "Object2D.h"
-#include "Graphics2D.h"
+#include "object_2d.h"
+#include "graphics_2d.h"
 #include "singleton.h"
 
 #define RENDER_VERTEX_ARRAY_GEN(VBO,VAO) \
