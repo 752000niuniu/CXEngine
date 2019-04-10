@@ -47,28 +47,10 @@ void player_set_move_speed(int move_speed)
 	}
 }
 
-void lua_push_actor(lua_State*L, Actor* actor)
-{
-	Actor** ptr = (Actor**)lua_newuserdata(L, sizeof(Actor*));
-	*ptr = actor;
-	if (luaL_newmetatable(L, "mt_actor")) {
-		luaL_setfuncs(L, mt_actor, 0);
-		lua_pushvalue(L, -1);
-		lua_setfield(L, -2, "__index");
-	}
-	lua_setmetatable(L, -2);
-}
-
-Actor* lua_check_actor(lua_State*L, int index)
-{
-	Actor** ptr = (Actor**)lua_touserdata(L, index);
-	return *ptr;
-}
-
 int actor_method_set_property(lua_State* L)
 {
 	Actor** ptr = (Actor**)lua_touserdata(L, 1);
-	const char* prop_name = lua_tostring(L,2);
+	const char* prop_name = lua_tostring(L, 2);
 	const char* prop_val = lua_tostring(L, 3);
 	Actor* actor = *ptr;
 	if (strcmp(prop_name, "name") == 0) {
@@ -99,12 +81,32 @@ int actor_destroy(lua_State * L)
 	return 0;
 }
 
+
 luaL_Reg mt_actor[] = {
 	{ "SetProperty",actor_method_set_property },
-	{ "GetProperty",actor_method_get_property },
-	{ "Destroy",actor_destroy},
-	{ NULL, NULL }
+{ "GetProperty",actor_method_get_property },
+{ "Destroy",actor_destroy },
+{ NULL, NULL }
 };
+
+
+void lua_push_actor(lua_State*L, Actor* actor)
+{
+	Actor** ptr = (Actor**)lua_newuserdata(L, sizeof(Actor*));
+	*ptr = actor;
+	if (luaL_newmetatable(L, "mt_actor")) {
+		luaL_setfuncs(L, mt_actor, 0);
+		lua_pushvalue(L, -1);
+		lua_setfield(L, -2, "__index");
+	}
+	lua_setmetatable(L, -2);
+}
+
+Actor* lua_check_actor(lua_State*L, int index)
+{
+	Actor** ptr = (Actor**)lua_touserdata(L, index);
+	return *ptr;
+}
 
 
 int lua_new_actor(lua_State* L)
@@ -128,8 +130,11 @@ int lua_new_actor(lua_State* L)
 }
 
 int actor_get_metatable(lua_State* L){
-	lua_pushstring(L, "mt_actor");
-	lua_rawget(L, LUA_REGISTRYINDEX);
+	if (luaL_newmetatable(L, "mt_actor")) {
+		luaL_setfuncs(L, mt_actor, 0);
+		lua_pushvalue(L, -1);
+		lua_setfield(L, -2, "__index");
+	}
 	return 1;
 }
 

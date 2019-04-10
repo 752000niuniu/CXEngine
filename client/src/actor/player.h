@@ -70,12 +70,10 @@ public:
 	std::list<Pos>& GetMoveList() { return m_MoveList; };
 	std::list<Pos>& GetBackupMoveList() { return m_BackupMoveList; };
 	void LogInfo();
-
 	
 	void Say(std::wstring Text);
 	void Say(std::string Text);
 	bool CanMove();
-	
 
 	void AddTarget(Player* target) { m_Targets.push_back(target); }
 	std::vector<Player*> GetTargets() { return m_Targets; }

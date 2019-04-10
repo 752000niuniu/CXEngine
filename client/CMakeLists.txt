@@ -82,6 +82,7 @@ add_executable(SimpleEngine
 
 if(MSVC)
     target_compile_options(SimpleEngine PRIVATE /wd4819 )
+    
 #   target_compile_options(SimpleEngine PRIVATE /W4 /WX /wd4324 /wd4201 /wd4819 /wd4267)
 else()
 #   target_compile_options(SimpleEngine PRIVATE -Wall -Wextra -pedantic -Werror)
@@ -116,6 +117,7 @@ target_compile_definitions(SimpleEngine
     -DZLIB_WINAPI
     -DNOMINMAX
     -DUNICODE
+    -D_UNICODE
     -DWIN32_LEAN_AND_MEAN
     -D_WIN32_WINNT=0x0501
 )
