@@ -1,6 +1,6 @@
 #include "profile.h"
 #include "Time/Time.h"
-#include "Logger.h"
+#include "logger.h"
 
 
 Profiler::Profiler()

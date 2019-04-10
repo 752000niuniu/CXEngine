@@ -1,16 +1,15 @@
 #include "game_map.h"
 
-#include <SOIL.h>
-#include "Window.h"
+#include "window.h"
 #include <functional>
 #include <thread>
 #include "profile.h"
 #include "file_loading.h"
-#include "NESupport.h"
 #include "cxrandom.h"
 #include "file_system.h"
 #include "sprite_renderer.h"
 #include "cxmath.h"
+#include "SOIL.h"
 
 GameMap::GameMap(uint32 mapID)
 	:m_XyqMap(nullptr)

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "define_types.h"
-#include "Singleton.h"
+#include "singleton.h"
 
 
 class BaseGameEntity;

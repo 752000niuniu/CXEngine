@@ -1,20 +1,14 @@
 #pragma once
 
 
-#include "Pos.h"
-#include "../scene/game_map.h"
-#include "tsv.h"
-#include "Logger.h"
-#include "../animation/animation_database.h"
-#include "../animation/frame_animation.h"
-#include "../State.h"
-#include "ui.h"
-#include "resource_manager.h"
-
+#include "pos.h"
+#include "entity.h"
 #include "action.h"
 #include "actor.h"
-
-
+#include "scene/game_map.h"
+#include "animation/frame_animation.h"
+#include "state.h"
+#include "ui.h"
 
 class Player : public Actor, public BaseGameEntity
 {

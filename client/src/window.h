@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Game.h"
-#include "Singleton.h"
+#include "game.h"
+#include "singleton.h"
 
 class Window : public Singleton<Window>
 {

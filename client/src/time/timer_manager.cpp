@@ -1,8 +1,8 @@
 #include "timer_manager.h"
-#include "Timer.h"
+#include "timer.h"
 #include <algorithm>
 
-#include "../Logger.h"
+#include "logger.h"
 #include "script_system.h"
 
 

@@ -1,6 +1,6 @@
 #include "map_object.h"
-#include "../Engine.h"
-#include "core/Texture.h"
+#include "../engine.h"
+#include "core/texture.h"
 #include "sprite_batch.h"
 #include "cube_batch.h"
 #include "input_manager.h"

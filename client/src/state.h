@@ -1,7 +1,7 @@
 #pragma once
 
 #include "define_types.h"
-#include "Entity.h"
+#include "entity.h"
 
 template <class EntityType>
 class State
@@ -14,15 +14,6 @@ public:
 	virtual ~State(){};
 };
 
-// class AttackState : public State
-// {
-// public:
-	
-// 	void OnExecute()
-// 	{
-
-// 	}
-// }
 
 template <class EntityType>
 class StateMachine

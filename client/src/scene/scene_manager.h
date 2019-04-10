@@ -1,7 +1,7 @@
 #pragma once
 
-#include "define_types.h"
-#include "tsv.h"
+#include <define_types.h>
+#include <tsv.h>
 #include "scene.h"
 
 struct TransportStation

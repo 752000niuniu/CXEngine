@@ -1,12 +1,12 @@
 #pragma once
 
+#include <NESupport.h>
+#include "astar/heap.h"
+#include "astar/astar.h"
 
-#include "../astar/Heap.h"
-#include "../astar/Astar.h"
-
-#include "../image.h"
+#include "image.h"
 #include "pos.h"
-#include "core/Texture.h"
+#include "core/texture.h"
 
 /*
 游戏地图类的封装

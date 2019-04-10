@@ -1,8 +1,6 @@
-#include "Skill.h"
-#include "../Engine.h"
-#include "../global.h"
-#include "../Message.h"
+#include "skill.h"
 #include "file_system.h"
+#include <tsv.h>
 
 SkillManager::SkillManager()
 {

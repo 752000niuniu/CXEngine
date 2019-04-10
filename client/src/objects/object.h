@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Entity.h"
+#include "../entity.h"
 #include "../Components/base_component.h"
 #include "../Components/transform_component.h"
 

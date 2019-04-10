@@ -8,7 +8,7 @@
 #include "test_scene.h"
 #include "Scene.h"
 #include "input_manager.h"
-#include "Game.h"
+#include "game.h"
 #include "cxmath.h"
 #include "file_system.h"
 
@@ -292,16 +292,16 @@ void SceneManager::DrawImGUI()
 
 	if (ImGui::CollapsingHeader("PlayAction"))
 	{
-		for (size_t i = 0; i < s_ActionSet.size(); i++)
+		for (size_t i = 0; i < action_get_size(); i++)
 		{
-			if (ImGui::Button(s_ActionSet[i].c_str()))
+			if (ImGui::Button(action_get_name((int)i).c_str()))
 			{
 				if (m_Player != nullptr)
 				{
 					m_Player->SetActionID((int)i);
 				}
 			}
-			if (i != s_ActionSet.size() - 1) ImGui::SameLine();
+			if (i != (int)action_get_size()- 1) ImGui::SameLine();
 		}
 	}
 

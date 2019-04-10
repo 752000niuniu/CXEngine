@@ -30,10 +30,10 @@ public:
 	void SetWeaponID(int weapon) { m_WeaponID = weapon; }
 	int GetWeaponID() { return m_WeaponID; }
 
-
 	void SetPos(float x, float y) { m_Pos.x = x; m_Pos.y = y; };
 	void SetPos(Pos p) { m_Pos = p; };
 	Pos GetPos() { return m_Pos; };
+
 	Pos GetMoveToPos() { return m_MoveToPos; };
 
 	void SetCombatPos(float x, float y) { m_CombatPos.x = x; m_CombatPos.y = y; };
@@ -43,35 +43,37 @@ public:
 	void SetCombatBackupPos(Pos pos) { m_CombatPosBackup = pos; };
 	Pos GetCombatBackupPos() { return m_CombatPosBackup; };
 
+	void SetCombatTargetPos(Pos pos) { m_CombatTargetPos = pos; };
 	Pos GetCombatTargetPos() { return m_CombatTargetPos; };
-
 	
 	void SetBoxX(int x) { m_Box.x = x; };
 	void SetBoxY(int y) { m_Box.y = y; }
-	int GetX() { return static_cast<int>(m_Pos.x); }
-	int GetY() { return  static_cast<int>(m_Pos.y); }
-
 	int GetBoxX() { return static_cast<int>(m_Pos.x / 20); }
 	int GetBoxY() { return static_cast<int>(m_Pos.y / 20); }
 
+	int GetX() { return static_cast<int>(m_Pos.x); }
+	int GetY() { return  static_cast<int>(m_Pos.y); }
 	void SetX(float x) { m_Pos.x = x; }
 	void SetY(float y) { m_Pos.y = y; }
 
-
-	void SetCombatTargetPos(Pos pos) { m_CombatTargetPos = pos; };
 	void SetNickName(std::string name) { m_NickName = name; };
 	std::string GetNickName() { return m_NickName; };
+
 	void SetIsCombat(bool bcombat) { m_bInCombat = bcombat; }
 	bool IsCombat() { return m_bInCombat; }
+
 	void SetVelocity(float velocity) { m_MoveVelocity = velocity; };
 	float GetVelocity() { return  m_MoveVelocity; };
+
 	void SetTargetID(int id) { m_TargetID = id; }
 	int GetTargetID() { return m_TargetID; }
 
 	bool IsAutoRun() { return m_IsAutoRun; };
 	void SetAutoRun(bool autoRun) { m_IsAutoRun = autoRun; };
+
 	void SetActorID(int id) { m_ActorID = id; };
 	int GetActorID() { return m_ActorID; };
+
 	void SetHP(float hp) { m_HP = hp; }
 	float GetHP() { return m_HP; }
 	void AddHP(float hp) { m_HP += hp; }
@@ -79,6 +81,7 @@ public:
 	void SetMP(float mp) { m_MP = mp; }
 	float GetMP() { return m_MP; }
 	void AddMP(float mp) { m_MP += mp; }
+
 	void SetLocalPlayer(bool local) { m_IsLocalPlayer = local; }
 	bool IsLocalPlayer() { return m_IsLocalPlayer; }
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "define_types.h"
-#include "Shader.h"
+#include "shader.h"
 
 
 class Object2D;

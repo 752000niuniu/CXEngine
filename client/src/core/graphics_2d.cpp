@@ -2,7 +2,7 @@
 #include "object_2d.h"
 #include "Renderer.h"
 #include "../file_system.h"
-#include "../Window.h"
+#include "../window.h"
 #include "../texture_manager.h"
 Graphics2D::Graphics2D()
 :m_SpriteVertices({{

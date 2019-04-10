@@ -1,8 +1,8 @@
 #pragma once
 
 #include "define_types.h"
-#include "Singleton.h"
-#include "core/Texture.h"
+#include "singleton.h"
+#include "core/texture.h"
 #include <unordered_map>
 class TextureManager final : public Singleton<TextureManager>
 {

@@ -1,11 +1,7 @@
 #pragma once
-
-
-
 #include <map>
 #include <functional>
-#include "Singleton.h"
-
+#include "singleton.h"
 
 using tstring=std::string;
 class Timer;

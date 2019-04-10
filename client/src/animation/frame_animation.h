@@ -1,11 +1,11 @@
 #pragma once 
 
 
-#include "core/Texture.h"
+#include "core/texture.h"
 #include "texture_manager.h"
 #include <vector>
 #include "sprite_renderer.h"
-#include "Pos.h"
+#include "pos.h"
 #include "resource_manager.h"
 
 class FrameAnimation

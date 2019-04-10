@@ -1,12 +1,13 @@
-#include "Engine.h"	
-#include "core/Texture.h"
+#include "engine.h"	
+#include "core/texture.h"
 #include "sprite_batch.h"
 #include "cube_batch.h"
+#include "time/timer_manager.h"
 #include "input_manager.h"
 #include "script_system.h"
 #include "scene/scene_manager.h"
 #include "scene/splash_scene.h"
-#include "Window.h"
+#include "window.h"
 #include "resource_manager.h"
 
 Engine::Engine()

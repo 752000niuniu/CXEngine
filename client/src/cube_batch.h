@@ -1,8 +1,8 @@
 #pragma once
 
 
-#include "Singleton.h"
-#include "core/Shader.h"
+#include "singleton.h"
+#include "core/shader.h"
 #include <array>
 
 struct CubeInfo

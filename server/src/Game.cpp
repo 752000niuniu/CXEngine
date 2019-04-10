@@ -1,4 +1,4 @@
-#include "Game.h"	
+#include "game.h"	
 #include "script_system.h"
 #include "scene/scene_manager.h"
 #include "scene/base_scene.h"

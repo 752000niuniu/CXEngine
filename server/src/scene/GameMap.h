@@ -1,10 +1,10 @@
 #pragma once
 #include <stdint.h>
 #include "NESupport.h"
-#include "../astar/Heap.h"
-#include "../astar/Astar.h"
+#include "astar/heap.h"
+#include "astar/astar.h"
 
-#include "Pos.h"
+#include "pos.h"
 
 /*
 游戏地图类的封装

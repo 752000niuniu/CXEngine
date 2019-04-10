@@ -1,7 +1,7 @@
-#include "Scene.h"
+#include "scene.h"
 
 #include "../animation/frame_animation.h"
-#include "Logger.h"
+#include "logger.h"
 #include "cxrandom.h"
 #include "../core/Renderer.h"
 #include "../global.h"

@@ -2,7 +2,7 @@
 #include "file_system.h"
 
 #include "global.h"
-#include "Window.h"
+#include "window.h"
 #include "profile.h"
 #include <assert.h>
 #include "script_system.h"

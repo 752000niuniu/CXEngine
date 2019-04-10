@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "Shader.h"
+#include "shader.h"
 
 class Texture
 {

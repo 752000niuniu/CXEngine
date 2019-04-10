@@ -1,4 +1,4 @@
-#include "Astar.h"
+#include "astar.h"
 #include <fstream>
 #include "cxmath.h"
 

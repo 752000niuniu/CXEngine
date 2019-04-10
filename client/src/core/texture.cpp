@@ -1,4 +1,4 @@
-#include "Texture.h"
+#include "texture.h"
 #include <SOIL.h>
 #include "image.h"
 #include "Bitmap.h"

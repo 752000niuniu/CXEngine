@@ -4,7 +4,7 @@
 #include <memory>
 #include <iostream>
 #include <random>
-#include "stdio.h"
+#include <cstdio>
 template <typename T>
 class Heap {
 #define HEAP_LEFT(i) (i*2+1)

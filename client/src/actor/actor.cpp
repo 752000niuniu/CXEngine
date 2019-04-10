@@ -5,6 +5,9 @@
 #include "utils.h"
 #include "lua.hpp"
 
+#define ACTOR_METATABLE_NAME "mt_actor"
+
+
 Actor::Actor(int roleID):
 m_RoleID(roleID),
 m_NickName(""),
@@ -35,7 +38,7 @@ void player_set_frame_speed(int frame_speed)
 {
 	Player* player = SCENE_MANAGER_INSTANCE->GetCurrentScene()->GetLocalPlayer();
 	if (player) {
-		player->SetFrameSpeed(frame_speed);
+		player->SetFrameSpeed((float)frame_speed);
 	}
 }
 
@@ -43,7 +46,7 @@ void player_set_move_speed(int move_speed)
 {
 	Player* player = SCENE_MANAGER_INSTANCE->GetCurrentScene()->GetLocalPlayer();
 	if (player) {
-		player->SetVelocity(move_speed);
+		player->SetVelocity((float)move_speed);
 	}
 }
 
@@ -89,12 +92,11 @@ luaL_Reg mt_actor[] = {
 { NULL, NULL }
 };
 
-
 void lua_push_actor(lua_State*L, Actor* actor)
 {
 	Actor** ptr = (Actor**)lua_newuserdata(L, sizeof(Actor*));
 	*ptr = actor;
-	if (luaL_newmetatable(L, "mt_actor")) {
+	if (luaL_newmetatable(L, ACTOR_METATABLE_NAME)) {
 		luaL_setfuncs(L, mt_actor, 0);
 		lua_pushvalue(L, -1);
 		lua_setfield(L, -2, "__index");
@@ -111,8 +113,8 @@ Actor* lua_check_actor(lua_State*L, int index)
 
 int lua_new_actor(lua_State* L)
 {
-	int type = luaL_optinteger(L, 1, ACTOR_TYPE_DEFAULT);
-	int rold_id = luaL_optinteger(L, 2, 0);
+	int type = (int)luaL_optinteger(L, 1, ACTOR_TYPE_DEFAULT);
+	int rold_id = (int)luaL_optinteger(L, 2, 0);
 	
 	Actor* actor = nullptr;
 	if (type == ACTOR_TYPE_PLAYER) {

@@ -1,10 +1,10 @@
 #pragma once
 
 
+#include <cxrandom.h>
 #include "define_types.h"
-#include "../actor/Player.h"
-#include "../animation/frame_animation.h"
-#include "cxrandom.h"
+#include "animation/frame_animation.h"
+
 
 class SkillManager : public Singleton<SkillManager>
 {

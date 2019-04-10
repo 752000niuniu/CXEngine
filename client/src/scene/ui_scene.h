@@ -3,11 +3,11 @@
 #include "define_types.h"
 
 
-#include "../i_update_draw.h"
-#include "../Event/Event.h"
-#include "core/Texture.h"
+#include "i_update_draw.h"
+#include "event/event.h"
+#include "core/texture.h"
 #include "game_map.h"
-#include "../actor/Player.h"
+#include "actor/player.h"
 #include "base_scene.h"
 
 class UIScene : public BaseScene

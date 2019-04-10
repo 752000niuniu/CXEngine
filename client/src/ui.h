@@ -1,7 +1,6 @@
 #pragma once
 #include "script_system.h"
 #include "text_renderer.h"
-#include "Pos.h"
 
 class InputManager;
 

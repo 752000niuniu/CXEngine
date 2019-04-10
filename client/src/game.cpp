@@ -1,9 +1,10 @@
-#include "Game.h"	
+#include "game.h"	
 #include "script_system.h"
-#include "Window.h"
+#include "window.h"
 #include "scene/scene_manager.h"
 #include "scene/base_scene.h"
-#include "../server/src/file_system.h"
+#include "file_system.h"
+#include "actor/action.h"
 
 Game::Game()
 {
@@ -78,14 +79,14 @@ uint32_t Game::GetActionWasID(int type, int roleID, int actionID)
 	std::string wasIDstr("");
 	if (actionID == Action::Idle || actionID == Action::Batidle)
 	{
-		auto wasIdle = rowTable->Rows[roleID][s_ActionSet[Action::Idle]];
-		auto wasBatidle = rowTable->Rows[roleID][s_ActionSet[Action::Batidle]];
+		auto wasIdle = rowTable->Rows[roleID][action_get_name(Action::Idle)];
+		auto wasBatidle = rowTable->Rows[roleID][action_get_name(Action::Batidle)];
 		if (wasIdle != "")wasIDstr = wasIdle;
 		else wasIDstr = wasBatidle;
 	}
 	else
 	{
-		wasIDstr = rowTable->Rows[roleID][s_ActionSet[actionID]];
+		wasIDstr = rowTable->Rows[roleID][action_get_name(actionID)];
 	}
 	if (wasIDstr == "")
 	{
@@ -103,14 +104,14 @@ uint32_t Game::GetWeaponWasID(int weaponID, int actionID)
 	std::string wasIDstr("");
 	if (actionID == Action::Idle || actionID == Action::Batidle)
 	{
-		auto wasIdle = s_AvatarWeapon90Table.Rows[weaponID][s_ActionSet[Action::Idle]];
-		auto wasBatidle = s_AvatarWeapon90Table.Rows[weaponID][s_ActionSet[Action::Batidle]];
+		auto wasIdle = s_AvatarWeapon90Table.Rows[weaponID][action_get_name(Action::Idle)];
+		auto wasBatidle = s_AvatarWeapon90Table.Rows[weaponID][action_get_name(Action::Batidle)];
 		if (wasIdle != "")wasIDstr = wasIdle;
 		else wasIDstr = wasBatidle;
 	}
 	else
 	{
-		wasIDstr = s_AvatarWeapon90Table.Rows[weaponID][s_ActionSet[actionID]];
+		wasIDstr = s_AvatarWeapon90Table.Rows[weaponID][action_get_name(actionID)];
 	}
 	if (wasIDstr == "")return-1;
 	uint32 wasID = std::stoul(wasIDstr, 0, 16);

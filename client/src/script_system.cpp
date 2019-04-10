@@ -1,10 +1,10 @@
 #include "script_system.h"
 
 #include "define_types.h"
-#include "Singleton.h"
+#include "singleton.h"
 #include "file_system.h" 
-#include "Logger.h"
-#include "Window.h"
+#include "logger.h"
+#include "window.h"
 #include "scene/scene_manager.h"
 #include "ui.h"
 #include "file_loading.h"
@@ -15,6 +15,7 @@
 #include "net_thread_queue.h"
 #include "lua_net.h"
 #include "scene/Scene.h"
+#include "time/time_manager.h"
 #include "luadbg.h"
 
 static lua_State* L = nullptr;

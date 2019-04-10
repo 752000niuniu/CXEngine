@@ -1,9 +1,7 @@
 #pragma once
 
 
-#include "Singleton.h"
-#include "i_update_draw.h"
-#include "time/timer_manager.h"
+#include "singleton.h"
 
 class Engine : public Singleton<Engine>
 {

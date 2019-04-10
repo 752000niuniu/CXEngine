@@ -1,7 +1,7 @@
 #pragma once
 
 #include "game_map.h"
-#include "../actor/Player.h"
+#include "actor/player.h"
 #include "base_scene.h"
 
 using String = std::string;

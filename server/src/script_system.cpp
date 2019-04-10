@@ -1,8 +1,8 @@
 #include "script_system.h"
 
-#include "Singleton.h"
+#include "singleton.h"
 #include "file_system.h" 
-#include "Logger.h"
+#include "logger.h"
 #include "scene/scene_manager.h"
 //#include "debugger.h"
 

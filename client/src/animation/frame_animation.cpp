@@ -1,7 +1,7 @@
 #include "frame_animation.h"
-#include "Engine.h"
+#include "engine.h"
 #include "profile.h"
-#include "Window.h"
+#include "window.h"
 #include "resource_manager.h"
 
 #define  FRAME_TIME_BASE_DEFAULT (1.0f/60*4)

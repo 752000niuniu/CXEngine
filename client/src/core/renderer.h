@@ -2,10 +2,10 @@
 
 #include "define_types.h"
 
-#include "Shader.h"
-#include "Texture.h"
+#include "shader.h"
+#include "texture.h"
 #include "file_system.h"
-#include "Window.h"
+#include "window.h"
 #include "core/Transform.h"
 #include "object_2d.h"
 #include "graphics_2d.h"

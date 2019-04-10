@@ -1,8 +1,8 @@
 #include "was_viewer_scene.h"
 #include "scene/splash_scene.h"
-#include "Window.h"
+#include "window.h"
 #include "scene_manager.h"
-#include "../server/src/file_system.h"
+#include "file_system.h"
 #include "utils.h"
 
 static std::vector<uint32> s_WASIDs;

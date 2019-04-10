@@ -2,7 +2,7 @@
 #include "script_system.h"
 #include "cxmath.h"
 #include "scene/scene_manager.h"
-#include "Window.h"
+#include "window.h"
 
 
 InputManager::InputManager()

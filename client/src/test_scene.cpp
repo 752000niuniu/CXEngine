@@ -2,7 +2,7 @@
 #include "file_system.h"
 #include "vertex.h"
 #include "camera.h"
-#include "Window.h"
+#include "window.h"
 #include "input_manager.h"
 //#include "model.h"
 #include "core/Renderer.h"

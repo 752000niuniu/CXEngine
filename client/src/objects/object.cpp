@@ -1,5 +1,5 @@
 #include "Object.h"
-#include "../Logger.h"
+#include "logger.h"
 #include "../Components/transform_component.h"
 #include "utils.h"
 

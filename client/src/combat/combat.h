@@ -2,7 +2,7 @@
 
 
 #include "define_types.h"
-#include "../actor/Player.h"
+#include "actor/player.h"
 #include "singleton.h"
 
 

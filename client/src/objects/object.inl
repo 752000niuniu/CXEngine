@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Object.h"
-#include "../Logger.h"
+#include "logger.h"
 #include <typeinfo>
 
 template <typename T>

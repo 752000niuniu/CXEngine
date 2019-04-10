@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
-#include "Singleton.h"
-#include "Pos.h"
+#include "singleton.h"
+#include "pos.h"
 /*
 负责初始化Engine Update Draw
 */

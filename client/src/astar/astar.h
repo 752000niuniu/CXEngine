@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <list>
-#include "Heap.h"
+#include "heap.h"
 #include <map>
 #include "pos.h"
 /*

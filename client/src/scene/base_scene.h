@@ -1,10 +1,10 @@
 #pragma once
 
 #include "define_types.h"
-#include "../i_update_draw.h"
-#include "Entity.h"
+#include "i_update_draw.h"
+#include "entity.h"
 #include "game_map.h"
-#include "actor/Player.h"
+#include "actor/player.h"
 
 /*
 场景对象的基类

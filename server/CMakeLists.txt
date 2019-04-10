@@ -14,7 +14,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "Header Files"  FILES $
 add_executable(GameServer 
   ${PRIVATE_HEADERS}
   src/actor/player.cpp
-  src/astar/Astar.cpp
+  src/astar/astar.cpp
   #src/debugger.cpp
   src/file_system.cpp
   src/Game.cpp

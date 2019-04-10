@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Message.h"
+#include "message.h"
 
 class BaseGameEntity
 {

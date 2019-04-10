@@ -1,6 +1,6 @@
 #include "base_scene.h"
-#include "Scene.h"
-#include "Game.h"
+#include "scene.h"
+#include "game.h"
 #include "utils.h"
 
 BaseScene::BaseScene(int id, String name)

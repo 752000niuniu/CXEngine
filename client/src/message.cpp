@@ -1,6 +1,6 @@
-#include "Message.h"
+#include "message.h"
 #include <chrono>
-#include "Entity.h"
+#include "entity.h"
 
 void MessageDispatcher::Discharge(BaseGameEntity* pReceiver, const Telegram& msg)
 {

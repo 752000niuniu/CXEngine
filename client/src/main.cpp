@@ -1,5 +1,5 @@
 #include "global.h"
-#include "Window.h"
+#include "window.h"
 #include "script_system.h"
 #include "kbase/at_exit_manager.h"
 #include "ezio/io_service_context.h"

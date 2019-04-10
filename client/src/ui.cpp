@@ -2,14 +2,14 @@
 #include "file_system.h"
 #include "input_manager.h"
 #include "Bitmap.h"
-#include "core/Texture.h"
+#include "core/texture.h"
 #include "resource_manager.h"
 #include "text_renderer.h"
 #include "Time/Time.h"
 #include "sprite_renderer.h"
-#include "Window.h"
+#include "window.h"
 #include "scene/scene_manager.h"
-#include "scene/Scene.h"
+#include "scene/scene.h"
 #include "utils.h"
 
 void TextView::OnCharacterInput(uint32_t charcode)

@@ -1,9 +1,8 @@
 #pragma once
 
-#include "Singleton.h"
-#include "Event/Event.h"
+#include "singleton.h"
 #include <functional>
-#include "Pos.h"
+#include "pos.h"
 #include "ui.h"
 #include "camera.h"
 

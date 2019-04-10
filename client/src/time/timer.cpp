@@ -1,5 +1,5 @@
-#include "Timer.h"
-#include "Engine.h"
+#include "timer.h"
+#include "engine.h"
 
 Timer::Timer()
 	:m_TargetTime(1.0f)

@@ -1,13 +1,13 @@
-#include "Scene.h"
+#include "scene.h"
 
-#include "Logger.h"
+#include "logger.h"
 #include "cxrandom.h"
 #include "script_system.h"
 #include "scene_manager.h"
 #include "cxmath.h"
 #include "actor/action.h"
 #include <algorithm>
-#include "Game.h"
+#include "game.h"
 
 bool s_IsCombat = true;
 

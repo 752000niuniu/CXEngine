@@ -9,7 +9,7 @@
 #pragma once
 
 
-#include "core/Texture.h"
+#include "core/texture.h"
 #include "script_system.h"
 
 // A static singleton ResourceManager class that hosts several

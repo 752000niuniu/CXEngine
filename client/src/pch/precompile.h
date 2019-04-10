@@ -65,7 +65,7 @@ extern "C"
 #endif
 #include <imgui.h>
 #include "define_types.h"
-#include "Logger.h"
+#include "logger.h"
 //#include <assimp/Importer.hpp>
 //#include <assimp/scene.h>
 //#include <assimp/postprocess.h>

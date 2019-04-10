@@ -1,13 +1,12 @@
 #pragma once
 
 
-#include "Pos.h"
+#include "pos.h"
 #include "tsv.h"
-#include "Logger.h"
-#include "../animation/animation_database.h"
+#include "logger.h"
 #include "../animation/frame_animation.h"
 #include "../State.h"
-#include "../Message.h"
+#include "../message.h"
 class Player;
 
 class BasePlayerCombatState :  public State<Player> 

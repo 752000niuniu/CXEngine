@@ -1,7 +1,7 @@
-#include "Window.h"
+#include "window.h"
 
 #include "global.h"
-#include "core/Shader.h"
+#include "core/shader.h"
 #include "file_system.h"
 #include "input_manager.h"
 #include "imgui.h"
