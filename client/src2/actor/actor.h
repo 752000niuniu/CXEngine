@@ -19,7 +19,7 @@ public:
 	Actor(int roleID = 0);
 	
 	virtual ~Actor();
-	void Update();
+	virtual void Update() {};
 
 	void SetDir(int dir) { m_Dir = dir; };
 	int GetDir() { return m_Dir; };

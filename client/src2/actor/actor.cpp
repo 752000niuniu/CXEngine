@@ -3,7 +3,7 @@
 #include "player.h"
 #include "scene/scene_manager.h"
 #include "utils.h"
-
+#include "lua.hpp"
 
 Actor::Actor(int roleID):
 m_RoleID(roleID),
@@ -31,13 +31,6 @@ Actor::~Actor()
 
 }
 
-void Actor::Update()
-{
-
-}
-
-
-
 void player_set_frame_speed(int frame_speed)
 {
 	Player* player = SCENE_MANAGER_INSTANCE->GetCurrentScene()->GetLocalPlayer();
@@ -58,8 +51,12 @@ void lua_push_actor(lua_State*L, Actor* actor)
 {
 	Actor** ptr = (Actor**)lua_newuserdata(L, sizeof(Actor*));
 	*ptr = actor;
-	luaL_setmetatable(L, "mt_actor");
-	
+	if (luaL_newmetatable(L, "mt_actor")) {
+		luaL_setfuncs(L, mt_actor, 0);
+		lua_pushvalue(L, -1);
+		lua_setfield(L, -2, "__index");
+	}
+	lua_setmetatable(L, -2);
 }
 
 Actor* lua_check_actor(lua_State*L, int index)
@@ -153,11 +150,5 @@ void luaopen_actor(lua_State* L)
 #undef REG_ENUM
 	lua_pop(L, 1);
 
-	if (luaL_newmetatable(L, "mt_actor")) {
-		luaL_setfuncs(L, mt_actor, 0);
-		lua_setfield(L, -1, "__index");
-	}
-	else {
-		std::cout << "associate mt_actor error!" << std::endl;
-	}
+	
 }
