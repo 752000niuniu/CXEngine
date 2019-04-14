@@ -21,7 +21,7 @@ GameMap::GameMap(uint32 mapID)
 	m_Astar = nullptr;
 
 	m_MapOffsetX = m_MapOffsetY = 0;
-	auto* iothread = ne_support_get_thread();
+	auto* iothread = file_loading_thread();
 	if (!iothread->IsFileLoadOk(fileName.c_str()))
 	{
 		iothread->PostTask(fileName.c_str(), [this](const char* path)->bool
@@ -211,7 +211,7 @@ std::list<Pos> GameMap::Move(int sx, int sy, int ex, int ey)
 
 GameMap::~GameMap()
 {
-	auto* iothread = ne_support_get_thread();
+	auto* iothread = file_loading_thread();
 	if (iothread)
 	{
 		std::string fileName = FileSystem::GetMapPath(std::to_string(m_MapID));
@@ -252,7 +252,7 @@ GameMap::~GameMap()
 
 void GameMap::Update()
 {
-	auto* iothread = ne_support_get_thread();
+	auto* iothread = file_loading_thread();
 	std::string fileName = FileSystem::GetMapPath(std::to_string(m_MapID));
 	if (!iothread->IsFileLoadOk(fileName.c_str()))return;
 }
@@ -268,7 +268,7 @@ int GameMap::GetMapOffsetY()
 
 void GameMap::Draw(int playerX, int playerY)
 {
-	auto* iothread = ne_support_get_thread();
+	auto* iothread = file_loading_thread();
 	std::string fileName = FileSystem::GetMapPath(std::to_string(m_MapID));
 	if (!iothread->IsFileLoadOk(fileName.c_str()))return;
 
@@ -392,7 +392,7 @@ void GameMap::DrawCell()
 
 void GameMap::DrawMask(int playerX, int playerY, int drawY)
 {
-	auto* iothread = ne_support_get_thread();
+	auto* iothread = file_loading_thread();
 	std::string fileName = FileSystem::GetMapPath(std::to_string(m_MapID));
 	if (!iothread->IsFileLoadOk(fileName.c_str()))return;
 

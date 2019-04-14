@@ -34,7 +34,7 @@ Sprite* ResourceManager::LoadWASSpriteByID(uint64_t resID,bool sync)
 	uint32_t wasID = 0;
 	DecodeWAS(resID, pack, wasID);
 
-	auto* iothread = ne_support_get_thread();
+	auto* iothread = file_loading_thread();
 	if (iothread->IsFileLoadOk(path.c_str()))
 	{
 		return s_Loaders[pack]->LoadSprite(wasID);

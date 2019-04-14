@@ -5,9 +5,9 @@
 #include "file_system.h"
 #include "input_manager.h"
 #include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-#include "Time/Time.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+#include "time/time.h"
 #include "script_system.h"
 #include "input_manager.h"
 #include "file_loading.h"
@@ -133,11 +133,6 @@ void Window::Show()
 	ImGuiIO& io = ImGui::GetIO();
     while (!glfwWindowShouldClose(m_pWindow))
 	{
-		// Poll and handle events (inputs, window resize, etc.)
-		// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-		// - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
-		// - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
-		// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
 		glfwPollEvents();
 
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
@@ -161,7 +156,6 @@ void Window::Show()
 		glViewport(0, 0, display_w, display_h);
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-		// Update and Render additional Platform Windows
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
 			ImGui::UpdatePlatformWindows();
@@ -173,7 +167,6 @@ void Window::Show()
     }
 	
 	script_system_deinit();
-	// Cleanup
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
@@ -181,7 +174,7 @@ void Window::Show()
 	glfwDestroyWindow(m_pWindow);
     glfwTerminate();
 
-	auto* ne_thread = ne_support_get_thread();
+	auto* ne_thread = file_loading_thread();
 	delete ne_thread;
 	ne_thread = nullptr;
 }

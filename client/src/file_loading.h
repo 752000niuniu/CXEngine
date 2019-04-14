@@ -50,6 +50,7 @@ private:
 
 };
 
-FileLoadingThread* ne_support_get_thread();
+FileLoadingThread* file_loading_thread();
+
 
 void luaopen_ne_support(lua_State*L);

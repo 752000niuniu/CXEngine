@@ -39,13 +39,12 @@ add_executable(SimpleEngine
     src/core/texture.cpp
     src/core/transform.cpp
     src/cube_batch.cpp
-    src/demo_scene.cpp
     src/engine.cpp
     src/entity.cpp
     src/file_system.cpp
     src/game.cpp
-    src/imgui_impl_glfw.cpp
-    src/imgui_impl_opengl3.cpp
+    src/imgui/imgui_impl_glfw.cpp
+    src/imgui/imgui_impl_opengl3.cpp
     src/input_manager.cpp
     src/logger.cpp
     src/message.cpp

@@ -119,7 +119,7 @@ void FileLoadingThread::RemoveTaskState(const char* cpath)
 }
 
 static FileLoadingThread* s_FileLoadingThread;
-FileLoadingThread* ne_support_get_thread()
+FileLoadingThread* file_loading_thread()
 {
 	if (s_FileLoadingThread == nullptr)
 	{
