@@ -79,6 +79,7 @@ void script_system_dofile(const char* file)
 	{
 		const char* msg = lua_tostring(L, -1);
 		LOG_ERR(msg);
+		DebugBreak();
 		return;
 	}
 }
