@@ -17,6 +17,7 @@
 #include "scene/Scene.h"
 #include "time/time_manager.h"
 #include "luadbg.h"
+#include "time/timer_manager.h"
 
 static lua_State* L = nullptr;
 void luaopen_script_system(lua_State* L);

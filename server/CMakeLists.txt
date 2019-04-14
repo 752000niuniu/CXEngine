@@ -15,15 +15,14 @@ add_executable(GameServer
   ${PRIVATE_HEADERS}
   src/actor/player.cpp
   src/astar/astar.cpp
-  #src/debugger.cpp
   src/file_system.cpp
-  src/Game.cpp
-  src/Logger.cpp
+  src/game.cpp
+  src/logger.cpp
   src/main.cpp
-  src/scene/BaseScene.cpp
-  src/scene/GameMap.cpp
-  src/scene/Scene.cpp
-  src/scene/SceneManager.cpp
+  src/scene/base_scene.cpp
+  src/scene/game_map.cpp
+  src/scene/scene.cpp
+  src/scene/scene_manager.cpp
   src/script_system.cpp
   src/server.cpp
 )

@@ -1,6 +1,6 @@
 #pragma once
 #include "pos.h"
-#include "scene/GameMap.h"
+#include "scene/game_map.h"
 
 enum EActorType
 {
