@@ -132,8 +132,10 @@ private:
 class Pet : public Player
 {
 public:
-	Pet(int role_id) :Player(role_id) {};
+	Pet(int role_id) :Player(role_id) { m_ActorType = ACTOR_TYPE_PET; };
 	Pet(const char* player_name, float x, float y, int dir, int role_id, int action_id);
+	virtual void OnDraw(int px, int py);
+	
 	virtual ~Pet();
 };
 

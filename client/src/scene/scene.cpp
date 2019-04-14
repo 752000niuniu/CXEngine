@@ -419,7 +419,7 @@ BattleScene::~BattleScene()
 
 void BattleScene::OnLoad()
 {
-	script_system_call_function(script_system_get_luastate(),"on_battle_scene_init");
+	
 }
 
 void BattleScene::OnUnLoad()

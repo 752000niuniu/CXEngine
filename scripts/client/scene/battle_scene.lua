@@ -29,11 +29,11 @@ local combat_enemy_pos =
 	{ x = 340.0 * ratio_x, y = 150.0 * ratio_y },   
 }
 
+
+
 function OnSceneInit()
     local s  = "Ocean藏心"
-    
     scene_add_player(s,math.floor(combat_self_pos[1].x) ,math.floor(combat_self_pos[1].y),2,9,5)
-
     scene_add_pet(s.."1",math.floor(combat_enemy_pos[1].x) ,math.floor(combat_enemy_pos[1].y),0,5,1)
     -- scene_add_npc(s..tostring(1), 530,1110,1,1,1,"asd")
     -- scene_add_pet(s..tostring(2), 560,970,1,5,1)
@@ -43,13 +43,9 @@ function OnSceneInit()
     -- scene_add_player(s..tostring(4), 530,1110,4,2)
     scene_set_player(s)
 
-    scene_set_announcement(
-        [[项目地址：github.com/oceancx/SimpleEngine
-        C++/OpenGL/Lua纯手工游戏编程
-        有问题随时提问，QQ群：465885387]])
-    scene_set_chat(
-        [[#50今天写Server 开工中。。。#109]]
-    )
+    
+
+
 end
 
 function OnSceneUpdate()

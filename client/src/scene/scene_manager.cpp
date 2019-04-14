@@ -56,7 +56,7 @@ SceneManager::~SceneManager()
 
 void SceneManager::Init() 
 {
-	script_system_call_function(script_system_get_luastate(),"on_scene_manager_init");
+	script_system_call_function(script_system_get_luastate(), "on_scene_manager_init");
 };
 
 void SceneManager::SwitchScene(String name)
@@ -180,7 +180,7 @@ void SceneManager::Update()
 			m_pCurrentScene = m_pNextScene;
 			m_pCurrentScene->Load();
 			
-			script_system_call_function(script_system_get_luastate(), "on_scene_manager_init_scene");
+			script_system_call_function(script_system_get_luastate(), "on_scene_manager_init_scene" ,m_pCurrentScene->GetName());
 
 			//m_pCurrentScene->SetPlayerByIndex(0);
 			if (m_pCurrentScene->GetLocalPlayer())
@@ -198,7 +198,7 @@ void SceneManager::Update()
 		if (m_pCurrentScene)
 		{
 			m_pCurrentScene->Update();
-			script_system_call_function(script_system_get_luastate(),"on_scene_manager_update");
+			script_system_call_function(script_system_get_luastate(),"on_scene_manager_update", m_pCurrentScene->GetName());
 		}
 	}
 };
@@ -331,7 +331,7 @@ void SceneManager::Draw()
 	{
 		m_pCurrentScene->Draw();
 		DrawImGUI();
-		script_system_call_function(script_system_get_luastate(), "on_scene_manager_draw");
+		script_system_call_function(script_system_get_luastate(), "on_scene_manager_draw", m_pCurrentScene->GetName());
 	}
 };
 

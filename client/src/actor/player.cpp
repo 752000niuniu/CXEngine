@@ -641,6 +641,7 @@ void Player::SyncRoleWeaponFrame()
 Npc::Npc(const char* player_name, float x, float y, int dir, int role_id, int action_id, std::string msg)
 	:Player(role_id)
 {
+	m_ActorType = ACTOR_TYPE_NPC;
 	m_NickName = player_name;
 	m_Pos.x	 = x;
 	m_Pos.y = y;
@@ -649,7 +650,6 @@ Npc::Npc(const char* player_name, float x, float y, int dir, int role_id, int ac
 	m_DirCount = 4;
 	m_Dir = GMath::Dir8toDir4(dir);
 	m_ActionID = action_id;
-	m_ActorType = ACTOR_TYPE_NPC;
 	m_WeaponID = -1;
 	m_ShowDialog = false;
 	m_DialogContent = msg;
@@ -727,6 +727,7 @@ void Npc::OnDraw(GameMap* m_GameMapPtr)
 Pet::Pet(const char* player_name, float x, float y, int dir, int role_id, int action_id)
 	:Player(role_id)
 {
+	m_ActorType = ACTOR_TYPE_PET;
 	m_NickName = player_name;
 	m_Pos.x = x;
 	m_Pos.y = y;
@@ -735,9 +736,13 @@ Pet::Pet(const char* player_name, float x, float y, int dir, int role_id, int ac
 	m_DirCount = 4;
 	m_Dir = GMath::Dir8toDir4(dir);
 	m_ActionID = action_id;
-	m_ActorType = ACTOR_TYPE_PET;
 	m_WeaponID = -1;
 	
+}
+
+void Pet::OnDraw(int px, int py)
+{
+	Player::OnDraw(px,py);
 }
 
 Pet::~Pet()

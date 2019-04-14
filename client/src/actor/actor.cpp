@@ -4,6 +4,7 @@
 #include "scene/scene_manager.h"
 #include "utils.h"
 #include "lua.hpp"
+#include "Window.h"
 
 #define ACTOR_METATABLE_NAME "mt_actor"
 
@@ -32,6 +33,12 @@ Actor::~Actor()
 {
 
 
+}
+
+Actor* lua_check_actor(lua_State*L, int index)
+{
+	Actor** ptr = (Actor**)lua_touserdata(L, index);
+	return *ptr;
 }
 
 void player_set_frame_speed(int frame_speed)
@@ -83,12 +90,45 @@ int actor_destroy(lua_State * L)
 	}
 	return 0;
 }
+int actor_update(lua_State * L) {
+	Actor* actor = lua_check_actor(L, 1);
+	actor->OnUpdate(WINDOW_INSTANCE->GetDeltaTime());
+	return 0;
+}
+
+int actor_draw(lua_State * L) {
+	Actor* actor = lua_check_actor(L, 1);
+	Pos pos = actor->GetPos();
+	actor->OnDraw((int)pos.x ,(int) pos.y );
+	return 0;
+}
+int actor_set_pos(lua_State* L)
+{
+	Actor* actor = lua_check_actor(L, 1);
+	lua_Number x = lua_tonumber(L, 2);
+	lua_Number y = lua_tonumber(L, 3);
+	actor->SetPos({ (float)x,(float)y });
+	return 0;
+}
+
+int actor_set_dir(lua_State* L)
+{
+	Actor* actor = lua_check_actor(L, 1);
+	lua_Number dir = lua_tonumber(L, 2);
+	actor->SetDir((int)dir);
+	return 0;
+}
+
 
 
 luaL_Reg mt_actor[] = {
 	{ "SetProperty",actor_method_set_property },
 { "GetProperty",actor_method_get_property },
 { "Destroy",actor_destroy },
+{ "update",actor_update},
+{ "draw",actor_draw },
+{ "set_pos",actor_set_pos},
+{ "set_dir",actor_set_dir },
 { NULL, NULL }
 };
 
@@ -104,11 +144,6 @@ void lua_push_actor(lua_State*L, Actor* actor)
 	lua_setmetatable(L, -2);
 }
 
-Actor* lua_check_actor(lua_State*L, int index)
-{
-	Actor** ptr = (Actor**)lua_touserdata(L, index);
-	return *ptr;
-}
 
 
 int lua_new_actor(lua_State* L)
@@ -132,7 +167,7 @@ int lua_new_actor(lua_State* L)
 }
 
 int actor_get_metatable(lua_State* L){
-	if (luaL_newmetatable(L, "mt_actor")) {
+	if (luaL_newmetatable(L, ACTOR_METATABLE_NAME)) {
 		luaL_setfuncs(L, mt_actor, 0);
 		lua_pushvalue(L, -1);
 		lua_setfield(L, -2, "__index");

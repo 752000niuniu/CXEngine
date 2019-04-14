@@ -3,8 +3,10 @@ SCREEN_HEIGHT = 600
 DefaultMapID = 1001
 
 script_system_dofile 'utils.lua'
+script_system_dofile 'content_system.lua'
 script_system_dofile 'actor_metatable.lua'
 script_system_dofile 'scene_manager.lua'
+script_system_dofile 'actor_manager.lua'
 script_system_dofile 'table_template.lua'
 
 IsCombat = false
@@ -20,6 +22,7 @@ end
 
 function on_script_system_init()
     -- generate_avatar_role_tsv()
+    content_system_init()
     net_manager_init()
     text_renderer_init()
     timer_manager_init()
@@ -28,6 +31,7 @@ function on_script_system_init()
     sprite_renderer_init()
     imgui_init()
     scene_manager_init()
+    actor_manager_init()
 end
 
 function on_script_system_update()
@@ -35,10 +39,12 @@ function on_script_system_update()
     timer_manager_update()
     resource_manager_update()
     scene_manager_update()
+    actor_manager_update()
 end
 
 function on_script_system_draw()
     scene_manager_draw()
+    actor_manager_draw()
 end
 
 function on_script_system_deinit()
@@ -48,4 +54,5 @@ function on_script_system_deinit()
     input_manager_deinit()
     resource_manager_deinit()
     scene_manager_deinit()
+    actor_manager_deinit()
 end

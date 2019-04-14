@@ -9,7 +9,7 @@ function OnSceneInit()
     actor1:SetProperty('name','oceancx')
     actor2:SetProperty('name','oceancx2')
     
-    print('name1' , actor1:GetNickName() ,'name2',actor2:GetNickName())
+    -- print('name1' , actor1:GetNickName() ,'name2',actor2:GetNickName())
     actor1:Destroy()
     actor2:Destroy()
 end

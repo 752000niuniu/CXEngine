@@ -2,6 +2,7 @@
 
 #include "define_types.h"
 #include "pos.h"
+#include "scene/game_map.h"
 
 
 enum EActorType
@@ -19,7 +20,9 @@ public:
 	Actor(int roleID = 0);
 	
 	virtual ~Actor();
-	virtual void Update() {};
+	virtual void OnUpdate(float dt) {};
+	virtual void OnDraw(GameMap* gameMapPtr) {};
+	virtual void OnDraw(int x, int y) {};
 
 	void SetDir(int dir) { m_Dir = dir; };
 	int GetDir() { return m_Dir; };

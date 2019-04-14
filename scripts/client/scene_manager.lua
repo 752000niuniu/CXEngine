@@ -8,15 +8,15 @@ DefaultSceneName = "门派_方寸山全景"
 local scene_lua_files = 
 {
     {name='default' ,           file= 'scene/scene.lua'},
-    {name='animation_editor' ,  file= 'scene/animation_editor.lua'},
-    {name='battle' ,            file= 'scene/battle_scene.lua'},
+    {name='AnimationEditor' ,  file= 'scene/animation_editor.lua'},
+    {name='BattleScene' ,            file= 'scene/battle_scene.lua'},
     {name='fangcunshan' ,       file= 'scene/fangcunshan_scene.lua'},
-    {name='splash' ,            file= 'scene/splash_scene.lua'},
-    {name='test_net' ,          file= 'scene/test_net_scene.lua'}
+    {name='Splash' ,            file= 'scene/splash_scene.lua'},
+    {name='TestScene' ,          file= 'scene/test_net_scene.lua'}
 }
 
 local scene_list = {}
-local current_scene_name = 'splash'
+local current_scene_name = 'Splash'
     
 function on_scene_manager_init()
     local parsed_tsv = utils_parse_tsv_file_as_table(fs_get_tsv_path('map'),false)
@@ -57,15 +57,15 @@ function on_scene_manager_init()
     
 end
 
-function on_scene_manager_init_scene()
-    scene_list[current_scene_name].OnSceneInit() 
+function on_scene_manager_init_scene(name)
+    scene_list[name].OnSceneInit() 
 end
 
-function on_scene_manager_update()
-    scene_list[current_scene_name].OnSceneUpdate()
+function on_scene_manager_update(name)
+    scene_list[name].OnSceneUpdate()
 end
 
-function on_scene_manager_draw()
-    scene_list[current_scene_name].OnSceneDraw()
+function on_scene_manager_draw(name)
+    scene_list[name].OnSceneDraw()
 end
 
