@@ -13,7 +13,6 @@ set(GLFW_BUILD_DOCS OFF)
 add_subdirectory(glfw)
 add_subdirectory(glm)
 add_subdirectory(SOIL)
-add_subdirectory(luadebugger)
 
 # adding assimp
 #set(ASSIMP_INSTALL_PDB FALSE)
