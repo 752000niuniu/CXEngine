@@ -54,7 +54,7 @@
 	path = internals/cxlua
 	url = https://github.com/oceancx/cxlua.git
 	branch = master
-[submodule "externals/luadebugger"]
-	path = externals/luadebugger
+[submodule "internals/luadebugger"]
+	path = internals/luadebugger
 	url = https://github.com/oceancx/luadebugger.git
 	branch = master
