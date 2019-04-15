@@ -23,6 +23,7 @@ local function utils_find_role_id_row(actor_type, role_id)
 end
 
 function actor_manager_init()
+    if true then return end
     local tbl_raw = utils_parse_tsv_file_as_table(fs_get_tsv_path('actor_template'), false)
     for i,row in ipairs(tbl_raw) do
         local ID = row.ID

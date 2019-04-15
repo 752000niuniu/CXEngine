@@ -10,7 +10,7 @@ local scene_lua_files =
     {name='default' ,           file= 'scene/scene.lua'},
     {name='AnimationEditor' ,  file= 'scene/animation_editor.lua'},
     {name='BattleScene' ,            file= 'scene/battle_scene.lua'},
-    {name='fangcunshan' ,       file= 'scene/fangcunshan_scene.lua'},
+    {name='门派_方寸山全景' ,       file= 'scene/splash_scene.lua'},
     {name='Splash' ,            file= 'scene/splash_scene.lua'},
     {name='TestScene' ,          file= 'scene/test_net_scene.lua'}
 }
