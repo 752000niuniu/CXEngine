@@ -3,6 +3,8 @@
 #include <corecrt_io.h>
 #endif
 
+static String VFS_WORK_PATH = WORK_DIR;
+
 FileSystem::FileSystem()
 {
 
@@ -15,8 +17,19 @@ FileSystem::~FileSystem()
 
 std::string FileSystem::GetPath()
 {
-	return WORK_DIR;
+	return VFS_WORK_PATH;
 }
+
+std::string FileSystem::MakePath(String rpath)
+{
+	return GetPath() + "/" + rpath;
+}
+
+std::string FileSystem::FormatPath(String path)
+{
+	return path.replace(path.begin(), path.end(), "\\", "/");
+}
+
 
 String FileSystem::GetTSVPath(String name)
 {
@@ -69,15 +82,16 @@ std::string FileSystem::GetIconPath(std::string path)
 	return GetPath() + "/res/icon/" + path;
 }
 
-std::vector<std::string> FileSystem::ListFiles(std::string path)
+std::vector<std::string> VFS_ListFiles(std::string path)
 {
 #if defined(_WIN32)
     std::vector<std::string> files;
-    path.append("\\*.*");
+	String filter_path(path);
+	filter_path.append("\\*.*");
     intptr_t handle;
     _finddata_t findData;
 
-    handle = _findfirst(path.c_str(), &findData);
+    handle = _findfirst(filter_path.c_str(), &findData);
     if (handle == -1)
         return files;
 
@@ -85,8 +99,14 @@ std::vector<std::string> FileSystem::ListFiles(std::string path)
     int found = 0;
     do
     {
-        files.push_back(findData.name);
-        found++;
+		String filename = findData.name;
+		if (filename != "." && filename != "..")
+		{
+			String p(path);
+			p.append("/").append(findData.name);
+			files.push_back(p);
+			found++;
+		}
     } while (_findnext(handle, &findData) == 0 || found >= limit);
 
     _findclose(handle);
@@ -96,7 +116,7 @@ std::vector<std::string> FileSystem::ListFiles(std::string path)
 #endif
 }
 
-std::vector<std::string> FileSystem::ListAllFiles(std::string path)
+std::vector<std::string> VFS_ListAllFiles(std::string path)
 {
 #if defined(_WIN32)
     std::vector<std::string> files;
@@ -117,7 +137,7 @@ std::vector<std::string> FileSystem::ListAllFiles(std::string path)
             if (strcmp(findData.name, ".") == 0 || strcmp(findData.name, "..") == 0)
                 continue;
             //cout << findData.name << "\t<dir>\n";
-            auto nextFiles = ListAllFiles(path + "\\" + findData.name);
+            auto nextFiles = VFS_ListFiles(path + "\\" + findData.name);
             for (auto f : nextFiles)
             {
                 files.push_back(f);
@@ -144,8 +164,42 @@ std::string fs_get_tsv_path(const char* name)
 	return FileSystem::GetTSVPath(name);
 }
 
+int vfs_list_files(lua_State* L)
+{
+	const char* rpath = luaL_checkstring(L, 1);
+	auto path = FileSystem::MakePath(rpath);
+	auto files = VFS_ListFiles(path);
+	lua_newtable(L);
+	int index = 1;
+	for (auto& f : files) 
+	{
+		lua_pushstring(L, f.c_str());
+		lua_rawseti(L, -2,index++);
+	}
+	return 1;
+}
+
+int vfs_set_workdir(lua_State* L)
+{
+	const char* path = luaL_checkstring(L, 1);
+	VFS_WORK_PATH = path;
+	return 0;
+}
+
+
+int vfs_get_workdir(lua_State* L)
+{
+	lua_pushstring(L, VFS_WORK_PATH.c_str());
+	return 1;
+}
+
 void luaopen_filesystem(lua_State*L)
 {
 	script_system_register_function(L, fs_get_tsv_path);
+
+	script_system_register_luac_function(L, vfs_list_files);
+
+	script_system_register_luac_function(L, vfs_set_workdir);
+	script_system_register_luac_function(L, vfs_get_workdir);
 
 }

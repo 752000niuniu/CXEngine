@@ -1,17 +1,15 @@
 local cjson = require("cjson")
 local imgui = require("imgui")
 
-
-
 function OnSceneInit()
-    local actor1 = lua_new_actor(ACTOR_TYPE_PLAYER, 9)
-    local actor2 = lua_new_actor(ACTOR_TYPE_PLAYER, 9)
-    actor1:SetProperty('name','oceancx')
-    actor2:SetProperty('name','oceancx2')
-    
-    -- print('name1' , actor1:GetNickName() ,'name2',actor2:GetNickName())
-    actor1:Destroy()
-    actor2:Destroy()
+    -- local files = vfs_list_files('scripts/server')
+    -- for i,f in ipairs(files) do
+    --     local fh = io.open(f,'r')
+    --     for c in fh:lines() do
+    --         print(c)
+    --     end
+    --     fh:close()
+    -- end
 end
 
 local move_speed = 400.0

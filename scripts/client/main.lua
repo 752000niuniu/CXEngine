@@ -1,6 +1,11 @@
+luadbg_listen(9527)
+
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 DefaultMapID = 1001
+
+script_system_dofile('vfs.lua')
+script_system_dofile('tsv.lua')
 
 script_system_dofile 'utils.lua'
 script_system_dofile 'content_system.lua'
@@ -11,14 +16,11 @@ script_system_dofile 'table_template.lua'
 
 IsCombat = false
 
-luadbg_listen(9527)
-
 --聊天背景框 wzife 39D3BD99 
 function main()
     window_system_init(SCREEN_WIDTH,SCREEN_HEIGHT)
     window_system_show()	
 end
-
 
 function on_script_system_init()
     -- generate_avatar_role_tsv()
