@@ -13,7 +13,7 @@ function remove_empty_lines(content)
     end
     local new_content = table.concat(t,'\n')
     -- print(table.concat(t,'\n'))
-    local output_file = io.open([[E:\Github\SimpleEngine\scripts\client\a.txt]],'w')
+    local output_file = io.open([[F:\Github\SimpleEngine\scripts\client\a.txt]],'w')
     output_file:write(new_content)
     output_file:close()
     return  new_content
@@ -87,7 +87,7 @@ imgui_header_separate_flags = {
     { [[struct ImGuiStyle]],                'skip'},
     { [[#ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS]],     'skip'},
     { [[#ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS]],     'skip'},
-    { [[namespace ImGui]],                  'parse ImGuiAPI'},
+    { [[namespace ImGui]],                  'skip'},
     { [[#endif]],                           'skip'},
     { [[enum ImDrawCornerFlags_]],          'parse enum blocks'},
     { [[struct ImDrawList]],                'skip'},
@@ -102,6 +102,158 @@ local imgui_enums = {}
 local imgui_apis = {}
 local imgui_types = {}
 local imgui_functions = {}
+local imgui_structs = {}
+
+function parse_struct(content)
+    for line in content:gmatch('(.-)\n') do
+        if line:find('struct') then
+            local last_word 
+            for word in line:gmatch('([^%s;]+)') do
+                last_word = word
+            end
+            if last_word then
+                table.insert(imgui_structs, last_word)
+            end
+        end
+    end
+    -- for i,struct_str in ipairs(imgui_structs) do
+        -- print(i, struct_str)
+    -- end
+end
+
+----------------------------------------
+-- function_prototype 函数原型
+-- [const][rettype][*|&] func([const][type][*|&][name][[10]])
+-- type = {
+--     is_const,
+--     is_ptr,
+--     is_ref,
+--     is_array,
+--     array_n,
+--     ele_type,
+-- }
+----------------------------------------
+
+-- PlotLines(const char* label,
+--  const float* values,
+--  int values_count,
+--  int values_offset = 0,
+--  const char* overlay_text = NULL,
+--  float scale_min = FLT_MAX,
+--  float scale_max = FLT_MAX,
+--  ImVec2 graph_size = ImVec2(0, 0),
+--  int stride = sizeof(float));
+
+local imgui_api_arg_types = {}
+
+function parse_funcargs_cap(args)
+    if args == '()' then return end
+    args = args:sub(2,#args-1)
+
+    local brace_repls ={}
+    args = args:gsub('(%b())',function(cap)
+        table.insert(brace_repls, cap)
+        return '@'..#brace_repls
+    end)
+
+    print('args ', args)
+    args = args..','
+    for arg_block in args:gmatch('(.-),') do
+        print('\t', arg_block)
+        if arg_block:find('%.%.%.') then
+            imgui_api_arg_types['...'] = true
+        else
+            local aconst, atype  = arg_block:gmatch('%s*([const]*)%s*([%w_]+)')()
+            print('aconst,atype', aconst,atype)
+            if atype=='const' then
+                print('bbbbbbbbbbbbbreakkkkkkkkkkkkkkkk!!!!!!!!!')
+            end
+            imgui_api_arg_types[atype] = true
+        end
+    end
+
+    
+    return args
+end
+
+function parse_typedef(content)
+    for line in content:gmatch('(.-)\n') do
+        -- print('parse_typedef', line )
+        if line:find('typedef') and line:find('ImS64')==nil and line:find('ImU64')==nil then
+            if line:find('typedef.+%b()%s*%b();') then
+                local ret_type, ret_dec, fname_cap, args_cap = line:gmatch('typedef%s*([%w_]+)%s*([&*]?)%s*(%b())(%b());')()
+                local fname = fname_cap:gmatch('[*]%s*([%w_]+)')()
+                -- local args = parse_funcargs_cap(args_cap)
+                -- print('find function', ret_type, ret_dec, fname, args)             
+                imgui_types[fname] =  ret_type..ret_dec..' (*)'..args_cap
+            else
+                local words = {} 
+                for word in line:gmatch('([^%s;]+)') do
+                    table.insert(words, word)
+                end
+                if #words > 2 then
+                    local first = words[1]
+                    local last = words[#words]
+                    table.remove(words,1)
+                    table.remove(words,#words)
+                    imgui_types[last] = table.concat(words,' ')    
+                end
+            end
+        end
+    end
+    local i = 1
+    for k,w in pairs(imgui_types) do
+        -- print('imgui_types ',i, k,'=', w)
+        i = i + 1
+    end
+end
+
+function parse_imvec2(content)
+    imgui_types['ImVec2'] = 'ImVec2';
+end
+
+function parse_imvec4(content)
+    imgui_types['ImVec4'] = 'ImVec4';
+end
+
+function parse_imgui_api(content)
+    imgui_apis ={}
+    for line in content:gmatch('.-\n') do
+        -- print('Parse imgui api','line',line)
+        if line:find('IMGUI_API') then
+            local rconst, rtype, rdec, fname, args = line:gmatch('IMGUI_API%s*([const]-)%s*([%w_]*)%s*([*&]?)%s*([%w_]+)(%b())')()
+            local proto = {}
+            proto.fname = fname
+            proto.rtype = rtype
+            proto.rconst= rconst
+            proto.rdec = rdec
+            proto.args = args
+            table.insert(imgui_apis, proto)
+        end
+    end
+
+    local all_types = {}
+    for i,v in ipairs(imgui_apis) do
+        -- print(string.format('func[%s] ret:%s %s%s  args:%s',v.fname,v.rconst, v.rtype,v.rdec, v.args))
+        all_types[v.rtype] = true
+        print('name', v.fname)
+        local arg_result =  parse_funcargs_cap(v.args)
+        
+    end
+
+    for k,v in pairs(all_types) do
+        print(k,v)
+    end
+    
+    for k,v in pairs(imgui_api_arg_types) do
+        print('imgui_api_arg_types' ,k,v)
+    end
+
+end
+
+function parse_enum_blocks(content)
+
+end
 
 
 function parse_imgui_header(path)
@@ -111,7 +263,7 @@ function parse_imgui_header(path)
     content = content:gsub('/%*.-%*/','')   
     content = remove_empty_lines(content)    
 
-    local output_file = io.open([[E:\Github\SimpleEngine\scripts\client\b.txt]],'w')
+    local output_file = io.open([[F:\Github\SimpleEngine\scripts\client\b.txt]],'w')
     for i=1, #imgui_header_separate_flags-1 do
         local begin_str = imgui_header_separate_flags[i][1]
         local end_str = imgui_header_separate_flags[i+1][1]
@@ -123,11 +275,17 @@ function parse_imgui_header(path)
 
         if parse_flag=='skip' then
         elseif parse_flag =='parse struct' then
+            parse_struct(sub)
         elseif parse_flag =='parse typedef' then
+            parse_typedef(sub)
         elseif parse_flag =='parse ImVec2' then
+            parse_imvec2(sub)
         elseif parse_flag =='parse ImVec4' then
+            parse_imvec4(sub)
         elseif parse_flag =='parse ImGuiAPI' then
+            parse_imgui_api(sub)
         elseif parse_flag =='parse enum blocks' then
+            parse_enum_blocks(sub)
         end
 
         output_file:write('\nsub :'..parse_flag.. '\n'..sub)
@@ -136,7 +294,7 @@ function parse_imgui_header(path)
 end
 
 
-parse_imgui_header([[E:\Github\SimpleEngine\internals\imgui\include\imgui.h]])
+parse_imgui_header([[F:\Github\SimpleEngine\internals\imgui\include\imgui.h]])
 
 
 
