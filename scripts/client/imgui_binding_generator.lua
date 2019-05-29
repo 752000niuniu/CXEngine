@@ -120,7 +120,6 @@ function parse_struct(content)
         -- print(i, struct_str)
     -- end
 end
-
 ----------------------------------------
 -- function_prototype 函数原型
 -- [const][rettype][*|&] func([const][type][*|&][name][[10]])
@@ -133,7 +132,6 @@ end
 --     ele_type,
 -- }
 ----------------------------------------
-
 -- PlotLines(const char* label,
 --  const float* values,
 --  int values_count,
@@ -143,6 +141,26 @@ end
 --  float scale_max = FLT_MAX,
 --  ImVec2 graph_size = ImVec2(0, 0),
 --  int stride = sizeof(float));
+
+int lua_plot_lines(luaState* L){
+    local arg1 = luacheckstring(label)
+
+    return 0 
+}
+local imgui_unsupported_types = 
+{
+    ImGuiContext = true,
+    ImGuiInputTextCallback  = true,
+    ImGuiStorage = true,
+    ImGuiViewport = true,
+    ImFontAtlas = true,
+    ImGuiDockFamily = true,
+    ImGuiStyle = true,
+    ImFont = true,
+    ImGuiSizeCallback = true,
+    ['...'] = true, 
+    va_list = true
+}
 
 local imgui_api_arg_types = {}
 
@@ -156,18 +174,32 @@ function parse_funcargs_cap(args)
         return '@'..#brace_repls
     end)
 
-    print('args ', args)
     args = args..','
     for arg_block in args:gmatch('(.-),') do
+        arg_block = arg_block:gsub('@', ' @', 1)
         print('\t', arg_block)
         if arg_block:find('%.%.%.') then
             imgui_api_arg_types['...'] = true
         else
-            local aconst, atype  = arg_block:gmatch('%s*([const]*)%s*([%w_]+)')()
-            print('aconst,atype', aconst,atype)
-            if atype=='const' then
-                print('bbbbbbbbbbbbbreakkkkkkkkkkkkkkkk!!!!!!!!!')
+            local equal_left
+            local equal_right
+            local l,r = arg_block:find('=') 
+            if l then
+                equal_left = arg_block:sub(1,l-1)
+                equal_right = arg_block:sub(r+1)
+            else 
+                equal_left = arg_block
             end
+
+            local atype 
+            local aname 
+            local words = {}
+            for w in equal_left:gmatch('([@%w_*&%[%]]+)') do
+                table.insert(words, w)
+            end
+            aname = words[#words]
+            table.remove(words,#words)
+            atype = table.concat(words,' ')
             imgui_api_arg_types[atype] = true
         end
     end
@@ -221,7 +253,12 @@ function parse_imgui_api(content)
     for line in content:gmatch('.-\n') do
         -- print('Parse imgui api','line',line)
         if line:find('IMGUI_API') then
-            local rconst, rtype, rdec, fname, args = line:gmatch('IMGUI_API%s*([const]-)%s*([%w_]*)%s*([*&]?)%s*([%w_]+)(%b())')()
+            local rconst, rtype, rdec, fname, args = line:gmatch('IMGUI_API%s+(const%s+)([%w_]*)%s*([*&]?)%s*([%w_]+)(%b())')()
+            if not rconst then
+                rconst = ''
+                rtype, rdec, fname, args = line:gmatch('IMGUI_API%s+([%w_]*)%s*([*&]?)%s*([%w_]+)(%b())')()
+            end
+
             local proto = {}
             proto.fname = fname
             proto.rtype = rtype
