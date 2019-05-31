@@ -28,15 +28,15 @@ end
 
 function find_all_type_typedef(content)
     for type, tpdef in content:gmatch('typedef%s*(.-)%s*([%w_]-);') do
-        print(type, tpdef)
+        -- print(type, tpdef)
         for t in type:gmatch('%s*([%w_*]+)%s*') do
-            print('\t', t)
+            -- print('\t', t)
         end
     end
     for block in content:gmatch('namespace%s*ImGui%s*(%b{})') do
         for line in block:gmatch('[^{}](.-)\n') do
             if not line:match('^%s*$') then
-                print(line)
+                -- print(line)
             end
         end
     end
@@ -72,8 +72,6 @@ end
 setmetatable(buf, BufferMT)
 
 -- find_all_macro_if_endif(content)
-
-
 imgui_header_separate_flags = {
     { '',                                   'skip'},
     { [[struct ImDrawChannel;]],            'parse struct'},
@@ -141,12 +139,6 @@ end
 --  float scale_max = FLT_MAX,
 --  ImVec2 graph_size = ImVec2(0, 0),
 --  int stride = sizeof(float));
-
-int lua_plot_lines(luaState* L){
-    local arg1 = luacheckstring(label)
-
-    return 0 
-}
 local imgui_unsupported_types = 
 {
     ImGuiContext = true,
@@ -162,22 +154,99 @@ local imgui_unsupported_types =
     va_list = true
 }
 
-local imgui_api_arg_types = {}
+--[[
+IMGUI_API bool          Combo(const char* label, int* current_item, const char* const items[], int items_count, int popup_max_height_in_items = -1);
+IMGUI_API bool          Combo(const char* label, int* current_item, const char* items_separated_by_zeros, int popup_max_height_in_items = -1);      
+IMGUI_API bool          ListBox(const char* label, int* current_item, bool (*items_getter)(void* data, int idx, const char** out_text), void* data, int items_count, int height_in_items = -1);
+IMGUI_API bool          Combo(const char* label, int* current_item, bool(*items_getter)(void* data, int idx, const char** out_text), void* data, int items_count, int popup_max_height_in_items = -1);
+]]--
+local TypeProtoMT = {}
+function TypeProtoMT:tostr()
+    local ret = {}
+    if self.final then
+        table.insert(ret, 'const ')
+    end
+    table.insert(ret,self.type)
+    if self.decor then
+        table.insert(ret,self.decor)
+    end
+    table.insert(ret,' ')
+    table.insert(ret,self.name)
+    if self.is_array then
+        if self.array_size > 0 then
+            table.insert(ret,string.format('[%d]', self.array_size ))
+        else
+            table.insert(ret,string.format('[]'))
+        end
+    end
+    return table.concat(ret)
+end
+TypeProtoMT.__index = TypeProtoMT
 
+function type_proto_create(name, type, decor, final, is_array, array_size)
+    local type_proto = {
+        name    = name, 
+        type    = type,
+        final   = final,
+        decor   =  decor,
+        is_array   = is_array ,
+        array_size = array_size ,
+        func    = nil
+    }
+    setmetatable(type_proto, TypeProtoMT)
+    return type_proto
+end
+
+function parse_type(str)
+    -- print('parse_type', str)
+    local final
+    local fs,fe = str:find('^%s*const')
+    if fs then
+        final = 'const'
+        str = str:sub(fe+1)
+    end
+    local type, decor, name = str:gmatch('([%w_]+)%s*([&*])%s*([@%w_]+)')()
+    if not decor then
+        type, name = str:gmatch('([%w_]+)%s+([@%w_]+)')()
+    end
+    
+    -- print('final', final, 'type', type, 'decor', decor, 'name', name)
+    fs, fe = str:find(name)
+    str = str:sub(fe+1)
+    local is_array = false 
+    local array_size = 0
+    if str:find('%[%d*%]') then
+        is_array = true
+        local sz = str:gmatch('%[(%d+)%]')()
+        if sz then
+            array_size = math.tointeger(sz)
+        end
+    end
+
+    return type_proto_create(name, type, decor, final, is_array, array_size)
+end
+
+function parse_val(str)
+    print('parse_val', str)
+    return str
+end
+
+local imgui_api_arg_types = {}
 function parse_funcargs_cap(args)
     if args == '()' then return end
     args = args:sub(2,#args-1)
-
-    local brace_repls ={}
+    
+    local brace_repls = {}
     args = args:gsub('(%b())',function(cap)
         table.insert(brace_repls, cap)
         return '@'..#brace_repls
     end)
 
     args = args..','
+    local all_args = { }
     for arg_block in args:gmatch('(.-),') do
-        arg_block = arg_block:gsub('@', ' @', 1)
-        print('\t', arg_block)
+        arg_block = arg_block:gsub('@', ' @', 1)  
+        -- print('arg_block', arg_block)
         if arg_block:find('%.%.%.') then
             imgui_api_arg_types['...'] = true
         else
@@ -190,22 +259,13 @@ function parse_funcargs_cap(args)
             else 
                 equal_left = arg_block
             end
-
-            local atype 
-            local aname 
-            local words = {}
-            for w in equal_left:gmatch('([@%w_*&%[%]]+)') do
-                table.insert(words, w)
-            end
-            aname = words[#words]
-            table.remove(words,#words)
-            atype = table.concat(words,' ')
-            imgui_api_arg_types[atype] = true
+            local cur_arg = {}
+            cur_arg.arg = parse_type(equal_left)
+            cur_arg.def = parse_val(equal_right)
+            table.insert(all_args, cur_arg)
         end
     end
-
-    
-    return args
+    return all_args
 end
 
 function parse_typedef(content)
@@ -233,11 +293,6 @@ function parse_typedef(content)
             end
         end
     end
-    local i = 1
-    for k,w in pairs(imgui_types) do
-        -- print('imgui_types ',i, k,'=', w)
-        i = i + 1
-    end
 end
 
 function parse_imvec2(content)
@@ -248,10 +303,15 @@ function parse_imvec4(content)
     imgui_types['ImVec4'] = 'ImVec4';
 end
 
+local imgui_ignore_func_filters={
+    'const char* const',
+    'items_getter',
+    'va_list args'
+}
+
 function parse_imgui_api(content)
-    imgui_apis ={}
+    imgui_apis = {}
     for line in content:gmatch('.-\n') do
-        -- print('Parse imgui api','line',line)
         if line:find('IMGUI_API') then
             local rconst, rtype, rdec, fname, args = line:gmatch('IMGUI_API%s+(const%s+)([%w_]*)%s*([*&]?)%s*([%w_]+)(%b())')()
             if not rconst then
@@ -259,13 +319,25 @@ function parse_imgui_api(content)
                 rtype, rdec, fname, args = line:gmatch('IMGUI_API%s+([%w_]*)%s*([*&]?)%s*([%w_]+)(%b())')()
             end
 
-            local proto = {}
-            proto.fname = fname
-            proto.rtype = rtype
-            proto.rconst= rconst
-            proto.rdec = rdec
-            proto.args = args
-            table.insert(imgui_apis, proto)
+            local skip = false
+            for i=1, #imgui_ignore_func_filters then
+                local filter = imgui_ignore_func_filters[i]
+                if fname:find(filter) then
+                    skip = true
+                    break
+                end
+            end
+            if not skip then
+                print('Parse imgui api','rconst ', rconst,'rtype', rtype,'rdec', rdec,'fname',  fname, 'args',args)
+                local proto = {}
+                proto.fname = fname
+                proto.rtype = rtype
+                proto.rconst= rconst
+                proto.rdec = rdec
+                proto.args = args
+                table.insert(imgui_apis, proto)
+                local arg_result =  parse_funcargs_cap(proto.args)
+            end
         end
     end
 
@@ -273,17 +345,16 @@ function parse_imgui_api(content)
     for i,v in ipairs(imgui_apis) do
         -- print(string.format('func[%s] ret:%s %s%s  args:%s',v.fname,v.rconst, v.rtype,v.rdec, v.args))
         all_types[v.rtype] = true
-        print('name', v.fname)
-        local arg_result =  parse_funcargs_cap(v.args)
-        
+        -- print('name', v.fname)
+        -- local arg_result =  parse_funcargs_cap(v.args)
     end
 
     for k,v in pairs(all_types) do
-        print(k,v)
+        -- print(k,v)
     end
     
     for k,v in pairs(imgui_api_arg_types) do
-        print('imgui_api_arg_types' ,k,v)
+        -- print('imgui_api_arg_types' ,k,v)
     end
 
 end
@@ -332,11 +403,4 @@ end
 
 
 parse_imgui_header([[F:\Github\SimpleEngine\internals\imgui\include\imgui.h]])
-
-
-
-
-
-
-
 

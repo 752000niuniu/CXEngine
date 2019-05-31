@@ -17,3 +17,6 @@ id name weapon_type action_was_id
 
 weapon 表
 id name lv type action_was_id
+
+
+git -c filter.lfs.smudge= -c filter.lfs.required=false clone url path
