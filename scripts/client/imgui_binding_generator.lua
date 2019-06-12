@@ -243,7 +243,7 @@ function parse_funcargs_cap(args)
     end)
 
     args = args..','
-    local all_args = { }
+    local all_args = {}
     for arg_block in args:gmatch('(.-),') do
         arg_block = arg_block:gsub('@', ' @', 1)  
         -- print('arg_block', arg_block)
@@ -303,12 +303,68 @@ function parse_imvec4(content)
     imgui_types['ImVec4'] = 'ImVec4';
 end
 
-local imgui_ignore_func_filters={
-    'const char* const',
-    'items_getter',
-    'va_list args'
+local imgui_api_ignore_fnames={
+    --[ImGuiStyle]
+    'GetStyle',
+    'ShowStyleEditor',
+    'StyleColorsDark',
+    'StyleColorsClassic',
+    'StyleColorsLight',
+   
+    'CreateContext',
+    'DestroyContext',
+    'GetCurrentContext',
+    'SetCurrentContext',
+    'GetIO',
+    'GetDrawData',
+    'GetWindowDrawList',
+    'GetWindowViewport',
+    'SetNextWindowSizeConstraint',
+    'PushFont',
+    'PopFont',
+    'GetFont',
+    'Combo',
+    'DragScalar',
+    'DragScalarN',
+    'SliderScalar',
+    'SliderScalarN',
+    'VSliderScalar',
+    'InputScalar',
+    'InputScalarN',
+    'ListBox',
+    'PlotLines',
+    'PlotHistogram',
+    'DockSpace',
+    'DockSpaceOverViewport',
+    'SetNextWindowDockId',
+    'SetNextWindowDockFamily',
+    'SetDragDropPayload',
+    'EndDragDropSource',
+    'BeginDragDropTarget',
+    'AcceptDragDropPayload',
+    'EndDragDropTarget',
+    'GetDragDropPayload',
+    'GetOverlayDrawList',
+    'GetDrawListSharedData',
+    'GetStateStorage',
+    'SetStateStorage',
+    'SetAllocatorFunctions',
+    'MemAlloc',
+    'MemFree',
+    'GetPlatformIO',
+    'GetMainViewport',
+    'RenderPlatformWindowsDefault',
+    'FindViewportByPlatformHandle'
 }
 
+local imgui_api_unsupported_types = {
+    'void*',        --translate void* to int 
+    'void',
+    '...',      --translate ... into unsupported , translate const char* fmt, va_list args to const char* string
+    'const char* const items[]'
+    'items_getter'
+}   
+   
 function parse_imgui_api(content)
     imgui_apis = {}
     for line in content:gmatch('.-\n') do
@@ -320,8 +376,8 @@ function parse_imgui_api(content)
             end
 
             local skip = false
-            for i=1, #imgui_ignore_func_filters then
-                local filter = imgui_ignore_func_filters[i]
+            for i=1, #imgui_api_ignore_fnames do
+                local filter = imgui_api_ignore_fnames[i]
                 if fname:find(filter) then
                     skip = true
                     break
@@ -336,7 +392,7 @@ function parse_imgui_api(content)
                 proto.rdec = rdec
                 proto.args = args
                 table.insert(imgui_apis, proto)
-                local arg_result =  parse_funcargs_cap(proto.args)
+                -- local arg_result = parse_funcargs_cap(proto.args)
             end
         end
     end
