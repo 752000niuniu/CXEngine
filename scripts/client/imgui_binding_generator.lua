@@ -360,8 +360,8 @@ local imgui_api_ignore_fnames={
 local imgui_api_unsupported_types = {
     'void*',        --translate void* to int 
     'void',
-    '...',      --translate ... into unsupported , translate const char* fmt, va_list args to const char* string
-    'const char* const items[]'
+    '...',          --translate ... into unsupported , translate const char* fmt, va_list args to const char* string
+    'const char* const items[]',
     'items_getter'
 }   
    
