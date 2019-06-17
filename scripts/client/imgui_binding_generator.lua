@@ -51,26 +51,6 @@ function find_all_type_typedef(content)
     end
 end
 
-local buf={}
-
-BufferMT = {}
-function BufferMT:ReadableSize()
-
-end
-
-function BufferMT:WriteableSize()
-
-end
-
-function BufferMT:Append()
-
-end
-
-function BufferMT:Preview()
-
-end
-setmetatable(buf, BufferMT)
-
 -- find_all_macro_if_endif(content)
 imgui_header_separate_flags = {
     { '',                                   'skip'},
@@ -198,7 +178,9 @@ function type_proto_create(name, type, decor, final, is_array, array_size)
 end
 
 function parse_type(str)
-    -- print('parse_type', str)
+    if str =='...' then
+        return type_proto_create('', '...', '')
+    end
     local final
     local fs,fe = str:find('^%s*const')
     if fs then
@@ -227,7 +209,7 @@ function parse_type(str)
 end
 
 function parse_val(str)
-    print('parse_val', str)
+    -- print('parse_val', str)
     return str
 end
 
@@ -236,19 +218,23 @@ function parse_funcargs_cap(args)
     if args == '()' then return end
     args = args:sub(2,#args-1)
     
-    local brace_repls = {}
+    local brace_repls = {}  
     args = args:gsub('(%b())',function(cap)
         table.insert(brace_repls, cap)
         return '@'..#brace_repls
     end)
 
     args = args..','
+
     local all_args = {}
+    all_args.brace_repls = brace_repls
     for arg_block in args:gmatch('(.-),') do
-        arg_block = arg_block:gsub('@', ' @', 1)  
-        -- print('arg_block', arg_block)
+        arg_block = arg_block:gsub('@', ' @', 1)    
+
         if arg_block:find('%.%.%.') then
-            imgui_api_arg_types['...'] = true
+            local cur_arg = {}
+            cur_arg.arg = parse_type('...')
+            table.insert(all_args, cur_arg)
         else
             local equal_left
             local equal_right
@@ -275,7 +261,7 @@ function parse_typedef(content)
             if line:find('typedef.+%b()%s*%b();') then
                 local ret_type, ret_dec, fname_cap, args_cap = line:gmatch('typedef%s*([%w_]+)%s*([&*]?)%s*(%b())(%b());')()
                 local fname = fname_cap:gmatch('[*]%s*([%w_]+)')()
-                -- local args = parse_funcargs_cap(args_cap)
+                
                 -- print('find function', ret_type, ret_dec, fname, args)             
                 imgui_types[fname] =  ret_type..ret_dec..' (*)'..args_cap
             else
@@ -374,35 +360,32 @@ function parse_imgui_api(content)
                 rconst = ''
                 rtype, rdec, fname, args = line:gmatch('IMGUI_API%s+([%w_]*)%s*([*&]?)%s*([%w_]+)(%b())')()
             end
+            
+            local proto = {}
+            proto.fname = fname
+            proto.rtype = rtype
+            proto.rconst= rconst
+            proto.rdec = rdec
+            proto.args = args
+            proto.parsed_args  = parse_funcargs_cap(proto.args)
 
-            local skip = false
-            for i=1, #imgui_api_ignore_fnames do
-                local filter = imgui_api_ignore_fnames[i]
-                if fname:find(filter) then
-                    skip = true
-                    break
-                end
-            end
-            if not skip then
-                print('Parse imgui api','rconst ', rconst,'rtype', rtype,'rdec', rdec,'fname',  fname, 'args',args)
-                local proto = {}
-                proto.fname = fname
-                proto.rtype = rtype
-                proto.rconst= rconst
-                proto.rdec = rdec
-                proto.args = args
-                table.insert(imgui_apis, proto)
-                -- local arg_result = parse_funcargs_cap(proto.args)
-            end
+            table.insert(imgui_apis, proto)
         end
     end
 
-    local all_types = {}
-    for i,v in ipairs(imgui_apis) do
-        -- print(string.format('func[%s] ret:%s %s%s  args:%s',v.fname,v.rconst, v.rtype,v.rdec, v.args))
-        all_types[v.rtype] = true
-        -- print('name', v.fname)
-        -- local arg_result =  parse_funcargs_cap(v.args)
+    -- local all_types = {}
+    for i,proto in ipairs(imgui_apis) do
+        -- all_types[v.rtype] = true
+        print('proto', proto.rtype..proto.rdec .. ' '..proto.fname..proto.args)
+        print('fname', proto.fname)
+        print('rtype',  proto.rtype ..proto.rdec )
+        print('args', proto.args )
+        if proto.parsed_args then
+            for i,a in ipairs(proto.parsed_args) do
+                print(a.arg:tostr(), '=', a.def or '')
+            end
+        end
+        print('\n')
     end
 
     for k,v in pairs(all_types) do
@@ -412,7 +395,6 @@ function parse_imgui_api(content)
     for k,v in pairs(imgui_api_arg_types) do
         -- print('imgui_api_arg_types' ,k,v)
     end
-
 end
 
 function parse_enum_blocks(content)
