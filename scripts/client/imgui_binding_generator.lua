@@ -1,6 +1,4 @@
 
-
--- print(content)
 function remove_empty_lines(content) 
     local t = {}
     local line_count = 1
@@ -19,39 +17,6 @@ function remove_empty_lines(content)
     return  new_content
 end
 
-function find_all_macro_if_endif(content)
-    for block in content:gmatch('(#if.-#endif)') do
-        print(block)
-        print('\n')
-    end
-end
-
-function find_all_type_typedef(content)
-    for type, tpdef in content:gmatch('typedef%s*(.-)%s*([%w_]-);') do
-        -- print(type, tpdef)
-        for t in type:gmatch('%s*([%w_*]+)%s*') do
-            -- print('\t', t)
-        end
-    end
-    for block in content:gmatch('namespace%s*ImGui%s*(%b{})') do
-        for line in block:gmatch('[^{}](.-)\n') do
-            if not line:match('^%s*$') then
-                -- print(line)
-            end
-        end
-    end
-    for block in content:gmatch('namespace%s*ImGui%s*(%b{})') do
-        for ret, fname, args in block:gmatch('IMGUI_API%s*([%w_*&]+)%s*([%w]+)(%b())') do
-            print( ret , fname , args)
-        end
-
-        for ret, fname, args in block:gmatch('IMGUI_API%s*([%w_*&]+)%s*([%w]+)(%b())') do
-            print( ret , fname , args)
-        end
-    end
-end
-
--- find_all_macro_if_endif(content)
 imgui_header_separate_flags = {
     { '',                                   'skip'},
     { [[struct ImDrawChannel;]],            'parse struct'},
@@ -78,7 +43,7 @@ imgui_header_separate_flags = {
 
 local imgui_enums = {}
 local imgui_apis = {}
-local imgui_types = {}
+local imgui_typedefs = {}
 local imgui_functions = {}
 local imgui_structs = {}
 
@@ -141,7 +106,44 @@ IMGUI_API bool          ListBox(const char* label, int* current_item, bool (*ite
 IMGUI_API bool          Combo(const char* label, int* current_item, bool(*items_getter)(void* data, int idx, const char** out_text), void* data, int items_count, int popup_max_height_in_items = -1);
 ]]--
 local TypeProtoMT = {}
-function TypeProtoMT:tostr()
+function TypeProtoMT:GenLuaPopCode(i, repls)
+    
+end
+
+function TypeProtoMT:GenLuaPushCode(i, repls)
+
+end
+
+function TypeProtoMT:IsFunc()
+    local cnt = 0
+    self:ToString():gsub('@',function(cap)
+        cnt  = cnt + 1 
+        return cap
+    end)
+    return cnt == 2
+end
+
+function TypeProtoMT:IsVoid()
+    return  self.type:find('void')
+end
+
+function TypeProtoMT:IsSupported()
+    return (not self:IsFunc()) and( not self:IsVoid()  )
+end
+
+function TypeProtoMT:Type()
+    local ret = {}
+    if self.final then
+        table.insert(ret, 'const ')
+    end
+    table.insert(ret,self.type)
+    if self.decor then
+        table.insert(ret,self.decor)
+    end
+    return table.concat(ret)
+end
+
+function TypeProtoMT:ToString()
     local ret = {}
     if self.final then
         table.insert(ret, 'const ')
@@ -162,16 +164,16 @@ function TypeProtoMT:tostr()
     return table.concat(ret)
 end
 TypeProtoMT.__index = TypeProtoMT
-
 function type_proto_create(name, type, decor, final, is_array, array_size)
     local type_proto = {
         name    = name, 
         type    = type,
         final   = final,
         decor   =  decor,
-        is_array   = is_array ,
-        array_size = array_size ,
-        func    = nil
+        is_array   = is_array,
+        array_size = array_size,
+        func    = nil,
+        def     = nil
     }
     setmetatable(type_proto, TypeProtoMT)
     return type_proto
@@ -187,9 +189,20 @@ function parse_type(str)
         final = 'const'
         str = str:sub(fe+1)
     end
+
+    local unsigned
+    fs,fe = str:find('^%s*unsigned')
+    if fs then
+        unsigned = 'unsigned'
+        str = str:sub(fe+1)
+    end
+
     local type, decor, name = str:gmatch('([%w_]+)%s*([&*])%s*([@%w_]+)')()
     if not decor then
         type, name = str:gmatch('([%w_]+)%s+([@%w_]+)')()
+    end
+    if unsigned then
+        type = unsigned..' '..type
     end
     
     -- print('final', final, 'type', type, 'decor', decor, 'name', name)
@@ -208,33 +221,15 @@ function parse_type(str)
     return type_proto_create(name, type, decor, final, is_array, array_size)
 end
 
-function parse_val(str)
-    -- print('parse_val', str)
-    return str
-end
-
-local imgui_api_arg_types = {}
 function parse_funcargs_cap(args)
-    if args == '()' then return end
-    args = args:sub(2,#args-1)
-    
-    local brace_repls = {}  
-    args = args:gsub('(%b())',function(cap)
-        table.insert(brace_repls, cap)
-        return '@'..#brace_repls
-    end)
-
     args = args..','
-
     local all_args = {}
-    all_args.brace_repls = brace_repls
     for arg_block in args:gmatch('(.-),') do
         arg_block = arg_block:gsub('@', ' @', 1)    
 
         if arg_block:find('%.%.%.') then
-            local cur_arg = {}
-            cur_arg.arg = parse_type('...')
-            table.insert(all_args, cur_arg)
+            local arg = parse_type('...')
+            table.insert(all_args, arg)
         else
             local equal_left
             local equal_right
@@ -245,10 +240,10 @@ function parse_funcargs_cap(args)
             else 
                 equal_left = arg_block
             end
-            local cur_arg = {}
-            cur_arg.arg = parse_type(equal_left)
-            cur_arg.def = parse_val(equal_right)
-            table.insert(all_args, cur_arg)
+            
+            local arg = parse_type(equal_left)
+            arg.def = equal_right
+            table.insert(all_args, arg)
         end
     end
     return all_args
@@ -256,14 +251,13 @@ end
 
 function parse_typedef(content)
     for line in content:gmatch('(.-)\n') do
-        -- print('parse_typedef', line )
+        -- print('parse_typedef', line)
         if line:find('typedef') and line:find('ImS64')==nil and line:find('ImU64')==nil then
             if line:find('typedef.+%b()%s*%b();') then
                 local ret_type, ret_dec, fname_cap, args_cap = line:gmatch('typedef%s*([%w_]+)%s*([&*]?)%s*(%b())(%b());')()
                 local fname = fname_cap:gmatch('[*]%s*([%w_]+)')()
-                
                 -- print('find function', ret_type, ret_dec, fname, args)             
-                imgui_types[fname] =  ret_type..ret_dec..' (*)'..args_cap
+                -- imgui_typedefs[fname] =  ret_type..ret_dec..' (*)'..args_cap
             else
                 local words = {} 
                 for word in line:gmatch('([^%s;]+)') do
@@ -274,7 +268,7 @@ function parse_typedef(content)
                     local last = words[#words]
                     table.remove(words,1)
                     table.remove(words,#words)
-                    imgui_types[last] = table.concat(words,' ')    
+                    imgui_typedefs[last] = table.concat(words,' ')    
                 end
             end
         end
@@ -282,11 +276,11 @@ function parse_typedef(content)
 end
 
 function parse_imvec2(content)
-    imgui_types['ImVec2'] = 'ImVec2';
+    imgui_typedefs['ImVec2'] = 'ImVec2';
 end
 
 function parse_imvec4(content)
-    imgui_types['ImVec4'] = 'ImVec4';
+    imgui_typedefs['ImVec4'] = 'ImVec4';
 end
 
 local imgui_api_ignore_fnames={
@@ -363,44 +357,29 @@ function parse_imgui_api(content)
             
             local proto = {}
             proto.fname = fname
-            proto.rtype = rtype
-            proto.rconst= rconst
-            proto.rdec = rdec
-            proto.args = args
-            proto.parsed_args  = parse_funcargs_cap(proto.args)
-
+            proto.ret =  type_proto_create('',rtype, rdec, rconst) 
+            proto.raw_args = args
+            if args == '()' then
+                proto.args = {}
+                proto.brace_repls = {}
+            else
+                local brace_repls = {}  
+                args = args:sub(2,#args-1)
+                args = args:gsub('(%b())',function(cap)
+                    table.insert(brace_repls, cap)
+                    return '@'..#brace_repls
+                end)
+                proto.brace_repls = brace_repls
+                proto.args  = parse_funcargs_cap(args)
+            end
             table.insert(imgui_apis, proto)
         end
-    end
-
-    -- local all_types = {}
-    for i,proto in ipairs(imgui_apis) do
-        -- all_types[v.rtype] = true
-        print('proto', proto.rtype..proto.rdec .. ' '..proto.fname..proto.args)
-        print('fname', proto.fname)
-        print('rtype',  proto.rtype ..proto.rdec )
-        print('args', proto.args )
-        if proto.parsed_args then
-            for i,a in ipairs(proto.parsed_args) do
-                print(a.arg:tostr(), '=', a.def or '')
-            end
-        end
-        print('\n')
-    end
-
-    for k,v in pairs(all_types) do
-        -- print(k,v)
-    end
-    
-    for k,v in pairs(imgui_api_arg_types) do
-        -- print('imgui_api_arg_types' ,k,v)
-    end
+    end   
 end
 
 function parse_enum_blocks(content)
-
+    
 end
-
 
 function parse_imgui_header(path)
     local file = io.open(path)
@@ -433,12 +412,126 @@ function parse_imgui_header(path)
         elseif parse_flag =='parse enum blocks' then
             parse_enum_blocks(sub)
         end
-
         output_file:write('\nsub :'..parse_flag.. '\n'..sub)
     end
     output_file:close()
+
+    for type,define in pairs(imgui_typedefs) do
+        print(type,'|',define)
+    end
+
+    local unsupported_func = {}
+    for i,proto in ipairs(imgui_apis) do
+        print(i)
+        print('proto', proto.ret:ToString() .. ' '..proto.fname..proto.raw_args)
+        print('ret', proto.ret:Type())
+        local supported = true
+        if proto.args then
+            for i,arg in ipairs(proto.args) do
+                print('arg'..i, arg:Type(), arg.name, '=', arg.def or '')
+                if not arg:IsSupported()then
+                    supported = false
+                end
+            end
+        end
+        if not supported then
+            print('UnSupported '.. proto.fname)
+            table.insert(unsupported_func, proto.fname)
+        else
+--[[
+    函数生成算法:
+    1. c函数原型里, 每有一个arg, 就对应于一个lua的check 或者 toxxx 语句
+    2. 读出这些args后, 调用imguiAPI, 得到返回值
+    3. 用c的返回类型转换成lua的pushxxx
+    4. 打完收工
+]]
+            local ret = proto.ret
+            
+            local fun_impl = {}
+            function fun_impl:write_line(fmt, ...) 
+                table.insert(fun_impl,string.format(fmt,...))
+            end
+            fun_impl:write_line('int %s(lua_State* L){', proto.fname);
+            fun_impl:write_line('int __argi__ = 0;');
+            fun_impl:write_line('%s __ret__;', ret:Type())
+
+            local supported = true
+            for i,arg in ipairs(proto.args) do
+                if arg.type == 'ImVec2' then
+                elseif arg.type == 'ImVec4' then
+                elseif arg:Type() == 'const char*' then
+                elseif arg.type == 'int' or arg.type =='unsigned int' or arg.type =='unsigned short' or imgui_typedefs[arg.type] == 'int' then
+                elseif arg.type =='float' or arg.type =='double' then
+                elseif arg.type == 'bool' then
+                else
+                    supported = false
+                    break
+                end
+                fun_impl:write_line('%s %s;', arg:Type(), arg.name)
+            end
+
+            local call_api_args = {}
+            for i,arg in ipairs(proto.args) do
+                if arg.type == 'ImVec2' then
+                    fun_impl:write_line( '%s.x = lua_tonumber(L,__argi__++);' ,arg.name)
+                    fun_impl:write_line( '%s.y = lua_tonumber(L,__argi__++);' ,arg.name)
+                    table.insert(call_api_args, arg.name)
+                elseif arg.type == 'ImVec4' then
+                    fun_impl:write_line( '%s.x = lua_tonumber(L,__argi__++);' ,arg.name)
+                    fun_impl:write_line( '%s.y = lua_tonumber(L,__argi__++);' ,arg.name)
+                    fun_impl:write_line( '%s.z = lua_tonumber(L,__argi__++);' ,arg.name)
+                    fun_impl:write_line( '%s.w = lua_tonumber(L,__argi__++);' ,arg.name)
+                    table.insert(call_api_args, arg.name)
+                elseif arg:Type() == 'const char*' then
+                    fun_impl:write_line( '%s = lua_tostring(L, __argi__++);' ,arg.name)
+                    table.insert(call_api_args, arg.name)
+                elseif arg.type == 'int' or arg.type =='unsigned int' or arg.type =='unsigned short' or imgui_typedefs[arg.type] == 'int' then
+                    fun_impl:write_line( '%s = lua_tointeger(L, __argi__++);' ,arg.name)
+                    table.insert(call_api_args, arg.name)
+                elseif arg.type =='float' or arg.type =='double' then
+                    fun_impl:write_line( '%s = lua_tonumber(L, __argi__++);' ,arg.name)
+                    table.insert(call_api_args, arg.name)
+                elseif arg.type == 'bool' then
+                    fun_impl:write_line( '%s = lua_toboolean(L, __argi__++);' ,arg.name)
+                    table.insert(call_api_args, arg.name)
+                end
+            end
+            
+            fun_impl:write_line( '__ret__ = %s(%s);' , proto.fname, table.concat(call_api_args,','))
+            local ret_cnt = 1
+            if ret.type == 'ImVec2' then
+                fun_impl:write_line( 'lua_pushnumber(L, __ret__.x);')
+                fun_impl:write_line( 'lua_pushnumber(L, __ret__.y);')
+                ret_cnt = 2
+            elseif ret.type == 'ImVec4' then
+                fun_impl:write_line( 'lua_pushnumber(L, __ret__.x);')
+                fun_impl:write_line( 'lua_pushnumber(L, __ret__.y);')
+                fun_impl:write_line( 'lua_pushnumber(L, __ret__.z);')
+                fun_impl:write_line( 'lua_pushnumber(L, __ret__.w);')
+                ret_cnt = 4
+            elseif ret:Type() == 'const char*' then
+                fun_impl:write_line( 'lua_pushstring(L, __ret__);')
+            elseif ret.type== 'int' or ret.type =='unsigned int' or ret.type =='unsigned short' or imgui_typedefs[ret.type] == 'int' then
+                fun_impl:write_line( 'lua_pushinteger(L, __ret__);')
+            elseif ret.type =='float' or ret.type =='double' then
+                fun_impl:write_line( 'lua_pushnumber(L, __ret__);')
+            elseif ret.type == 'bool' then
+                fun_impl:write_line( 'lua_pushboolean(L, __ret__);')
+            end
+
+            fun_impl:write_line( 'return %d;', ret_cnt)
+            table.insert(fun_impl, '};')
+
+            print('impl', proto.fname)
+            local imp = table.concat(fun_impl,'\n')
+            print( imp)
+        end
+    end
+    print('total func', #imgui_apis, 'unSupported', #unsupported_func)
 end
 
 
 parse_imgui_header([[F:\Github\SimpleEngine\internals\imgui\include\imgui.h]])
+
+
 
