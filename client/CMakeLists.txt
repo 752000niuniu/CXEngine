@@ -76,6 +76,7 @@ add_executable(SimpleEngine
     src/ui.cpp
     src/vertex.cpp
     src/window.cpp
+    src/cximgui.cpp
 )
 
 if(MSVC)

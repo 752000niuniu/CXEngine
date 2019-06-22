@@ -10,10 +10,10 @@ function remove_empty_lines(content)
         end
     end
     local new_content = table.concat(t,'\n')
-    -- print(table.concat(t,'\n'))
-    local output_file = io.open([[F:\Github\SimpleEngine\scripts\client\a.txt]],'w')
+    local output_file = io.open([[E:\Github\SimpleEngine\scripts\client\a.txt]],'w')
     output_file:write(new_content)
     output_file:close()
+    -- print(new_content)
     return  new_content
 end
 
@@ -44,7 +44,6 @@ imgui_header_separate_flags = {
 local imgui_enums = {}
 local imgui_apis = {}
 local imgui_typedefs = {}
-local imgui_functions = {}
 local imgui_structs = {}
 
 function parse_struct(content)
@@ -63,18 +62,7 @@ function parse_struct(content)
         -- print(i, struct_str)
     -- end
 end
-----------------------------------------
--- function_prototype 函数原型
--- [const][rettype][*|&] func([const][type][*|&][name][[10]])
--- type = {
---     is_const,
---     is_ptr,
---     is_ref,
---     is_array,
---     array_n,
---     ele_type,
--- }
-----------------------------------------
+
 -- PlotLines(const char* label,
 --  const float* values,
 --  int values_count,
@@ -99,21 +87,7 @@ local imgui_unsupported_types =
     va_list = true
 }
 
---[[
-IMGUI_API bool          Combo(const char* label, int* current_item, const char* const items[], int items_count, int popup_max_height_in_items = -1);
-IMGUI_API bool          Combo(const char* label, int* current_item, const char* items_separated_by_zeros, int popup_max_height_in_items = -1);      
-IMGUI_API bool          ListBox(const char* label, int* current_item, bool (*items_getter)(void* data, int idx, const char** out_text), void* data, int items_count, int height_in_items = -1);
-IMGUI_API bool          Combo(const char* label, int* current_item, bool(*items_getter)(void* data, int idx, const char** out_text), void* data, int items_count, int popup_max_height_in_items = -1);
-]]--
 local TypeProtoMT = {}
-function TypeProtoMT:GenLuaPopCode(i, repls)
-    
-end
-
-function TypeProtoMT:GenLuaPushCode(i, repls)
-
-end
-
 function TypeProtoMT:IsFunc()
     local cnt = 0
     self:ToString():gsub('@',function(cap)
@@ -131,6 +105,14 @@ function TypeProtoMT:IsSupported()
     return (not self:IsFunc()) and( not self:IsVoid()  )
 end
 
+function TypeProtoMT:IsRef()
+    return self.decor=='&'
+end
+
+function TypeProtoMT:IsPtr()
+    return self.decor=='*' 
+end
+
 function TypeProtoMT:Type()
     local ret = {}
     if self.final and self.final ~= '' then
@@ -139,6 +121,13 @@ function TypeProtoMT:Type()
     table.insert(ret,self.type)
     if self.decor and self.decor ~= '' then
         table.insert(ret,self.decor)
+    end
+    if self.is_array then
+        table.insert(ret,'[')
+        if self.array_size then
+            table.insert(ret,tostring(self.array_size))
+        end
+        table.insert(ret,']')
     end
     return table.concat(ret)
 end
@@ -168,15 +157,92 @@ function type_proto_create(name, type, decor, final, is_array, array_size)
     local type_proto = {
         name    = name, 
         type    = type,
-        final   = final,
+        final   = final or '',
         decor   =  decor,
         is_array   = is_array,
         array_size = array_size,
         func    = nil,
-        def     = nil
+        def     = nil,
+        proto_type = '',
     }
     setmetatable(type_proto, TypeProtoMT)
     return type_proto
+end
+
+local FuncProtoMT = {}
+function FuncProtoMT:WrapName()
+    local tbl = {}
+    table.insert(tbl, self.name)
+    
+    if #self.args > 0 then
+        table.insert(tbl, '_'..#self.args..'_')
+        for i,arg in ipairs(self.args) do
+            if arg.type == 'ImVec2' then
+                table.insert(tbl, 'v2')
+            elseif arg.type == 'ImVec4' then
+                table.insert(tbl, 'v4')
+            elseif arg:Type() == 'const char*' then
+                table.insert(tbl, 's')
+            elseif arg.type == 'int' or arg.type =='unsigned int' or arg.type =='unsigned short' or imgui_typedefs[arg.type] == 'int' or imgui_typedefs[arg.type] == 'unsigned int' then
+                if arg.type:find('unsigned') then
+                    table.insert(tbl, 'I')
+                else
+                    table.insert(tbl, 'i')
+                end
+            elseif arg.type =='float' or arg.type =='double' then
+                if arg.type:find('unsigned') then
+                    table.insert(tbl, 'N')
+                else
+                    table.insert(tbl, 'n')
+                end
+            elseif arg.type == 'bool' then
+                table.insert(tbl, 'b')
+            else
+                table.insert(tbl, 'u')
+            end
+            if arg.decor=='*' and arg:Type() ~= 'const char*' then
+                table.insert(tbl, 'p')
+            end
+        end
+    end
+    return table.concat(tbl)
+end
+
+function FuncProtoMT:ToString()
+    local tstr = {}
+    if self.ret then
+        table.insert(tstr, self.ret:ToString())
+        table.insert(tstr, ' ')
+    end
+
+    if self.name~='' then
+        table.insert(tstr, self.name)
+    end
+    table.insert(tstr, '(')
+    if #self.args > 0 then
+        for i,arg in ipairs(self.args) do
+            table.insert(tstr, arg:ToString())
+            if i~= #self.args then
+                table.insert(tstr, ',')
+            end
+        end
+    end
+    table.insert(tstr, ');')
+    return table.concat(tstr)
+end
+
+FuncProtoMT.__index = FuncProtoMT
+function func_proto_create(name)
+    local func_proto = {
+        name = name,
+        args = {},
+        ret  = nil,
+        raw_args = '',
+        brace_repls = {},
+        proto_type= '',
+    }
+    setmetatable(func_proto, FuncProtoMT)
+    return func_proto
 end
 
 function parse_type(str)
@@ -204,6 +270,7 @@ function parse_type(str)
     if unsigned then
         type = unsigned..' '..type
     end
+    
     
     -- print('final', final, 'type', type, 'decor', decor, 'name', name)
     fs, fe = str:find(name)
@@ -256,8 +323,7 @@ function parse_typedef(content)
             if line:find('typedef.+%b()%s*%b();') then
                 local ret_type, ret_dec, fname_cap, args_cap = line:gmatch('typedef%s*([%w_]+)%s*([&*]?)%s*(%b())(%b());')()
                 local fname = fname_cap:gmatch('[*]%s*([%w_]+)')()
-                -- print('find function', ret_type, ret_dec, fname, args)             
-                -- imgui_typedefs[fname] =  ret_type..ret_dec..' (*)'..args_cap
+                -- print('find function', ret_type, ret_dec, fname, args)            
             else
                 local words = {} 
                 for word in line:gmatch('([^%s;]+)') do
@@ -355,14 +421,10 @@ function parse_imgui_api(content)
                 rtype, rdec, fname, args = line:gmatch('IMGUI_API%s+([%w_]*)%s*([*&]?)%s*([%w_]+)(%b())')()
             end
             
-            local proto = {}
-            proto.fname = fname
+            local proto = func_proto_create(fname)
             proto.ret =  type_proto_create('',rtype, rdec, rconst) 
             proto.raw_args = args
-            if args == '()' then
-                proto.args = {}
-                proto.brace_repls = {}
-            else
+            if args ~= '()' then
                 local brace_repls = {}  
                 args = args:sub(2,#args-1)
                 args = args:gsub('(%b())',function(cap)
@@ -388,7 +450,7 @@ function parse_imgui_header(path)
     content = content:gsub('/%*.-%*/','')   
     content = remove_empty_lines(content)    
 
-    local output_file = io.open([[F:\Github\SimpleEngine\scripts\client\b.txt]],'w')
+    local output_file = io.open([[E:\Github\SimpleEngine\scripts\client\b.txt]],'w')
     for i=1, #imgui_header_separate_flags-1 do
         local begin_str = imgui_header_separate_flags[i][1]
         local end_str = imgui_header_separate_flags[i+1][1]
@@ -417,26 +479,26 @@ function parse_imgui_header(path)
     output_file:close()
 
     for type,define in pairs(imgui_typedefs) do
-        print(type,'|',define)
+        -- print(type,'|',define)
     end
+    imgui_typedefs['size_t'] = 'unsigned int'
 
     local unsupported_func = {}
     for i,proto in ipairs(imgui_apis) do
-        print(i)
-        print('proto', proto.ret:ToString() .. ' '..proto.fname..proto.raw_args)
-        print('ret', proto.ret:Type())
+
+        print('//'..proto:ToString())
         local supported = true
         if proto.args then
             for i,arg in ipairs(proto.args) do
-                print('arg'..i, arg:Type(), arg.name, '=', arg.def or '')
+                print('//arg'..i, arg:Type(), arg.name, '=', arg.def or '')
                 if not arg:IsSupported()then
                     supported = false
                 end
             end
         end
         if not supported then
-            print('UnSupported '.. proto.fname)
-            table.insert(unsupported_func, proto.fname)
+            print('//UnSupported '.. proto.name)
+            table.insert(unsupported_func, proto:WrapName())
         else
 --[[
     函数生成算法:
@@ -445,92 +507,126 @@ function parse_imgui_header(path)
     3. 用c的返回类型转换成lua的pushxxx
     4. 打完收工
 ]]
-            local ret = proto.ret
+            local call_api_args = {}
+            local supported = true
             local fun_impl = {}
             function fun_impl:write_line(fmt, ...) 
                 table.insert(fun_impl,string.format(fmt,...))
             end
-            fun_impl:write_line('int %s(lua_State* L){', proto.fname);
-            fun_impl:write_line('\tint __argi__ = 0;');
-
-
-            local supported = true
+            fun_impl:write_line('int cximgui_%s(lua_State* L){', proto:WrapName());
+            if #proto.args > 0 then
+                fun_impl:write_line('\tint __argi__ = 0;');
+            end
+            local ret_args = {}
             for i,arg in ipairs(proto.args) do
+                if arg:IsRef() or (arg:IsPtr() and arg.final=='') then
+                    table.insert(ret_args, arg)
+                end
                 if arg.type == 'ImVec2' then
+                    fun_impl:write_line('\t%s %s;', arg.type, arg.name)
+                    fun_impl:write_line( '\t%s.x = (float)lua_tonumber(L,__argi__++);' ,arg.name)
+                    fun_impl:write_line( '\t%s.y = (float)lua_tonumber(L,__argi__++);' ,arg.name)
+                    local call_arg = arg:IsPtr() and ('&'..arg.name) or arg.name
+                    table.insert(call_api_args, call_arg)
                 elseif arg.type == 'ImVec4' then
+                    fun_impl:write_line('\t%s %s;', arg.type, arg.name)
+                    fun_impl:write_line( '\t%s.x = (float)lua_tonumber(L,__argi__++);' ,arg.name)
+                    fun_impl:write_line( '\t%s.y = (float)lua_tonumber(L,__argi__++);' ,arg.name)
+                    fun_impl:write_line( '\t%s.z = (float)lua_tonumber(L,__argi__++);' ,arg.name)
+                    fun_impl:write_line( '\t%s.w = (float)lua_tonumber(L,__argi__++);' ,arg.name)
+                    local call_arg = arg:IsPtr() and ('&'..arg.name) or arg.name
+                    table.insert(call_api_args, call_arg)
                 elseif arg:Type() == 'const char*' then
-                elseif arg.type == 'int' or arg.type =='unsigned int' or arg.type =='unsigned short' or imgui_typedefs[arg.type] == 'int' then
-                elseif arg.type =='float' or arg.type =='double' then
+                    fun_impl:write_line( '\t%s %s = lua_tostring(L, __argi__++);' ,arg:Type(), arg.name)
+                    table.insert(call_api_args, arg.name)
+                elseif (arg.type == 'int' or arg.type =='unsigned int' or arg.type =='unsigned short' or imgui_typedefs[arg.type] == 'int' or imgui_typedefs[arg.type] == 'unsigned int')  and (not arg.is_array) then
+                    fun_impl:write_line( '\t%s %s = (%s)lua_tointeger(L, __argi__++);' ,arg.type, arg.name, arg.type)
+                    local call_arg = arg:IsPtr() and ('&'..arg.name) or arg.name
+                    table.insert(call_api_args, call_arg)
+                elseif (arg.type =='float' or arg.type =='double') and (not arg.is_array) then
+                    fun_impl:write_line( '\t%s %s = (%s)lua_tonumber(L, __argi__++);' ,arg.type, arg.name , arg.type)
+                    local call_arg = arg:IsPtr() and ('&'..arg.name) or arg.name
+                    table.insert(call_api_args, call_arg)
                 elseif arg.type == 'bool' then
+                    fun_impl:write_line( '\t%s %s = lua_toboolean(L, __argi__++);' ,arg.type, arg.name)
+                    local call_arg = arg:IsPtr() and ('&'..arg.name) or arg.name
+                    table.insert(call_api_args, call_arg)
                 else
+                    print('//['.. proto.name..']'..' unsupported arg type!!!')
+                    print('')
+                    
+                    table.insert(unsupported_func, proto:WrapName())
                     supported = false
                     break
+                end 
+            end
+            if supported then
+                local ret = proto.ret
+                local ret_cnt = 1
+                if ret.type =='void' then
+                    ret_cnt  = 0
+                    fun_impl:write_line( '\tImGui::%s(%s);', proto.name, table.concat(call_api_args,','))    
+                else
+                    fun_impl:write_line( '\t%s __ret__ = ImGui::%s(%s);', ret:Type(), proto.name, table.concat(call_api_args,','))    
+                    if ret.type == 'ImVec2' then
+                        fun_impl:write_line( '\tlua_pushnumber(L, __ret__.x);')
+                        fun_impl:write_line( '\tlua_pushnumber(L, __ret__.y);')
+                        ret_cnt = 2
+                    elseif ret.type == 'ImVec4' then
+                        fun_impl:write_line( '\tlua_pushnumber(L, __ret__.x);')
+                        fun_impl:write_line( '\tlua_pushnumber(L, __ret__.y);')
+                        fun_impl:write_line( '\tlua_pushnumber(L, __ret__.z);')
+                        fun_impl:write_line( '\tlua_pushnumber(L, __ret__.w);')
+                        ret_cnt = 4
+                    elseif ret:Type() == 'const char*' then
+                        fun_impl:write_line( '\tlua_pushstring(L, __ret__);')
+                    elseif ret.type== 'int' or ret.type =='unsigned int' or ret.type =='unsigned short' or imgui_typedefs[ret.type] == 'int'   or imgui_typedefs[ret.type] == 'unsigned int' then
+                        fun_impl:write_line( '\tlua_pushinteger(L, __ret__);')
+                    elseif ret.type =='float' or ret.type =='double' then
+                        fun_impl:write_line( '\tlua_pushnumber(L, __ret__);')
+                    elseif ret.type == 'bool' then
+                        fun_impl:write_line( '\tlua_pushboolean(L, __ret__);')
+                    else 
+                        ret_cnt = 0
+                    end
                 end
-                fun_impl:write_line('\t%s %s;', arg:Type(), arg.name)
-            end
 
-            local call_api_args = {}
-            for i,arg in ipairs(proto.args) do
-                if arg.type == 'ImVec2' then
-                    fun_impl:write_line( '\t%s.x = lua_tonumber(L,__argi__++);' ,arg.name)
-                    fun_impl:write_line( '\t%s.y = lua_tonumber(L,__argi__++);' ,arg.name)
-                    table.insert(call_api_args, arg.name)
-                elseif arg.type == 'ImVec4' then
-                    fun_impl:write_line( '\t%s.x = lua_tonumber(L,__argi__++);' ,arg.name)
-                    fun_impl:write_line( '\t%s.y = lua_tonumber(L,__argi__++);' ,arg.name)
-                    fun_impl:write_line( '\t%s.z = lua_tonumber(L,__argi__++);' ,arg.name)
-                    fun_impl:write_line( '\t%s.w = lua_tonumber(L,__argi__++);' ,arg.name)
-                    table.insert(call_api_args, arg.name)
-                elseif arg:Type() == 'const char*' then
-                    fun_impl:write_line( '\t%s = lua_tostring(L, __argi__++);' ,arg.name)
-                    table.insert(call_api_args, arg.name)
-                elseif arg.type == 'int' or arg.type =='unsigned int' or arg.type =='unsigned short' or imgui_typedefs[arg.type] == 'int' then
-                    fun_impl:write_line( '\t%s = lua_tointeger(L, __argi__++);' ,arg.name)
-                    table.insert(call_api_args, arg.name)
-                elseif arg.type =='float' or arg.type =='double' then
-                    fun_impl:write_line( '\t%s = lua_tonumber(L, __argi__++);' ,arg.name)
-                    table.insert(call_api_args, arg.name)
-                elseif arg.type == 'bool' then
-                    fun_impl:write_line( '\t%s = lua_toboolean(L, __argi__++);' ,arg.name)
-                    table.insert(call_api_args, arg.name)
+                for i,ret_arg in ipairs(ret_args) do
+                    if ret_arg.type == 'ImVec2' then
+                        fun_impl:write_line( '\tlua_pushnumber(L, %s.x);', ret_arg.name)
+                        fun_impl:write_line( '\tlua_pushnumber(L, %s.y);', ret_arg.name)
+                        ret_cnt = ret_cnt + 2
+                    elseif ret_arg.type == 'ImVec4' then
+                        fun_impl:write_line( '\tlua_pushnumber(L, %s.x);', ret_arg.name)
+                        fun_impl:write_line( '\tlua_pushnumber(L, %s.y);', ret_arg.name)
+                        fun_impl:write_line( '\tlua_pushnumber(L, %s.z);', ret_arg.name)
+                        fun_impl:write_line( '\tlua_pushnumber(L, %s.w);', ret_arg.name)
+                        ret_cnt = ret_cnt + 4
+                    elseif ret_arg.type== 'int' or ret.type =='unsigned int' or ret.type =='unsigned short' or imgui_typedefs[ret.type] == 'int'  or imgui_typedefs[ret.type] == 'unsigned int' then
+                        fun_impl:write_line( '\tlua_pushinteger(L, %s);', ret_arg.name)
+                        ret_cnt = ret_cnt + 1
+                    elseif ret_arg.type =='float' or ret.type =='double' then
+                        fun_impl:write_line( '\tlua_pushnumber(L, %s);', ret_arg.name)
+                        ret_cnt = ret_cnt + 1
+                    elseif ret_arg.type == 'bool' then
+                        fun_impl:write_line( '\tlua_pushboolean(L, %s);', ret_arg.name)
+                        ret_cnt = ret_cnt + 1
+                    end
                 end
+                fun_impl:write_line( '\treturn %d;', ret_cnt)
+                table.insert(fun_impl, '};')
+                
+                local imp = table.concat(fun_impl,'\n')
+                print(imp)
+                print('')
             end
-                        
-            fun_impl:write_line( '\t%s __ret__ = %s(%s);' , ret:Type() , proto.fname, table.concat(call_api_args,','))
-            local ret_cnt = 1
-            if ret.type == 'ImVec2' then
-                fun_impl:write_line( '\tlua_pushnumber(L, __ret__.x);')
-                fun_impl:write_line( '\tlua_pushnumber(L, __ret__.y);')
-                ret_cnt = 2
-            elseif ret.type == 'ImVec4' then
-                fun_impl:write_line( '\tlua_pushnumber(L, __ret__.x);')
-                fun_impl:write_line( '\tlua_pushnumber(L, __ret__.y);')
-                fun_impl:write_line( '\tlua_pushnumber(L, __ret__.z);')
-                fun_impl:write_line( '\tlua_pushnumber(L, __ret__.w);')
-                ret_cnt = 4
-            elseif ret:Type() == 'const char*' then
-                fun_impl:write_line( '\tlua_pushstring(L, __ret__);')
-            elseif ret.type== 'int' or ret.type =='unsigned int' or ret.type =='unsigned short' or imgui_typedefs[ret.type] == 'int' then
-                fun_impl:write_line( '\tlua_pushinteger(L, __ret__);')
-            elseif ret.type =='float' or ret.type =='double' then
-                fun_impl:write_line( '\tlua_pushnumber(L, __ret__);')
-            elseif ret.type == 'bool' then
-                fun_impl:write_line( '\tlua_pushboolean(L, __ret__);')
-            end
-
-            fun_impl:write_line( '\treturn %d;', ret_cnt)
-            table.insert(fun_impl, '};')
-
-            print('impl', proto.fname)
-            local imp = table.concat(fun_impl,'\n')
-            print( imp)
         end
     end
-    print('total func', #imgui_apis, 'unSupported', #unsupported_func)
+    print('\n//total func', #imgui_apis, 'unSupported', #unsupported_func)
 end
 
 
-parse_imgui_header([[F:\Github\SimpleEngine\internals\imgui\include\imgui.h]])
+parse_imgui_header([[E:\Github\SimpleEngine\internals\imgui\include\imgui.h]])
 
 
 
