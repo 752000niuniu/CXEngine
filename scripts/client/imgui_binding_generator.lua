@@ -618,6 +618,30 @@ function parse_imgui_header(path)
         end
     end
     print('\n//total func', #imgui_apis, 'unSupported', #unsupported_func)
+
+
+    print('luaL_Reg cximgui_methods[] = {')
+    local last_name = ''
+    for i,proto in ipairs(imgui_apis) do
+        if last_name ~= proto.name then
+            print(string.format('\t{"%s",%s},', proto.name, proto:WrapName()) )    
+        end
+        last_name = proto.name
+    end 
+    print('\t{ NULL, NULL }')
+    print('};')
+
+    print([[//open_imgui
+void luaopen_cximgui(lua_State* L){
+    if (luaL_newmetatable(L, "mt_cximgui")) {
+        luaL_setfuncs(L, cximgui_methods , 0);
+        lua_setfield(L, -1, "__index");
+    }
+    else {
+        std::cout << "associate mt_net_thread_queue error!" << std::endl;
+    }
+}]])
+
 end
 
 
