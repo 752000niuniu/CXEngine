@@ -450,7 +450,8 @@ function parse_imgui_header(path)
     content = content:gsub('/%*.-%*/','')   
     content = remove_empty_lines(content)    
 
-    local output_file = io.open([[E:\Github\SimpleEngine\scripts\client\b.txt]],'w')
+    imgui_typedefs['size_t'] = 'unsigned int'
+    local parsed_skip_file = io.open([[E:\Github\SimpleEngine\scripts\client\b.txt]],'w')
     for i=1, #imgui_header_separate_flags-1 do
         local begin_str = imgui_header_separate_flags[i][1]
         local end_str = imgui_header_separate_flags[i+1][1]
@@ -474,18 +475,12 @@ function parse_imgui_header(path)
         elseif parse_flag =='parse enum blocks' then
             parse_enum_blocks(sub)
         end
-        output_file:write('\nsub :'..parse_flag.. '\n'..sub)
+        parsed_skip_file:write('\nsub :'..parse_flag.. '\n'..sub)
     end
-    output_file:close()
-
-    for type,define in pairs(imgui_typedefs) do
-        -- print(type,'|',define)
-    end
-    imgui_typedefs['size_t'] = 'unsigned int'
-
+    parsed_skip_file:close()
+    
     local unsupported_func = {}
     for i,proto in ipairs(imgui_apis) do
-
         print('//'..proto:ToString())
         local supported = true
         if proto.args then
