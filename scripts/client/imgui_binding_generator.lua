@@ -10,9 +10,11 @@ function remove_empty_lines(content)
         end
     end
     local new_content = table.concat(t,'\n')
-    local output_file = io.open([[E:\Github\SimpleEngine\scripts\client\a.txt]],'w')
-    output_file:write(new_content)
-    output_file:close()
+    
+    -- local path = vfs_makepath('scripts/client/remove_lines_file.txt') 
+    -- local output_file = io.open(path,'w')
+    -- output_file:write(new_content)
+    -- output_file:close()
     -- print(new_content)
     return  new_content
 end
@@ -63,15 +65,6 @@ function parse_struct(content)
     -- end
 end
 
--- PlotLines(const char* label,
---  const float* values,
---  int values_count,
---  int values_offset = 0,
---  const char* overlay_text = NULL,
---  float scale_min = FLT_MAX,
---  float scale_max = FLT_MAX,
---  ImVec2 graph_size = ImVec2(0, 0),
---  int stride = sizeof(float));
 local imgui_unsupported_types = 
 {
     ImGuiContext = true,
@@ -462,9 +455,6 @@ function parse_imgui_api(content)
                     table.insert(brace_repls, cap)
                     return '@'..#brace_repls
                 end)
-                -- for i,v in ipairs(brace_repls) do
-                --     print('brace_repls',i,v)
-                -- end
                 proto.brace_repls = brace_repls
                 proto.args  = parse_funcargs_cap(args, brace_repls)
             end
