@@ -1,11 +1,7 @@
 //ImGuiContext*  CreateContext(ImFontAtlas* shared_font_atlas);
-//arg1	ImFontAtlas*	shared_font_atlas	=	 NULL
-//[CreateContext] unsupported arg type!!!
-
+//UnSupported CreateContext
 //void  DestroyContext(ImGuiContext* ctx);
-//arg1	ImGuiContext*	ctx	=	 NULL
-//[DestroyContext] unsupported arg type!!!
-
+//UnSupported DestroyContext
 //ImGuiContext*  GetCurrentContext();
 int cximgui_GetCurrentContext(lua_State* L) {
 	ImGuiContext* __ret__ = ImGui::GetCurrentContext();
@@ -13,24 +9,16 @@ int cximgui_GetCurrentContext(lua_State* L) {
 };
 
 //void  SetCurrentContext(ImGuiContext* ctx);
-//arg1	ImGuiContext*	ctx	=	
-//[SetCurrentContext] unsupported arg type!!!
-
+//UnSupported SetCurrentContext
 //bool  DebugCheckVersionAndDataLayout(const char* version_str,size_t sz_io,size_t sz_style,size_t sz_vec2,size_t sz_vec4,size_t sz_drawvert);
-//arg1	const char*	version_str	=	
-//arg2	size_t	sz_io	=	
-//arg3	size_t	sz_style	=	
-//arg4	size_t	sz_vec2	=	
-//arg5	size_t	sz_vec4	=	
-//arg6	size_t	sz_drawvert	=	
 int cximgui_DebugCheckVersionAndDataLayout_6_siiiii(lua_State* L) {
 	int __argi__ = 0;
-	const char* version_str = lua_tostring(L, __argi__++);
-	size_t sz_io = (size_t)lua_tointeger(L, __argi__++);
-	size_t sz_style = (size_t)lua_tointeger(L, __argi__++);
-	size_t sz_vec2 = (size_t)lua_tointeger(L, __argi__++);
-	size_t sz_vec4 = (size_t)lua_tointeger(L, __argi__++);
-	size_t sz_drawvert = (size_t)lua_tointeger(L, __argi__++);
+	const char* version_str = lua_tostring(L, ++__argi__);
+	size_t sz_io = (size_t)lua_tointeger(L, ++__argi__);
+	size_t sz_style = (size_t)lua_tointeger(L, ++__argi__);
+	size_t sz_vec2 = (size_t)lua_tointeger(L, ++__argi__);
+	size_t sz_vec4 = (size_t)lua_tointeger(L, ++__argi__);
+	size_t sz_drawvert = (size_t)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::DebugCheckVersionAndDataLayout(version_str, sz_io, sz_style, sz_vec2, sz_vec4, sz_drawvert);
 	lua_pushboolean(L, __ret__);
 	return 1;
@@ -73,44 +61,38 @@ int cximgui_GetDrawData(lua_State* L) {
 };
 
 //void  ShowDemoWindow(bool* p_open);
-//arg1	bool*	p_open	=	 NULL
 int cximgui_ShowDemoWindow_1_bp(lua_State* L) {
 	int __argi__ = 0;
-	bool p_open = lua_toboolean(L, __argi__++);
+	bool p_open = lua_toboolean(L, ++__argi__);
 	ImGui::ShowDemoWindow(&p_open);
 	lua_pushboolean(L, p_open);
 	return 1;
 };
 
 //void  ShowMetricsWindow(bool* p_open);
-//arg1	bool*	p_open	=	 NULL
 int cximgui_ShowMetricsWindow_1_bp(lua_State* L) {
 	int __argi__ = 0;
-	bool p_open = lua_toboolean(L, __argi__++);
+	bool p_open = lua_toboolean(L, ++__argi__);
 	ImGui::ShowMetricsWindow(&p_open);
 	lua_pushboolean(L, p_open);
 	return 1;
 };
 
 //void  ShowStyleEditor(ImGuiStyle* ref);
-//arg1	ImGuiStyle*	ref	=	 NULL
-//[ShowStyleEditor] unsupported arg type!!!
-
+//UnSupported ShowStyleEditor
 //bool  ShowStyleSelector(const char* label);
-//arg1	const char*	label	=	
 int cximgui_ShowStyleSelector_1_s(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
 	bool __ret__ = ImGui::ShowStyleSelector(label);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //void  ShowFontSelector(const char* label);
-//arg1	const char*	label	=	
 int cximgui_ShowFontSelector_1_s(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
 	ImGui::ShowFontSelector(label);
 	return 0;
 };
@@ -129,26 +111,17 @@ int cximgui_GetVersion(lua_State* L) {
 };
 
 //void  StyleColorsDark(ImGuiStyle* dst);
-//arg1	ImGuiStyle*	dst	=	 NULL
-//[StyleColorsDark] unsupported arg type!!!
-
+//UnSupported StyleColorsDark
 //void  StyleColorsClassic(ImGuiStyle* dst);
-//arg1	ImGuiStyle*	dst	=	 NULL
-//[StyleColorsClassic] unsupported arg type!!!
-
+//UnSupported StyleColorsClassic
 //void  StyleColorsLight(ImGuiStyle* dst);
-//arg1	ImGuiStyle*	dst	=	 NULL
-//[StyleColorsLight] unsupported arg type!!!
-
+//UnSupported StyleColorsLight
 //bool  Begin(const char* name,bool* p_open,ImGuiWindowFlags flags);
-//arg1	const char*	name	=	
-//arg2	bool*	p_open	=	 NULL
-//arg3	ImGuiWindowFlags	flags	=	 0
 int cximgui_Begin_3_sbpi(lua_State* L) {
 	int __argi__ = 0;
-	const char* name = lua_tostring(L, __argi__++);
-	bool p_open = lua_toboolean(L, __argi__++);
-	ImGuiWindowFlags flags = (ImGuiWindowFlags)lua_tointeger(L, __argi__++);
+	const char* name = lua_tostring(L, ++__argi__);
+	bool p_open = lua_toboolean(L, ++__argi__);
+	ImGuiWindowFlags flags = (ImGuiWindowFlags)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::Begin(name, &p_open, flags);
 	lua_pushboolean(L, __ret__);
 	lua_pushboolean(L, p_open);
@@ -162,18 +135,14 @@ int cximgui_End(lua_State* L) {
 };
 
 //bool  BeginChild(const char* str_id,const ImVec2& size,bool border,ImGuiWindowFlags flags);
-//arg1	const char*	str_id	=	
-//arg2	const ImVec2&	size	=	 ImVec2 @1
-//arg3	bool	border	=	 false
-//arg4	ImGuiWindowFlags	flags	=	 0
 int cximgui_BeginChild_4_sv2bi(lua_State* L) {
 	int __argi__ = 0;
-	const char* str_id = lua_tostring(L, __argi__++);
+	const char* str_id = lua_tostring(L, ++__argi__);
 	ImVec2 size;
-	size.x = (float)lua_tonumber(L, __argi__++);
-	size.y = (float)lua_tonumber(L, __argi__++);
-	bool border = lua_toboolean(L, __argi__++);
-	ImGuiWindowFlags flags = (ImGuiWindowFlags)lua_tointeger(L, __argi__++);
+	size.x = (float)lua_tonumber(L, ++__argi__);
+	size.y = (float)lua_tonumber(L, ++__argi__);
+	bool border = lua_toboolean(L, ++__argi__);
+	ImGuiWindowFlags flags = (ImGuiWindowFlags)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::BeginChild(str_id, size, border, flags);
 	lua_pushboolean(L, __ret__);
 	lua_pushnumber(L, size.x);
@@ -182,18 +151,14 @@ int cximgui_BeginChild_4_sv2bi(lua_State* L) {
 };
 
 //bool  BeginChild(ImGuiID id,const ImVec2& size,bool border,ImGuiWindowFlags flags);
-//arg1	ImGuiID	id	=	
-//arg2	const ImVec2&	size	=	 ImVec2 @1
-//arg3	bool	border	=	 false
-//arg4	ImGuiWindowFlags	flags	=	 0
 int cximgui_BeginChild_4_iv2bi(lua_State* L) {
 	int __argi__ = 0;
-	ImGuiID id = (ImGuiID)lua_tointeger(L, __argi__++);
+	ImGuiID id = (ImGuiID)lua_tointeger(L, ++__argi__);
 	ImVec2 size;
-	size.x = (float)lua_tonumber(L, __argi__++);
-	size.y = (float)lua_tonumber(L, __argi__++);
-	bool border = lua_toboolean(L, __argi__++);
-	ImGuiWindowFlags flags = (ImGuiWindowFlags)lua_tointeger(L, __argi__++);
+	size.x = (float)lua_tonumber(L, ++__argi__);
+	size.y = (float)lua_tonumber(L, ++__argi__);
+	bool border = lua_toboolean(L, ++__argi__);
+	ImGuiWindowFlags flags = (ImGuiWindowFlags)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::BeginChild(id, size, border, flags);
 	lua_pushboolean(L, __ret__);
 	lua_pushnumber(L, size.x);
@@ -222,20 +187,18 @@ int cximgui_IsWindowCollapsed(lua_State* L) {
 };
 
 //bool  IsWindowFocused(ImGuiFocusedFlags flags);
-//arg1	ImGuiFocusedFlags	flags	=	0
 int cximgui_IsWindowFocused_1_i(lua_State* L) {
 	int __argi__ = 0;
-	ImGuiFocusedFlags flags = (ImGuiFocusedFlags)lua_tointeger(L, __argi__++);
+	ImGuiFocusedFlags flags = (ImGuiFocusedFlags)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::IsWindowFocused(flags);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  IsWindowHovered(ImGuiHoveredFlags flags);
-//arg1	ImGuiHoveredFlags	flags	=	0
 int cximgui_IsWindowHovered_1_i(lua_State* L) {
 	int __argi__ = 0;
-	ImGuiHoveredFlags flags = (ImGuiHoveredFlags)lua_tointeger(L, __argi__++);
+	ImGuiHoveredFlags flags = (ImGuiHoveredFlags)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::IsWindowHovered(flags);
 	lua_pushboolean(L, __ret__);
 	return 1;
@@ -337,18 +300,15 @@ int cximgui_GetWindowContentRegionWidth(lua_State* L) {
 };
 
 //void  SetNextWindowPos(const ImVec2& pos,ImGuiCond cond,const ImVec2& pivot);
-//arg1	const ImVec2&	pos	=	
-//arg2	ImGuiCond	cond	=	 0
-//arg3	const ImVec2&	pivot	=	 ImVec2 @1
 int cximgui_SetNextWindowPos_3_v2iv2(lua_State* L) {
 	int __argi__ = 0;
 	ImVec2 pos;
-	pos.x = (float)lua_tonumber(L, __argi__++);
-	pos.y = (float)lua_tonumber(L, __argi__++);
-	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, __argi__++);
+	pos.x = (float)lua_tonumber(L, ++__argi__);
+	pos.y = (float)lua_tonumber(L, ++__argi__);
+	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, ++__argi__);
 	ImVec2 pivot;
-	pivot.x = (float)lua_tonumber(L, __argi__++);
-	pivot.y = (float)lua_tonumber(L, __argi__++);
+	pivot.x = (float)lua_tonumber(L, ++__argi__);
+	pivot.y = (float)lua_tonumber(L, ++__argi__);
 	ImGui::SetNextWindowPos(pos, cond, pivot);
 	lua_pushnumber(L, pos.x);
 	lua_pushnumber(L, pos.y);
@@ -358,14 +318,12 @@ int cximgui_SetNextWindowPos_3_v2iv2(lua_State* L) {
 };
 
 //void  SetNextWindowSize(const ImVec2& size,ImGuiCond cond);
-//arg1	const ImVec2&	size	=	
-//arg2	ImGuiCond	cond	=	 0
 int cximgui_SetNextWindowSize_2_v2i(lua_State* L) {
 	int __argi__ = 0;
 	ImVec2 size;
-	size.x = (float)lua_tonumber(L, __argi__++);
-	size.y = (float)lua_tonumber(L, __argi__++);
-	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, __argi__++);
+	size.x = (float)lua_tonumber(L, ++__argi__);
+	size.y = (float)lua_tonumber(L, ++__argi__);
+	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, ++__argi__);
 	ImGui::SetNextWindowSize(size, cond);
 	lua_pushnumber(L, size.x);
 	lua_pushnumber(L, size.y);
@@ -373,18 +331,13 @@ int cximgui_SetNextWindowSize_2_v2i(lua_State* L) {
 };
 
 //void  SetNextWindowSizeConstraints(const ImVec2& size_min,const ImVec2& size_max,ImGuiSizeCallback custom_callback,void* custom_callback_data);
-//arg1	const ImVec2&	size_min	=	
-//arg2	const ImVec2&	size_max	=	
-//arg3	ImGuiSizeCallback	custom_callback	=	 NULL
-//arg4	void*	custom_callback_data	=	 NULL
 //UnSupported SetNextWindowSizeConstraints
 //void  SetNextWindowContentSize(const ImVec2& size);
-//arg1	const ImVec2&	size	=	
 int cximgui_SetNextWindowContentSize_1_v2(lua_State* L) {
 	int __argi__ = 0;
 	ImVec2 size;
-	size.x = (float)lua_tonumber(L, __argi__++);
-	size.y = (float)lua_tonumber(L, __argi__++);
+	size.x = (float)lua_tonumber(L, ++__argi__);
+	size.y = (float)lua_tonumber(L, ++__argi__);
 	ImGui::SetNextWindowContentSize(size);
 	lua_pushnumber(L, size.x);
 	lua_pushnumber(L, size.y);
@@ -392,12 +345,10 @@ int cximgui_SetNextWindowContentSize_1_v2(lua_State* L) {
 };
 
 //void  SetNextWindowCollapsed(bool collapsed,ImGuiCond cond);
-//arg1	bool	collapsed	=	
-//arg2	ImGuiCond	cond	=	 0
 int cximgui_SetNextWindowCollapsed_2_bi(lua_State* L) {
 	int __argi__ = 0;
-	bool collapsed = lua_toboolean(L, __argi__++);
-	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, __argi__++);
+	bool collapsed = lua_toboolean(L, ++__argi__);
+	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, ++__argi__);
 	ImGui::SetNextWindowCollapsed(collapsed, cond);
 	return 0;
 };
@@ -409,32 +360,28 @@ int cximgui_SetNextWindowFocus(lua_State* L) {
 };
 
 //void  SetNextWindowBgAlpha(float alpha);
-//arg1	float	alpha	=	
 int cximgui_SetNextWindowBgAlpha_1_n(lua_State* L) {
 	int __argi__ = 0;
-	float alpha = (float)lua_tonumber(L, __argi__++);
+	float alpha = (float)lua_tonumber(L, ++__argi__);
 	ImGui::SetNextWindowBgAlpha(alpha);
 	return 0;
 };
 
 //void  SetNextWindowViewport(ImGuiID viewport_id);
-//arg1	ImGuiID	viewport_id	=	
 int cximgui_SetNextWindowViewport_1_i(lua_State* L) {
 	int __argi__ = 0;
-	ImGuiID viewport_id = (ImGuiID)lua_tointeger(L, __argi__++);
+	ImGuiID viewport_id = (ImGuiID)lua_tointeger(L, ++__argi__);
 	ImGui::SetNextWindowViewport(viewport_id);
 	return 0;
 };
 
 //void  SetWindowPos(const ImVec2& pos,ImGuiCond cond);
-//arg1	const ImVec2&	pos	=	
-//arg2	ImGuiCond	cond	=	 0
 int cximgui_SetWindowPos_2_v2i(lua_State* L) {
 	int __argi__ = 0;
 	ImVec2 pos;
-	pos.x = (float)lua_tonumber(L, __argi__++);
-	pos.y = (float)lua_tonumber(L, __argi__++);
-	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, __argi__++);
+	pos.x = (float)lua_tonumber(L, ++__argi__);
+	pos.y = (float)lua_tonumber(L, ++__argi__);
+	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, ++__argi__);
 	ImGui::SetWindowPos(pos, cond);
 	lua_pushnumber(L, pos.x);
 	lua_pushnumber(L, pos.y);
@@ -442,14 +389,12 @@ int cximgui_SetWindowPos_2_v2i(lua_State* L) {
 };
 
 //void  SetWindowSize(const ImVec2& size,ImGuiCond cond);
-//arg1	const ImVec2&	size	=	
-//arg2	ImGuiCond	cond	=	 0
 int cximgui_SetWindowSize_2_v2i(lua_State* L) {
 	int __argi__ = 0;
 	ImVec2 size;
-	size.x = (float)lua_tonumber(L, __argi__++);
-	size.y = (float)lua_tonumber(L, __argi__++);
-	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, __argi__++);
+	size.x = (float)lua_tonumber(L, ++__argi__);
+	size.y = (float)lua_tonumber(L, ++__argi__);
+	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, ++__argi__);
 	ImGui::SetWindowSize(size, cond);
 	lua_pushnumber(L, size.x);
 	lua_pushnumber(L, size.y);
@@ -457,12 +402,10 @@ int cximgui_SetWindowSize_2_v2i(lua_State* L) {
 };
 
 //void  SetWindowCollapsed(bool collapsed,ImGuiCond cond);
-//arg1	bool	collapsed	=	
-//arg2	ImGuiCond	cond	=	 0
 int cximgui_SetWindowCollapsed_2_bi(lua_State* L) {
 	int __argi__ = 0;
-	bool collapsed = lua_toboolean(L, __argi__++);
-	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, __argi__++);
+	bool collapsed = lua_toboolean(L, ++__argi__);
+	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, ++__argi__);
 	ImGui::SetWindowCollapsed(collapsed, cond);
 	return 0;
 };
@@ -474,25 +417,21 @@ int cximgui_SetWindowFocus(lua_State* L) {
 };
 
 //void  SetWindowFontScale(float scale);
-//arg1	float	scale	=	
 int cximgui_SetWindowFontScale_1_n(lua_State* L) {
 	int __argi__ = 0;
-	float scale = (float)lua_tonumber(L, __argi__++);
+	float scale = (float)lua_tonumber(L, ++__argi__);
 	ImGui::SetWindowFontScale(scale);
 	return 0;
 };
 
 //void  SetWindowPos(const char* name,const ImVec2& pos,ImGuiCond cond);
-//arg1	const char*	name	=	
-//arg2	const ImVec2&	pos	=	
-//arg3	ImGuiCond	cond	=	 0
 int cximgui_SetWindowPos_3_sv2i(lua_State* L) {
 	int __argi__ = 0;
-	const char* name = lua_tostring(L, __argi__++);
+	const char* name = lua_tostring(L, ++__argi__);
 	ImVec2 pos;
-	pos.x = (float)lua_tonumber(L, __argi__++);
-	pos.y = (float)lua_tonumber(L, __argi__++);
-	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, __argi__++);
+	pos.x = (float)lua_tonumber(L, ++__argi__);
+	pos.y = (float)lua_tonumber(L, ++__argi__);
+	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, ++__argi__);
 	ImGui::SetWindowPos(name, pos, cond);
 	lua_pushnumber(L, pos.x);
 	lua_pushnumber(L, pos.y);
@@ -500,16 +439,13 @@ int cximgui_SetWindowPos_3_sv2i(lua_State* L) {
 };
 
 //void  SetWindowSize(const char* name,const ImVec2& size,ImGuiCond cond);
-//arg1	const char*	name	=	
-//arg2	const ImVec2&	size	=	
-//arg3	ImGuiCond	cond	=	 0
 int cximgui_SetWindowSize_3_sv2i(lua_State* L) {
 	int __argi__ = 0;
-	const char* name = lua_tostring(L, __argi__++);
+	const char* name = lua_tostring(L, ++__argi__);
 	ImVec2 size;
-	size.x = (float)lua_tonumber(L, __argi__++);
-	size.y = (float)lua_tonumber(L, __argi__++);
-	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, __argi__++);
+	size.x = (float)lua_tonumber(L, ++__argi__);
+	size.y = (float)lua_tonumber(L, ++__argi__);
+	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, ++__argi__);
 	ImGui::SetWindowSize(name, size, cond);
 	lua_pushnumber(L, size.x);
 	lua_pushnumber(L, size.y);
@@ -517,23 +453,19 @@ int cximgui_SetWindowSize_3_sv2i(lua_State* L) {
 };
 
 //void  SetWindowCollapsed(const char* name,bool collapsed,ImGuiCond cond);
-//arg1	const char*	name	=	
-//arg2	bool	collapsed	=	
-//arg3	ImGuiCond	cond	=	 0
 int cximgui_SetWindowCollapsed_3_sbi(lua_State* L) {
 	int __argi__ = 0;
-	const char* name = lua_tostring(L, __argi__++);
-	bool collapsed = lua_toboolean(L, __argi__++);
-	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, __argi__++);
+	const char* name = lua_tostring(L, ++__argi__);
+	bool collapsed = lua_toboolean(L, ++__argi__);
+	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, ++__argi__);
 	ImGui::SetWindowCollapsed(name, collapsed, cond);
 	return 0;
 };
 
 //void  SetWindowFocus(const char* name);
-//arg1	const char*	name	=	
 int cximgui_SetWindowFocus_1_s(lua_State* L) {
 	int __argi__ = 0;
-	const char* name = lua_tostring(L, __argi__++);
+	const char* name = lua_tostring(L, ++__argi__);
 	ImGui::SetWindowFocus(name);
 	return 0;
 };
@@ -567,47 +499,40 @@ int cximgui_GetScrollMaxY(lua_State* L) {
 };
 
 //void  SetScrollX(float scroll_x);
-//arg1	float	scroll_x	=	
 int cximgui_SetScrollX_1_n(lua_State* L) {
 	int __argi__ = 0;
-	float scroll_x = (float)lua_tonumber(L, __argi__++);
+	float scroll_x = (float)lua_tonumber(L, ++__argi__);
 	ImGui::SetScrollX(scroll_x);
 	return 0;
 };
 
 //void  SetScrollY(float scroll_y);
-//arg1	float	scroll_y	=	
 int cximgui_SetScrollY_1_n(lua_State* L) {
 	int __argi__ = 0;
-	float scroll_y = (float)lua_tonumber(L, __argi__++);
+	float scroll_y = (float)lua_tonumber(L, ++__argi__);
 	ImGui::SetScrollY(scroll_y);
 	return 0;
 };
 
 //void  SetScrollHereY(float center_y_ratio);
-//arg1	float	center_y_ratio	=	 0.5f
 int cximgui_SetScrollHereY_1_n(lua_State* L) {
 	int __argi__ = 0;
-	float center_y_ratio = (float)lua_tonumber(L, __argi__++);
+	float center_y_ratio = (float)lua_tonumber(L, ++__argi__);
 	ImGui::SetScrollHereY(center_y_ratio);
 	return 0;
 };
 
 //void  SetScrollFromPosY(float pos_y,float center_y_ratio);
-//arg1	float	pos_y	=	
-//arg2	float	center_y_ratio	=	 0.5f
 int cximgui_SetScrollFromPosY_2_nn(lua_State* L) {
 	int __argi__ = 0;
-	float pos_y = (float)lua_tonumber(L, __argi__++);
-	float center_y_ratio = (float)lua_tonumber(L, __argi__++);
+	float pos_y = (float)lua_tonumber(L, ++__argi__);
+	float center_y_ratio = (float)lua_tonumber(L, ++__argi__);
 	ImGui::SetScrollFromPosY(pos_y, center_y_ratio);
 	return 0;
 };
 
 //void  PushFont(ImFont* font);
-//arg1	ImFont*	font	=	
-//[PushFont] unsupported arg type!!!
-
+//UnSupported PushFont
 //void  PopFont();
 int cximgui_PopFont(lua_State* L) {
 	ImGui::PopFont();
@@ -615,27 +540,23 @@ int cximgui_PopFont(lua_State* L) {
 };
 
 //void  PushStyleColor(ImGuiCol idx,ImU32 col);
-//arg1	ImGuiCol	idx	=	
-//arg2	ImU32	col	=	
 int cximgui_PushStyleColor_2_ii(lua_State* L) {
 	int __argi__ = 0;
-	ImGuiCol idx = (ImGuiCol)lua_tointeger(L, __argi__++);
-	ImU32 col = (ImU32)lua_tointeger(L, __argi__++);
+	ImGuiCol idx = (ImGuiCol)lua_tointeger(L, ++__argi__);
+	ImU32 col = (ImU32)lua_tointeger(L, ++__argi__);
 	ImGui::PushStyleColor(idx, col);
 	return 0;
 };
 
 //void  PushStyleColor(ImGuiCol idx,const ImVec4& col);
-//arg1	ImGuiCol	idx	=	
-//arg2	const ImVec4&	col	=	
 int cximgui_PushStyleColor_2_iv4(lua_State* L) {
 	int __argi__ = 0;
-	ImGuiCol idx = (ImGuiCol)lua_tointeger(L, __argi__++);
+	ImGuiCol idx = (ImGuiCol)lua_tointeger(L, ++__argi__);
 	ImVec4 col;
-	col.x = (float)lua_tonumber(L, __argi__++);
-	col.y = (float)lua_tonumber(L, __argi__++);
-	col.z = (float)lua_tonumber(L, __argi__++);
-	col.w = (float)lua_tonumber(L, __argi__++);
+	col.x = (float)lua_tonumber(L, ++__argi__);
+	col.y = (float)lua_tonumber(L, ++__argi__);
+	col.z = (float)lua_tonumber(L, ++__argi__);
+	col.w = (float)lua_tonumber(L, ++__argi__);
 	ImGui::PushStyleColor(idx, col);
 	lua_pushnumber(L, col.x);
 	lua_pushnumber(L, col.y);
@@ -645,34 +566,29 @@ int cximgui_PushStyleColor_2_iv4(lua_State* L) {
 };
 
 //void  PopStyleColor(int count);
-//arg1	int	count	=	 1
 int cximgui_PopStyleColor_1_i(lua_State* L) {
 	int __argi__ = 0;
-	int count = (int)lua_tointeger(L, __argi__++);
+	int count = (int)lua_tointeger(L, ++__argi__);
 	ImGui::PopStyleColor(count);
 	return 0;
 };
 
 //void  PushStyleVar(ImGuiStyleVar idx,float val);
-//arg1	ImGuiStyleVar	idx	=	
-//arg2	float	val	=	
 int cximgui_PushStyleVar_2_in(lua_State* L) {
 	int __argi__ = 0;
-	ImGuiStyleVar idx = (ImGuiStyleVar)lua_tointeger(L, __argi__++);
-	float val = (float)lua_tonumber(L, __argi__++);
+	ImGuiStyleVar idx = (ImGuiStyleVar)lua_tointeger(L, ++__argi__);
+	float val = (float)lua_tonumber(L, ++__argi__);
 	ImGui::PushStyleVar(idx, val);
 	return 0;
 };
 
 //void  PushStyleVar(ImGuiStyleVar idx,const ImVec2& val);
-//arg1	ImGuiStyleVar	idx	=	
-//arg2	const ImVec2&	val	=	
 int cximgui_PushStyleVar_2_iv2(lua_State* L) {
 	int __argi__ = 0;
-	ImGuiStyleVar idx = (ImGuiStyleVar)lua_tointeger(L, __argi__++);
+	ImGuiStyleVar idx = (ImGuiStyleVar)lua_tointeger(L, ++__argi__);
 	ImVec2 val;
-	val.x = (float)lua_tonumber(L, __argi__++);
-	val.y = (float)lua_tonumber(L, __argi__++);
+	val.x = (float)lua_tonumber(L, ++__argi__);
+	val.y = (float)lua_tonumber(L, ++__argi__);
 	ImGui::PushStyleVar(idx, val);
 	lua_pushnumber(L, val.x);
 	lua_pushnumber(L, val.y);
@@ -680,19 +596,17 @@ int cximgui_PushStyleVar_2_iv2(lua_State* L) {
 };
 
 //void  PopStyleVar(int count);
-//arg1	int	count	=	 1
 int cximgui_PopStyleVar_1_i(lua_State* L) {
 	int __argi__ = 0;
-	int count = (int)lua_tointeger(L, __argi__++);
+	int count = (int)lua_tointeger(L, ++__argi__);
 	ImGui::PopStyleVar(count);
 	return 0;
 };
 
 //const ImVec4&  GetStyleColorVec4(ImGuiCol idx);
-//arg1	ImGuiCol	idx	=	
 int cximgui_GetStyleColorVec4_1_i(lua_State* L) {
 	int __argi__ = 0;
-	ImGuiCol idx = (ImGuiCol)lua_tointeger(L, __argi__++);
+	ImGuiCol idx = (ImGuiCol)lua_tointeger(L, ++__argi__);
 	const ImVec4& __ret__ = ImGui::GetStyleColorVec4(idx);
 	lua_pushnumber(L, __ret__.x);
 	lua_pushnumber(L, __ret__.y);
@@ -723,26 +637,23 @@ int cximgui_GetFontTexUvWhitePixel(lua_State* L) {
 };
 
 //ImU32  GetColorU32(ImGuiCol idx,float alpha_mul);
-//arg1	ImGuiCol	idx	=	
-//arg2	float	alpha_mul	=	 1.0f
 int cximgui_GetColorU32_2_in(lua_State* L) {
 	int __argi__ = 0;
-	ImGuiCol idx = (ImGuiCol)lua_tointeger(L, __argi__++);
-	float alpha_mul = (float)lua_tonumber(L, __argi__++);
+	ImGuiCol idx = (ImGuiCol)lua_tointeger(L, ++__argi__);
+	float alpha_mul = (float)lua_tonumber(L, ++__argi__);
 	ImU32 __ret__ = ImGui::GetColorU32(idx, alpha_mul);
 	lua_pushinteger(L, __ret__);
 	return 1;
 };
 
 //ImU32  GetColorU32(const ImVec4& col);
-//arg1	const ImVec4&	col	=	
 int cximgui_GetColorU32_1_v4(lua_State* L) {
 	int __argi__ = 0;
 	ImVec4 col;
-	col.x = (float)lua_tonumber(L, __argi__++);
-	col.y = (float)lua_tonumber(L, __argi__++);
-	col.z = (float)lua_tonumber(L, __argi__++);
-	col.w = (float)lua_tonumber(L, __argi__++);
+	col.x = (float)lua_tonumber(L, ++__argi__);
+	col.y = (float)lua_tonumber(L, ++__argi__);
+	col.z = (float)lua_tonumber(L, ++__argi__);
+	col.w = (float)lua_tonumber(L, ++__argi__);
 	ImU32 __ret__ = ImGui::GetColorU32(col);
 	lua_pushinteger(L, __ret__);
 	lua_pushnumber(L, col.x);
@@ -753,20 +664,18 @@ int cximgui_GetColorU32_1_v4(lua_State* L) {
 };
 
 //ImU32  GetColorU32(ImU32 col);
-//arg1	ImU32	col	=	
 int cximgui_GetColorU32_1_i(lua_State* L) {
 	int __argi__ = 0;
-	ImU32 col = (ImU32)lua_tointeger(L, __argi__++);
+	ImU32 col = (ImU32)lua_tointeger(L, ++__argi__);
 	ImU32 __ret__ = ImGui::GetColorU32(col);
 	lua_pushinteger(L, __ret__);
 	return 1;
 };
 
 //void  PushItemWidth(float item_width);
-//arg1	float	item_width	=	
 int cximgui_PushItemWidth_1_n(lua_State* L) {
 	int __argi__ = 0;
-	float item_width = (float)lua_tonumber(L, __argi__++);
+	float item_width = (float)lua_tonumber(L, ++__argi__);
 	ImGui::PushItemWidth(item_width);
 	return 0;
 };
@@ -785,10 +694,9 @@ int cximgui_CalcItemWidth(lua_State* L) {
 };
 
 //void  PushTextWrapPos(float wrap_pos_x);
-//arg1	float	wrap_pos_x	=	 0.0f
 int cximgui_PushTextWrapPos_1_n(lua_State* L) {
 	int __argi__ = 0;
-	float wrap_pos_x = (float)lua_tonumber(L, __argi__++);
+	float wrap_pos_x = (float)lua_tonumber(L, ++__argi__);
 	ImGui::PushTextWrapPos(wrap_pos_x);
 	return 0;
 };
@@ -800,10 +708,9 @@ int cximgui_PopTextWrapPos(lua_State* L) {
 };
 
 //void  PushAllowKeyboardFocus(bool allow_keyboard_focus);
-//arg1	bool	allow_keyboard_focus	=	
 int cximgui_PushAllowKeyboardFocus_1_b(lua_State* L) {
 	int __argi__ = 0;
-	bool allow_keyboard_focus = lua_toboolean(L, __argi__++);
+	bool allow_keyboard_focus = lua_toboolean(L, ++__argi__);
 	ImGui::PushAllowKeyboardFocus(allow_keyboard_focus);
 	return 0;
 };
@@ -815,10 +722,9 @@ int cximgui_PopAllowKeyboardFocus(lua_State* L) {
 };
 
 //void  PushButtonRepeat(bool repeat);
-//arg1	bool	repeat	=	
 int cximgui_PushButtonRepeat_1_b(lua_State* L) {
 	int __argi__ = 0;
-	bool repeat = lua_toboolean(L, __argi__++);
+	bool repeat = lua_toboolean(L, ++__argi__);
 	ImGui::PushButtonRepeat(repeat);
 	return 0;
 };
@@ -836,12 +742,10 @@ int cximgui_Separator(lua_State* L) {
 };
 
 //void  SameLine(float pos_x,float spacing_w);
-//arg1	float	pos_x	=	 0.0f
-//arg2	float	spacing_w	=	 -1.0f
 int cximgui_SameLine_2_nn(lua_State* L) {
 	int __argi__ = 0;
-	float pos_x = (float)lua_tonumber(L, __argi__++);
-	float spacing_w = (float)lua_tonumber(L, __argi__++);
+	float pos_x = (float)lua_tonumber(L, ++__argi__);
+	float spacing_w = (float)lua_tonumber(L, ++__argi__);
 	ImGui::SameLine(pos_x, spacing_w);
 	return 0;
 };
@@ -859,12 +763,11 @@ int cximgui_Spacing(lua_State* L) {
 };
 
 //void  Dummy(const ImVec2& size);
-//arg1	const ImVec2&	size	=	
 int cximgui_Dummy_1_v2(lua_State* L) {
 	int __argi__ = 0;
 	ImVec2 size;
-	size.x = (float)lua_tonumber(L, __argi__++);
-	size.y = (float)lua_tonumber(L, __argi__++);
+	size.x = (float)lua_tonumber(L, ++__argi__);
+	size.y = (float)lua_tonumber(L, ++__argi__);
 	ImGui::Dummy(size);
 	lua_pushnumber(L, size.x);
 	lua_pushnumber(L, size.y);
@@ -872,19 +775,17 @@ int cximgui_Dummy_1_v2(lua_State* L) {
 };
 
 //void  Indent(float indent_w);
-//arg1	float	indent_w	=	 0.0f
 int cximgui_Indent_1_n(lua_State* L) {
 	int __argi__ = 0;
-	float indent_w = (float)lua_tonumber(L, __argi__++);
+	float indent_w = (float)lua_tonumber(L, ++__argi__);
 	ImGui::Indent(indent_w);
 	return 0;
 };
 
 //void  Unindent(float indent_w);
-//arg1	float	indent_w	=	 0.0f
 int cximgui_Unindent_1_n(lua_State* L) {
 	int __argi__ = 0;
-	float indent_w = (float)lua_tonumber(L, __argi__++);
+	float indent_w = (float)lua_tonumber(L, ++__argi__);
 	ImGui::Unindent(indent_w);
 	return 0;
 };
@@ -924,12 +825,11 @@ int cximgui_GetCursorPosY(lua_State* L) {
 };
 
 //void  SetCursorPos(const ImVec2& local_pos);
-//arg1	const ImVec2&	local_pos	=	
 int cximgui_SetCursorPos_1_v2(lua_State* L) {
 	int __argi__ = 0;
 	ImVec2 local_pos;
-	local_pos.x = (float)lua_tonumber(L, __argi__++);
-	local_pos.y = (float)lua_tonumber(L, __argi__++);
+	local_pos.x = (float)lua_tonumber(L, ++__argi__);
+	local_pos.y = (float)lua_tonumber(L, ++__argi__);
 	ImGui::SetCursorPos(local_pos);
 	lua_pushnumber(L, local_pos.x);
 	lua_pushnumber(L, local_pos.y);
@@ -937,19 +837,17 @@ int cximgui_SetCursorPos_1_v2(lua_State* L) {
 };
 
 //void  SetCursorPosX(float x);
-//arg1	float	x	=	
 int cximgui_SetCursorPosX_1_n(lua_State* L) {
 	int __argi__ = 0;
-	float x = (float)lua_tonumber(L, __argi__++);
+	float x = (float)lua_tonumber(L, ++__argi__);
 	ImGui::SetCursorPosX(x);
 	return 0;
 };
 
 //void  SetCursorPosY(float y);
-//arg1	float	y	=	
 int cximgui_SetCursorPosY_1_n(lua_State* L) {
 	int __argi__ = 0;
-	float y = (float)lua_tonumber(L, __argi__++);
+	float y = (float)lua_tonumber(L, ++__argi__);
 	ImGui::SetCursorPosY(y);
 	return 0;
 };
@@ -971,12 +869,11 @@ int cximgui_GetCursorScreenPos(lua_State* L) {
 };
 
 //void  SetCursorScreenPos(const ImVec2& pos);
-//arg1	const ImVec2&	pos	=	
 int cximgui_SetCursorScreenPos_1_v2(lua_State* L) {
 	int __argi__ = 0;
 	ImVec2 pos;
-	pos.x = (float)lua_tonumber(L, __argi__++);
-	pos.y = (float)lua_tonumber(L, __argi__++);
+	pos.x = (float)lua_tonumber(L, ++__argi__);
+	pos.y = (float)lua_tonumber(L, ++__argi__);
 	ImGui::SetCursorScreenPos(pos);
 	lua_pushnumber(L, pos.x);
 	lua_pushnumber(L, pos.y);
@@ -1018,33 +915,28 @@ int cximgui_GetFrameHeightWithSpacing(lua_State* L) {
 };
 
 //void  PushID(const char* str_id);
-//arg1	const char*	str_id	=	
 int cximgui_PushID_1_s(lua_State* L) {
 	int __argi__ = 0;
-	const char* str_id = lua_tostring(L, __argi__++);
+	const char* str_id = lua_tostring(L, ++__argi__);
 	ImGui::PushID(str_id);
 	return 0;
 };
 
 //void  PushID(const char* str_id_begin,const char* str_id_end);
-//arg1	const char*	str_id_begin	=	
-//arg2	const char*	str_id_end	=	
 int cximgui_PushID_2_ss(lua_State* L) {
 	int __argi__ = 0;
-	const char* str_id_begin = lua_tostring(L, __argi__++);
-	const char* str_id_end = lua_tostring(L, __argi__++);
+	const char* str_id_begin = lua_tostring(L, ++__argi__);
+	const char* str_id_end = lua_tostring(L, ++__argi__);
 	ImGui::PushID(str_id_begin, str_id_end);
 	return 0;
 };
 
 //void  PushID(const void* ptr_id);
-//arg1	const void*	ptr_id	=	
 //UnSupported PushID
 //void  PushID(int int_id);
-//arg1	int	int_id	=	
 int cximgui_PushID_1_i(lua_State* L) {
 	int __argi__ = 0;
-	int int_id = (int)lua_tointeger(L, __argi__++);
+	int int_id = (int)lua_tointeger(L, ++__argi__);
 	ImGui::PushID(int_id);
 	return 0;
 };
@@ -1056,114 +948,66 @@ int cximgui_PopID(lua_State* L) {
 };
 
 //ImGuiID  GetID(const char* str_id);
-//arg1	const char*	str_id	=	
 int cximgui_GetID_1_s(lua_State* L) {
 	int __argi__ = 0;
-	const char* str_id = lua_tostring(L, __argi__++);
+	const char* str_id = lua_tostring(L, ++__argi__);
 	ImGuiID __ret__ = ImGui::GetID(str_id);
 	lua_pushinteger(L, __ret__);
 	return 1;
 };
 
 //ImGuiID  GetID(const char* str_id_begin,const char* str_id_end);
-//arg1	const char*	str_id_begin	=	
-//arg2	const char*	str_id_end	=	
 int cximgui_GetID_2_ss(lua_State* L) {
 	int __argi__ = 0;
-	const char* str_id_begin = lua_tostring(L, __argi__++);
-	const char* str_id_end = lua_tostring(L, __argi__++);
+	const char* str_id_begin = lua_tostring(L, ++__argi__);
+	const char* str_id_end = lua_tostring(L, ++__argi__);
 	ImGuiID __ret__ = ImGui::GetID(str_id_begin, str_id_end);
 	lua_pushinteger(L, __ret__);
 	return 1;
 };
 
 //ImGuiID  GetID(const void* ptr_id);
-//arg1	const void*	ptr_id	=	
 //UnSupported GetID
 //void  TextUnformatted(const char* text,const char* text_end);
-//arg1	const char*	text	=	
-//arg2	const char*	text_end	=	 NULL
 int cximgui_TextUnformatted_2_ss(lua_State* L) {
 	int __argi__ = 0;
-	const char* text = lua_tostring(L, __argi__++);
-	const char* text_end = lua_tostring(L, __argi__++);
+	const char* text = lua_tostring(L, ++__argi__);
+	const char* text_end = lua_tostring(L, ++__argi__);
 	ImGui::TextUnformatted(text, text_end);
 	return 0;
 };
 
 //void  Text(const char* fmt,... );
-//arg1	const char*	fmt	=	
-//arg2	...		=	
-//[Text] unsupported arg type!!!
-
+//UnSupported Text
 //void  TextV(const char* fmt,va_list args);
-//arg1	const char*	fmt	=	
-//arg2	va_list	args	=	
-//[TextV] unsupported arg type!!!
-
+//UnSupported TextV
 //void  TextColored(const ImVec4& col,const char* fmt,... );
-//arg1	const ImVec4&	col	=	
-//arg2	const char*	fmt	=	
-//arg3	...		=	
-//[TextColored] unsupported arg type!!!
-
+//UnSupported TextColored
 //void  TextColoredV(const ImVec4& col,const char* fmt,va_list args);
-//arg1	const ImVec4&	col	=	
-//arg2	const char*	fmt	=	
-//arg3	va_list	args	=	
-//[TextColoredV] unsupported arg type!!!
-
+//UnSupported TextColoredV
 //void  TextDisabled(const char* fmt,... );
-//arg1	const char*	fmt	=	
-//arg2	...		=	
-//[TextDisabled] unsupported arg type!!!
-
+//UnSupported TextDisabled
 //void  TextDisabledV(const char* fmt,va_list args);
-//arg1	const char*	fmt	=	
-//arg2	va_list	args	=	
-//[TextDisabledV] unsupported arg type!!!
-
+//UnSupported TextDisabledV
 //void  TextWrapped(const char* fmt,... );
-//arg1	const char*	fmt	=	
-//arg2	...		=	
-//[TextWrapped] unsupported arg type!!!
-
+//UnSupported TextWrapped
 //void  TextWrappedV(const char* fmt,va_list args);
-//arg1	const char*	fmt	=	
-//arg2	va_list	args	=	
-//[TextWrappedV] unsupported arg type!!!
-
+//UnSupported TextWrappedV
 //void  LabelText(const char* label,const char* fmt,... );
-//arg1	const char*	label	=	
-//arg2	const char*	fmt	=	
-//arg3	...		=	
-//[LabelText] unsupported arg type!!!
-
+//UnSupported LabelText
 //void  LabelTextV(const char* label,const char* fmt,va_list args);
-//arg1	const char*	label	=	
-//arg2	const char*	fmt	=	
-//arg3	va_list	args	=	
-//[LabelTextV] unsupported arg type!!!
-
+//UnSupported LabelTextV
 //void  BulletText(const char* fmt,... );
-//arg1	const char*	fmt	=	
-//arg2	...		=	
-//[BulletText] unsupported arg type!!!
-
+//UnSupported BulletText
 //void  BulletTextV(const char* fmt,va_list args);
-//arg1	const char*	fmt	=	
-//arg2	va_list	args	=	
-//[BulletTextV] unsupported arg type!!!
-
+//UnSupported BulletTextV
 //bool  Button(const char* label,const ImVec2& size);
-//arg1	const char*	label	=	
-//arg2	const ImVec2&	size	=	 ImVec2 @1
 int cximgui_Button_2_sv2(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
 	ImVec2 size;
-	size.x = (float)lua_tonumber(L, __argi__++);
-	size.y = (float)lua_tonumber(L, __argi__++);
+	size.x = (float)lua_tonumber(L, ++__argi__);
+	size.y = (float)lua_tonumber(L, ++__argi__);
 	bool __ret__ = ImGui::Button(label, size);
 	lua_pushboolean(L, __ret__);
 	lua_pushnumber(L, size.x);
@@ -1172,24 +1016,21 @@ int cximgui_Button_2_sv2(lua_State* L) {
 };
 
 //bool  SmallButton(const char* label);
-//arg1	const char*	label	=	
 int cximgui_SmallButton_1_s(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
 	bool __ret__ = ImGui::SmallButton(label);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  InvisibleButton(const char* str_id,const ImVec2& size);
-//arg1	const char*	str_id	=	
-//arg2	const ImVec2&	size	=	
 int cximgui_InvisibleButton_2_sv2(lua_State* L) {
 	int __argi__ = 0;
-	const char* str_id = lua_tostring(L, __argi__++);
+	const char* str_id = lua_tostring(L, ++__argi__);
 	ImVec2 size;
-	size.x = (float)lua_tonumber(L, __argi__++);
-	size.y = (float)lua_tonumber(L, __argi__++);
+	size.x = (float)lua_tonumber(L, ++__argi__);
+	size.y = (float)lua_tonumber(L, ++__argi__);
 	bool __ret__ = ImGui::InvisibleButton(str_id, size);
 	lua_pushboolean(L, __ret__);
 	lua_pushnumber(L, size.x);
@@ -1198,43 +1039,24 @@ int cximgui_InvisibleButton_2_sv2(lua_State* L) {
 };
 
 //bool  ArrowButton(const char* str_id,ImGuiDir dir);
-//arg1	const char*	str_id	=	
-//arg2	ImGuiDir	dir	=	
 int cximgui_ArrowButton_2_si(lua_State* L) {
 	int __argi__ = 0;
-	const char* str_id = lua_tostring(L, __argi__++);
-	ImGuiDir dir = (ImGuiDir)lua_tointeger(L, __argi__++);
+	const char* str_id = lua_tostring(L, ++__argi__);
+	ImGuiDir dir = (ImGuiDir)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::ArrowButton(str_id, dir);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //void  Image(ImTextureID user_texture_id,const ImVec2& size,const ImVec2& uv0,const ImVec2& uv1,const ImVec4& tint_col,const ImVec4& border_col);
-//arg1	ImTextureID	user_texture_id	=	
-//arg2	const ImVec2&	size	=	
-//arg3	const ImVec2&	uv0	=	 ImVec2 @1
-//arg4	const ImVec2&	uv1	=	 ImVec2 @2
-//arg5	const ImVec4&	tint_col	=	 ImVec4 @3
-//arg6	const ImVec4&	border_col	=	 ImVec4 @4
-//[Image] unsupported arg type!!!
-
+//UnSupported Image
 //bool  ImageButton(ImTextureID user_texture_id,const ImVec2& size,const ImVec2& uv0,const ImVec2& uv1,int frame_padding,const ImVec4& bg_col,const ImVec4& tint_col);
-//arg1	ImTextureID	user_texture_id	=	
-//arg2	const ImVec2&	size	=	
-//arg3	const ImVec2&	uv0	=	 ImVec2 @1
-//arg4	const ImVec2&	uv1	=	 ImVec2 @2
-//arg5	int	frame_padding	=	 -1
-//arg6	const ImVec4&	bg_col	=	 ImVec4 @3
-//arg7	const ImVec4&	tint_col	=	 ImVec4 @4
-//[ImageButton] unsupported arg type!!!
-
+//UnSupported ImageButton
 //bool  Checkbox(const char* label,bool* v);
-//arg1	const char*	label	=	
-//arg2	bool*	v	=	
 int cximgui_Checkbox_2_sbp(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	bool v = lua_toboolean(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	bool v = lua_toboolean(L, ++__argi__);
 	bool __ret__ = ImGui::Checkbox(label, &v);
 	lua_pushboolean(L, __ret__);
 	lua_pushboolean(L, v);
@@ -1242,40 +1064,32 @@ int cximgui_Checkbox_2_sbp(lua_State* L) {
 };
 
 //bool  CheckboxFlags(const char* label,unsigned int* flags,unsigned int flags_value);
-//arg1	const char*	label	=	
-//arg2	unsigned int*	flags	=	
-//arg3	unsigned int	flags_value	=	
 int cximgui_CheckboxFlags_3_sIpI(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	unsigned int flags = (unsigned int)lua_tointeger(L, __argi__++);
-	unsigned int flags_value = (unsigned int)lua_tointeger(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	unsigned int flags = (unsigned int)lua_tointeger(L, ++__argi__);
+	unsigned int flags_value = (unsigned int)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::CheckboxFlags(label, &flags, flags_value);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  RadioButton(const char* label,bool active);
-//arg1	const char*	label	=	
-//arg2	bool	active	=	
 int cximgui_RadioButton_2_sb(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	bool active = lua_toboolean(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	bool active = lua_toboolean(L, ++__argi__);
 	bool __ret__ = ImGui::RadioButton(label, active);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  RadioButton(const char* label,int* v,int v_button);
-//arg1	const char*	label	=	
-//arg2	int*	v	=	
-//arg3	int	v_button	=	
 int cximgui_RadioButton_3_sipi(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	int v = (int)lua_tointeger(L, __argi__++);
-	int v_button = (int)lua_tointeger(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	int v = (int)lua_tointeger(L, ++__argi__);
+	int v_button = (int)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::RadioButton(label, &v, v_button);
 	lua_pushboolean(L, __ret__);
 	lua_pushinteger(L, v);
@@ -1283,16 +1097,13 @@ int cximgui_RadioButton_3_sipi(lua_State* L) {
 };
 
 //void  ProgressBar(float fraction,const ImVec2& size_arg,const char* overlay);
-//arg1	float	fraction	=	
-//arg2	const ImVec2&	size_arg	=	 ImVec2 @1
-//arg3	const char*	overlay	=	 NULL
 int cximgui_ProgressBar_3_nv2s(lua_State* L) {
 	int __argi__ = 0;
-	float fraction = (float)lua_tonumber(L, __argi__++);
+	float fraction = (float)lua_tonumber(L, ++__argi__);
 	ImVec2 size_arg;
-	size_arg.x = (float)lua_tonumber(L, __argi__++);
-	size_arg.y = (float)lua_tonumber(L, __argi__++);
-	const char* overlay = lua_tostring(L, __argi__++);
+	size_arg.x = (float)lua_tonumber(L, ++__argi__);
+	size_arg.y = (float)lua_tonumber(L, ++__argi__);
+	const char* overlay = lua_tostring(L, ++__argi__);
 	ImGui::ProgressBar(fraction, size_arg, overlay);
 	lua_pushnumber(L, size_arg.x);
 	lua_pushnumber(L, size_arg.y);
@@ -1306,14 +1117,11 @@ int cximgui_Bullet(lua_State* L) {
 };
 
 //bool  BeginCombo(const char* label,const char* preview_value,ImGuiComboFlags flags);
-//arg1	const char*	label	=	
-//arg2	const char*	preview_value	=	
-//arg3	ImGuiComboFlags	flags	=	 0
 int cximgui_BeginCombo_3_ssi(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	const char* preview_value = lua_tostring(L, __argi__++);
-	ImGuiComboFlags flags = (ImGuiComboFlags)lua_tointeger(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	const char* preview_value = lua_tostring(L, ++__argi__);
+	ImGuiComboFlags flags = (ImGuiComboFlags)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::BeginCombo(label, preview_value, flags);
 	lua_pushboolean(L, __ret__);
 	return 1;
@@ -1326,24 +1134,14 @@ int cximgui_EndCombo(lua_State* L) {
 };
 
 //bool  Combo(const char* label,int* current_item,const char* const[],int items_count,int popup_max_height_in_items);
-//arg1	const char*	label	=	
-//arg2	int*	current_item	=	
-//arg3	const char*[0]	const	=	
-//arg4	int	items_count	=	
-//arg5	int	popup_max_height_in_items	=	 -1
-//[Combo] unsupported arg type!!!
-
+//UnSupported Combo
 //bool  Combo(const char* label,int* current_item,const char* items_separated_by_zeros,int popup_max_height_in_items);
-//arg1	const char*	label	=	
-//arg2	int*	current_item	=	
-//arg3	const char*	items_separated_by_zeros	=	
-//arg4	int	popup_max_height_in_items	=	 -1
 int cximgui_Combo_4_sipsi(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	int current_item = (int)lua_tointeger(L, __argi__++);
-	const char* items_separated_by_zeros = lua_tostring(L, __argi__++);
-	int popup_max_height_in_items = (int)lua_tointeger(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	int current_item = (int)lua_tointeger(L, ++__argi__);
+	const char* items_separated_by_zeros = lua_tostring(L, ++__argi__);
+	int popup_max_height_in_items = (int)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::Combo(label, &current_item, items_separated_by_zeros, popup_max_height_in_items);
 	lua_pushboolean(L, __ret__);
 	lua_pushinteger(L, current_item);
@@ -1351,30 +1149,17 @@ int cximgui_Combo_4_sipsi(lua_State* L) {
 };
 
 //bool  Combo(const char* label,int* current_item,bool @1@2,void* data,int items_count,int popup_max_height_in_items);
-//arg1	const char*	label	=	
-//arg2	int*	current_item	=	
-//arg3	bool	@1@2	=	
-//arg4	void*	data	=	
-//arg5	int	items_count	=	
-//arg6	int	popup_max_height_in_items	=	 -1
 //UnSupported Combo
 //bool  DragFloat(const char* label,float* v,float v_speed,float v_min,float v_max,const char* format,float power);
-//arg1	const char*	label	=	
-//arg2	float*	v	=	
-//arg3	float	v_speed	=	 1.0f
-//arg4	float	v_min	=	 0.0f
-//arg5	float	v_max	=	 0.0f
-//arg6	const char*	format	=	 "%.3f"
-//arg7	float	power	=	 1.0f
 int cximgui_DragFloat_7_snpnnnsn(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	float v = (float)lua_tonumber(L, __argi__++);
-	float v_speed = (float)lua_tonumber(L, __argi__++);
-	float v_min = (float)lua_tonumber(L, __argi__++);
-	float v_max = (float)lua_tonumber(L, __argi__++);
-	const char* format = lua_tostring(L, __argi__++);
-	float power = (float)lua_tonumber(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	float v = (float)lua_tonumber(L, ++__argi__);
+	float v_speed = (float)lua_tonumber(L, ++__argi__);
+	float v_min = (float)lua_tonumber(L, ++__argi__);
+	float v_max = (float)lua_tonumber(L, ++__argi__);
+	const char* format = lua_tostring(L, ++__argi__);
+	float power = (float)lua_tonumber(L, ++__argi__);
 	bool __ret__ = ImGui::DragFloat(label, &v, v_speed, v_min, v_max, format, power);
 	lua_pushboolean(L, __ret__);
 	lua_pushnumber(L, v);
@@ -1382,56 +1167,23 @@ int cximgui_DragFloat_7_snpnnnsn(lua_State* L) {
 };
 
 //bool  DragFloat2(const char* label,float v[2],float v_speed,float v_min,float v_max,const char* format,float power);
-//arg1	const char*	label	=	
-//arg2	float[2]	v	=	
-//arg3	float	v_speed	=	 1.0f
-//arg4	float	v_min	=	 0.0f
-//arg5	float	v_max	=	 0.0f
-//arg6	const char*	format	=	 "%.3f"
-//arg7	float	power	=	 1.0f
-//[DragFloat2] unsupported arg type!!!
-
+//UnSupported DragFloat2
 //bool  DragFloat3(const char* label,float v[3],float v_speed,float v_min,float v_max,const char* format,float power);
-//arg1	const char*	label	=	
-//arg2	float[3]	v	=	
-//arg3	float	v_speed	=	 1.0f
-//arg4	float	v_min	=	 0.0f
-//arg5	float	v_max	=	 0.0f
-//arg6	const char*	format	=	 "%.3f"
-//arg7	float	power	=	 1.0f
-//[DragFloat3] unsupported arg type!!!
-
+//UnSupported DragFloat3
 //bool  DragFloat4(const char* label,float v[4],float v_speed,float v_min,float v_max,const char* format,float power);
-//arg1	const char*	label	=	
-//arg2	float[4]	v	=	
-//arg3	float	v_speed	=	 1.0f
-//arg4	float	v_min	=	 0.0f
-//arg5	float	v_max	=	 0.0f
-//arg6	const char*	format	=	 "%.3f"
-//arg7	float	power	=	 1.0f
-//[DragFloat4] unsupported arg type!!!
-
+//UnSupported DragFloat4
 //bool  DragFloatRange2(const char* label,float* v_current_min,float* v_current_max,float v_speed,float v_min,float v_max,const char* format,const char* format_max,float power);
-//arg1	const char*	label	=	
-//arg2	float*	v_current_min	=	
-//arg3	float*	v_current_max	=	
-//arg4	float	v_speed	=	 1.0f
-//arg5	float	v_min	=	 0.0f
-//arg6	float	v_max	=	 0.0f
-//arg7	const char*	format	=	 "%.3f"
-//arg8	const char*	format_max	=	 NULL
-//arg9	float	power	=	 1.0f
 int cximgui_DragFloatRange2_9_snpnpnnnssn(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	float v_current_min = (float)lua_tonumber(L, __argi__++);
-	float v_current_max = (float)lua_tonumber(L, __argi__++);
-	float v_speed = (float)lua_tonumber(L, __argi__++);
-	float v_min = (float)lua_tonumber(L, __argi__++);
-	float v_max = (float)lua_tonumber(L, __argi__++);
-	const char* format = lua_tostring(L, __argi__++);
-	const char* format_max = lua_tostring(L, __argi__++);
-	float power = (float)lua_tonumber(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	float v_current_min = (float)lua_tonumber(L, ++__argi__);
+	float v_current_max = (float)lua_tonumber(L, ++__argi__);
+	float v_speed = (float)lua_tonumber(L, ++__argi__);
+	float v_min = (float)lua_tonumber(L, ++__argi__);
+	float v_max = (float)lua_tonumber(L, ++__argi__);
+	const char* format = lua_tostring(L, ++__argi__);
+	const char* format_max = lua_tostring(L, ++__argi__);
+	float power = (float)lua_tonumber(L, ++__argi__);
 	bool __ret__ = ImGui::DragFloatRange2(label, &v_current_min, &v_current_max, v_speed, v_min, v_max, format, format_max, power);
 	lua_pushboolean(L, __ret__);
 	lua_pushnumber(L, v_current_min);
@@ -1440,20 +1192,14 @@ int cximgui_DragFloatRange2_9_snpnpnnnssn(lua_State* L) {
 };
 
 //bool  DragInt(const char* label,int* v,float v_speed,int v_min,int v_max,const char* format);
-//arg1	const char*	label	=	
-//arg2	int*	v	=	
-//arg3	float	v_speed	=	 1.0f
-//arg4	int	v_min	=	 0
-//arg5	int	v_max	=	 0
-//arg6	const char*	format	=	 "%d"
 int cximgui_DragInt_6_sipniis(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	int v = (int)lua_tointeger(L, __argi__++);
-	float v_speed = (float)lua_tonumber(L, __argi__++);
-	int v_min = (int)lua_tointeger(L, __argi__++);
-	int v_max = (int)lua_tointeger(L, __argi__++);
-	const char* format = lua_tostring(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	int v = (int)lua_tointeger(L, ++__argi__);
+	float v_speed = (float)lua_tonumber(L, ++__argi__);
+	int v_min = (int)lua_tointeger(L, ++__argi__);
+	int v_max = (int)lua_tointeger(L, ++__argi__);
+	const char* format = lua_tostring(L, ++__argi__);
 	bool __ret__ = ImGui::DragInt(label, &v, v_speed, v_min, v_max, format);
 	lua_pushboolean(L, __ret__);
 	lua_pushinteger(L, v);
@@ -1461,51 +1207,22 @@ int cximgui_DragInt_6_sipniis(lua_State* L) {
 };
 
 //bool  DragInt2(const char* label,int v[2],float v_speed,int v_min,int v_max,const char* format);
-//arg1	const char*	label	=	
-//arg2	int[2]	v	=	
-//arg3	float	v_speed	=	 1.0f
-//arg4	int	v_min	=	 0
-//arg5	int	v_max	=	 0
-//arg6	const char*	format	=	 "%d"
-//[DragInt2] unsupported arg type!!!
-
+//UnSupported DragInt2
 //bool  DragInt3(const char* label,int v[3],float v_speed,int v_min,int v_max,const char* format);
-//arg1	const char*	label	=	
-//arg2	int[3]	v	=	
-//arg3	float	v_speed	=	 1.0f
-//arg4	int	v_min	=	 0
-//arg5	int	v_max	=	 0
-//arg6	const char*	format	=	 "%d"
-//[DragInt3] unsupported arg type!!!
-
+//UnSupported DragInt3
 //bool  DragInt4(const char* label,int v[4],float v_speed,int v_min,int v_max,const char* format);
-//arg1	const char*	label	=	
-//arg2	int[4]	v	=	
-//arg3	float	v_speed	=	 1.0f
-//arg4	int	v_min	=	 0
-//arg5	int	v_max	=	 0
-//arg6	const char*	format	=	 "%d"
-//[DragInt4] unsupported arg type!!!
-
+//UnSupported DragInt4
 //bool  DragIntRange2(const char* label,int* v_current_min,int* v_current_max,float v_speed,int v_min,int v_max,const char* format,const char* format_max);
-//arg1	const char*	label	=	
-//arg2	int*	v_current_min	=	
-//arg3	int*	v_current_max	=	
-//arg4	float	v_speed	=	 1.0f
-//arg5	int	v_min	=	 0
-//arg6	int	v_max	=	 0
-//arg7	const char*	format	=	 "%d"
-//arg8	const char*	format_max	=	 NULL
 int cximgui_DragIntRange2_8_sipipniiss(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	int v_current_min = (int)lua_tointeger(L, __argi__++);
-	int v_current_max = (int)lua_tointeger(L, __argi__++);
-	float v_speed = (float)lua_tonumber(L, __argi__++);
-	int v_min = (int)lua_tointeger(L, __argi__++);
-	int v_max = (int)lua_tointeger(L, __argi__++);
-	const char* format = lua_tostring(L, __argi__++);
-	const char* format_max = lua_tostring(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	int v_current_min = (int)lua_tointeger(L, ++__argi__);
+	int v_current_max = (int)lua_tointeger(L, ++__argi__);
+	float v_speed = (float)lua_tonumber(L, ++__argi__);
+	int v_min = (int)lua_tointeger(L, ++__argi__);
+	int v_max = (int)lua_tointeger(L, ++__argi__);
+	const char* format = lua_tostring(L, ++__argi__);
+	const char* format_max = lua_tostring(L, ++__argi__);
 	bool __ret__ = ImGui::DragIntRange2(label, &v_current_min, &v_current_max, v_speed, v_min, v_max, format, format_max);
 	lua_pushboolean(L, __ret__);
 	lua_pushinteger(L, v_current_min);
@@ -1514,41 +1231,18 @@ int cximgui_DragIntRange2_8_sipipniiss(lua_State* L) {
 };
 
 //bool  DragScalar(const char* label,ImGuiDataType data_type,void* v,float v_speed,const void* v_min,const void* v_max,const char* format,float power);
-//arg1	const char*	label	=	
-//arg2	ImGuiDataType	data_type	=	
-//arg3	void*	v	=	
-//arg4	float	v_speed	=	
-//arg5	const void*	v_min	=	 NULL
-//arg6	const void*	v_max	=	 NULL
-//arg7	const char*	format	=	 NULL
-//arg8	float	power	=	 1.0f
 //UnSupported DragScalar
 //bool  DragScalarN(const char* label,ImGuiDataType data_type,void* v,int components,float v_speed,const void* v_min,const void* v_max,const char* format,float power);
-//arg1	const char*	label	=	
-//arg2	ImGuiDataType	data_type	=	
-//arg3	void*	v	=	
-//arg4	int	components	=	
-//arg5	float	v_speed	=	
-//arg6	const void*	v_min	=	 NULL
-//arg7	const void*	v_max	=	 NULL
-//arg8	const char*	format	=	 NULL
-//arg9	float	power	=	 1.0f
 //UnSupported DragScalarN
 //bool  SliderFloat(const char* label,float* v,float v_min,float v_max,const char* format,float power);
-//arg1	const char*	label	=	
-//arg2	float*	v	=	
-//arg3	float	v_min	=	
-//arg4	float	v_max	=	
-//arg5	const char*	format	=	 "%.3f"
-//arg6	float	power	=	 1.0f
 int cximgui_SliderFloat_6_snpnnsn(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	float v = (float)lua_tonumber(L, __argi__++);
-	float v_min = (float)lua_tonumber(L, __argi__++);
-	float v_max = (float)lua_tonumber(L, __argi__++);
-	const char* format = lua_tostring(L, __argi__++);
-	float power = (float)lua_tonumber(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	float v = (float)lua_tonumber(L, ++__argi__);
+	float v_min = (float)lua_tonumber(L, ++__argi__);
+	float v_max = (float)lua_tonumber(L, ++__argi__);
+	const char* format = lua_tostring(L, ++__argi__);
+	float power = (float)lua_tonumber(L, ++__argi__);
 	bool __ret__ = ImGui::SliderFloat(label, &v, v_min, v_max, format, power);
 	lua_pushboolean(L, __ret__);
 	lua_pushnumber(L, v);
@@ -1556,45 +1250,19 @@ int cximgui_SliderFloat_6_snpnnsn(lua_State* L) {
 };
 
 //bool  SliderFloat2(const char* label,float v[2],float v_min,float v_max,const char* format,float power);
-//arg1	const char*	label	=	
-//arg2	float[2]	v	=	
-//arg3	float	v_min	=	
-//arg4	float	v_max	=	
-//arg5	const char*	format	=	 "%.3f"
-//arg6	float	power	=	 1.0f
-//[SliderFloat2] unsupported arg type!!!
-
+//UnSupported SliderFloat2
 //bool  SliderFloat3(const char* label,float v[3],float v_min,float v_max,const char* format,float power);
-//arg1	const char*	label	=	
-//arg2	float[3]	v	=	
-//arg3	float	v_min	=	
-//arg4	float	v_max	=	
-//arg5	const char*	format	=	 "%.3f"
-//arg6	float	power	=	 1.0f
-//[SliderFloat3] unsupported arg type!!!
-
+//UnSupported SliderFloat3
 //bool  SliderFloat4(const char* label,float v[4],float v_min,float v_max,const char* format,float power);
-//arg1	const char*	label	=	
-//arg2	float[4]	v	=	
-//arg3	float	v_min	=	
-//arg4	float	v_max	=	
-//arg5	const char*	format	=	 "%.3f"
-//arg6	float	power	=	 1.0f
-//[SliderFloat4] unsupported arg type!!!
-
+//UnSupported SliderFloat4
 //bool  SliderAngle(const char* label,float* v_rad,float v_degrees_min,float v_degrees_max,const char* format);
-//arg1	const char*	label	=	
-//arg2	float*	v_rad	=	
-//arg3	float	v_degrees_min	=	 -360.0f
-//arg4	float	v_degrees_max	=	 +360.0f
-//arg5	const char*	format	=	 "%.0f deg"
 int cximgui_SliderAngle_5_snpnns(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	float v_rad = (float)lua_tonumber(L, __argi__++);
-	float v_degrees_min = (float)lua_tonumber(L, __argi__++);
-	float v_degrees_max = (float)lua_tonumber(L, __argi__++);
-	const char* format = lua_tostring(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	float v_rad = (float)lua_tonumber(L, ++__argi__);
+	float v_degrees_min = (float)lua_tonumber(L, ++__argi__);
+	float v_degrees_max = (float)lua_tonumber(L, ++__argi__);
+	const char* format = lua_tostring(L, ++__argi__);
 	bool __ret__ = ImGui::SliderAngle(label, &v_rad, v_degrees_min, v_degrees_max, format);
 	lua_pushboolean(L, __ret__);
 	lua_pushnumber(L, v_rad);
@@ -1602,18 +1270,13 @@ int cximgui_SliderAngle_5_snpnns(lua_State* L) {
 };
 
 //bool  SliderInt(const char* label,int* v,int v_min,int v_max,const char* format);
-//arg1	const char*	label	=	
-//arg2	int*	v	=	
-//arg3	int	v_min	=	
-//arg4	int	v_max	=	
-//arg5	const char*	format	=	 "%d"
 int cximgui_SliderInt_5_sipiis(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	int v = (int)lua_tointeger(L, __argi__++);
-	int v_min = (int)lua_tointeger(L, __argi__++);
-	int v_max = (int)lua_tointeger(L, __argi__++);
-	const char* format = lua_tostring(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	int v = (int)lua_tointeger(L, ++__argi__);
+	int v_min = (int)lua_tointeger(L, ++__argi__);
+	int v_max = (int)lua_tointeger(L, ++__argi__);
+	const char* format = lua_tostring(L, ++__argi__);
 	bool __ret__ = ImGui::SliderInt(label, &v, v_min, v_max, format);
 	lua_pushboolean(L, __ret__);
 	lua_pushinteger(L, v);
@@ -1621,67 +1284,27 @@ int cximgui_SliderInt_5_sipiis(lua_State* L) {
 };
 
 //bool  SliderInt2(const char* label,int v[2],int v_min,int v_max,const char* format);
-//arg1	const char*	label	=	
-//arg2	int[2]	v	=	
-//arg3	int	v_min	=	
-//arg4	int	v_max	=	
-//arg5	const char*	format	=	 "%d"
-//[SliderInt2] unsupported arg type!!!
-
+//UnSupported SliderInt2
 //bool  SliderInt3(const char* label,int v[3],int v_min,int v_max,const char* format);
-//arg1	const char*	label	=	
-//arg2	int[3]	v	=	
-//arg3	int	v_min	=	
-//arg4	int	v_max	=	
-//arg5	const char*	format	=	 "%d"
-//[SliderInt3] unsupported arg type!!!
-
+//UnSupported SliderInt3
 //bool  SliderInt4(const char* label,int v[4],int v_min,int v_max,const char* format);
-//arg1	const char*	label	=	
-//arg2	int[4]	v	=	
-//arg3	int	v_min	=	
-//arg4	int	v_max	=	
-//arg5	const char*	format	=	 "%d"
-//[SliderInt4] unsupported arg type!!!
-
+//UnSupported SliderInt4
 //bool  SliderScalar(const char* label,ImGuiDataType data_type,void* v,const void* v_min,const void* v_max,const char* format,float power);
-//arg1	const char*	label	=	
-//arg2	ImGuiDataType	data_type	=	
-//arg3	void*	v	=	
-//arg4	const void*	v_min	=	
-//arg5	const void*	v_max	=	
-//arg6	const char*	format	=	 NULL
-//arg7	float	power	=	 1.0f
 //UnSupported SliderScalar
 //bool  SliderScalarN(const char* label,ImGuiDataType data_type,void* v,int components,const void* v_min,const void* v_max,const char* format,float power);
-//arg1	const char*	label	=	
-//arg2	ImGuiDataType	data_type	=	
-//arg3	void*	v	=	
-//arg4	int	components	=	
-//arg5	const void*	v_min	=	
-//arg6	const void*	v_max	=	
-//arg7	const char*	format	=	 NULL
-//arg8	float	power	=	 1.0f
 //UnSupported SliderScalarN
 //bool  VSliderFloat(const char* label,const ImVec2& size,float* v,float v_min,float v_max,const char* format,float power);
-//arg1	const char*	label	=	
-//arg2	const ImVec2&	size	=	
-//arg3	float*	v	=	
-//arg4	float	v_min	=	
-//arg5	float	v_max	=	
-//arg6	const char*	format	=	 "%.3f"
-//arg7	float	power	=	 1.0f
 int cximgui_VSliderFloat_7_sv2npnnsn(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
 	ImVec2 size;
-	size.x = (float)lua_tonumber(L, __argi__++);
-	size.y = (float)lua_tonumber(L, __argi__++);
-	float v = (float)lua_tonumber(L, __argi__++);
-	float v_min = (float)lua_tonumber(L, __argi__++);
-	float v_max = (float)lua_tonumber(L, __argi__++);
-	const char* format = lua_tostring(L, __argi__++);
-	float power = (float)lua_tonumber(L, __argi__++);
+	size.x = (float)lua_tonumber(L, ++__argi__);
+	size.y = (float)lua_tonumber(L, ++__argi__);
+	float v = (float)lua_tonumber(L, ++__argi__);
+	float v_min = (float)lua_tonumber(L, ++__argi__);
+	float v_max = (float)lua_tonumber(L, ++__argi__);
+	const char* format = lua_tostring(L, ++__argi__);
+	float power = (float)lua_tonumber(L, ++__argi__);
 	bool __ret__ = ImGui::VSliderFloat(label, size, &v, v_min, v_max, format, power);
 	lua_pushboolean(L, __ret__);
 	lua_pushnumber(L, size.x);
@@ -1691,22 +1314,16 @@ int cximgui_VSliderFloat_7_sv2npnnsn(lua_State* L) {
 };
 
 //bool  VSliderInt(const char* label,const ImVec2& size,int* v,int v_min,int v_max,const char* format);
-//arg1	const char*	label	=	
-//arg2	const ImVec2&	size	=	
-//arg3	int*	v	=	
-//arg4	int	v_min	=	
-//arg5	int	v_max	=	
-//arg6	const char*	format	=	 "%d"
 int cximgui_VSliderInt_6_sv2ipiis(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
 	ImVec2 size;
-	size.x = (float)lua_tonumber(L, __argi__++);
-	size.y = (float)lua_tonumber(L, __argi__++);
-	int v = (int)lua_tointeger(L, __argi__++);
-	int v_min = (int)lua_tointeger(L, __argi__++);
-	int v_max = (int)lua_tointeger(L, __argi__++);
-	const char* format = lua_tostring(L, __argi__++);
+	size.x = (float)lua_tonumber(L, ++__argi__);
+	size.y = (float)lua_tonumber(L, ++__argi__);
+	int v = (int)lua_tointeger(L, ++__argi__);
+	int v_min = (int)lua_tointeger(L, ++__argi__);
+	int v_max = (int)lua_tointeger(L, ++__argi__);
+	const char* format = lua_tostring(L, ++__argi__);
 	bool __ret__ = ImGui::VSliderInt(label, size, &v, v_min, v_max, format);
 	lua_pushboolean(L, __ret__);
 	lua_pushnumber(L, size.x);
@@ -1716,47 +1333,20 @@ int cximgui_VSliderInt_6_sv2ipiis(lua_State* L) {
 };
 
 //bool  VSliderScalar(const char* label,const ImVec2& size,ImGuiDataType data_type,void* v,const void* v_min,const void* v_max,const char* format,float power);
-//arg1	const char*	label	=	
-//arg2	const ImVec2&	size	=	
-//arg3	ImGuiDataType	data_type	=	
-//arg4	void*	v	=	
-//arg5	const void*	v_min	=	
-//arg6	const void*	v_max	=	
-//arg7	const char*	format	=	 NULL
-//arg8	float	power	=	 1.0f
 //UnSupported VSliderScalar
 //bool  InputText(const char* label,char* buf,size_t buf_size,ImGuiInputTextFlags flags,ImGuiInputTextCallback callback,void* user_data);
-//arg1	const char*	label	=	
-//arg2	char*	buf	=	
-//arg3	size_t	buf_size	=	
-//arg4	ImGuiInputTextFlags	flags	=	 0
-//arg5	ImGuiInputTextCallback	callback	=	 NULL
-//arg6	void*	user_data	=	 NULL
 //UnSupported InputText
 //bool  InputTextMultiline(const char* label,char* buf,size_t buf_size,const ImVec2& size,ImGuiInputTextFlags flags,ImGuiInputTextCallback callback,void* user_data);
-//arg1	const char*	label	=	
-//arg2	char*	buf	=	
-//arg3	size_t	buf_size	=	
-//arg4	const ImVec2&	size	=	 ImVec2 @1
-//arg5	ImGuiInputTextFlags	flags	=	 0
-//arg6	ImGuiInputTextCallback	callback	=	 NULL
-//arg7	void*	user_data	=	 NULL
 //UnSupported InputTextMultiline
 //bool  InputFloat(const char* label,float* v,float step,float step_fast,const char* format,ImGuiInputTextFlags extra_flags);
-//arg1	const char*	label	=	
-//arg2	float*	v	=	
-//arg3	float	step	=	 0.0f
-//arg4	float	step_fast	=	 0.0f
-//arg5	const char*	format	=	 "%.3f"
-//arg6	ImGuiInputTextFlags	extra_flags	=	 0
 int cximgui_InputFloat_6_snpnnsi(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	float v = (float)lua_tonumber(L, __argi__++);
-	float step = (float)lua_tonumber(L, __argi__++);
-	float step_fast = (float)lua_tonumber(L, __argi__++);
-	const char* format = lua_tostring(L, __argi__++);
-	ImGuiInputTextFlags extra_flags = (ImGuiInputTextFlags)lua_tointeger(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	float v = (float)lua_tonumber(L, ++__argi__);
+	float step = (float)lua_tonumber(L, ++__argi__);
+	float step_fast = (float)lua_tonumber(L, ++__argi__);
+	const char* format = lua_tostring(L, ++__argi__);
+	ImGuiInputTextFlags extra_flags = (ImGuiInputTextFlags)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::InputFloat(label, &v, step, step_fast, format, extra_flags);
 	lua_pushboolean(L, __ret__);
 	lua_pushnumber(L, v);
@@ -1764,39 +1354,19 @@ int cximgui_InputFloat_6_snpnnsi(lua_State* L) {
 };
 
 //bool  InputFloat2(const char* label,float v[2],const char* format,ImGuiInputTextFlags extra_flags);
-//arg1	const char*	label	=	
-//arg2	float[2]	v	=	
-//arg3	const char*	format	=	 "%.3f"
-//arg4	ImGuiInputTextFlags	extra_flags	=	 0
-//[InputFloat2] unsupported arg type!!!
-
+//UnSupported InputFloat2
 //bool  InputFloat3(const char* label,float v[3],const char* format,ImGuiInputTextFlags extra_flags);
-//arg1	const char*	label	=	
-//arg2	float[3]	v	=	
-//arg3	const char*	format	=	 "%.3f"
-//arg4	ImGuiInputTextFlags	extra_flags	=	 0
-//[InputFloat3] unsupported arg type!!!
-
+//UnSupported InputFloat3
 //bool  InputFloat4(const char* label,float v[4],const char* format,ImGuiInputTextFlags extra_flags);
-//arg1	const char*	label	=	
-//arg2	float[4]	v	=	
-//arg3	const char*	format	=	 "%.3f"
-//arg4	ImGuiInputTextFlags	extra_flags	=	 0
-//[InputFloat4] unsupported arg type!!!
-
+//UnSupported InputFloat4
 //bool  InputInt(const char* label,int* v,int step,int step_fast,ImGuiInputTextFlags extra_flags);
-//arg1	const char*	label	=	
-//arg2	int*	v	=	
-//arg3	int	step	=	 1
-//arg4	int	step_fast	=	 100
-//arg5	ImGuiInputTextFlags	extra_flags	=	 0
 int cximgui_InputInt_5_sipiii(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	int v = (int)lua_tointeger(L, __argi__++);
-	int step = (int)lua_tointeger(L, __argi__++);
-	int step_fast = (int)lua_tointeger(L, __argi__++);
-	ImGuiInputTextFlags extra_flags = (ImGuiInputTextFlags)lua_tointeger(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	int v = (int)lua_tointeger(L, ++__argi__);
+	int step = (int)lua_tointeger(L, ++__argi__);
+	int step_fast = (int)lua_tointeger(L, ++__argi__);
+	ImGuiInputTextFlags extra_flags = (ImGuiInputTextFlags)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::InputInt(label, &v, step, step_fast, extra_flags);
 	lua_pushboolean(L, __ret__);
 	lua_pushinteger(L, v);
@@ -1804,104 +1374,50 @@ int cximgui_InputInt_5_sipiii(lua_State* L) {
 };
 
 //bool  InputInt2(const char* label,int v[2],ImGuiInputTextFlags extra_flags);
-//arg1	const char*	label	=	
-//arg2	int[2]	v	=	
-//arg3	ImGuiInputTextFlags	extra_flags	=	 0
-//[InputInt2] unsupported arg type!!!
-
+//UnSupported InputInt2
 //bool  InputInt3(const char* label,int v[3],ImGuiInputTextFlags extra_flags);
-//arg1	const char*	label	=	
-//arg2	int[3]	v	=	
-//arg3	ImGuiInputTextFlags	extra_flags	=	 0
-//[InputInt3] unsupported arg type!!!
-
+//UnSupported InputInt3
 //bool  InputInt4(const char* label,int v[4],ImGuiInputTextFlags extra_flags);
-//arg1	const char*	label	=	
-//arg2	int[4]	v	=	
-//arg3	ImGuiInputTextFlags	extra_flags	=	 0
-//[InputInt4] unsupported arg type!!!
-
+//UnSupported InputInt4
 //bool  InputDouble(const char* label,double* v,double step,double step_fast,const char* format,ImGuiInputTextFlags extra_flags);
-//arg1	const char*	label	=	
-//arg2	double*	v	=	
-//arg3	double	step	=	 0.0f
-//arg4	double	step_fast	=	 0.0f
-//arg5	const char*	format	=	 "%.6f"
-//arg6	ImGuiInputTextFlags	extra_flags	=	 0
 int cximgui_InputDouble_6_snpnnsi(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	double v = (double)lua_tonumber(L, __argi__++);
-	double step = (double)lua_tonumber(L, __argi__++);
-	double step_fast = (double)lua_tonumber(L, __argi__++);
-	const char* format = lua_tostring(L, __argi__++);
-	ImGuiInputTextFlags extra_flags = (ImGuiInputTextFlags)lua_tointeger(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	double v = (double)lua_tonumber(L, ++__argi__);
+	double step = (double)lua_tonumber(L, ++__argi__);
+	double step_fast = (double)lua_tonumber(L, ++__argi__);
+	const char* format = lua_tostring(L, ++__argi__);
+	ImGuiInputTextFlags extra_flags = (ImGuiInputTextFlags)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::InputDouble(label, &v, step, step_fast, format, extra_flags);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  InputScalar(const char* label,ImGuiDataType data_type,void* v,const void* step,const void* step_fast,const char* format,ImGuiInputTextFlags extra_flags);
-//arg1	const char*	label	=	
-//arg2	ImGuiDataType	data_type	=	
-//arg3	void*	v	=	
-//arg4	const void*	step	=	 NULL
-//arg5	const void*	step_fast	=	 NULL
-//arg6	const char*	format	=	 NULL
-//arg7	ImGuiInputTextFlags	extra_flags	=	 0
 //UnSupported InputScalar
 //bool  InputScalarN(const char* label,ImGuiDataType data_type,void* v,int components,const void* step,const void* step_fast,const char* format,ImGuiInputTextFlags extra_flags);
-//arg1	const char*	label	=	
-//arg2	ImGuiDataType	data_type	=	
-//arg3	void*	v	=	
-//arg4	int	components	=	
-//arg5	const void*	step	=	 NULL
-//arg6	const void*	step_fast	=	 NULL
-//arg7	const char*	format	=	 NULL
-//arg8	ImGuiInputTextFlags	extra_flags	=	 0
 //UnSupported InputScalarN
 //bool  ColorEdit3(const char* label,float col[3],ImGuiColorEditFlags flags);
-//arg1	const char*	label	=	
-//arg2	float[3]	col	=	
-//arg3	ImGuiColorEditFlags	flags	=	 0
-//[ColorEdit3] unsupported arg type!!!
-
+//UnSupported ColorEdit3
 //bool  ColorEdit4(const char* label,float col[4],ImGuiColorEditFlags flags);
-//arg1	const char*	label	=	
-//arg2	float[4]	col	=	
-//arg3	ImGuiColorEditFlags	flags	=	 0
-//[ColorEdit4] unsupported arg type!!!
-
+//UnSupported ColorEdit4
 //bool  ColorPicker3(const char* label,float col[3],ImGuiColorEditFlags flags);
-//arg1	const char*	label	=	
-//arg2	float[3]	col	=	
-//arg3	ImGuiColorEditFlags	flags	=	 0
-//[ColorPicker3] unsupported arg type!!!
-
+//UnSupported ColorPicker3
 //bool  ColorPicker4(const char* label,float col[4],ImGuiColorEditFlags flags,const float* ref_col);
-//arg1	const char*	label	=	
-//arg2	float[4]	col	=	
-//arg3	ImGuiColorEditFlags	flags	=	 0
-//arg4	const float*	ref_col	=	 NULL
-//[ColorPicker4] unsupported arg type!!!
-
+//UnSupported ColorPicker4
 //bool  ColorButton(const char* desc_id,const ImVec4& col,ImGuiColorEditFlags flags,ImVec2 size);
-//arg1	const char*	desc_id	=	
-//arg2	const ImVec4&	col	=	
-//arg3	ImGuiColorEditFlags	flags	=	 0
-//arg4	ImVec2	size	=	 ImVec2 @1
 int cximgui_ColorButton_4_sv4iv2(lua_State* L) {
 	int __argi__ = 0;
-	const char* desc_id = lua_tostring(L, __argi__++);
+	const char* desc_id = lua_tostring(L, ++__argi__);
 	ImVec4 col;
-	col.x = (float)lua_tonumber(L, __argi__++);
-	col.y = (float)lua_tonumber(L, __argi__++);
-	col.z = (float)lua_tonumber(L, __argi__++);
-	col.w = (float)lua_tonumber(L, __argi__++);
-	ImGuiColorEditFlags flags = (ImGuiColorEditFlags)lua_tointeger(L, __argi__++);
+	col.x = (float)lua_tonumber(L, ++__argi__);
+	col.y = (float)lua_tonumber(L, ++__argi__);
+	col.z = (float)lua_tonumber(L, ++__argi__);
+	col.w = (float)lua_tonumber(L, ++__argi__);
+	ImGuiColorEditFlags flags = (ImGuiColorEditFlags)lua_tointeger(L, ++__argi__);
 	ImVec2 size;
-	size.x = (float)lua_tonumber(L, __argi__++);
-	size.y = (float)lua_tonumber(L, __argi__++);
+	size.x = (float)lua_tonumber(L, ++__argi__);
+	size.y = (float)lua_tonumber(L, ++__argi__);
 	bool __ret__ = ImGui::ColorButton(desc_id, col, flags, size);
 	lua_pushboolean(L, __ret__);
 	lua_pushnumber(L, col.x);
@@ -1912,95 +1428,57 @@ int cximgui_ColorButton_4_sv4iv2(lua_State* L) {
 };
 
 //void  SetColorEditOptions(ImGuiColorEditFlags flags);
-//arg1	ImGuiColorEditFlags	flags	=	
 int cximgui_SetColorEditOptions_1_i(lua_State* L) {
 	int __argi__ = 0;
-	ImGuiColorEditFlags flags = (ImGuiColorEditFlags)lua_tointeger(L, __argi__++);
+	ImGuiColorEditFlags flags = (ImGuiColorEditFlags)lua_tointeger(L, ++__argi__);
 	ImGui::SetColorEditOptions(flags);
 	return 0;
 };
 
 //bool  TreeNode(const char* label);
-//arg1	const char*	label	=	
 int cximgui_TreeNode_1_s(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
 	bool __ret__ = ImGui::TreeNode(label);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  TreeNode(const char* str_id,const char* fmt,... );
-//arg1	const char*	str_id	=	
-//arg2	const char*	fmt	=	
-//arg3	...		=	
-//[TreeNode] unsupported arg type!!!
-
+//UnSupported TreeNode
 //bool  TreeNode(const void* ptr_id,const char* fmt,... );
-//arg1	const void*	ptr_id	=	
-//arg2	const char*	fmt	=	
-//arg3	...		=	
 //UnSupported TreeNode
 //bool  TreeNodeV(const char* str_id,const char* fmt,va_list args);
-//arg1	const char*	str_id	=	
-//arg2	const char*	fmt	=	
-//arg3	va_list	args	=	
-//[TreeNodeV] unsupported arg type!!!
-
+//UnSupported TreeNodeV
 //bool  TreeNodeV(const void* ptr_id,const char* fmt,va_list args);
-//arg1	const void*	ptr_id	=	
-//arg2	const char*	fmt	=	
-//arg3	va_list	args	=	
 //UnSupported TreeNodeV
 //bool  TreeNodeEx(const char* label,ImGuiTreeNodeFlags flags);
-//arg1	const char*	label	=	
-//arg2	ImGuiTreeNodeFlags	flags	=	 0
 int cximgui_TreeNodeEx_2_si(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	ImGuiTreeNodeFlags flags = (ImGuiTreeNodeFlags)lua_tointeger(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	ImGuiTreeNodeFlags flags = (ImGuiTreeNodeFlags)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::TreeNodeEx(label, flags);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  TreeNodeEx(const char* str_id,ImGuiTreeNodeFlags flags,const char* fmt,... );
-//arg1	const char*	str_id	=	
-//arg2	ImGuiTreeNodeFlags	flags	=	
-//arg3	const char*	fmt	=	
-//arg4	...		=	
-//[TreeNodeEx] unsupported arg type!!!
-
+//UnSupported TreeNodeEx
 //bool  TreeNodeEx(const void* ptr_id,ImGuiTreeNodeFlags flags,const char* fmt,... );
-//arg1	const void*	ptr_id	=	
-//arg2	ImGuiTreeNodeFlags	flags	=	
-//arg3	const char*	fmt	=	
-//arg4	...		=	
 //UnSupported TreeNodeEx
 //bool  TreeNodeExV(const char* str_id,ImGuiTreeNodeFlags flags,const char* fmt,va_list args);
-//arg1	const char*	str_id	=	
-//arg2	ImGuiTreeNodeFlags	flags	=	
-//arg3	const char*	fmt	=	
-//arg4	va_list	args	=	
-//[TreeNodeExV] unsupported arg type!!!
-
+//UnSupported TreeNodeExV
 //bool  TreeNodeExV(const void* ptr_id,ImGuiTreeNodeFlags flags,const char* fmt,va_list args);
-//arg1	const void*	ptr_id	=	
-//arg2	ImGuiTreeNodeFlags	flags	=	
-//arg3	const char*	fmt	=	
-//arg4	va_list	args	=	
 //UnSupported TreeNodeExV
 //void  TreePush(const char* str_id);
-//arg1	const char*	str_id	=	
 int cximgui_TreePush_1_s(lua_State* L) {
 	int __argi__ = 0;
-	const char* str_id = lua_tostring(L, __argi__++);
+	const char* str_id = lua_tostring(L, ++__argi__);
 	ImGui::TreePush(str_id);
 	return 0;
 };
 
 //void  TreePush(const void* ptr_id);
-//arg1	const void*	ptr_id	=	 NULL
 //UnSupported TreePush
 //void  TreePop();
 int cximgui_TreePop(lua_State* L) {
@@ -2022,37 +1500,30 @@ int cximgui_GetTreeNodeToLabelSpacing(lua_State* L) {
 };
 
 //void  SetNextTreeNodeOpen(bool is_open,ImGuiCond cond);
-//arg1	bool	is_open	=	
-//arg2	ImGuiCond	cond	=	 0
 int cximgui_SetNextTreeNodeOpen_2_bi(lua_State* L) {
 	int __argi__ = 0;
-	bool is_open = lua_toboolean(L, __argi__++);
-	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, __argi__++);
+	bool is_open = lua_toboolean(L, ++__argi__);
+	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, ++__argi__);
 	ImGui::SetNextTreeNodeOpen(is_open, cond);
 	return 0;
 };
 
 //bool  CollapsingHeader(const char* label,ImGuiTreeNodeFlags flags);
-//arg1	const char*	label	=	
-//arg2	ImGuiTreeNodeFlags	flags	=	 0
 int cximgui_CollapsingHeader_2_si(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	ImGuiTreeNodeFlags flags = (ImGuiTreeNodeFlags)lua_tointeger(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	ImGuiTreeNodeFlags flags = (ImGuiTreeNodeFlags)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::CollapsingHeader(label, flags);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  CollapsingHeader(const char* label,bool* p_open,ImGuiTreeNodeFlags flags);
-//arg1	const char*	label	=	
-//arg2	bool*	p_open	=	
-//arg3	ImGuiTreeNodeFlags	flags	=	 0
 int cximgui_CollapsingHeader_3_sbpi(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	bool p_open = lua_toboolean(L, __argi__++);
-	ImGuiTreeNodeFlags flags = (ImGuiTreeNodeFlags)lua_tointeger(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	bool p_open = lua_toboolean(L, ++__argi__);
+	ImGuiTreeNodeFlags flags = (ImGuiTreeNodeFlags)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::CollapsingHeader(label, &p_open, flags);
 	lua_pushboolean(L, __ret__);
 	lua_pushboolean(L, p_open);
@@ -2060,18 +1531,14 @@ int cximgui_CollapsingHeader_3_sbpi(lua_State* L) {
 };
 
 //bool  Selectable(const char* label,bool selected,ImGuiSelectableFlags flags,const ImVec2& size);
-//arg1	const char*	label	=	
-//arg2	bool	selected	=	 false
-//arg3	ImGuiSelectableFlags	flags	=	 0
-//arg4	const ImVec2&	size	=	 ImVec2 @1
 int cximgui_Selectable_4_sbiv2(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	bool selected = lua_toboolean(L, __argi__++);
-	ImGuiSelectableFlags flags = (ImGuiSelectableFlags)lua_tointeger(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	bool selected = lua_toboolean(L, ++__argi__);
+	ImGuiSelectableFlags flags = (ImGuiSelectableFlags)lua_tointeger(L, ++__argi__);
 	ImVec2 size;
-	size.x = (float)lua_tonumber(L, __argi__++);
-	size.y = (float)lua_tonumber(L, __argi__++);
+	size.x = (float)lua_tonumber(L, ++__argi__);
+	size.y = (float)lua_tonumber(L, ++__argi__);
 	bool __ret__ = ImGui::Selectable(label, selected, flags, size);
 	lua_pushboolean(L, __ret__);
 	lua_pushnumber(L, size.x);
@@ -2080,18 +1547,14 @@ int cximgui_Selectable_4_sbiv2(lua_State* L) {
 };
 
 //bool  Selectable(const char* label,bool* p_selected,ImGuiSelectableFlags flags,const ImVec2& size);
-//arg1	const char*	label	=	
-//arg2	bool*	p_selected	=	
-//arg3	ImGuiSelectableFlags	flags	=	 0
-//arg4	const ImVec2&	size	=	 ImVec2 @1
 int cximgui_Selectable_4_sbpiv2(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	bool p_selected = lua_toboolean(L, __argi__++);
-	ImGuiSelectableFlags flags = (ImGuiSelectableFlags)lua_tointeger(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	bool p_selected = lua_toboolean(L, ++__argi__);
+	ImGuiSelectableFlags flags = (ImGuiSelectableFlags)lua_tointeger(L, ++__argi__);
 	ImVec2 size;
-	size.x = (float)lua_tonumber(L, __argi__++);
-	size.y = (float)lua_tonumber(L, __argi__++);
+	size.x = (float)lua_tonumber(L, ++__argi__);
+	size.y = (float)lua_tonumber(L, ++__argi__);
 	bool __ret__ = ImGui::Selectable(label, &p_selected, flags, size);
 	lua_pushboolean(L, __ret__);
 	lua_pushboolean(L, p_selected);
@@ -2101,30 +1564,16 @@ int cximgui_Selectable_4_sbpiv2(lua_State* L) {
 };
 
 //bool  ListBox(const char* label,int* current_item,const char* const[],int items_count,int height_in_items);
-//arg1	const char*	label	=	
-//arg2	int*	current_item	=	
-//arg3	const char*[0]	const	=	
-//arg4	int	items_count	=	
-//arg5	int	height_in_items	=	 -1
-//[ListBox] unsupported arg type!!!
-
+//UnSupported ListBox
 //bool  ListBox(const char* label,int* current_item,bool @1@2,void* data,int items_count,int height_in_items);
-//arg1	const char*	label	=	
-//arg2	int*	current_item	=	
-//arg3	bool	@1@2	=	
-//arg4	void*	data	=	
-//arg5	int	items_count	=	
-//arg6	int	height_in_items	=	 -1
 //UnSupported ListBox
 //bool  ListBoxHeader(const char* label,const ImVec2& size);
-//arg1	const char*	label	=	
-//arg2	const ImVec2&	size	=	 ImVec2 @1
 int cximgui_ListBoxHeader_2_sv2(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
 	ImVec2 size;
-	size.x = (float)lua_tonumber(L, __argi__++);
-	size.y = (float)lua_tonumber(L, __argi__++);
+	size.x = (float)lua_tonumber(L, ++__argi__);
+	size.y = (float)lua_tonumber(L, ++__argi__);
 	bool __ret__ = ImGui::ListBoxHeader(label, size);
 	lua_pushboolean(L, __ret__);
 	lua_pushnumber(L, size.x);
@@ -2133,14 +1582,11 @@ int cximgui_ListBoxHeader_2_sv2(lua_State* L) {
 };
 
 //bool  ListBoxHeader(const char* label,int items_count,int height_in_items);
-//arg1	const char*	label	=	
-//arg2	int	items_count	=	
-//arg3	int	height_in_items	=	 -1
 int cximgui_ListBoxHeader_3_sii(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	int items_count = (int)lua_tointeger(L, __argi__++);
-	int height_in_items = (int)lua_tointeger(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	int items_count = (int)lua_tointeger(L, ++__argi__);
+	int height_in_items = (int)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::ListBoxHeader(label, items_count, height_in_items);
 	lua_pushboolean(L, __ret__);
 	return 1;
@@ -2153,123 +1599,78 @@ int cximgui_ListBoxFooter(lua_State* L) {
 };
 
 //void  PlotLines(const char* label,const float* values,int values_count,int values_offset,const char* overlay_text,float scale_min,float scale_max,ImVec2 graph_size,int stride);
-//arg1	const char*	label	=	
-//arg2	const float*	values	=	
-//arg3	int	values_count	=	
-//arg4	int	values_offset	=	 0
-//arg5	const char*	overlay_text	=	 NULL
-//arg6	float	scale_min	=	 FLT_MAX
-//arg7	float	scale_max	=	 FLT_MAX
-//arg8	ImVec2	graph_size	=	 ImVec2 @1
-//arg9	int	stride	=	 sizeof @2
 int cximgui_PlotLines_9_snpiisnnv2i(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	float values = (float)lua_tonumber(L, __argi__++);
-	int values_count = (int)lua_tointeger(L, __argi__++);
-	int values_offset = (int)lua_tointeger(L, __argi__++);
-	const char* overlay_text = lua_tostring(L, __argi__++);
-	float scale_min = (float)lua_tonumber(L, __argi__++);
-	float scale_max = (float)lua_tonumber(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	float values = (float)lua_tonumber(L, ++__argi__);
+	int values_count = (int)lua_tointeger(L, ++__argi__);
+	int values_offset = (int)lua_tointeger(L, ++__argi__);
+	const char* overlay_text = lua_tostring(L, ++__argi__);
+	float scale_min = (float)lua_tonumber(L, ++__argi__);
+	float scale_max = (float)lua_tonumber(L, ++__argi__);
 	ImVec2 graph_size;
-	graph_size.x = (float)lua_tonumber(L, __argi__++);
-	graph_size.y = (float)lua_tonumber(L, __argi__++);
-	int stride = (int)lua_tointeger(L, __argi__++);
+	graph_size.x = (float)lua_tonumber(L, ++__argi__);
+	graph_size.y = (float)lua_tonumber(L, ++__argi__);
+	int stride = (int)lua_tointeger(L, ++__argi__);
 	ImGui::PlotLines(label, &values, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size, stride);
 	return 0;
 };
 
 //void  PlotLines(const char* label,float @1@2,void* data,int values_count,int values_offset,const char* overlay_text,float scale_min,float scale_max,ImVec2 graph_size);
-//arg1	const char*	label	=	
-//arg2	float	@1@2	=	
-//arg3	void*	data	=	
-//arg4	int	values_count	=	
-//arg5	int	values_offset	=	 0
-//arg6	const char*	overlay_text	=	 NULL
-//arg7	float	scale_min	=	 FLT_MAX
-//arg8	float	scale_max	=	 FLT_MAX
-//arg9	ImVec2	graph_size	=	 ImVec2 @3
 //UnSupported PlotLines
 //void  PlotHistogram(const char* label,const float* values,int values_count,int values_offset,const char* overlay_text,float scale_min,float scale_max,ImVec2 graph_size,int stride);
-//arg1	const char*	label	=	
-//arg2	const float*	values	=	
-//arg3	int	values_count	=	
-//arg4	int	values_offset	=	 0
-//arg5	const char*	overlay_text	=	 NULL
-//arg6	float	scale_min	=	 FLT_MAX
-//arg7	float	scale_max	=	 FLT_MAX
-//arg8	ImVec2	graph_size	=	 ImVec2 @1
-//arg9	int	stride	=	 sizeof @2
 int cximgui_PlotHistogram_9_snpiisnnv2i(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	float values = (float)lua_tonumber(L, __argi__++);
-	int values_count = (int)lua_tointeger(L, __argi__++);
-	int values_offset = (int)lua_tointeger(L, __argi__++);
-	const char* overlay_text = lua_tostring(L, __argi__++);
-	float scale_min = (float)lua_tonumber(L, __argi__++);
-	float scale_max = (float)lua_tonumber(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	float values = (float)lua_tonumber(L, ++__argi__);
+	int values_count = (int)lua_tointeger(L, ++__argi__);
+	int values_offset = (int)lua_tointeger(L, ++__argi__);
+	const char* overlay_text = lua_tostring(L, ++__argi__);
+	float scale_min = (float)lua_tonumber(L, ++__argi__);
+	float scale_max = (float)lua_tonumber(L, ++__argi__);
 	ImVec2 graph_size;
-	graph_size.x = (float)lua_tonumber(L, __argi__++);
-	graph_size.y = (float)lua_tonumber(L, __argi__++);
-	int stride = (int)lua_tointeger(L, __argi__++);
+	graph_size.x = (float)lua_tonumber(L, ++__argi__);
+	graph_size.y = (float)lua_tonumber(L, ++__argi__);
+	int stride = (int)lua_tointeger(L, ++__argi__);
 	ImGui::PlotHistogram(label, &values, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size, stride);
 	return 0;
 };
 
 //void  PlotHistogram(const char* label,float @1@2,void* data,int values_count,int values_offset,const char* overlay_text,float scale_min,float scale_max,ImVec2 graph_size);
-//arg1	const char*	label	=	
-//arg2	float	@1@2	=	
-//arg3	void*	data	=	
-//arg4	int	values_count	=	
-//arg5	int	values_offset	=	 0
-//arg6	const char*	overlay_text	=	 NULL
-//arg7	float	scale_min	=	 FLT_MAX
-//arg8	float	scale_max	=	 FLT_MAX
-//arg9	ImVec2	graph_size	=	 ImVec2 @3
 //UnSupported PlotHistogram
 //void  Value(const char* prefix,bool b);
-//arg1	const char*	prefix	=	
-//arg2	bool	b	=	
 int cximgui_Value_2_sb(lua_State* L) {
 	int __argi__ = 0;
-	const char* prefix = lua_tostring(L, __argi__++);
-	bool b = lua_toboolean(L, __argi__++);
+	const char* prefix = lua_tostring(L, ++__argi__);
+	bool b = lua_toboolean(L, ++__argi__);
 	ImGui::Value(prefix, b);
 	return 0;
 };
 
 //void  Value(const char* prefix,int v);
-//arg1	const char*	prefix	=	
-//arg2	int	v	=	
 int cximgui_Value_2_si(lua_State* L) {
 	int __argi__ = 0;
-	const char* prefix = lua_tostring(L, __argi__++);
-	int v = (int)lua_tointeger(L, __argi__++);
+	const char* prefix = lua_tostring(L, ++__argi__);
+	int v = (int)lua_tointeger(L, ++__argi__);
 	ImGui::Value(prefix, v);
 	return 0;
 };
 
 //void  Value(const char* prefix,unsigned int v);
-//arg1	const char*	prefix	=	
-//arg2	unsigned int	v	=	
 int cximgui_Value_2_sI(lua_State* L) {
 	int __argi__ = 0;
-	const char* prefix = lua_tostring(L, __argi__++);
-	unsigned int v = (unsigned int)lua_tointeger(L, __argi__++);
+	const char* prefix = lua_tostring(L, ++__argi__);
+	unsigned int v = (unsigned int)lua_tointeger(L, ++__argi__);
 	ImGui::Value(prefix, v);
 	return 0;
 };
 
 //void  Value(const char* prefix,float v,const char* float_format);
-//arg1	const char*	prefix	=	
-//arg2	float	v	=	
-//arg3	const char*	float_format	=	 NULL
 int cximgui_Value_3_sns(lua_State* L) {
 	int __argi__ = 0;
-	const char* prefix = lua_tostring(L, __argi__++);
-	float v = (float)lua_tonumber(L, __argi__++);
-	const char* float_format = lua_tostring(L, __argi__++);
+	const char* prefix = lua_tostring(L, ++__argi__);
+	float v = (float)lua_tonumber(L, ++__argi__);
+	const char* float_format = lua_tostring(L, ++__argi__);
 	ImGui::Value(prefix, v, float_format);
 	return 0;
 };
@@ -2301,12 +1702,10 @@ int cximgui_EndMenuBar(lua_State* L) {
 };
 
 //bool  BeginMenu(const char* label,bool enabled);
-//arg1	const char*	label	=	
-//arg2	bool	enabled	=	 true
 int cximgui_BeginMenu_2_sb(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	bool enabled = lua_toboolean(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	bool enabled = lua_toboolean(L, ++__argi__);
 	bool __ret__ = ImGui::BeginMenu(label, enabled);
 	lua_pushboolean(L, __ret__);
 	return 1;
@@ -2319,32 +1718,24 @@ int cximgui_EndMenu(lua_State* L) {
 };
 
 //bool  MenuItem(const char* label,const char* shortcut,bool selected,bool enabled);
-//arg1	const char*	label	=	
-//arg2	const char*	shortcut	=	 NULL
-//arg3	bool	selected	=	 false
-//arg4	bool	enabled	=	 true
 int cximgui_MenuItem_4_ssbb(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	const char* shortcut = lua_tostring(L, __argi__++);
-	bool selected = lua_toboolean(L, __argi__++);
-	bool enabled = lua_toboolean(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	const char* shortcut = lua_tostring(L, ++__argi__);
+	bool selected = lua_toboolean(L, ++__argi__);
+	bool enabled = lua_toboolean(L, ++__argi__);
 	bool __ret__ = ImGui::MenuItem(label, shortcut, selected, enabled);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  MenuItem(const char* label,const char* shortcut,bool* p_selected,bool enabled);
-//arg1	const char*	label	=	
-//arg2	const char*	shortcut	=	
-//arg3	bool*	p_selected	=	
-//arg4	bool	enabled	=	 true
 int cximgui_MenuItem_4_ssbpb(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	const char* shortcut = lua_tostring(L, __argi__++);
-	bool p_selected = lua_toboolean(L, __argi__++);
-	bool enabled = lua_toboolean(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	const char* shortcut = lua_tostring(L, ++__argi__);
+	bool p_selected = lua_toboolean(L, ++__argi__);
+	bool enabled = lua_toboolean(L, ++__argi__);
 	bool __ret__ = ImGui::MenuItem(label, shortcut, &p_selected, enabled);
 	lua_pushboolean(L, __ret__);
 	lua_pushboolean(L, p_selected);
@@ -2364,83 +1755,64 @@ int cximgui_EndTooltip(lua_State* L) {
 };
 
 //void  SetTooltip(const char* fmt,... );
-//arg1	const char*	fmt	=	
-//arg2	...		=	
-//[SetTooltip] unsupported arg type!!!
-
+//UnSupported SetTooltip
 //void  SetTooltipV(const char* fmt,va_list args);
-//arg1	const char*	fmt	=	
-//arg2	va_list	args	=	
-//[SetTooltipV] unsupported arg type!!!
-
+//UnSupported SetTooltipV
 //void  OpenPopup(const char* str_id);
-//arg1	const char*	str_id	=	
 int cximgui_OpenPopup_1_s(lua_State* L) {
 	int __argi__ = 0;
-	const char* str_id = lua_tostring(L, __argi__++);
+	const char* str_id = lua_tostring(L, ++__argi__);
 	ImGui::OpenPopup(str_id);
 	return 0;
 };
 
 //bool  BeginPopup(const char* str_id,ImGuiWindowFlags flags);
-//arg1	const char*	str_id	=	
-//arg2	ImGuiWindowFlags	flags	=	 0
 int cximgui_BeginPopup_2_si(lua_State* L) {
 	int __argi__ = 0;
-	const char* str_id = lua_tostring(L, __argi__++);
-	ImGuiWindowFlags flags = (ImGuiWindowFlags)lua_tointeger(L, __argi__++);
+	const char* str_id = lua_tostring(L, ++__argi__);
+	ImGuiWindowFlags flags = (ImGuiWindowFlags)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::BeginPopup(str_id, flags);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  BeginPopupContextItem(const char* str_id,int mouse_button);
-//arg1	const char*	str_id	=	 NULL
-//arg2	int	mouse_button	=	 1
 int cximgui_BeginPopupContextItem_2_si(lua_State* L) {
 	int __argi__ = 0;
-	const char* str_id = lua_tostring(L, __argi__++);
-	int mouse_button = (int)lua_tointeger(L, __argi__++);
+	const char* str_id = lua_tostring(L, ++__argi__);
+	int mouse_button = (int)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::BeginPopupContextItem(str_id, mouse_button);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  BeginPopupContextWindow(const char* str_id,int mouse_button,bool also_over_items);
-//arg1	const char*	str_id	=	 NULL
-//arg2	int	mouse_button	=	 1
-//arg3	bool	also_over_items	=	 true
 int cximgui_BeginPopupContextWindow_3_sib(lua_State* L) {
 	int __argi__ = 0;
-	const char* str_id = lua_tostring(L, __argi__++);
-	int mouse_button = (int)lua_tointeger(L, __argi__++);
-	bool also_over_items = lua_toboolean(L, __argi__++);
+	const char* str_id = lua_tostring(L, ++__argi__);
+	int mouse_button = (int)lua_tointeger(L, ++__argi__);
+	bool also_over_items = lua_toboolean(L, ++__argi__);
 	bool __ret__ = ImGui::BeginPopupContextWindow(str_id, mouse_button, also_over_items);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  BeginPopupContextVoid(const char* str_id,int mouse_button);
-//arg1	const char*	str_id	=	 NULL
-//arg2	int	mouse_button	=	 1
 int cximgui_BeginPopupContextVoid_2_si(lua_State* L) {
 	int __argi__ = 0;
-	const char* str_id = lua_tostring(L, __argi__++);
-	int mouse_button = (int)lua_tointeger(L, __argi__++);
+	const char* str_id = lua_tostring(L, ++__argi__);
+	int mouse_button = (int)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::BeginPopupContextVoid(str_id, mouse_button);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  BeginPopupModal(const char* name,bool* p_open,ImGuiWindowFlags flags);
-//arg1	const char*	name	=	
-//arg2	bool*	p_open	=	 NULL
-//arg3	ImGuiWindowFlags	flags	=	 0
 int cximgui_BeginPopupModal_3_sbpi(lua_State* L) {
 	int __argi__ = 0;
-	const char* name = lua_tostring(L, __argi__++);
-	bool p_open = lua_toboolean(L, __argi__++);
-	ImGuiWindowFlags flags = (ImGuiWindowFlags)lua_tointeger(L, __argi__++);
+	const char* name = lua_tostring(L, ++__argi__);
+	bool p_open = lua_toboolean(L, ++__argi__);
+	ImGuiWindowFlags flags = (ImGuiWindowFlags)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::BeginPopupModal(name, &p_open, flags);
 	lua_pushboolean(L, __ret__);
 	lua_pushboolean(L, p_open);
@@ -2454,22 +1826,19 @@ int cximgui_EndPopup(lua_State* L) {
 };
 
 //bool  OpenPopupOnItemClick(const char* str_id,int mouse_button);
-//arg1	const char*	str_id	=	 NULL
-//arg2	int	mouse_button	=	 1
 int cximgui_OpenPopupOnItemClick_2_si(lua_State* L) {
 	int __argi__ = 0;
-	const char* str_id = lua_tostring(L, __argi__++);
-	int mouse_button = (int)lua_tointeger(L, __argi__++);
+	const char* str_id = lua_tostring(L, ++__argi__);
+	int mouse_button = (int)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::OpenPopupOnItemClick(str_id, mouse_button);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  IsPopupOpen(const char* str_id);
-//arg1	const char*	str_id	=	
 int cximgui_IsPopupOpen_1_s(lua_State* L) {
 	int __argi__ = 0;
-	const char* str_id = lua_tostring(L, __argi__++);
+	const char* str_id = lua_tostring(L, ++__argi__);
 	bool __ret__ = ImGui::IsPopupOpen(str_id);
 	lua_pushboolean(L, __ret__);
 	return 1;
@@ -2482,14 +1851,11 @@ int cximgui_CloseCurrentPopup(lua_State* L) {
 };
 
 //void  Columns(int count,const char* id,bool border);
-//arg1	int	count	=	 1
-//arg2	const char*	id	=	 NULL
-//arg3	bool	border	=	 true
 int cximgui_Columns_3_isb(lua_State* L) {
 	int __argi__ = 0;
-	int count = (int)lua_tointeger(L, __argi__++);
-	const char* id = lua_tostring(L, __argi__++);
-	bool border = lua_toboolean(L, __argi__++);
+	int count = (int)lua_tointeger(L, ++__argi__);
+	const char* id = lua_tostring(L, ++__argi__);
+	bool border = lua_toboolean(L, ++__argi__);
 	ImGui::Columns(count, id, border);
 	return 0;
 };
@@ -2508,43 +1874,37 @@ int cximgui_GetColumnIndex(lua_State* L) {
 };
 
 //float  GetColumnWidth(int column_index);
-//arg1	int	column_index	=	 -1
 int cximgui_GetColumnWidth_1_i(lua_State* L) {
 	int __argi__ = 0;
-	int column_index = (int)lua_tointeger(L, __argi__++);
+	int column_index = (int)lua_tointeger(L, ++__argi__);
 	float __ret__ = ImGui::GetColumnWidth(column_index);
 	lua_pushnumber(L, __ret__);
 	return 1;
 };
 
 //void  SetColumnWidth(int column_index,float width);
-//arg1	int	column_index	=	
-//arg2	float	width	=	
 int cximgui_SetColumnWidth_2_in(lua_State* L) {
 	int __argi__ = 0;
-	int column_index = (int)lua_tointeger(L, __argi__++);
-	float width = (float)lua_tonumber(L, __argi__++);
+	int column_index = (int)lua_tointeger(L, ++__argi__);
+	float width = (float)lua_tonumber(L, ++__argi__);
 	ImGui::SetColumnWidth(column_index, width);
 	return 0;
 };
 
 //float  GetColumnOffset(int column_index);
-//arg1	int	column_index	=	 -1
 int cximgui_GetColumnOffset_1_i(lua_State* L) {
 	int __argi__ = 0;
-	int column_index = (int)lua_tointeger(L, __argi__++);
+	int column_index = (int)lua_tointeger(L, ++__argi__);
 	float __ret__ = ImGui::GetColumnOffset(column_index);
 	lua_pushnumber(L, __ret__);
 	return 1;
 };
 
 //void  SetColumnOffset(int column_index,float offset_x);
-//arg1	int	column_index	=	
-//arg2	float	offset_x	=	
 int cximgui_SetColumnOffset_2_in(lua_State* L) {
 	int __argi__ = 0;
-	int column_index = (int)lua_tointeger(L, __argi__++);
-	float offset_x = (float)lua_tonumber(L, __argi__++);
+	int column_index = (int)lua_tointeger(L, ++__argi__);
+	float offset_x = (float)lua_tonumber(L, ++__argi__);
 	ImGui::SetColumnOffset(column_index, offset_x);
 	return 0;
 };
@@ -2557,12 +1917,10 @@ int cximgui_GetColumnsCount(lua_State* L) {
 };
 
 //bool  BeginTabBar(const char* str_id,ImGuiTabBarFlags flags);
-//arg1	const char*	str_id	=	
-//arg2	ImGuiTabBarFlags	flags	=	 0
 int cximgui_BeginTabBar_2_si(lua_State* L) {
 	int __argi__ = 0;
-	const char* str_id = lua_tostring(L, __argi__++);
-	ImGuiTabBarFlags flags = (ImGuiTabBarFlags)lua_tointeger(L, __argi__++);
+	const char* str_id = lua_tostring(L, ++__argi__);
+	ImGuiTabBarFlags flags = (ImGuiTabBarFlags)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::BeginTabBar(str_id, flags);
 	lua_pushboolean(L, __ret__);
 	return 1;
@@ -2575,14 +1933,11 @@ int cximgui_EndTabBar(lua_State* L) {
 };
 
 //bool  BeginTabItem(const char* label,bool* p_open,ImGuiTabItemFlags flags);
-//arg1	const char*	label	=	
-//arg2	bool*	p_open	=	 NULL
-//arg3	ImGuiTabItemFlags	flags	=	 0
 int cximgui_BeginTabItem_3_sbpi(lua_State* L) {
 	int __argi__ = 0;
-	const char* label = lua_tostring(L, __argi__++);
-	bool p_open = lua_toboolean(L, __argi__++);
-	ImGuiTabItemFlags flags = (ImGuiTabItemFlags)lua_tointeger(L, __argi__++);
+	const char* label = lua_tostring(L, ++__argi__);
+	bool p_open = lua_toboolean(L, ++__argi__);
+	ImGuiTabItemFlags flags = (ImGuiTabItemFlags)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::BeginTabItem(label, &p_open, flags);
 	lua_pushboolean(L, __ret__);
 	lua_pushboolean(L, p_open);
@@ -2596,42 +1951,28 @@ int cximgui_EndTabItem(lua_State* L) {
 };
 
 //void  SetTabItemClosed(const char* tab_or_docked_window_label);
-//arg1	const char*	tab_or_docked_window_label	=	
 int cximgui_SetTabItemClosed_1_s(lua_State* L) {
 	int __argi__ = 0;
-	const char* tab_or_docked_window_label = lua_tostring(L, __argi__++);
+	const char* tab_or_docked_window_label = lua_tostring(L, ++__argi__);
 	ImGui::SetTabItemClosed(tab_or_docked_window_label);
 	return 0;
 };
 
 //void  DockSpace(ImGuiID id,const ImVec2& size,ImGuiDockNodeFlags flags,const ImGuiDockFamily* dock_family);
-//arg1	ImGuiID	id	=	
-//arg2	const ImVec2&	size	=	 ImVec2 @1
-//arg3	ImGuiDockNodeFlags	flags	=	 0
-//arg4	const ImGuiDockFamily*	dock_family	=	 NULL
-//[DockSpace] unsupported arg type!!!
-
+//UnSupported DockSpace
 //ImGuiID  DockSpaceOverViewport(ImGuiViewport* viewport,ImGuiDockNodeFlags dockspace_flags,const ImGuiDockFamily* dock_family);
-//arg1	ImGuiViewport*	viewport	=	 NULL
-//arg2	ImGuiDockNodeFlags	dockspace_flags	=	 0
-//arg3	const ImGuiDockFamily*	dock_family	=	 NULL
-//[DockSpaceOverViewport] unsupported arg type!!!
-
+//UnSupported DockSpaceOverViewport
 //void  SetNextWindowDockId(ImGuiID dock_id,ImGuiCond cond);
-//arg1	ImGuiID	dock_id	=	
-//arg2	ImGuiCond	cond	=	 0
 int cximgui_SetNextWindowDockId_2_ii(lua_State* L) {
 	int __argi__ = 0;
-	ImGuiID dock_id = (ImGuiID)lua_tointeger(L, __argi__++);
-	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, __argi__++);
+	ImGuiID dock_id = (ImGuiID)lua_tointeger(L, ++__argi__);
+	ImGuiCond cond = (ImGuiCond)lua_tointeger(L, ++__argi__);
 	ImGui::SetNextWindowDockId(dock_id, cond);
 	return 0;
 };
 
 //void  SetNextWindowDockFamily(const ImGuiDockFamily* dock_family);
-//arg1	const ImGuiDockFamily*	dock_family	=	
-//[SetNextWindowDockFamily] unsupported arg type!!!
-
+//UnSupported SetNextWindowDockFamily
 //ImGuiID  GetWindowDockId();
 int cximgui_GetWindowDockId(lua_State* L) {
 	ImGuiID __ret__ = ImGui::GetWindowDockId();
@@ -2647,30 +1988,26 @@ int cximgui_IsWindowDocked(lua_State* L) {
 };
 
 //void  LogToTTY(int max_depth);
-//arg1	int	max_depth	=	 -1
 int cximgui_LogToTTY_1_i(lua_State* L) {
 	int __argi__ = 0;
-	int max_depth = (int)lua_tointeger(L, __argi__++);
+	int max_depth = (int)lua_tointeger(L, ++__argi__);
 	ImGui::LogToTTY(max_depth);
 	return 0;
 };
 
 //void  LogToFile(int max_depth,const char* filename);
-//arg1	int	max_depth	=	 -1
-//arg2	const char*	filename	=	 NULL
 int cximgui_LogToFile_2_is(lua_State* L) {
 	int __argi__ = 0;
-	int max_depth = (int)lua_tointeger(L, __argi__++);
-	const char* filename = lua_tostring(L, __argi__++);
+	int max_depth = (int)lua_tointeger(L, ++__argi__);
+	const char* filename = lua_tostring(L, ++__argi__);
 	ImGui::LogToFile(max_depth, filename);
 	return 0;
 };
 
 //void  LogToClipboard(int max_depth);
-//arg1	int	max_depth	=	 -1
 int cximgui_LogToClipboard_1_i(lua_State* L) {
 	int __argi__ = 0;
-	int max_depth = (int)lua_tointeger(L, __argi__++);
+	int max_depth = (int)lua_tointeger(L, ++__argi__);
 	ImGui::LogToClipboard(max_depth);
 	return 0;
 };
@@ -2688,25 +2025,17 @@ int cximgui_LogButtons(lua_State* L) {
 };
 
 //void  LogText(const char* fmt,... );
-//arg1	const char*	fmt	=	
-//arg2	...		=	
-//[LogText] unsupported arg type!!!
-
+//UnSupported LogText
 //bool  BeginDragDropSource(ImGuiDragDropFlags flags);
-//arg1	ImGuiDragDropFlags	flags	=	 0
 int cximgui_BeginDragDropSource_1_i(lua_State* L) {
 	int __argi__ = 0;
-	ImGuiDragDropFlags flags = (ImGuiDragDropFlags)lua_tointeger(L, __argi__++);
+	ImGuiDragDropFlags flags = (ImGuiDragDropFlags)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::BeginDragDropSource(flags);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  SetDragDropPayload(const char* type,const void* data,size_t size,ImGuiCond cond);
-//arg1	const char*	type	=	
-//arg2	const void*	data	=	
-//arg3	size_t	size	=	
-//arg4	ImGuiCond	cond	=	 0
 //UnSupported SetDragDropPayload
 //void  EndDragDropSource();
 int cximgui_EndDragDropSource(lua_State* L) {
@@ -2722,12 +2051,10 @@ int cximgui_BeginDragDropTarget(lua_State* L) {
 };
 
 //const ImGuiPayload*  AcceptDragDropPayload(const char* type,ImGuiDragDropFlags flags);
-//arg1	const char*	type	=	
-//arg2	ImGuiDragDropFlags	flags	=	 0
 int cximgui_AcceptDragDropPayload_2_si(lua_State* L) {
 	int __argi__ = 0;
-	const char* type = lua_tostring(L, __argi__++);
-	ImGuiDragDropFlags flags = (ImGuiDragDropFlags)lua_tointeger(L, __argi__++);
+	const char* type = lua_tostring(L, ++__argi__);
+	ImGuiDragDropFlags flags = (ImGuiDragDropFlags)lua_tointeger(L, ++__argi__);
 	const ImGuiPayload* __ret__ = ImGui::AcceptDragDropPayload(type, flags);
 	return 0;
 };
@@ -2745,18 +2072,15 @@ int cximgui_GetDragDropPayload(lua_State* L) {
 };
 
 //void  PushClipRect(const ImVec2& clip_rect_min,const ImVec2& clip_rect_max,bool intersect_with_current_clip_rect);
-//arg1	const ImVec2&	clip_rect_min	=	
-//arg2	const ImVec2&	clip_rect_max	=	
-//arg3	bool	intersect_with_current_clip_rect	=	
 int cximgui_PushClipRect_3_v2v2b(lua_State* L) {
 	int __argi__ = 0;
 	ImVec2 clip_rect_min;
-	clip_rect_min.x = (float)lua_tonumber(L, __argi__++);
-	clip_rect_min.y = (float)lua_tonumber(L, __argi__++);
+	clip_rect_min.x = (float)lua_tonumber(L, ++__argi__);
+	clip_rect_min.y = (float)lua_tonumber(L, ++__argi__);
 	ImVec2 clip_rect_max;
-	clip_rect_max.x = (float)lua_tonumber(L, __argi__++);
-	clip_rect_max.y = (float)lua_tonumber(L, __argi__++);
-	bool intersect_with_current_clip_rect = lua_toboolean(L, __argi__++);
+	clip_rect_max.x = (float)lua_tonumber(L, ++__argi__);
+	clip_rect_max.y = (float)lua_tonumber(L, ++__argi__);
+	bool intersect_with_current_clip_rect = lua_toboolean(L, ++__argi__);
 	ImGui::PushClipRect(clip_rect_min, clip_rect_max, intersect_with_current_clip_rect);
 	lua_pushnumber(L, clip_rect_min.x);
 	lua_pushnumber(L, clip_rect_min.y);
@@ -2778,19 +2102,17 @@ int cximgui_SetItemDefaultFocus(lua_State* L) {
 };
 
 //void  SetKeyboardFocusHere(int offset);
-//arg1	int	offset	=	 0
 int cximgui_SetKeyboardFocusHere_1_i(lua_State* L) {
 	int __argi__ = 0;
-	int offset = (int)lua_tointeger(L, __argi__++);
+	int offset = (int)lua_tointeger(L, ++__argi__);
 	ImGui::SetKeyboardFocusHere(offset);
 	return 0;
 };
 
 //bool  IsItemHovered(ImGuiHoveredFlags flags);
-//arg1	ImGuiHoveredFlags	flags	=	 0
 int cximgui_IsItemHovered_1_i(lua_State* L) {
 	int __argi__ = 0;
-	ImGuiHoveredFlags flags = (ImGuiHoveredFlags)lua_tointeger(L, __argi__++);
+	ImGuiHoveredFlags flags = (ImGuiHoveredFlags)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::IsItemHovered(flags);
 	lua_pushboolean(L, __ret__);
 	return 1;
@@ -2811,10 +2133,9 @@ int cximgui_IsItemFocused(lua_State* L) {
 };
 
 //bool  IsItemClicked(int mouse_button);
-//arg1	int	mouse_button	=	 0
 int cximgui_IsItemClicked_1_i(lua_State* L) {
 	int __argi__ = 0;
-	int mouse_button = (int)lua_tointeger(L, __argi__++);
+	int mouse_button = (int)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::IsItemClicked(mouse_button);
 	lua_pushboolean(L, __ret__);
 	return 1;
@@ -2900,12 +2221,11 @@ int cximgui_SetItemAllowOverlap(lua_State* L) {
 };
 
 //bool  IsRectVisible(const ImVec2& size);
-//arg1	const ImVec2&	size	=	
 int cximgui_IsRectVisible_1_v2(lua_State* L) {
 	int __argi__ = 0;
 	ImVec2 size;
-	size.x = (float)lua_tonumber(L, __argi__++);
-	size.y = (float)lua_tonumber(L, __argi__++);
+	size.x = (float)lua_tonumber(L, ++__argi__);
+	size.y = (float)lua_tonumber(L, ++__argi__);
 	bool __ret__ = ImGui::IsRectVisible(size);
 	lua_pushboolean(L, __ret__);
 	lua_pushnumber(L, size.x);
@@ -2914,16 +2234,14 @@ int cximgui_IsRectVisible_1_v2(lua_State* L) {
 };
 
 //bool  IsRectVisible(const ImVec2& rect_min,const ImVec2& rect_max);
-//arg1	const ImVec2&	rect_min	=	
-//arg2	const ImVec2&	rect_max	=	
 int cximgui_IsRectVisible_2_v2v2(lua_State* L) {
 	int __argi__ = 0;
 	ImVec2 rect_min;
-	rect_min.x = (float)lua_tonumber(L, __argi__++);
-	rect_min.y = (float)lua_tonumber(L, __argi__++);
+	rect_min.x = (float)lua_tonumber(L, ++__argi__);
+	rect_min.y = (float)lua_tonumber(L, ++__argi__);
 	ImVec2 rect_max;
-	rect_max.x = (float)lua_tonumber(L, __argi__++);
-	rect_max.y = (float)lua_tonumber(L, __argi__++);
+	rect_max.x = (float)lua_tonumber(L, ++__argi__);
+	rect_max.y = (float)lua_tonumber(L, ++__argi__);
 	bool __ret__ = ImGui::IsRectVisible(rect_min, rect_max);
 	lua_pushboolean(L, __ret__);
 	lua_pushnumber(L, rect_min.x);
@@ -2954,9 +2272,7 @@ int cximgui_GetOverlayDrawList(lua_State* L) {
 };
 
 //ImDrawList*  GetOverlayDrawList(ImGuiViewport* viewport);
-//arg1	ImGuiViewport*	viewport	=	
-//[GetOverlayDrawList] unsupported arg type!!!
-
+//UnSupported GetOverlayDrawList
 //ImDrawListSharedData*  GetDrawListSharedData();
 int cximgui_GetDrawListSharedData(lua_State* L) {
 	ImDrawListSharedData* __ret__ = ImGui::GetDrawListSharedData();
@@ -2964,19 +2280,16 @@ int cximgui_GetDrawListSharedData(lua_State* L) {
 };
 
 //const char*  GetStyleColorName(ImGuiCol idx);
-//arg1	ImGuiCol	idx	=	
 int cximgui_GetStyleColorName_1_i(lua_State* L) {
 	int __argi__ = 0;
-	ImGuiCol idx = (ImGuiCol)lua_tointeger(L, __argi__++);
+	ImGuiCol idx = (ImGuiCol)lua_tointeger(L, ++__argi__);
 	const char* __ret__ = ImGui::GetStyleColorName(idx);
 	lua_pushstring(L, __ret__);
 	return 1;
 };
 
 //void  SetStateStorage(ImGuiStorage* storage);
-//arg1	ImGuiStorage*	storage	=	
-//[SetStateStorage] unsupported arg type!!!
-
+//UnSupported SetStateStorage
 //ImGuiStorage*  GetStateStorage();
 int cximgui_GetStateStorage(lua_State* L) {
 	ImGuiStorage* __ret__ = ImGui::GetStateStorage();
@@ -2984,16 +2297,12 @@ int cximgui_GetStateStorage(lua_State* L) {
 };
 
 //ImVec2  CalcTextSize(const char* text,const char* text_end,bool hide_text_after_double_hash,float wrap_width);
-//arg1	const char*	text	=	
-//arg2	const char*	text_end	=	 NULL
-//arg3	bool	hide_text_after_double_hash	=	 false
-//arg4	float	wrap_width	=	 -1.0f
 int cximgui_CalcTextSize_4_ssbn(lua_State* L) {
 	int __argi__ = 0;
-	const char* text = lua_tostring(L, __argi__++);
-	const char* text_end = lua_tostring(L, __argi__++);
-	bool hide_text_after_double_hash = lua_toboolean(L, __argi__++);
-	float wrap_width = (float)lua_tonumber(L, __argi__++);
+	const char* text = lua_tostring(L, ++__argi__);
+	const char* text_end = lua_tostring(L, ++__argi__);
+	bool hide_text_after_double_hash = lua_toboolean(L, ++__argi__);
+	float wrap_width = (float)lua_tonumber(L, ++__argi__);
 	ImVec2 __ret__ = ImGui::CalcTextSize(text, text_end, hide_text_after_double_hash, wrap_width);
 	lua_pushnumber(L, __ret__.x);
 	lua_pushnumber(L, __ret__.y);
@@ -3001,16 +2310,12 @@ int cximgui_CalcTextSize_4_ssbn(lua_State* L) {
 };
 
 //void  CalcListClipping(int items_count,float items_height,int* out_items_display_start,int* out_items_display_end);
-//arg1	int	items_count	=	
-//arg2	float	items_height	=	
-//arg3	int*	out_items_display_start	=	
-//arg4	int*	out_items_display_end	=	
 int cximgui_CalcListClipping_4_inipip(lua_State* L) {
 	int __argi__ = 0;
-	int items_count = (int)lua_tointeger(L, __argi__++);
-	float items_height = (float)lua_tonumber(L, __argi__++);
-	int out_items_display_start = (int)lua_tointeger(L, __argi__++);
-	int out_items_display_end = (int)lua_tointeger(L, __argi__++);
+	int items_count = (int)lua_tointeger(L, ++__argi__);
+	float items_height = (float)lua_tonumber(L, ++__argi__);
+	int out_items_display_start = (int)lua_tointeger(L, ++__argi__);
+	int out_items_display_end = (int)lua_tointeger(L, ++__argi__);
 	ImGui::CalcListClipping(items_count, items_height, &out_items_display_start, &out_items_display_end);
 	lua_pushinteger(L, out_items_display_start);
 	lua_pushinteger(L, out_items_display_end);
@@ -3018,16 +2323,13 @@ int cximgui_CalcListClipping_4_inipip(lua_State* L) {
 };
 
 //bool  BeginChildFrame(ImGuiID id,const ImVec2& size,ImGuiWindowFlags flags);
-//arg1	ImGuiID	id	=	
-//arg2	const ImVec2&	size	=	
-//arg3	ImGuiWindowFlags	flags	=	 0
 int cximgui_BeginChildFrame_3_iv2i(lua_State* L) {
 	int __argi__ = 0;
-	ImGuiID id = (ImGuiID)lua_tointeger(L, __argi__++);
+	ImGuiID id = (ImGuiID)lua_tointeger(L, ++__argi__);
 	ImVec2 size;
-	size.x = (float)lua_tonumber(L, __argi__++);
-	size.y = (float)lua_tonumber(L, __argi__++);
-	ImGuiWindowFlags flags = (ImGuiWindowFlags)lua_tointeger(L, __argi__++);
+	size.x = (float)lua_tonumber(L, ++__argi__);
+	size.y = (float)lua_tonumber(L, ++__argi__);
+	ImGuiWindowFlags flags = (ImGuiWindowFlags)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::BeginChildFrame(id, size, flags);
 	lua_pushboolean(L, __ret__);
 	lua_pushnumber(L, size.x);
@@ -3042,10 +2344,9 @@ int cximgui_EndChildFrame(lua_State* L) {
 };
 
 //ImVec4  ColorConvertU32ToFloat4(ImU32 in);
-//arg1	ImU32	in	=	
 int cximgui_ColorConvertU32ToFloat4_1_i(lua_State* L) {
 	int __argi__ = 0;
-	ImU32 in = (ImU32)lua_tointeger(L, __argi__++);
+	ImU32 in = (ImU32)lua_tointeger(L, ++__argi__);
 	ImVec4 __ret__ = ImGui::ColorConvertU32ToFloat4(in);
 	lua_pushnumber(L, __ret__.x);
 	lua_pushnumber(L, __ret__.y);
@@ -3055,14 +2356,13 @@ int cximgui_ColorConvertU32ToFloat4_1_i(lua_State* L) {
 };
 
 //ImU32  ColorConvertFloat4ToU32(const ImVec4& in);
-//arg1	const ImVec4&	in	=	
 int cximgui_ColorConvertFloat4ToU32_1_v4(lua_State* L) {
 	int __argi__ = 0;
 	ImVec4 in;
-	in.x = (float)lua_tonumber(L, __argi__++);
-	in.y = (float)lua_tonumber(L, __argi__++);
-	in.z = (float)lua_tonumber(L, __argi__++);
-	in.w = (float)lua_tonumber(L, __argi__++);
+	in.x = (float)lua_tonumber(L, ++__argi__);
+	in.y = (float)lua_tonumber(L, ++__argi__);
+	in.z = (float)lua_tonumber(L, ++__argi__);
+	in.w = (float)lua_tonumber(L, ++__argi__);
 	ImU32 __ret__ = ImGui::ColorConvertFloat4ToU32(in);
 	lua_pushinteger(L, __ret__);
 	lua_pushnumber(L, in.x);
@@ -3073,20 +2373,14 @@ int cximgui_ColorConvertFloat4ToU32_1_v4(lua_State* L) {
 };
 
 //void  ColorConvertRGBtoHSV(float r,float g,float b,float& out_h,float& out_s,float& out_v);
-//arg1	float	r	=	
-//arg2	float	g	=	
-//arg3	float	b	=	
-//arg4	float&	out_h	=	
-//arg5	float&	out_s	=	
-//arg6	float&	out_v	=	
 int cximgui_ColorConvertRGBtoHSV_6_nnnnnn(lua_State* L) {
 	int __argi__ = 0;
-	float r = (float)lua_tonumber(L, __argi__++);
-	float g = (float)lua_tonumber(L, __argi__++);
-	float b = (float)lua_tonumber(L, __argi__++);
-	float out_h = (float)lua_tonumber(L, __argi__++);
-	float out_s = (float)lua_tonumber(L, __argi__++);
-	float out_v = (float)lua_tonumber(L, __argi__++);
+	float r = (float)lua_tonumber(L, ++__argi__);
+	float g = (float)lua_tonumber(L, ++__argi__);
+	float b = (float)lua_tonumber(L, ++__argi__);
+	float out_h = (float)lua_tonumber(L, ++__argi__);
+	float out_s = (float)lua_tonumber(L, ++__argi__);
+	float out_v = (float)lua_tonumber(L, ++__argi__);
 	ImGui::ColorConvertRGBtoHSV(r, g, b, out_h, out_s, out_v);
 	lua_pushnumber(L, out_h);
 	lua_pushnumber(L, out_s);
@@ -3095,20 +2389,14 @@ int cximgui_ColorConvertRGBtoHSV_6_nnnnnn(lua_State* L) {
 };
 
 //void  ColorConvertHSVtoRGB(float h,float s,float v,float& out_r,float& out_g,float& out_b);
-//arg1	float	h	=	
-//arg2	float	s	=	
-//arg3	float	v	=	
-//arg4	float&	out_r	=	
-//arg5	float&	out_g	=	
-//arg6	float&	out_b	=	
 int cximgui_ColorConvertHSVtoRGB_6_nnnnnn(lua_State* L) {
 	int __argi__ = 0;
-	float h = (float)lua_tonumber(L, __argi__++);
-	float s = (float)lua_tonumber(L, __argi__++);
-	float v = (float)lua_tonumber(L, __argi__++);
-	float out_r = (float)lua_tonumber(L, __argi__++);
-	float out_g = (float)lua_tonumber(L, __argi__++);
-	float out_b = (float)lua_tonumber(L, __argi__++);
+	float h = (float)lua_tonumber(L, ++__argi__);
+	float s = (float)lua_tonumber(L, ++__argi__);
+	float v = (float)lua_tonumber(L, ++__argi__);
+	float out_r = (float)lua_tonumber(L, ++__argi__);
+	float out_g = (float)lua_tonumber(L, ++__argi__);
+	float out_b = (float)lua_tonumber(L, ++__argi__);
 	ImGui::ColorConvertHSVtoRGB(h, s, v, out_r, out_g, out_b);
 	lua_pushnumber(L, out_r);
 	lua_pushnumber(L, out_g);
@@ -3117,66 +2405,57 @@ int cximgui_ColorConvertHSVtoRGB_6_nnnnnn(lua_State* L) {
 };
 
 //int  GetKeyIndex(ImGuiKey imgui_key);
-//arg1	ImGuiKey	imgui_key	=	
 int cximgui_GetKeyIndex_1_i(lua_State* L) {
 	int __argi__ = 0;
-	ImGuiKey imgui_key = (ImGuiKey)lua_tointeger(L, __argi__++);
+	ImGuiKey imgui_key = (ImGuiKey)lua_tointeger(L, ++__argi__);
 	int __ret__ = ImGui::GetKeyIndex(imgui_key);
 	lua_pushinteger(L, __ret__);
 	return 1;
 };
 
 //bool  IsKeyDown(int user_key_index);
-//arg1	int	user_key_index	=	
 int cximgui_IsKeyDown_1_i(lua_State* L) {
 	int __argi__ = 0;
-	int user_key_index = (int)lua_tointeger(L, __argi__++);
+	int user_key_index = (int)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::IsKeyDown(user_key_index);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  IsKeyPressed(int user_key_index,bool repeat);
-//arg1	int	user_key_index	=	
-//arg2	bool	repeat	=	 true
 int cximgui_IsKeyPressed_2_ib(lua_State* L) {
 	int __argi__ = 0;
-	int user_key_index = (int)lua_tointeger(L, __argi__++);
-	bool repeat = lua_toboolean(L, __argi__++);
+	int user_key_index = (int)lua_tointeger(L, ++__argi__);
+	bool repeat = lua_toboolean(L, ++__argi__);
 	bool __ret__ = ImGui::IsKeyPressed(user_key_index, repeat);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  IsKeyReleased(int user_key_index);
-//arg1	int	user_key_index	=	
 int cximgui_IsKeyReleased_1_i(lua_State* L) {
 	int __argi__ = 0;
-	int user_key_index = (int)lua_tointeger(L, __argi__++);
+	int user_key_index = (int)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::IsKeyReleased(user_key_index);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //int  GetKeyPressedAmount(int key_index,float repeat_delay,float rate);
-//arg1	int	key_index	=	
-//arg2	float	repeat_delay	=	
-//arg3	float	rate	=	
 int cximgui_GetKeyPressedAmount_3_inn(lua_State* L) {
 	int __argi__ = 0;
-	int key_index = (int)lua_tointeger(L, __argi__++);
-	float repeat_delay = (float)lua_tonumber(L, __argi__++);
-	float rate = (float)lua_tonumber(L, __argi__++);
+	int key_index = (int)lua_tointeger(L, ++__argi__);
+	float repeat_delay = (float)lua_tonumber(L, ++__argi__);
+	float rate = (float)lua_tonumber(L, ++__argi__);
 	int __ret__ = ImGui::GetKeyPressedAmount(key_index, repeat_delay, rate);
 	lua_pushinteger(L, __ret__);
 	return 1;
 };
 
 //bool  IsMouseDown(int button);
-//arg1	int	button	=	
 int cximgui_IsMouseDown_1_i(lua_State* L) {
 	int __argi__ = 0;
-	int button = (int)lua_tointeger(L, __argi__++);
+	int button = (int)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::IsMouseDown(button);
 	lua_pushboolean(L, __ret__);
 	return 1;
@@ -3190,62 +2469,53 @@ int cximgui_IsAnyMouseDown(lua_State* L) {
 };
 
 //bool  IsMouseClicked(int button,bool repeat);
-//arg1	int	button	=	
-//arg2	bool	repeat	=	 false
 int cximgui_IsMouseClicked_2_ib(lua_State* L) {
 	int __argi__ = 0;
-	int button = (int)lua_tointeger(L, __argi__++);
-	bool repeat = lua_toboolean(L, __argi__++);
+	int button = (int)lua_tointeger(L, ++__argi__);
+	bool repeat = lua_toboolean(L, ++__argi__);
 	bool __ret__ = ImGui::IsMouseClicked(button, repeat);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  IsMouseDoubleClicked(int button);
-//arg1	int	button	=	
 int cximgui_IsMouseDoubleClicked_1_i(lua_State* L) {
 	int __argi__ = 0;
-	int button = (int)lua_tointeger(L, __argi__++);
+	int button = (int)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::IsMouseDoubleClicked(button);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  IsMouseReleased(int button);
-//arg1	int	button	=	
 int cximgui_IsMouseReleased_1_i(lua_State* L) {
 	int __argi__ = 0;
-	int button = (int)lua_tointeger(L, __argi__++);
+	int button = (int)lua_tointeger(L, ++__argi__);
 	bool __ret__ = ImGui::IsMouseReleased(button);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  IsMouseDragging(int button,float lock_threshold);
-//arg1	int	button	=	 0
-//arg2	float	lock_threshold	=	 -1.0f
 int cximgui_IsMouseDragging_2_in(lua_State* L) {
 	int __argi__ = 0;
-	int button = (int)lua_tointeger(L, __argi__++);
-	float lock_threshold = (float)lua_tonumber(L, __argi__++);
+	int button = (int)lua_tointeger(L, ++__argi__);
+	float lock_threshold = (float)lua_tonumber(L, ++__argi__);
 	bool __ret__ = ImGui::IsMouseDragging(button, lock_threshold);
 	lua_pushboolean(L, __ret__);
 	return 1;
 };
 
 //bool  IsMouseHoveringRect(const ImVec2& r_min,const ImVec2& r_max,bool clip);
-//arg1	const ImVec2&	r_min	=	
-//arg2	const ImVec2&	r_max	=	
-//arg3	bool	clip	=	 true
 int cximgui_IsMouseHoveringRect_3_v2v2b(lua_State* L) {
 	int __argi__ = 0;
 	ImVec2 r_min;
-	r_min.x = (float)lua_tonumber(L, __argi__++);
-	r_min.y = (float)lua_tonumber(L, __argi__++);
+	r_min.x = (float)lua_tonumber(L, ++__argi__);
+	r_min.y = (float)lua_tonumber(L, ++__argi__);
 	ImVec2 r_max;
-	r_max.x = (float)lua_tonumber(L, __argi__++);
-	r_max.y = (float)lua_tonumber(L, __argi__++);
-	bool clip = lua_toboolean(L, __argi__++);
+	r_max.x = (float)lua_tonumber(L, ++__argi__);
+	r_max.y = (float)lua_tonumber(L, ++__argi__);
+	bool clip = lua_toboolean(L, ++__argi__);
 	bool __ret__ = ImGui::IsMouseHoveringRect(r_min, r_max, clip);
 	lua_pushboolean(L, __ret__);
 	lua_pushnumber(L, r_min.x);
@@ -3256,12 +2526,11 @@ int cximgui_IsMouseHoveringRect_3_v2v2b(lua_State* L) {
 };
 
 //bool  IsMousePosValid(const ImVec2* mouse_pos);
-//arg1	const ImVec2*	mouse_pos	=	 NULL
 int cximgui_IsMousePosValid_1_v2p(lua_State* L) {
 	int __argi__ = 0;
 	ImVec2 mouse_pos;
-	mouse_pos.x = (float)lua_tonumber(L, __argi__++);
-	mouse_pos.y = (float)lua_tonumber(L, __argi__++);
+	mouse_pos.x = (float)lua_tonumber(L, ++__argi__);
+	mouse_pos.y = (float)lua_tonumber(L, ++__argi__);
 	bool __ret__ = ImGui::IsMousePosValid(&mouse_pos);
 	lua_pushboolean(L, __ret__);
 	return 1;
@@ -3284,12 +2553,10 @@ int cximgui_GetMousePosOnOpeningCurrentPopup(lua_State* L) {
 };
 
 //ImVec2  GetMouseDragDelta(int button,float lock_threshold);
-//arg1	int	button	=	 0
-//arg2	float	lock_threshold	=	 -1.0f
 int cximgui_GetMouseDragDelta_2_in(lua_State* L) {
 	int __argi__ = 0;
-	int button = (int)lua_tointeger(L, __argi__++);
-	float lock_threshold = (float)lua_tonumber(L, __argi__++);
+	int button = (int)lua_tointeger(L, ++__argi__);
+	float lock_threshold = (float)lua_tonumber(L, ++__argi__);
 	ImVec2 __ret__ = ImGui::GetMouseDragDelta(button, lock_threshold);
 	lua_pushnumber(L, __ret__.x);
 	lua_pushnumber(L, __ret__.y);
@@ -3297,10 +2564,9 @@ int cximgui_GetMouseDragDelta_2_in(lua_State* L) {
 };
 
 //void  ResetMouseDragDelta(int button);
-//arg1	int	button	=	 0
 int cximgui_ResetMouseDragDelta_1_i(lua_State* L) {
 	int __argi__ = 0;
-	int button = (int)lua_tointeger(L, __argi__++);
+	int button = (int)lua_tointeger(L, ++__argi__);
 	ImGui::ResetMouseDragDelta(button);
 	return 0;
 };
@@ -3313,28 +2579,25 @@ int cximgui_GetMouseCursor(lua_State* L) {
 };
 
 //void  SetMouseCursor(ImGuiMouseCursor type);
-//arg1	ImGuiMouseCursor	type	=	
 int cximgui_SetMouseCursor_1_i(lua_State* L) {
 	int __argi__ = 0;
-	ImGuiMouseCursor type = (ImGuiMouseCursor)lua_tointeger(L, __argi__++);
+	ImGuiMouseCursor type = (ImGuiMouseCursor)lua_tointeger(L, ++__argi__);
 	ImGui::SetMouseCursor(type);
 	return 0;
 };
 
 //void  CaptureKeyboardFromApp(bool capture);
-//arg1	bool	capture	=	 true
 int cximgui_CaptureKeyboardFromApp_1_b(lua_State* L) {
 	int __argi__ = 0;
-	bool capture = lua_toboolean(L, __argi__++);
+	bool capture = lua_toboolean(L, ++__argi__);
 	ImGui::CaptureKeyboardFromApp(capture);
 	return 0;
 };
 
 //void  CaptureMouseFromApp(bool capture);
-//arg1	bool	capture	=	 true
 int cximgui_CaptureMouseFromApp_1_b(lua_State* L) {
 	int __argi__ = 0;
-	bool capture = lua_toboolean(L, __argi__++);
+	bool capture = lua_toboolean(L, ++__argi__);
 	ImGui::CaptureMouseFromApp(capture);
 	return 0;
 };
@@ -3347,69 +2610,58 @@ int cximgui_GetClipboardText(lua_State* L) {
 };
 
 //void  SetClipboardText(const char* text);
-//arg1	const char*	text	=	
 int cximgui_SetClipboardText_1_s(lua_State* L) {
 	int __argi__ = 0;
-	const char* text = lua_tostring(L, __argi__++);
+	const char* text = lua_tostring(L, ++__argi__);
 	ImGui::SetClipboardText(text);
 	return 0;
 };
 
 //void  LoadIniSettingsFromDisk(const char* ini_filename);
-//arg1	const char*	ini_filename	=	
 int cximgui_LoadIniSettingsFromDisk_1_s(lua_State* L) {
 	int __argi__ = 0;
-	const char* ini_filename = lua_tostring(L, __argi__++);
+	const char* ini_filename = lua_tostring(L, ++__argi__);
 	ImGui::LoadIniSettingsFromDisk(ini_filename);
 	return 0;
 };
 
 //void  LoadIniSettingsFromMemory(const char* ini_data,size_t ini_size);
-//arg1	const char*	ini_data	=	
-//arg2	size_t	ini_size	=	0
 int cximgui_LoadIniSettingsFromMemory_2_si(lua_State* L) {
 	int __argi__ = 0;
-	const char* ini_data = lua_tostring(L, __argi__++);
-	size_t ini_size = (size_t)lua_tointeger(L, __argi__++);
+	const char* ini_data = lua_tostring(L, ++__argi__);
+	size_t ini_size = (size_t)lua_tointeger(L, ++__argi__);
 	ImGui::LoadIniSettingsFromMemory(ini_data, ini_size);
 	return 0;
 };
 
 //void  SaveIniSettingsToDisk(const char* ini_filename);
-//arg1	const char*	ini_filename	=	
 int cximgui_SaveIniSettingsToDisk_1_s(lua_State* L) {
 	int __argi__ = 0;
-	const char* ini_filename = lua_tostring(L, __argi__++);
+	const char* ini_filename = lua_tostring(L, ++__argi__);
 	ImGui::SaveIniSettingsToDisk(ini_filename);
 	return 0;
 };
 
 //const char*  SaveIniSettingsToMemory(size_t* out_ini_size);
-//arg1	size_t*	out_ini_size	=	 NULL
 int cximgui_SaveIniSettingsToMemory_1_ip(lua_State* L) {
 	int __argi__ = 0;
-	size_t out_ini_size = (size_t)lua_tointeger(L, __argi__++);
+	size_t out_ini_size = (size_t)lua_tointeger(L, ++__argi__);
 	const char* __ret__ = ImGui::SaveIniSettingsToMemory(&out_ini_size);
 	lua_pushstring(L, __ret__);
 	return 1;
 };
 
 //void  SetAllocatorFunctions(void* @1@2,void @3@4,void* user_data);
-//arg1	void*	@1@2	=	
-//arg2	void	@3@4	=	
-//arg3	void*	user_data	=	 NULL
 //UnSupported SetAllocatorFunctions
 //void*  MemAlloc(size_t size);
-//arg1	size_t	size	=	
 int cximgui_MemAlloc_1_i(lua_State* L) {
 	int __argi__ = 0;
-	size_t size = (size_t)lua_tointeger(L, __argi__++);
+	size_t size = (size_t)lua_tointeger(L, ++__argi__);
 	ImGui::MemAlloc(size);
 	return 0;
 };
 
 //void  MemFree(void* ptr);
-//arg1	void*	ptr	=	
 //UnSupported MemFree
 //ImGuiPlatformIO&  GetPlatformIO();
 int cximgui_GetPlatformIO(lua_State* L) {
@@ -3430,8 +2682,6 @@ int cximgui_UpdatePlatformWindows(lua_State* L) {
 };
 
 //void  RenderPlatformWindowsDefault(void* platform_arg,void* renderer_arg);
-//arg1	void*	platform_arg	=	 NULL
-//arg2	void*	renderer_arg	=	 NULL
 //UnSupported RenderPlatformWindowsDefault
 //void  DestroyPlatformWindows();
 int cximgui_DestroyPlatformWindows(lua_State* L) {
@@ -3440,7 +2690,282 @@ int cximgui_DestroyPlatformWindows(lua_State* L) {
 };
 
 //ImGuiViewport*  FindViewportByPlatformHandle(void* platform_handle);
-//arg1	void*	platform_handle	=	
 //UnSupported FindViewportByPlatformHandle
 
 //total func	358	unSupported	84
+luaL_Reg cximgui_methods[] = {
+	{ "GetCurrentContext",cximgui_GetCurrentContext },
+{ "DebugCheckVersionAndDataLayout",cximgui_DebugCheckVersionAndDataLayout_6_siiiii },
+{ "GetIO",cximgui_GetIO },
+{ "GetStyle",cximgui_GetStyle },
+{ "NewFrame",cximgui_NewFrame },
+{ "EndFrame",cximgui_EndFrame },
+{ "Render",cximgui_Render },
+{ "GetDrawData",cximgui_GetDrawData },
+{ "ShowDemoWindow",cximgui_ShowDemoWindow_1_bp },
+{ "ShowMetricsWindow",cximgui_ShowMetricsWindow_1_bp },
+{ "ShowStyleSelector",cximgui_ShowStyleSelector_1_s },
+{ "ShowFontSelector",cximgui_ShowFontSelector_1_s },
+{ "ShowUserGuide",cximgui_ShowUserGuide },
+{ "GetVersion",cximgui_GetVersion },
+{ "Begin",cximgui_Begin_3_sbpi },
+{ "End",cximgui_End },
+{ "BeginChild",cximgui_BeginChild_4_sv2bi },
+{ "EndChild",cximgui_EndChild },
+{ "IsWindowAppearing",cximgui_IsWindowAppearing },
+{ "IsWindowCollapsed",cximgui_IsWindowCollapsed },
+{ "IsWindowFocused",cximgui_IsWindowFocused_1_i },
+{ "IsWindowHovered",cximgui_IsWindowHovered_1_i },
+{ "GetWindowDrawList",cximgui_GetWindowDrawList },
+{ "GetWindowDpiScale",cximgui_GetWindowDpiScale },
+{ "GetWindowViewport",cximgui_GetWindowViewport },
+{ "GetWindowPos",cximgui_GetWindowPos },
+{ "GetWindowSize",cximgui_GetWindowSize },
+{ "GetWindowWidth",cximgui_GetWindowWidth },
+{ "GetWindowHeight",cximgui_GetWindowHeight },
+{ "GetContentRegionMax",cximgui_GetContentRegionMax },
+{ "GetContentRegionAvail",cximgui_GetContentRegionAvail },
+{ "GetContentRegionAvailWidth",cximgui_GetContentRegionAvailWidth },
+{ "GetWindowContentRegionMin",cximgui_GetWindowContentRegionMin },
+{ "GetWindowContentRegionMax",cximgui_GetWindowContentRegionMax },
+{ "GetWindowContentRegionWidth",cximgui_GetWindowContentRegionWidth },
+{ "SetNextWindowPos",cximgui_SetNextWindowPos_3_v2iv2 },
+{ "SetNextWindowSize",cximgui_SetNextWindowSize_2_v2i },
+{ "SetNextWindowContentSize",cximgui_SetNextWindowContentSize_1_v2 },
+{ "SetNextWindowCollapsed",cximgui_SetNextWindowCollapsed_2_bi },
+{ "SetNextWindowFocus",cximgui_SetNextWindowFocus },
+{ "SetNextWindowBgAlpha",cximgui_SetNextWindowBgAlpha_1_n },
+{ "SetNextWindowViewport",cximgui_SetNextWindowViewport_1_i },
+{ "SetWindowPos",cximgui_SetWindowPos_2_v2i },
+{ "SetWindowSize",cximgui_SetWindowSize_2_v2i },
+{ "SetWindowCollapsed",cximgui_SetWindowCollapsed_2_bi },
+{ "SetWindowFocus",cximgui_SetWindowFocus },
+{ "SetWindowFontScale",cximgui_SetWindowFontScale_1_n },
+{ "SetWindowPos",cximgui_SetWindowPos_3_sv2i },
+{ "SetWindowSize",cximgui_SetWindowSize_3_sv2i },
+{ "SetWindowCollapsed",cximgui_SetWindowCollapsed_3_sbi },
+{ "SetWindowFocus",cximgui_SetWindowFocus_1_s },
+{ "GetScrollX",cximgui_GetScrollX },
+{ "GetScrollY",cximgui_GetScrollY },
+{ "GetScrollMaxX",cximgui_GetScrollMaxX },
+{ "GetScrollMaxY",cximgui_GetScrollMaxY },
+{ "SetScrollX",cximgui_SetScrollX_1_n },
+{ "SetScrollY",cximgui_SetScrollY_1_n },
+{ "SetScrollHereY",cximgui_SetScrollHereY_1_n },
+{ "SetScrollFromPosY",cximgui_SetScrollFromPosY_2_nn },
+{ "PopFont",cximgui_PopFont },
+{ "PushStyleColor",cximgui_PushStyleColor_2_ii },
+{ "PopStyleColor",cximgui_PopStyleColor_1_i },
+{ "PushStyleVar",cximgui_PushStyleVar_2_in },
+{ "PopStyleVar",cximgui_PopStyleVar_1_i },
+{ "GetStyleColorVec4",cximgui_GetStyleColorVec4_1_i },
+{ "GetFont",cximgui_GetFont },
+{ "GetFontSize",cximgui_GetFontSize },
+{ "GetFontTexUvWhitePixel",cximgui_GetFontTexUvWhitePixel },
+{ "GetColorU32",cximgui_GetColorU32_2_in },
+{ "PushItemWidth",cximgui_PushItemWidth_1_n },
+{ "PopItemWidth",cximgui_PopItemWidth },
+{ "CalcItemWidth",cximgui_CalcItemWidth },
+{ "PushTextWrapPos",cximgui_PushTextWrapPos_1_n },
+{ "PopTextWrapPos",cximgui_PopTextWrapPos },
+{ "PushAllowKeyboardFocus",cximgui_PushAllowKeyboardFocus_1_b },
+{ "PopAllowKeyboardFocus",cximgui_PopAllowKeyboardFocus },
+{ "PushButtonRepeat",cximgui_PushButtonRepeat_1_b },
+{ "PopButtonRepeat",cximgui_PopButtonRepeat },
+{ "Separator",cximgui_Separator },
+{ "SameLine",cximgui_SameLine_2_nn },
+{ "NewLine",cximgui_NewLine },
+{ "Spacing",cximgui_Spacing },
+{ "Dummy",cximgui_Dummy_1_v2 },
+{ "Indent",cximgui_Indent_1_n },
+{ "Unindent",cximgui_Unindent_1_n },
+{ "BeginGroup",cximgui_BeginGroup },
+{ "EndGroup",cximgui_EndGroup },
+{ "GetCursorPos",cximgui_GetCursorPos },
+{ "GetCursorPosX",cximgui_GetCursorPosX },
+{ "GetCursorPosY",cximgui_GetCursorPosY },
+{ "SetCursorPos",cximgui_SetCursorPos_1_v2 },
+{ "SetCursorPosX",cximgui_SetCursorPosX_1_n },
+{ "SetCursorPosY",cximgui_SetCursorPosY_1_n },
+{ "GetCursorStartPos",cximgui_GetCursorStartPos },
+{ "GetCursorScreenPos",cximgui_GetCursorScreenPos },
+{ "SetCursorScreenPos",cximgui_SetCursorScreenPos_1_v2 },
+{ "AlignTextToFramePadding",cximgui_AlignTextToFramePadding },
+{ "GetTextLineHeight",cximgui_GetTextLineHeight },
+{ "GetTextLineHeightWithSpacing",cximgui_GetTextLineHeightWithSpacing },
+{ "GetFrameHeight",cximgui_GetFrameHeight },
+{ "GetFrameHeightWithSpacing",cximgui_GetFrameHeightWithSpacing },
+{ "PushID",cximgui_PushID_1_s },
+{ "PopID",cximgui_PopID },
+{ "GetID",cximgui_GetID_1_s },
+{ "TextUnformatted",cximgui_TextUnformatted_2_ss },
+{ "Button",cximgui_Button_2_sv2 },
+{ "SmallButton",cximgui_SmallButton_1_s },
+{ "InvisibleButton",cximgui_InvisibleButton_2_sv2 },
+{ "ArrowButton",cximgui_ArrowButton_2_si },
+{ "Checkbox",cximgui_Checkbox_2_sbp },
+{ "CheckboxFlags",cximgui_CheckboxFlags_3_sIpI },
+{ "RadioButton",cximgui_RadioButton_2_sb },
+{ "ProgressBar",cximgui_ProgressBar_3_nv2s },
+{ "Bullet",cximgui_Bullet },
+{ "BeginCombo",cximgui_BeginCombo_3_ssi },
+{ "EndCombo",cximgui_EndCombo },
+{ "DragFloat",cximgui_DragFloat_7_snpnnnsn },
+{ "DragFloatRange2",cximgui_DragFloatRange2_9_snpnpnnnssn },
+{ "DragInt",cximgui_DragInt_6_sipniis },
+{ "DragIntRange2",cximgui_DragIntRange2_8_sipipniiss },
+{ "SliderFloat",cximgui_SliderFloat_6_snpnnsn },
+{ "SliderAngle",cximgui_SliderAngle_5_snpnns },
+{ "SliderInt",cximgui_SliderInt_5_sipiis },
+{ "VSliderFloat",cximgui_VSliderFloat_7_sv2npnnsn },
+{ "VSliderInt",cximgui_VSliderInt_6_sv2ipiis },
+{ "InputFloat",cximgui_InputFloat_6_snpnnsi },
+{ "InputInt",cximgui_InputInt_5_sipiii },
+{ "InputDouble",cximgui_InputDouble_6_snpnnsi },
+{ "ColorButton",cximgui_ColorButton_4_sv4iv2 },
+{ "SetColorEditOptions",cximgui_SetColorEditOptions_1_i },
+{ "TreeNode",cximgui_TreeNode_1_s },
+{ "TreeNodeEx",cximgui_TreeNodeEx_2_si },
+{ "TreePush",cximgui_TreePush_1_s },
+{ "TreePop",cximgui_TreePop },
+{ "TreeAdvanceToLabelPos",cximgui_TreeAdvanceToLabelPos },
+{ "GetTreeNodeToLabelSpacing",cximgui_GetTreeNodeToLabelSpacing },
+{ "SetNextTreeNodeOpen",cximgui_SetNextTreeNodeOpen_2_bi },
+{ "CollapsingHeader",cximgui_CollapsingHeader_2_si },
+{ "Selectable",cximgui_Selectable_4_sbiv2 },
+{ "ListBoxHeader",cximgui_ListBoxHeader_2_sv2 },
+{ "ListBoxFooter",cximgui_ListBoxFooter },
+{ "PlotLines",cximgui_PlotLines_9_snpiisnnv2i },
+{ "PlotHistogram",cximgui_PlotHistogram_9_snpiisnnv2i },
+{ "Value",cximgui_Value_2_sb },
+{ "BeginMainMenuBar",cximgui_BeginMainMenuBar },
+{ "EndMainMenuBar",cximgui_EndMainMenuBar },
+{ "BeginMenuBar",cximgui_BeginMenuBar },
+{ "EndMenuBar",cximgui_EndMenuBar },
+{ "BeginMenu",cximgui_BeginMenu_2_sb },
+{ "EndMenu",cximgui_EndMenu },
+{ "MenuItem",cximgui_MenuItem_4_ssbb },
+{ "BeginTooltip",cximgui_BeginTooltip },
+{ "EndTooltip",cximgui_EndTooltip },
+{ "OpenPopup",cximgui_OpenPopup_1_s },
+{ "BeginPopup",cximgui_BeginPopup_2_si },
+{ "BeginPopupContextItem",cximgui_BeginPopupContextItem_2_si },
+{ "BeginPopupContextWindow",cximgui_BeginPopupContextWindow_3_sib },
+{ "BeginPopupContextVoid",cximgui_BeginPopupContextVoid_2_si },
+{ "BeginPopupModal",cximgui_BeginPopupModal_3_sbpi },
+{ "EndPopup",cximgui_EndPopup },
+{ "OpenPopupOnItemClick",cximgui_OpenPopupOnItemClick_2_si },
+{ "IsPopupOpen",cximgui_IsPopupOpen_1_s },
+{ "CloseCurrentPopup",cximgui_CloseCurrentPopup },
+{ "Columns",cximgui_Columns_3_isb },
+{ "NextColumn",cximgui_NextColumn },
+{ "GetColumnIndex",cximgui_GetColumnIndex },
+{ "GetColumnWidth",cximgui_GetColumnWidth_1_i },
+{ "SetColumnWidth",cximgui_SetColumnWidth_2_in },
+{ "GetColumnOffset",cximgui_GetColumnOffset_1_i },
+{ "SetColumnOffset",cximgui_SetColumnOffset_2_in },
+{ "GetColumnsCount",cximgui_GetColumnsCount },
+{ "BeginTabBar",cximgui_BeginTabBar_2_si },
+{ "EndTabBar",cximgui_EndTabBar },
+{ "BeginTabItem",cximgui_BeginTabItem_3_sbpi },
+{ "EndTabItem",cximgui_EndTabItem },
+{ "SetTabItemClosed",cximgui_SetTabItemClosed_1_s },
+{ "SetNextWindowDockId",cximgui_SetNextWindowDockId_2_ii },
+{ "GetWindowDockId",cximgui_GetWindowDockId },
+{ "IsWindowDocked",cximgui_IsWindowDocked },
+{ "LogToTTY",cximgui_LogToTTY_1_i },
+{ "LogToFile",cximgui_LogToFile_2_is },
+{ "LogToClipboard",cximgui_LogToClipboard_1_i },
+{ "LogFinish",cximgui_LogFinish },
+{ "LogButtons",cximgui_LogButtons },
+{ "BeginDragDropSource",cximgui_BeginDragDropSource_1_i },
+{ "EndDragDropSource",cximgui_EndDragDropSource },
+{ "BeginDragDropTarget",cximgui_BeginDragDropTarget },
+{ "AcceptDragDropPayload",cximgui_AcceptDragDropPayload_2_si },
+{ "EndDragDropTarget",cximgui_EndDragDropTarget },
+{ "GetDragDropPayload",cximgui_GetDragDropPayload },
+{ "PushClipRect",cximgui_PushClipRect_3_v2v2b },
+{ "PopClipRect",cximgui_PopClipRect },
+{ "SetItemDefaultFocus",cximgui_SetItemDefaultFocus },
+{ "SetKeyboardFocusHere",cximgui_SetKeyboardFocusHere_1_i },
+{ "IsItemHovered",cximgui_IsItemHovered_1_i },
+{ "IsItemActive",cximgui_IsItemActive },
+{ "IsItemFocused",cximgui_IsItemFocused },
+{ "IsItemClicked",cximgui_IsItemClicked_1_i },
+{ "IsItemVisible",cximgui_IsItemVisible },
+{ "IsItemEdited",cximgui_IsItemEdited },
+{ "IsItemDeactivated",cximgui_IsItemDeactivated },
+{ "IsItemDeactivatedAfterEdit",cximgui_IsItemDeactivatedAfterEdit },
+{ "IsAnyItemHovered",cximgui_IsAnyItemHovered },
+{ "IsAnyItemActive",cximgui_IsAnyItemActive },
+{ "IsAnyItemFocused",cximgui_IsAnyItemFocused },
+{ "GetItemRectMin",cximgui_GetItemRectMin },
+{ "GetItemRectMax",cximgui_GetItemRectMax },
+{ "GetItemRectSize",cximgui_GetItemRectSize },
+{ "SetItemAllowOverlap",cximgui_SetItemAllowOverlap },
+{ "IsRectVisible",cximgui_IsRectVisible_1_v2 },
+{ "GetTime",cximgui_GetTime },
+{ "GetFrameCount",cximgui_GetFrameCount },
+{ "GetOverlayDrawList",cximgui_GetOverlayDrawList },
+{ "GetDrawListSharedData",cximgui_GetDrawListSharedData },
+{ "GetStyleColorName",cximgui_GetStyleColorName_1_i },
+{ "GetStateStorage",cximgui_GetStateStorage },
+{ "CalcTextSize",cximgui_CalcTextSize_4_ssbn },
+{ "CalcListClipping",cximgui_CalcListClipping_4_inipip },
+{ "BeginChildFrame",cximgui_BeginChildFrame_3_iv2i },
+{ "EndChildFrame",cximgui_EndChildFrame },
+{ "ColorConvertU32ToFloat4",cximgui_ColorConvertU32ToFloat4_1_i },
+{ "ColorConvertFloat4ToU32",cximgui_ColorConvertFloat4ToU32_1_v4 },
+{ "ColorConvertRGBtoHSV",cximgui_ColorConvertRGBtoHSV_6_nnnnnn },
+{ "ColorConvertHSVtoRGB",cximgui_ColorConvertHSVtoRGB_6_nnnnnn },
+{ "GetKeyIndex",cximgui_GetKeyIndex_1_i },
+{ "IsKeyDown",cximgui_IsKeyDown_1_i },
+{ "IsKeyPressed",cximgui_IsKeyPressed_2_ib },
+{ "IsKeyReleased",cximgui_IsKeyReleased_1_i },
+{ "GetKeyPressedAmount",cximgui_GetKeyPressedAmount_3_inn },
+{ "IsMouseDown",cximgui_IsMouseDown_1_i },
+{ "IsAnyMouseDown",cximgui_IsAnyMouseDown },
+{ "IsMouseClicked",cximgui_IsMouseClicked_2_ib },
+{ "IsMouseDoubleClicked",cximgui_IsMouseDoubleClicked_1_i },
+{ "IsMouseReleased",cximgui_IsMouseReleased_1_i },
+{ "IsMouseDragging",cximgui_IsMouseDragging_2_in },
+{ "IsMouseHoveringRect",cximgui_IsMouseHoveringRect_3_v2v2b },
+{ "IsMousePosValid",cximgui_IsMousePosValid_1_v2p },
+{ "GetMousePos",cximgui_GetMousePos },
+{ "GetMousePosOnOpeningCurrentPopup",cximgui_GetMousePosOnOpeningCurrentPopup },
+{ "GetMouseDragDelta",cximgui_GetMouseDragDelta_2_in },
+{ "ResetMouseDragDelta",cximgui_ResetMouseDragDelta_1_i },
+{ "GetMouseCursor",cximgui_GetMouseCursor },
+{ "SetMouseCursor",cximgui_SetMouseCursor_1_i },
+{ "CaptureKeyboardFromApp",cximgui_CaptureKeyboardFromApp_1_b },
+{ "CaptureMouseFromApp",cximgui_CaptureMouseFromApp_1_b },
+{ "GetClipboardText",cximgui_GetClipboardText },
+{ "SetClipboardText",cximgui_SetClipboardText_1_s },
+{ "LoadIniSettingsFromDisk",cximgui_LoadIniSettingsFromDisk_1_s },
+{ "LoadIniSettingsFromMemory",cximgui_LoadIniSettingsFromMemory_2_si },
+{ "SaveIniSettingsToDisk",cximgui_SaveIniSettingsToDisk_1_s },
+{ "SaveIniSettingsToMemory",cximgui_SaveIniSettingsToMemory_1_ip },
+{ "MemAlloc",cximgui_MemAlloc_1_i },
+{ "GetPlatformIO",cximgui_GetPlatformIO },
+{ "GetMainViewport",cximgui_GetMainViewport },
+{ "UpdatePlatformWindows",cximgui_UpdatePlatformWindows },
+{ "DestroyPlatformWindows",cximgui_DestroyPlatformWindows },
+{ NULL, NULL }
+};
+//open_imgui
+void luaopen_cximgui(lua_State* L) {
+	if (luaL_newmetatable(L, "mt_cximgui")) {
+		luaL_setfuncs(L, cximgui_methods, 0);
+		lua_setfield(L, -1, "__index");
+	}
+	else {
+		std::cout << "associate cximgui error!" << std::endl;
+	}
+
+	lua_newtable(L);
+	luaL_setmetatable(L, "mt_cximgui");
+	lua_setglobal(L, "imgui");
+}
+
+
+

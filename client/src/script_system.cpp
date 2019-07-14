@@ -11,7 +11,7 @@
 #include "text_renderer.h"
 #include "input_manager.h"
 #include "net.h"
-#include "wrap_imgui_impl.h"
+#include "cximgui.h"
 #include "net_thread_queue.h"
 #include "lua_net.h"
 #include "scene/Scene.h"
@@ -53,7 +53,7 @@ void script_system_prepare_init()
 	luaL_requirelib(L, "cjson", luaopen_cjson);
 	luaopen_script_system(L);
 	luaopen_filesystem(L);
-	luaopen_imgui(L);
+	luaopen_cximgui(L);
 	luaopen_logger(L);
 	luaopen_ne_support(L);
 	luaopen_window(L);
