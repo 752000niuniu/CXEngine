@@ -243,8 +243,8 @@ function FuncProtoMT:CalcSupported()
             if arg.type == 'ImVec2' or
                 arg.type == 'ImVec4' or
                 arg:Type() == 'const char*' or
-                ((arg.type == 'int' or arg.type =='unsigned int' or arg.type =='unsigned short' or imgui_typedefs[arg.type] == 'int' or imgui_typedefs[arg.type] == 'unsigned int') and (not arg.is_array))  or
-                ((arg.type =='float' or arg.type =='double') and (not arg.is_array)) or
+                (arg.type == 'int' or arg.type =='unsigned int' or arg.type =='unsigned short' or imgui_typedefs[arg.type] == 'int' or imgui_typedefs[arg.type] == 'unsigned int')  or
+                (arg.type =='float' or arg.type =='double') or
                 arg.type == 'bool' then
             else 
                 supported = false
@@ -312,7 +312,7 @@ function parse_type(str)
     return type_proto_create(name, type, decor, final, is_array, array_size)
 end
 
-function parse_funcargs_cap(args)
+function parse_funcargs_cap(args, brace_repls)
     args = args..','
     local all_args = {}
     for arg_block in args:gmatch('(.-),') do
@@ -333,7 +333,14 @@ function parse_funcargs_cap(args)
             end
             
             local arg = parse_type(equal_left)
-            arg.def = equal_right
+            if equal_right then
+                equal_right = equal_right:gsub('(@%d+)',function(cap)
+                    local index = cap:gmatch('(%d+)')()
+                    return brace_repls[math.tointeger(index)]
+                end)
+                equal_right = equal_right:gsub(' ','')
+                arg.def = equal_right
+            end
             table.insert(all_args, arg)
         end
     end
@@ -455,8 +462,11 @@ function parse_imgui_api(content)
                     table.insert(brace_repls, cap)
                     return '@'..#brace_repls
                 end)
+                -- for i,v in ipairs(brace_repls) do
+                --     print('brace_repls',i,v)
+                -- end
                 proto.brace_repls = brace_repls
-                proto.args  = parse_funcargs_cap(args)
+                proto.args  = parse_funcargs_cap(args, brace_repls)
             end
             proto:CalcSupported()
             table.insert(imgui_apis, proto)
@@ -467,7 +477,7 @@ end
 function parse_enum_blocks(content)
     imgui_enums = imgui_enums or {}
     for enum_name, enum_block in content:gmatch('enum%s*([%w_]+).-(%b{});') do
-        print('enum_name', enum_name)
+        -- print('enum_name', enum_name)
         imgui_enums[enum_name] =imgui_enums[enum_name] or {}
         local pause_parse = false
         for line in enum_block:gmatch('(.-)\n') do
@@ -480,16 +490,6 @@ function parse_enum_blocks(content)
                     line = line:gsub('%s','')
                     
                     local name = line:gmatch('([%w_]+)%s*')()
-                    -- line = line:gsub('%s','')
-                    -- local equal_left
-                    -- local equal_right
-                    -- local l,r = line:find('=') 
-                    -- if l then
-                    --     equal_left = line:sub(1,l-1)
-                    --     equal_right = line:sub(r+1)
-                    -- else 
-                    --     equal_left = line
-                    -- end                 
                     table.insert(imgui_enums[enum_name],name)
                 end
             end
@@ -505,7 +505,7 @@ end
     4. 打完收工
 ]]
 function output_imguiapis()
-  
+    print([[#include "cximgui.h"]]) 
     local unsupported_func = {}
     for i,proto in ipairs(imgui_apis) do
         print('//'..proto:ToString())
@@ -520,40 +520,99 @@ function output_imguiapis()
             end
             fun_impl:write_line('int cximgui_%s(lua_State* L){', proto:WrapName());
             if #proto.args > 0 then
-                fun_impl:write_line('\tint __argi__ = 0;');
+                fun_impl:write_line('\tint __argi__ = 1;');
             end
             local ret_args = {}
             for i,arg in ipairs(proto.args) do
-                if arg:IsRef() or (arg:IsPtr() and arg.final=='') then
+                if (arg:IsRef() and arg.final=='') 
+                or (arg:IsPtr() and arg.final=='') 
+                or (arg.is_array and arg.final=='') then
                     table.insert(ret_args, arg)
                 end
                 if arg.type == 'ImVec2' then
-                    fun_impl:write_line('\t%s %s;', arg.type, arg.name)
-                    fun_impl:write_line( '\t%s.x = (float)lua_tonumber(L,++__argi__);' ,arg.name)
-                    fun_impl:write_line( '\t%s.y = (float)lua_tonumber(L,++__argi__);' ,arg.name)
+                    if arg.def and not arg:IsPtr() then
+                        fun_impl:write_line('\t%s %s_def = %s;', arg.type, arg.name, arg.def)
+                        fun_impl:write_line('\t%s %s;', arg.type, arg.name)
+                        fun_impl:write_line( '\t%s.x = (float)luaL_optnumber(L,__argi__  ,%s_def.x);' ,arg.name, arg.name)
+                        fun_impl:write_line( '\t%s.y = (float)luaL_optnumber(L,__argi__+1,%s_def.y);' ,arg.name, arg.name)
+                        local wline = '\tif( _tmp_.x != _tmp__def.x || _tmp_.y != _tmp__def.y  ) __argi__+=2;'
+                        wline = wline:gsub('_tmp_',arg.name)
+                        fun_impl:write_line( wline)
+                    else
+                        fun_impl:write_line('\t%s %s;', arg.type, arg.name)
+                        fun_impl:write_line( '\t%s.x = (float)lua_tonumber(L,__argi__++);' ,arg.name)
+                        fun_impl:write_line( '\t%s.y = (float)lua_tonumber(L,__argi__++);' ,arg.name)
+                    end
+                    
                     local call_arg = arg:IsPtr() and ('&'..arg.name) or arg.name
                     table.insert(call_api_args, call_arg)
                 elseif arg.type == 'ImVec4' then
-                    fun_impl:write_line('\t%s %s;', arg.type, arg.name)
-                    fun_impl:write_line( '\t%s.x = (float)lua_tonumber(L,++__argi__);' ,arg.name)
-                    fun_impl:write_line( '\t%s.y = (float)lua_tonumber(L,++__argi__);' ,arg.name)
-                    fun_impl:write_line( '\t%s.z = (float)lua_tonumber(L,++__argi__);' ,arg.name)
-                    fun_impl:write_line( '\t%s.w = (float)lua_tonumber(L,++__argi__);' ,arg.name)
+                    if arg.def  and not arg:IsPtr() then
+                        fun_impl:write_line('\t%s %s_def = %s;', arg.type, arg.name, arg.def)
+                        fun_impl:write_line('\t%s %s;', arg.type, arg.name)
+                        fun_impl:write_line( '\t%s.x = (float)luaL_optnumber(L,__argi__  ,%s_def.x);' ,arg.name, arg.name)
+                        fun_impl:write_line( '\t%s.y = (float)luaL_optnumber(L,__argi__+1,%s_def.y);' ,arg.name, arg.name)
+                        fun_impl:write_line( '\t%s.z = (float)luaL_optnumber(L,__argi__+2,%s_def.y);' ,arg.name, arg.name)
+                        fun_impl:write_line( '\t%s.w = (float)luaL_optnumber(L,__argi__+3,%s_def.y);' ,arg.name, arg.name)
+                        local wline = '\tif( _tmp_.x != _tmp__def.x || _tmp_.y != _tmp__def.y ||  _tmp_.z != _tmp__def.z || _tmp_.w != _tmp__def.w) __argi__+=4;'
+                        wline = wline:gsub('_tmp_',arg.name)
+                        fun_impl:write_line( wline)
+                    else
+                        fun_impl:write_line('\t%s %s;', arg.type, arg.name)
+                        fun_impl:write_line( '\t%s.x = (float)lua_tonumber(L,__argi__++);' ,arg.name)
+                        fun_impl:write_line( '\t%s.y = (float)lua_tonumber(L,__argi__++);' ,arg.name)
+                        fun_impl:write_line( '\t%s.z = (float)lua_tonumber(L,__argi__++);' ,arg.name)
+                        fun_impl:write_line( '\t%s.w = (float)lua_tonumber(L,__argi__++);' ,arg.name)
+                    end
+
                     local call_arg = arg:IsPtr() and ('&'..arg.name) or arg.name
                     table.insert(call_api_args, call_arg)
                 elseif arg:Type() == 'const char*' then
-                    fun_impl:write_line( '\t%s %s = lua_tostring(L, ++__argi__);' ,arg:Type(), arg.name)
+                    if arg.def then
+                        fun_impl:write_line( '\t%s %s = luaL_optstring(L, __argi__, %s);' ,arg:Type(), arg.name, arg.def)
+                        fun_impl:write_line( '\tif( %s != %s ) __argi__++;' ,arg.name, arg.def)
+                    else
+                        fun_impl:write_line( '\t%s %s = lua_tostring(L, __argi__++);' ,arg:Type(), arg.name)
+                    end
                     table.insert(call_api_args, arg.name)
-                elseif (arg.type == 'int' or arg.type =='unsigned int' or arg.type =='unsigned short' or imgui_typedefs[arg.type] == 'int' or imgui_typedefs[arg.type] == 'unsigned int')  and (not arg.is_array) then
-                    fun_impl:write_line( '\t%s %s = (%s)lua_tointeger(L, ++__argi__);' ,arg.type, arg.name, arg.type)
-                    local call_arg = arg:IsPtr() and ('&'..arg.name) or arg.name
-                    table.insert(call_api_args, call_arg)
-                elseif (arg.type =='float' or arg.type =='double') and (not arg.is_array) then
-                    fun_impl:write_line( '\t%s %s = (%s)lua_tonumber(L, ++__argi__);' ,arg.type, arg.name , arg.type)
-                    local call_arg = arg:IsPtr() and ('&'..arg.name) or arg.name
-                    table.insert(call_api_args, call_arg)
+                elseif (arg.type == 'int' or arg.type =='unsigned int' or arg.type =='unsigned short' or imgui_typedefs[arg.type] == 'int' or imgui_typedefs[arg.type] == 'unsigned int')  then
+                    if arg.is_array then
+                        fun_impl:write_line('\t%s %s[%d];' ,arg.type, arg.name, arg.array_size)
+                        for i=0,arg.array_size-1 do
+                            fun_impl:write_line( '\t%s[%d] = (%s)lua_tointeger(L, __argi__++);', arg.name, i, arg.type)
+                        end
+                        table.insert(call_api_args, arg.name)
+                    else
+                        if arg.def then
+                            fun_impl:write_line( '\t%s %s = (%s)luaL_optinteger(L, __argi__, %s);' ,arg.type, arg.name, arg.type, arg.def)
+                            fun_impl:write_line( '\tif( %s != %s ) __argi__++;' ,arg.name, arg.def)
+                        else
+                            fun_impl:write_line( '\t%s %s = (%s)lua_tointeger(L, __argi__++);' ,arg.type, arg.name, arg.type)
+                        end                    
+                        local call_arg = arg:IsPtr() and ('&'..arg.name) or arg.name
+                        table.insert(call_api_args, call_arg)
+                    end
+                elseif (arg.type =='float' or arg.type =='double') then
+                    if arg.is_array then
+                        fun_impl:write_line('\t%s %s[%d];' ,arg.type, arg.name, arg.array_size)
+                        for i=0,arg.array_size-1 do
+                            fun_impl:write_line( '\t%s[%d] = (%s)lua_tonumber(L, __argi__++);', arg.name, i, arg.type)
+                        end
+                        table.insert(call_api_args, arg.name)
+                    else
+                        if arg.def then
+                            fun_impl:write_line( '\t%s %s = (%s)luaL_optnumber(L, __argi__, %s);' ,arg.type, arg.name , arg.type, arg.def)
+                            fun_impl:write_line( '\tif( %s != %s ) __argi__++;' ,arg.name, arg.def)
+                        else
+                            fun_impl:write_line( '\t%s %s = (%s)lua_tonumber(L, __argi__++);' ,arg.type, arg.name , arg.type)
+                        end                                        
+                        
+                        local call_arg = arg:IsPtr() and ('&'..arg.name) or arg.name
+                        table.insert(call_api_args, call_arg)
+                    end
+                    
                 elseif arg.type == 'bool' then
-                    fun_impl:write_line( '\t%s %s = lua_toboolean(L, ++__argi__);' ,arg.type, arg.name)
+                    fun_impl:write_line( '\t%s %s = lua_toboolean(L, __argi__++);' ,arg.type, arg.name)
                     local call_arg = arg:IsPtr() and ('&'..arg.name) or arg.name
                     table.insert(call_api_args, call_arg)
                 else
@@ -604,11 +663,25 @@ function output_imguiapis()
                         fun_impl:write_line( '\tlua_pushnumber(L, %s.w);', ret_arg.name)
                         ret_cnt = ret_cnt + 4
                     elseif ret_arg.type== 'int' or ret.type =='unsigned int' or ret.type =='unsigned short' or imgui_typedefs[ret.type] == 'int'  or imgui_typedefs[ret.type] == 'unsigned int' then
-                        fun_impl:write_line( '\tlua_pushinteger(L, %s);', ret_arg.name)
-                        ret_cnt = ret_cnt + 1
+                        if ret_arg.is_array then
+                            for i=0,ret_arg.array_size-1 do
+                                fun_impl:write_line( '\tlua_pushinteger(L, %s[%d]);', ret_arg.name,i)
+                            end
+                            ret_cnt = ret_cnt + ret_arg.array_size
+                        else
+                            fun_impl:write_line( '\tlua_pushinteger(L, %s);', ret_arg.name)
+                            ret_cnt = ret_cnt + 1
+                        end
                     elseif ret_arg.type =='float' or ret.type =='double' then
-                        fun_impl:write_line( '\tlua_pushnumber(L, %s);', ret_arg.name)
-                        ret_cnt = ret_cnt + 1
+                        if ret_arg.is_array then
+                            for i=0,ret_arg.array_size-1 do
+                                fun_impl:write_line( '\tlua_pushnumber(L, %s[%d]);', ret_arg.name,i)
+                            end
+                            ret_cnt = ret_cnt + ret_arg.array_size
+                        else
+                            fun_impl:write_line( '\tlua_pushnumber(L, %s);', ret_arg.name)
+                            ret_cnt = ret_cnt + 1
+                        end
                     elseif ret_arg.type == 'bool' then
                         fun_impl:write_line( '\tlua_pushboolean(L, %s);', ret_arg.name)
                         ret_cnt = ret_cnt + 1
@@ -628,9 +701,16 @@ function output_imguiapis()
 
     print('luaL_Reg cximgui_methods[] = {')
     local last_name = ''
+    local name_identifier = 2
     for i,proto in ipairs(imgui_apis) do
-        if proto.supported and last_name ~= proto.name then
-            print(string.format('\t{"%s",%s},', proto.name,'cximgui_'.. proto:WrapName()) )    
+        if proto.supported then
+            if last_name ~= proto.name then
+                name_identifier = 2
+                print(string.format('\t{"%s",%s},', proto.name,'cximgui_'.. proto:WrapName()) )   
+            else
+                print(string.format('\t{"%s",%s},', proto.name..name_identifier,'cximgui_'.. proto:WrapName()) )   
+                name_identifier = name_identifier+1
+            end
         end
         last_name = proto.name
     end 
@@ -668,7 +748,7 @@ function parse_imgui_header(path)
     content = remove_empty_lines(content)    
 
     imgui_typedefs['size_t'] = 'unsigned int'
-    local parsed_skip_file = io.open([[E:\Github\SimpleEngine\scripts\client\b.txt]],'w')
+    local parsed_skip_file = io.open(vfs_makepath('scripts/client/parsed_skip_file.txt') ,'w')
     for i=1, #imgui_header_separate_flags-1 do
         local begin_str = imgui_header_separate_flags[i][1]
         local end_str = imgui_header_separate_flags[i+1][1]
@@ -696,12 +776,12 @@ function parse_imgui_header(path)
     end
     parsed_skip_file:close()
     
-    -- output_imguiapis()
+    output_imguiapis()
  
 end
 
 
-parse_imgui_header([[E:\Github\SimpleEngine\internals\imgui\include\imgui.h]])
+parse_imgui_header(vfs_makepath('internals/imgui/include/imgui.h') )
 
 function output_imgui_enums(path)
     
@@ -717,7 +797,7 @@ function output_imgui_enums(path)
     file:close(new_content)
 end
 
-output_imgui_enums([[E:\Github\SimpleEngine\scripts\client\imgui_enums.inl]])
+output_imgui_enums(vfs_makepath('client/src/cximgui_enums.inl'))
 
 
 
