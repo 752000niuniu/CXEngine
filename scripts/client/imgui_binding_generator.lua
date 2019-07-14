@@ -465,60 +465,54 @@ function parse_imgui_api(content)
 end
 
 function parse_enum_blocks(content)
-    
+    imgui_enums = imgui_enums or {}
+    for enum_name, enum_block in content:gmatch('enum%s*([%w_]+).-(%b{});') do
+        print('enum_name', enum_name)
+        imgui_enums[enum_name] =imgui_enums[enum_name] or {}
+        local pause_parse = false
+        for line in enum_block:gmatch('(.-)\n') do
+            if line:find('#if[n]?def') then
+                pause_parse = true
+            elseif line:find('#endif') then
+                pause_parse = false
+            else
+                if not pause_parse and line:find(enum_name) then
+                    line = line:gsub('%s','')
+                    
+                    local name = line:gmatch('([%w_]+)%s*')()
+                    -- line = line:gsub('%s','')
+                    -- local equal_left
+                    -- local equal_right
+                    -- local l,r = line:find('=') 
+                    -- if l then
+                    --     equal_left = line:sub(1,l-1)
+                    --     equal_right = line:sub(r+1)
+                    -- else 
+                    --     equal_left = line
+                    -- end                 
+                    table.insert(imgui_enums[enum_name],name)
+                end
+            end
+        end
+    end
 end
 
-function parse_imgui_header(path)
-    local file = io.open(path)
-    local content = file:read('a')
-    content = content:gsub('//.-\n','\n')   --去掉注释
-    content = content:gsub('/%*.-%*/','')   
-    content = remove_empty_lines(content)    
-
-    imgui_typedefs['size_t'] = 'unsigned int'
-    local parsed_skip_file = io.open([[E:\Github\SimpleEngine\scripts\client\b.txt]],'w')
-    for i=1, #imgui_header_separate_flags-1 do
-        local begin_str = imgui_header_separate_flags[i][1]
-        local end_str = imgui_header_separate_flags[i+1][1]
-        local parse_flag = imgui_header_separate_flags[i][2]
-        local s = begin_str=='' and 1 or content:find(begin_str)
-        local e = content:find(end_str)
-        local sub = content:sub(s,e-1)
-        content = content:sub(e)
-
-        if parse_flag=='skip' then
-        elseif parse_flag =='parse struct' then
-            parse_struct(sub)
-        elseif parse_flag =='parse typedef' then
-            parse_typedef(sub)
-        elseif parse_flag =='parse ImVec2' then
-            parse_imvec2(sub)
-        elseif parse_flag =='parse ImVec4' then
-            parse_imvec4(sub)
-        elseif parse_flag =='parse ImGuiAPI' then
-            parse_imgui_api(sub)
-        elseif parse_flag =='parse enum blocks' then
-            parse_enum_blocks(sub)
-        end
-        parsed_skip_file:write('\nsub :'..parse_flag.. '\n'..sub)
-    end
-    parsed_skip_file:close()
-    
-    local unsupported_func = {}
-    for i,proto in ipairs(imgui_apis) do
-        print('//'..proto:ToString())
-        
-        if not proto.supported then
-            print('//UnSupported '.. proto.name)
-            table.insert(unsupported_func, proto:WrapName())
-        else
---[[
+ --[[
     函数生成算法:
     1. c函数原型里, 每有一个arg, 就对应于一个lua的check 或者 toxxx 语句
     2. 读出这些args后, 调用imguiAPI, 得到返回值
     3. 用c的返回类型转换成lua的pushxxx
     4. 打完收工
 ]]
+function output_imguiapis()
+  
+    local unsupported_func = {}
+    for i,proto in ipairs(imgui_apis) do
+        print('//'..proto:ToString())
+        if not proto.supported then
+            print('//UnSupported '.. proto.name)
+            table.insert(unsupported_func, proto:WrapName())
+        else
             local call_api_args = {}
             local fun_impl = {}
             function fun_impl:write_line(fmt, ...) 
@@ -644,26 +638,88 @@ function parse_imgui_header(path)
     print('};')
 
     print([[//open_imgui
-void luaopen_cximgui(lua_State* L){
-    if (luaL_newmetatable(L, "mt_cximgui")) {
-        luaL_setfuncs(L, cximgui_methods , 0);
-        lua_setfield(L, -1, "__index");
-    }
-    else {
-        std::cout << "associate cximgui error!" << std::endl;
-    }
+void luaopen_cximgui(lua_State* L) {
 
-    lua_newtable(L);
+#define REG_IMGUI_ENUM(name)  (lua_pushinteger(L, name),lua_setglobal(L, #name))
+#include "cximgui_enums.inl"
+#undef REG_IMGUI_ENUM
+
+	if (luaL_newmetatable(L, "mt_cximgui")) {
+		luaL_setfuncs(L, cximgui_methods, 0);
+		lua_setfield(L, -1, "__index");
+	}
+	else {
+		std::cout << "associate cximgui error!" << std::endl;
+	}
+
+	lua_newtable(L);
 	luaL_setmetatable(L, "mt_cximgui");
-	lua_setglobal(L,"imgui");
+	lua_setglobal(L, "imgui");
+
 }
-
-
 ]])
+end
 
+function parse_imgui_header(path)
+    local file = io.open(path)
+    local content = file:read('a')
+    content = content:gsub('//.-\n','\n')   --去掉注释
+    content = content:gsub('/%*.-%*/','')   
+    content = remove_empty_lines(content)    
+
+    imgui_typedefs['size_t'] = 'unsigned int'
+    local parsed_skip_file = io.open([[E:\Github\SimpleEngine\scripts\client\b.txt]],'w')
+    for i=1, #imgui_header_separate_flags-1 do
+        local begin_str = imgui_header_separate_flags[i][1]
+        local end_str = imgui_header_separate_flags[i+1][1]
+        local parse_flag = imgui_header_separate_flags[i][2]
+        local s = begin_str=='' and 1 or content:find(begin_str)
+        local e = content:find(end_str)
+        local sub = content:sub(s,e-1)
+        content = content:sub(e)
+
+        if parse_flag=='skip' then
+        elseif parse_flag =='parse struct' then
+            parse_struct(sub)
+        elseif parse_flag =='parse typedef' then
+            parse_typedef(sub)
+        elseif parse_flag =='parse ImVec2' then
+            parse_imvec2(sub)
+        elseif parse_flag =='parse ImVec4' then
+            parse_imvec4(sub)
+        elseif parse_flag =='parse ImGuiAPI' then
+            parse_imgui_api(sub)
+        elseif parse_flag =='parse enum blocks' then
+            parse_enum_blocks(sub)
+        end
+        parsed_skip_file:write('\nsub :'..parse_flag.. '\n'..sub)
+    end
+    parsed_skip_file:close()
+    
+    -- output_imguiapis()
+ 
 end
 
 
 parse_imgui_header([[E:\Github\SimpleEngine\internals\imgui\include\imgui.h]])
+
+function output_imgui_enums(path)
+    
+    local file = io.open(path, 'w')
+    local enum_macro = "#define REG_IMGUI_ENUM(name)  (lua_pushinteger(L, name),lua_setglobal(L, #name))"
+    for k,v in pairs(imgui_enums) do
+        -- print(k,v)
+        for i, name in ipairs(v) do
+            -- print(name)
+            file:write( string.format('REG_IMGUI_ENUM(%s);\n',name) )
+        end
+    end
+    file:close(new_content)
+end
+
+output_imgui_enums([[E:\Github\SimpleEngine\scripts\client\imgui_enums.inl]])
+
+
+
 
 

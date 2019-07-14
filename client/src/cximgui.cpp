@@ -2952,8 +2952,15 @@ luaL_Reg cximgui_methods[] = {
 { "DestroyPlatformWindows",cximgui_DestroyPlatformWindows },
 { NULL, NULL }
 };
+
+
 //open_imgui
 void luaopen_cximgui(lua_State* L) {
+
+#define REG_IMGUI_ENUM(name)  (lua_pushinteger(L, name),lua_setglobal(L, #name))
+#include "cximgui_enums.inl"
+#undef REG_IMGUI_ENUM
+
 	if (luaL_newmetatable(L, "mt_cximgui")) {
 		luaL_setfuncs(L, cximgui_methods, 0);
 		lua_setfield(L, -1, "__index");
@@ -2965,6 +2972,7 @@ void luaopen_cximgui(lua_State* L) {
 	lua_newtable(L);
 	luaL_setmetatable(L, "mt_cximgui");
 	lua_setglobal(L, "imgui");
+
 }
 
 
