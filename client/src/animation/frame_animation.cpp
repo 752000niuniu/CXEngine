@@ -484,7 +484,7 @@ void luaopen_frame_animation(lua_State* L)
 		lua_setfield(L, -1, "__index");
 	}
 	else {
-		std::cout << "associate mt_net_thread_queue error!" << std::endl;
+		std::cout << "associate mt_frame_animation error!" << std::endl;
 	}
 
 	script_system_register_function(L, frame_animation_set_bezier_curve_p1_p2);
