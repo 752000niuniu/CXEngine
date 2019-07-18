@@ -496,6 +496,8 @@ end
 ]]
 function output_imguiapis()
     print([[#include "cximgui.h"]]) 
+    print([[#include <imgui.h>]]) 
+    print([[#include <string.h>]]) 
     local unsupported_func = {}
     for i,proto in ipairs(imgui_apis) do
         print('//'..proto:ToString())
@@ -707,25 +709,103 @@ function output_imguiapis()
     print('\t{ NULL, NULL }')
     print('};')
 
-    print([[//open_imgui
+    print([[
+
+struct CXIMStrBuf {
+    char* str;
+    uint32_t size;
+};
+
+int cximgui_strbuf_reset(lua_State* L) {
+    CXIMStrBuf* buf = (CXIMStrBuf*)lua_touserdata(L, 1);
+    const char* str = lua_tostring(L, 2);
+    size_t len = strlen(str);
+    strcpy(buf->str, str);
+    buf->str[len] = '\0';
+    return 0;
+}
+
+int cximgui_strbuf_str(lua_State* L) {
+    CXIMStrBuf* buf = (CXIMStrBuf*)lua_touserdata(L, 1);
+    lua_pushstring(L, buf->str);
+    return 1;
+}
+
+int cximgui_strbuf_size(lua_State* L) {
+    CXIMStrBuf* buf = (CXIMStrBuf*)lua_touserdata(L, 1);
+    lua_pushinteger(L, buf->size);
+    return 1;
+}
+
+luaL_Reg cximgui_strbuf_methods[] = {
+    { "str", cximgui_strbuf_str },
+    { "size", cximgui_strbuf_size },
+    { "reset", cximgui_strbuf_reset },
+};
+
+int cximgui_strbuf_destroy(lua_State* L) {
+    CXIMStrBuf* buf = (CXIMStrBuf*)lua_touserdata(L, 1);
+    delete[] buf->str;
+    return 0;
+}
+
+int cximgui_strbuf_create(lua_State* L) {
+    const char* str = lua_tostring(L, 1);
+    size_t len = strlen(str);
+    uint32_t size = (uint32_t)lua_tointeger(L, 2);
+    CXIMStrBuf* buf = (CXIMStrBuf*)lua_newuserdata(L, sizeof(CXIMStrBuf));
+    luaL_setmetatable(L, "mt_cximgui_strbuf");
+    buf->str = new char[size];
+    strcpy(buf->str, str);
+    buf->str[len] = '\0';
+    buf->size = size;
+    return 1;
+}
+
+int cximgui_InputText_3_sui(lua_State* L) {
+    int __argi__ = 1;
+    const char* label = lua_tostring(L, __argi__++);
+    CXIMStrBuf* buf = (CXIMStrBuf*)lua_touserdata(L, __argi__++);
+    ImGuiInputTextFlags extra_flags = (ImGuiInputTextFlags)luaL_optinteger(L, __argi__, 0);
+    if (extra_flags != 0) __argi__++;
+    bool __ret__ = ImGui::InputText(label, buf->str, buf->size, extra_flags);
+    lua_pushboolean(L, __ret__);
+    return 1;
+};
+
+luaL_Reg cximgui_extra_methods[] = {
+    { "CreateStrbuf", cximgui_strbuf_create },
+    { "DestroyStrbuf", cximgui_strbuf_destroy },
+    { "InputText",cximgui_InputText_3_sui },
+    { "Text", cximgui_TextUnformatted_2_ss},
+};
+
 void luaopen_cximgui(lua_State* L) {
 
 #define REG_IMGUI_ENUM(name)  (lua_pushinteger(L, name),lua_setglobal(L, #name))
 #include "cximgui_enums.inl"
 #undef REG_IMGUI_ENUM
 
-	if (luaL_newmetatable(L, "mt_cximgui")) {
-		luaL_setfuncs(L, cximgui_methods, 0);
-		lua_setfield(L, -1, "__index");
-	}
-	else {
-		std::cout << "associate cximgui error!" << std::endl;
-	}
+    if (luaL_newmetatable(L, "mt_cximgui_strbuf")) {
+        luaL_setfuncs(L, cximgui_strbuf_methods, 0);
+        lua_setfield(L, -1, "__index");
+    }
+    else {
+        std::cout << "associate cximgui_strbuf error!" << std::endl;
+    }
 
-	lua_newtable(L);
-	luaL_setmetatable(L, "mt_cximgui");
-	lua_setglobal(L, "imgui");
+    if (luaL_newmetatable(L, "mt_cximgui")) {
+        luaL_setfuncs(L, cximgui_methods, 0);
+        luaL_setfuncs(L, cximgui_extra_methods, 0);
+        lua_setfield(L, -1, "__index");
+    }
+    else {
+        std::cout << "associate cximgui error!" << std::endl;
+    }
 
+    lua_newtable(L);
+    luaL_setmetatable(L, "mt_cximgui");
+    lua_setglobal(L, "imgui");
 }
 ]])
 end
@@ -777,9 +857,13 @@ function output_imgui_enums(path)
     
     local file = io.open(path, 'w')
     local enum_macro = "#define REG_IMGUI_ENUM(name)  (lua_pushinteger(L, name),lua_setglobal(L, #name))"
+    local sorted_keys  = {}
     for k,v in pairs(imgui_enums) do
-        -- print(k,v)
-        for i, name in ipairs(v) do
+        table.insert(sorted_keys, k)
+    end
+    table.sort(sorted_keys)
+    for _,key in ipairs(sorted_keys) do
+        for i, name in ipairs(imgui_enums[key]) do
             -- print(name)
             file:write( string.format('REG_IMGUI_ENUM(%s);\n',name) )
         end
