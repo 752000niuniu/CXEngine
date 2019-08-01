@@ -13,10 +13,10 @@ public:
 	void Show();
 
 	GLFWwindow* GetGLFWwindow(){ return m_pWindow;};
-	int GetWidth() { return m_Width;};
-	int GetHeight(){ return m_Height;};
-	float GetCenterX() { return m_Width / 2.f; }
-	float GetCenterY() { return m_Height/ 2.f; }
+	int GetWidth();
+	int GetHeight();
+	float GetCenterX() { return GetWidth()/ 2.f; }
+	float GetCenterY() { return GetHeight()/ 2.f; }
 	float GetDeltaTime();
 	float GetDeltaTimeMilliseconds();
 	void OnFrameBufferSizeCallback(int width, int height);

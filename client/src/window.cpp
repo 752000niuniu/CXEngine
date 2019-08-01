@@ -22,18 +22,15 @@ static void glfw_framebuffer_size_callback(GLFWwindow* window, int width, int he
 
 static void glfw_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
-	ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
 	INPUT_MANAGER_INSTANCE->MouseButtonCallback(window, button, action, mods);
 }
 
 static void glfw_key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
-	ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mode);
 	INPUT_MANAGER_INSTANCE->KeyCallbackFunc(window, key, scancode, action, mode);
 }
 static void glfw_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
 	INPUT_MANAGER_INSTANCE->ScrollCallbackFunc(window, (float)xoffset, (float)yoffset);
 }
 
@@ -48,19 +45,28 @@ static void glfw_character_callback(GLFWwindow* window, unsigned int charcode)
 	INPUT_MANAGER_INSTANCE->CharacterInputCallback(window, charcode);
 }
 
-Window::Window()
-:m_Width(0),m_Height(0),m_FPS(MS_PER_UPDATE)
-{
-	glfwInit();
+static void glfw_error_callback(int error, const char* description) {
+	printf("Error: %s\n", description);
 }
 
-Window::~Window()
-{
+
+Window::Window()
+	:m_Width(0), m_Height(0), m_FPS(MS_PER_UPDATE), m_pWindow(nullptr){
+	
+}
+
+Window::~Window() {
 	
 }
 
 void Window::Init(int w,int h)
 {
+	if (!glfwInit()) {
+		cxlog_err("glfwInit error!");
+		exit(EXIT_FAILURE);
+	}
+	glfwSetErrorCallback(glfw_error_callback);
+
 #if __APPLE__
     // GL 3.2 + GLSL 150
     const char* glsl_version = "#version 150";
@@ -76,34 +82,35 @@ void Window::Init(int w,int h)
     //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 #endif
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);	
+	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);	
 	auto floatConfig = script_system_get_config("window_float");
 	glfwWindowHint(GLFW_FLOATING, strcmp(floatConfig , "1")==0);
 
-	m_Width = w;
-	m_Height = h;
-	
-	m_pWindow = glfwCreateWindow(m_Width, m_Height, WINDOW_TITLE, nullptr, nullptr);
+	m_pWindow = glfwCreateWindow(w, h, WINDOW_TITLE, nullptr, nullptr);
 	if (m_pWindow == nullptr)
 	{
-		LOG_ERR("glfwCreateWindow failed!");
+		cxlog_err("glfwCreateWindow failed!");
 		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
+	glfwGetWindowSize(m_pWindow, &m_Width, &m_Height);
+	glfwMakeContextCurrent(m_pWindow);
+	GLenum err = glewInit();
+	if (GLEW_OK !=err) {
+		cxlog_err("glewInit error! %s\n", glewGetErrorString(err));
 		return;
 	}
+	glfwSwapInterval(1);
 
-	glfwMakeContextCurrent(m_pWindow);
-	glfwSwapInterval(1); // Enable vsync
-
-	//glewExperimental = GL_TRUE;
-	glewInit();
+	int fwidth, fheight;
+	glfwGetFramebufferSize(m_pWindow, &fwidth, &fheight);
+	glViewport(0, 0, fwidth, fheight);
 
 	ImGui::CreateContext();
-
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       																
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         
-																
 	ImGui_ImplGlfw_InitForOpenGL(m_pWindow,true);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
@@ -119,9 +126,6 @@ void Window::Init(int w,int h)
 	glfwSetScrollCallback(m_pWindow, glfw_scroll_callback);
 	glfwSetCharCallback(m_pWindow, glfw_character_callback);
 	glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-
-	glViewport(0, 0, m_Width, m_Height);
-	
 }
 
 void Window::Show()
@@ -133,8 +137,6 @@ void Window::Show()
 	ImGuiIO& io = ImGui::GetIO();
     while (!glfwWindowShouldClose(m_pWindow))
 	{
-		glfwPollEvents();
-
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);		
 		auto now = glfwGetTime();
@@ -164,6 +166,7 @@ void Window::Show()
 
 		glfwMakeContextCurrent(m_pWindow);
 		glfwSwapBuffers(m_pWindow);
+		glfwPollEvents();
     }
 	
 	script_system_deinit();
@@ -177,6 +180,16 @@ void Window::Show()
 	auto* ne_thread = file_loading_thread();
 	delete ne_thread;
 	ne_thread = nullptr;
+}
+
+int Window::GetWidth()
+{
+	return m_Width;
+}
+
+int Window::GetHeight()
+{
+	return m_Height;
 }
 
 float Window::GetDeltaTime()

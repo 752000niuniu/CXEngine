@@ -76,7 +76,7 @@ m_Path(filePath)
 		}
 		else
 		{
-			LOG_ERR("ReadBitmapFile FAILED\n");
+			cxlog_err("ReadBitmapFile FAILED\n");
 			return;
 		}
 	}
@@ -86,7 +86,7 @@ m_Path(filePath)
 		lImageBuffer = SOIL_load_image(m_Path.c_str(), &m_Width, &m_Height, &channel, SOIL_LOAD_AUTO);
 		if (lImageBuffer == NULL)
 		{
-			LOG_ERR("ReadSOIL FAILED - NO IMAGE BUFFER\n");
+			cxlog_err("ReadSOIL FAILED - NO IMAGE BUFFER\n");
 			return;
 		}
 

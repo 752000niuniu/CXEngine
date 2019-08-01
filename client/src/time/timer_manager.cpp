@@ -75,7 +75,7 @@ bool TimerManager::RemoveTimer(const std::string & name)
 		}
 	}
 
-	LOG_WARN(std::string(_T("TimerManager::RemoveTimer: trying to remove unknown timer '") + name + _T("'.")).c_str());
+	cxlog_warn(std::string(_T("TimerManager::RemoveTimer: trying to remove unknown timer '") + name + _T("'.")).c_str());
 	return false;
 }
 
@@ -89,7 +89,7 @@ void TimerManager::PauseTimer(const std::string & name, bool paused)
 			return;
 		}
 	}
-	LOG_WARN(std::string(_T("TimerManager::PauseTimer: trying to pause unknown timer '") + name + _T("'.")).c_str());
+	cxlog_warn(std::string(_T("TimerManager::PauseTimer: trying to pause unknown timer '") + name + _T("'.")).c_str());
 }
 
 void TimerManager::SetCountingDownTimer(const std::string & name, bool countingDown)
@@ -102,7 +102,7 @@ void TimerManager::SetCountingDownTimer(const std::string & name, bool countingD
 			return;
 		}
 	}
-	LOG_WARN(std::string(_T("TimerManager::SetCountingDownTimer: trying to adjust unknown timer '") + name + _T("'.")).c_str());
+	cxlog_warn(std::string(_T("TimerManager::SetCountingDownTimer: trying to adjust unknown timer '") + name + _T("'.")).c_str());
 }
 
 void TimerManager::SetLoopTimer(const std::string & name, bool looping)
@@ -115,7 +115,7 @@ void TimerManager::SetLoopTimer(const std::string & name, bool looping)
 			return;
 		}
 	}
-	LOG_WARN(std::string(_T("TimerManager::SetLoopTimer: trying to adjust unknown timer '") + name + _T("'.")).c_str());
+	cxlog_warn(std::string(_T("TimerManager::SetLoopTimer: trying to adjust unknown timer '") + name + _T("'.")).c_str());
 }
 
 void TimerManager::ResetTimer(const std::string & name, bool paused)
@@ -128,7 +128,7 @@ void TimerManager::ResetTimer(const std::string & name, bool paused)
 			return;
 		}
 	}
-	LOG_WARN(std::string(_T("TimerManager::ResetTimer: trying to reset unknown timer '") + name + _T("'.")).c_str());
+	cxlog_warn(std::string(_T("TimerManager::ResetTimer: trying to reset unknown timer '") + name + _T("'.")).c_str());
 }
 
 void TimerManager::SetTargetTimeTimer(const std::string & name, float32 targetTime, bool reset, bool paused)
@@ -141,7 +141,7 @@ void TimerManager::SetTargetTimeTimer(const std::string & name, float32 targetTi
 			return;
 		}
 	}
-	LOG_WARN(std::string(_T("TimerManager::SetTargetTimeTimer: trying to adjust unknown timer '") + name + _T("'.")).c_str());
+	cxlog_warn(std::string(_T("TimerManager::SetTargetTimeTimer: trying to adjust unknown timer '") + name + _T("'.")).c_str());
 }
 
 void TimerManager::SetFunctionTimer(const std::string & name, const std::function<void()> & func)
@@ -154,7 +154,7 @@ void TimerManager::SetFunctionTimer(const std::string & name, const std::functio
 			return;
 		}
 	}
-	LOG_WARN(std::string(_T("TimerManager::SetFunctionTimer: trying to adjust unknown timer '") + name + _T("'.")).c_str());
+	cxlog_warn(std::string(_T("TimerManager::SetFunctionTimer: trying to adjust unknown timer '") + name + _T("'.")).c_str());
 }
 
 float64 TimerManager::ForceEndTimer(const std::string & name)
@@ -166,7 +166,7 @@ float64 TimerManager::ForceEndTimer(const std::string & name)
 			return it.second.ForceEnd();
 		}
 	}
-	LOG_WARN(std::string(_T("TimerManager::ForceEndTimer: trying to end unknown timer '") + name + _T("'.")).c_str());
+	cxlog_warn(std::string(_T("TimerManager::ForceEndTimer: trying to end unknown timer '") + name + _T("'.")).c_str());
 	return 0;
 }
 
@@ -180,7 +180,7 @@ void TimerManager::ForwardTimer(const std::string & name, float64 time)
 			return;
 		}
 	}
-	LOG_WARN(std::string(_T("TimerManager::ForwardTimer: trying to forward unknown timer '") + name + _T("'.")).c_str());
+	cxlog_warn(std::string(_T("TimerManager::ForwardTimer: trying to forward unknown timer '") + name + _T("'.")).c_str());
 }
 
 void TimerManager::ForwardAllTimers(float64 time)
@@ -200,7 +200,7 @@ int32 TimerManager::GetTimerMinutes(const std::string & name) const
 			return it.second.GetCurrentMinutes();
 		}
 	}
-	LOG_WARN(std::string(_T("TimerManager::GetTimerMinutes: Couldn't find the timer '") + name + _T("'.")).c_str());
+	cxlog_warn(std::string(_T("TimerManager::GetTimerMinutes: Couldn't find the timer '") + name + _T("'.")).c_str());
 	return 0;
 }
 
@@ -213,7 +213,7 @@ int32 TimerManager::GetTimerSeconds(const std::string & name) const
 			return it.second.GetCurrentSeconds();
 		}
 	}
-	LOG_WARN(std::string(_T("TimerManager::GetTimerSeconds: Couldn't find the timer '") + name + _T("'.")).c_str());
+	cxlog_warn(std::string(_T("TimerManager::GetTimerSeconds: Couldn't find the timer '") + name + _T("'.")).c_str());
 	return 0;
 }
 
@@ -226,7 +226,7 @@ int32 TimerManager::GetTimerTotalSeconds(const std::string & name) const
 			return it.second.GetCurrentTotalSeconds();
 		}
 	}
-	LOG_WARN(std::string(_T("TimerManager::GetTimerTotalSeconds: Couldn't find the timer '") + name + _T("'.")).c_str());
+	cxlog_warn(std::string(_T("TimerManager::GetTimerTotalSeconds: Couldn't find the timer '") + name + _T("'.")).c_str());
 	return 0;
 }
 
@@ -239,7 +239,7 @@ float64 TimerManager::GetTimerTargetTime(const std::string & name) const
 			return it.second.GetTargetTime();
 		}
 	}
-	LOG_WARN(std::string(_T("TimerManager::GetTimerTargetTime: trying to access unknown timer '") + name + _T("'.")).c_str());
+	cxlog_warn(std::string(_T("TimerManager::GetTimerTargetTime: trying to access unknown timer '") + name + _T("'.")).c_str());
 	return 0;
 }
 
@@ -252,7 +252,7 @@ float64 TimerManager::GetTimerAccurateTime(const std::string & name) const
 			return it.second.GetCurrentAccurateTime();
 		}
 	}
-	LOG_WARN(std::string(_T("TimerManager::GetTimerAccurateTime: Couldn't find the timer '") + name + _T("'.")).c_str());
+	cxlog_warn(std::string(_T("TimerManager::GetTimerAccurateTime: Couldn't find the timer '") + name + _T("'.")).c_str());
 	return 0;
 }
 

@@ -33,11 +33,11 @@ public:
 
 #define LOG_PRINT(format,...) Logger::GetInstance()->Print(format,__VA_ARGS__)
 
-#define LOG_INFO(format,...) Logger::GetInstance()->Print(format,__VA_ARGS__)
+#define cxlog_info(format,...) Logger::GetInstance()->Print(format,__VA_ARGS__)
 
-#define LOG_ERR(format,...) Logger::GetInstance()->Print(format,"")
+#define cxlog_err(format,...) Logger::GetInstance()->Print(format,__VA_ARGS__)
 
-#define LOG_WARN(format,...) Logger::GetInstance()->Print(format,"")
+#define cxlog_warn(format,...) Logger::GetInstance()->Print(format,"")
 
 enum struct LogLevel : int
 {

@@ -277,7 +277,7 @@ void FrameAnimation::OnUpdate()
 					m_LastFrame = (m_CurrentGroup)* m_GroupFrameCount + m_GroupFrameCount - 1;
 					if (m_LastFrame >= m_pSprite->mFrames.size())
 					{
-						LOG_ERR("m_LastFrame over size");
+						cxlog_err("m_LastFrame over size");
 						m_LastFrame = 0;
 					}
 					if (!m_pSprite->mFrames[m_LastFrame].IsBlank)

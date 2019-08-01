@@ -61,8 +61,25 @@ function on_scene_manager_init_scene(name)
     scene_list[name].OnSceneInit() 
 end
 
+
+function dock_window_flags()
+    return ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking 
+    |ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
+    |ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+end
 function on_scene_manager_update(name)
+    local vid, x,y,w,h = imgui.GetMainViewport5()
+    imgui.SetNextWindowPos(x,y)
+    imgui.SetNextWindowSize(w,h)
+    imgui.SetNextWindowViewport(vid)
+
+    imgui.Begin('Dock', true, dock_window_flags())
+    
+    local dockspace_id = imgui.GetID('MyDockSpace')
+    imgui.DockSpace(dockspace_id, 0,0, 0)
     scene_list[name].OnSceneUpdate()
+    imgui.End()
 end
 
 function on_scene_manager_draw(name)

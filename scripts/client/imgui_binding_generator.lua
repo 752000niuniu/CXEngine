@@ -773,11 +773,38 @@ int cximgui_InputText_3_sui(lua_State* L) {
     return 1;
 };
 
+int cximgui_DockSpace_3_iv2i(lua_State*L) {
+	int __argi__ = 1;
+	int id = (int)lua_tointeger(L, __argi__++);
+	ImVec2 size_def = ImVec2(0, 0);
+	ImVec2 size;
+	size.x = (float)luaL_optnumber(L, __argi__, size_def.x);
+	size.y = (float)luaL_optnumber(L, __argi__ + 1, size_def.y);
+	if (size.x != size_def.x || size.y != size_def.y) __argi__ += 2;
+	ImGuiDockNodeFlags  flags = (ImGuiDockNodeFlags)luaL_optinteger(L, __argi__, 0);
+	if (flags != 0) __argi__++; 
+		
+	ImGui::DockSpace(id, size, flags);
+	return 0;
+}
+
+int cximgui_GetMainViewport(lua_State*L) {
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+	lua_pushinteger(L, viewport->ID);
+	lua_pushinteger(L, (int)viewport->Pos.x);
+	lua_pushinteger(L, (int)viewport->Pos.y);
+	lua_pushinteger(L, (int)viewport->Size.x);
+	lua_pushinteger(L, (int)viewport->Size.y);
+	return 5;
+}
+
 luaL_Reg cximgui_extra_methods[] = {
-    { "CreateStrbuf", cximgui_strbuf_create },
-    { "DestroyStrbuf", cximgui_strbuf_destroy },
-    { "InputText",cximgui_InputText_3_sui },
-    { "Text", cximgui_TextUnformatted_2_ss},
+	{ "CreateStrbuf", cximgui_strbuf_create },
+{ "DestroyStrbuf", cximgui_strbuf_destroy },
+{ "InputText",cximgui_InputText_3_sui },
+{ "Text", cximgui_TextUnformatted_2_ss },
+{ "DockSpace", cximgui_DockSpace_3_iv2i },
+{ "GetMainViewport", cximgui_GetMainViewport},
 };
 
 void luaopen_cximgui(lua_State* L) {
