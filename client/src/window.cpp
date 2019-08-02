@@ -108,16 +108,14 @@ void Window::Init(int w,int h)
 
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       																
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         
-	ImGui_ImplGlfw_InitForOpenGL(m_pWindow,true);
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	ImGui_ImplGlfw_InitForOpenGL(m_pWindow, true);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
-	// Setup style
 	ImGui::GetStyle().WindowRounding = 0.0f;
 	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsClassic();
 
 	glfwSetFramebufferSizeCallback(m_pWindow, glfw_framebuffer_size_callback);
 	glfwSetCursorPosCallback(m_pWindow, glfw_mouse_callback);

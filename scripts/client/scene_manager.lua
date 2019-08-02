@@ -69,17 +69,17 @@ function dock_window_flags()
 
 end
 function on_scene_manager_update(name)
-    local vid, x,y,w,h = imgui.GetMainViewport5()
-    imgui.SetNextWindowPos(x,y)
-    imgui.SetNextWindowSize(w,h)
-    imgui.SetNextWindowViewport(vid)
+    -- local vid, x,y,w,h = imgui.GetMainViewport5()
+    -- imgui.SetNextWindowPos(x,y)
+    -- imgui.SetNextWindowSize(w,h)
+    -- imgui.SetNextWindowViewport(vid)
+    -- imgui.Begin('Dock', true, dock_window_flags())
+    -- local dockspace_id = imgui.GetID('MyDockSpace')
+    -- imgui.DockSpace(dockspace_id, 0,0, 0)
+    -- scene_list[name].OnSceneUpdate()
+    -- imgui.End()
 
-    imgui.Begin('Dock', true, dock_window_flags())
-    
-    local dockspace_id = imgui.GetID('MyDockSpace')
-    imgui.DockSpace(dockspace_id, 0,0, 0)
     scene_list[name].OnSceneUpdate()
-    imgui.End()
 end
 
 function on_scene_manager_draw(name)

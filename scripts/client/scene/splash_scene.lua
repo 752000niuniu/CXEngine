@@ -24,11 +24,6 @@ function OnSceneUpdate()
     end
     
     imgui.Begin('what', true, 0)
-    
-    
-    
-
-    
     imgui.TextUnformatted("Nickname   :");
 	imgui.SameLine();
 	-- -- s_Account = imgui.InputTextUnformatted("##account", s_Account, 1024);
@@ -58,19 +53,6 @@ function OnSceneUpdate()
          frame_animation_set_bezier_curve_p1_p2(0.48,0.01,0.01,1.01,1.01)
     end
     imgui.End()
-
-
-    -- local old_speed = frame_speed
-    -- frame_speed =  imgui.DragFloat('FrameSpeed', frame_speed)
-    -- if old_speed ~= frame_speed then
-    --     player_set_frame_speed(frame_speed)
-    -- end
-    -- old_speed = move_speed
-    -- move_speed = imgui.DragFloat('MoveSpeed', move_speed)
-    -- if old_speed~= move_speed then
-    --     player_set_move_speed(move_speed)
-    -- end
-
 end
 
 function OnSceneDraw()
