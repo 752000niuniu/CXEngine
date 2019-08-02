@@ -137,6 +137,13 @@ int actor_get_dir(lua_State* L) {
 	return 1;
 }
 
+int actor_set_action_id(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	int actionID = (int)lua_tointeger(L, 2);
+	actor->SetActionID(actionID);
+	return 0;
+}
+
 luaL_Reg mt_actor[] = {
 	{ "SetProperty",actor_method_set_property },
 { "GetProperty",actor_method_get_property },
@@ -148,6 +155,7 @@ luaL_Reg mt_actor[] = {
 {"GetX", actor_get_x},
 {"GetY", actor_get_y},
 {"GetDir", actor_get_dir},
+{"SetActionID", actor_set_action_id},
 
 { NULL, NULL }
 };
@@ -195,6 +203,13 @@ int actor_get_metatable(lua_State* L){
 	return 1;
 }
 
+int action_system_get_action_size() {
+	return action_get_size();
+}
+
+std::string action_system_get_action_name(int action) {
+	return action_get_name(action);
+}
 
 void luaopen_actor(lua_State* L)
 {
@@ -202,7 +217,15 @@ void luaopen_actor(lua_State* L)
 	script_system_register_function(L, player_set_move_speed);
 	script_system_register_luac_function(L, lua_new_actor);
 	script_system_register_luac_function(L, actor_get_metatable);
-	
+
+	script_system_register_function(L, action_system_get_action_size);
+	script_system_register_function(L, action_system_get_action_name);
+
+	std::map<std::string, int> action_enums;
+	for (int i = Action::Idle; i <= Action::Defend; i++) {
+		action_enums.insert({ action_get_name(i), i });
+	}
+
 	lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
 #define REG_ENUM(e) lua_pushinteger(L, e);	lua_setfield(L, -2, #e);
 	REG_ENUM(ACTOR_TYPE_DEFAULT);
@@ -210,7 +233,29 @@ void luaopen_actor(lua_State* L)
 	REG_ENUM(ACTOR_TYPE_PET);
 	REG_ENUM(ACTOR_TYPE_NPC);
 #undef REG_ENUM
+
+
+#define REG_ENUM(nmspc,name) lua_pushinteger(L, nmspc::name);	lua_setfield(L, -2, #nmspc#name);
+	REG_ENUM(Action, Idle);
+	REG_ENUM(Action, Walk);
+	REG_ENUM(Action, Sit);
+	REG_ENUM(Action, Angry);
+	REG_ENUM(Action, Sayhi);
+	REG_ENUM(Action, Dance);
+	REG_ENUM(Action, Salute);
+	REG_ENUM(Action, Clps);
+	REG_ENUM(Action, Cry);
+	REG_ENUM(Action, Batidle);
+	REG_ENUM(Action, Attack);
+	REG_ENUM(Action, Cast);
+	REG_ENUM(Action, Behit);
+	REG_ENUM(Action, Runto);
+	REG_ENUM(Action, Runback);
+	REG_ENUM(Action, Defend);
+#undef REG_ENUM
+
+
 	lua_pop(L, 1);
 
-	
+
 }

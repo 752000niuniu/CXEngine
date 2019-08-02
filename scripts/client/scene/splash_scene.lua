@@ -16,14 +16,14 @@ local frame_speed = 0.0
 local s_Account = 'oceancx11'
 local PosXY = '200,2790'
 local s_AccountStrbuf = imgui.CreateStrbuf('w2hat',1024)
-function OnSceneUpdate()
+function OnSceneUpdate()    
+    imgui.Begin('what', true, 0)
 
     ret, show_demo = imgui.Checkbox('Demo', show_demo)
     if show_demo then
         imgui.ShowDemoWindow(show_demo)
     end
-    
-    imgui.Begin('what', true, 0)
+
     imgui.TextUnformatted("Nickname   :");
 	imgui.SameLine();
 	-- -- s_Account = imgui.InputTextUnformatted("##account", s_Account, 1024);

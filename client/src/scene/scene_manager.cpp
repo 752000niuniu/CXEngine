@@ -12,9 +12,9 @@
 #include "cxmath.h"
 #include "file_system.h"
 
-static bool s_DrawMask(true), s_DrawStrider(true), s_DrawCell(false), s_DrawMap(true), s_DrawAnnouncement(true), s_AutoRun(false);
-bool g_IsMouseInImGui = false;
 
+static bool s_DrawMask, s_DrawStrider, s_DrawCell, s_DrawMap, s_DrawAnnouncement, s_AutoRun;
+static bool g_IsMouseInImGui;
 /*
 lua 尽快完成tsv解析  然后把scene创建放在lua
 */
@@ -119,7 +119,7 @@ void SceneManager::RemoveScene(String name)
 
 bool SceneManager::IsHoverImGui()
 {
-	return g_IsMouseInImGui;
+	return	g_IsMouseInImGui;
 }
 
 bool SceneManager::IsDrawMask()
@@ -201,128 +201,14 @@ void SceneManager::Update()
 			script_system_call_function(script_system_get_luastate(),"on_scene_manager_update", m_pCurrentScene->GetName());
 		}
 	}
-};
-
-void SceneManager::DrawImGUI()
-{
-	if (m_SwitchingScene)return;
-	auto* curScene = GetCurrentScene();
-	if (!curScene)return;
-	auto m_Player = curScene->GetLocalPlayer();
-	if (!m_Player)return;
-	ImGui::Begin("[Scene]", NULL, ImGuiWindowFlags_NoTitleBar);
-
-	Pos mousePos = INPUT_MANAGER_INSTANCE->GetMousePos();
-	Pos mouseWorldPos = GAME_INSTANCE->ScreenPosToMapPos(mousePos);
-	ImGui::Text("[mouse] : x=%.0f,y=%.0f world.x=%.0f,world.y=%.0f", 
-		mousePos.x, mousePos.y,
-		mouseWorldPos.x, mouseWorldPos.y);
-	ImGui::Text("[player] : x=%d,y=%d,dir=%d", m_Player->GetX(), m_Player->GetY(), m_Player->GetDir());
-	ImGui::SameLine();
-	ImGui::Checkbox("DrawMap", &s_DrawMap);
-	ImGui::SameLine();
-	ImGui::Checkbox("DrawCell", &s_DrawCell);
-	ImGui::SameLine();
-	ImGui::Checkbox("DrawStrider", &s_DrawStrider);
-	ImGui::SameLine();
-	ImGui::Checkbox("DrawMask", &s_DrawMask);
-	ImGui::SameLine();
-	ImGui::Checkbox("DrawAnnouncement", &s_DrawAnnouncement);
-	ImGui::SameLine();
-	ImGui::Checkbox("AutoRun", &s_AutoRun);
-
-	static int s_SceneNameIndex = 0;
-	static std::vector<std::string> m_SceneNames;
-	if (ImGui::CollapsingHeader("CHSceneList"))
-	{
-		auto& allScene = SCENE_MANAGER_INSTANCE->GetAllScene();
-		if (m_SceneNames.size() == 0)
-		{
-			for (auto& scene : allScene)
-			{
-				m_SceneNames.push_back(scene.second->GetName().c_str());
-			}
-		}
-		ImGui::ListBox("##SceneList", &s_SceneNameIndex, [](void* data, int idx, const char** out_text)
-		{
-			std::vector<std::string>* str_vec = (std::vector<std::string> *)data;
-			*out_text = (*str_vec)[idx].c_str();
-			return true;
-		}, (void*)&m_SceneNames, (int)m_SceneNames.size(), 20);
-		ImGui::SameLine();
-		if (ImGui::Button("SwitchSceneByName"))
-		{
-			SCENE_MANAGER_INSTANCE->SwitchScene(m_SceneNames[s_SceneNameIndex]);
-		}
-	}
-
-	for (int i = 0; i < 10; i++)
-	{
-		std::string name("Player");
-		name.append(std::to_string(i));
-		if (ImGui::Button(name.c_str()))
-		{
-			curScene->SetPlayerByIndex(i);
-		}
-		ImGui::SameLine();
-		if (i == 9)
-		{
-			if (ImGui::Button("Clear"))
-			{
-				curScene->ClearAllPlayers();
-				curScene->AddPlayer("test", 520, 1050, 1, 9, 5);
-				curScene->SetPlayerByIndex(0);
-			}
-		}
-	}
-	
-
-	static char s_templ_name[128];
-	static int s_copy_actor_type = ACTOR_TYPE_PLAYER;
-	
-	ImGui::Text(u8"TemplName  :");
-	ImGui::SameLine();
-	ImGui::InputText("##templ_name", s_templ_name, 128);
-	if (ImGui::Button("召唤Avatar"))
-	{
-		scene_add_player_by_templ_name(s_templ_name, s_copy_actor_type);
-	}
-	ImGui::SameLine();
-	ImGui::SliderInt("##actor_type", &s_copy_actor_type,1,3);
-
-	if (ImGui::CollapsingHeader("PlayAction"))
-	{
-		for (size_t i = 0; i < action_get_size(); i++)
-		{
-			if (ImGui::Button(action_get_name((int)i).c_str()))
-			{
-				if (m_Player != nullptr)
-				{
-					m_Player->SetActionID((int)i);
-				}
-			}
-			if (i != (int)action_get_size()- 1) ImGui::SameLine();
-		}
-	}
-
-	if (ImGui::Button("SwitchToLogin"))
-	{
-		SCENE_MANAGER_INSTANCE->SwitchScene("TestNetScene");
-	}
-
-	if (ImGui::Button("SwitchToBattle"))
-	{
-		SCENE_MANAGER_INSTANCE->SwitchScene("BattleScene");
-	}
-
 	auto mouseX = INPUT_MANAGER_INSTANCE->GetMouseX();
 	auto mouseY = INPUT_MANAGER_INSTANCE->GetMouseY();
 	ImVec2 pos = ImGui::GetWindowPos();
 	ImVec2 size = ImGui::GetWindowSize();
 	Bound bound{ pos.x, pos.x + size.x, pos.y, pos.y + size.y };
 	g_IsMouseInImGui = utils::BoundHitTest(bound, Pos{ mouseX, mouseY });
-	ImGui::End();
-}
+};
+
 
 void SceneManager::Draw() 
 {
@@ -330,8 +216,6 @@ void SceneManager::Draw()
 	if(m_pCurrentScene)
 	{
 		m_pCurrentScene->Draw();
-		DrawImGUI();
-		script_system_call_function(script_system_get_luastate(), "on_scene_manager_draw", m_pCurrentScene->GetName());
 	}
 };
 
@@ -513,6 +397,21 @@ int scene_manager_fetch_local_player(lua_State* L){
 	return 1;
 }
 
+void scene_manager_set_player_by_index(int index) {
+	auto* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
+	if (scene == nullptr) return;
+	scene->SetPlayerByIndex(index);
+}
+
+void scene_manager_sync_draw_cbx(bool draw_map, bool draw_cell, bool draw_strider, bool draw_mask, bool draw_announcement, bool auto_run) {
+	s_DrawMap = draw_map;
+	s_DrawCell = draw_cell;
+	s_DrawStrider = draw_strider;
+	s_DrawMask = draw_mask;
+	s_DrawAnnouncement = draw_announcement;
+	s_AutoRun = auto_run;
+}
+
 void luaopen_scene_manager(lua_State* L)
 {
 	script_system_register_function(L, scene_manager_init);
@@ -527,6 +426,8 @@ void luaopen_scene_manager(lua_State* L)
 
 	script_system_register_function(L, scene_manager_switch_scene_by_name);
 
+	script_system_register_function(L, scene_manager_set_player_by_index);
+
 	script_system_register_function(L, scene_set_player);
 	script_system_register_function(L, scene_add_player);
 	script_system_register_function(L, scene_add_npc);
@@ -536,5 +437,7 @@ void luaopen_scene_manager(lua_State* L)
 
 	script_system_register_function(L, scene_set_announcement);
 	script_system_register_function(L, scene_set_chat);
+
+	script_system_register_function(L, scene_manager_sync_draw_cbx);
 
 }
