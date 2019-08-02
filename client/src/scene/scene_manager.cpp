@@ -504,6 +504,15 @@ void scene_manager_add_custom_scene(int id, const char* name)
 }
 
 
+int scene_manager_fetch_local_player(lua_State* L){
+	auto* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
+	if (scene == nullptr) return 0;
+	auto* player = scene->GetLocalPlayer();
+	if (player == nullptr)return 0;
+	lua_push_actor(L, player);
+	return 1;
+}
+
 void luaopen_scene_manager(lua_State* L)
 {
 	script_system_register_function(L, scene_manager_init);
@@ -512,6 +521,9 @@ void luaopen_scene_manager(lua_State* L)
 	script_system_register_function(L, scene_manager_deinit);
 	script_system_register_function(L, scene_manager_add_scene);
 	script_system_register_function(L, scene_manager_add_custom_scene);
+
+
+	script_system_register_luac_function(L, scene_manager_fetch_local_player);
 
 	script_system_register_function(L, scene_manager_switch_scene_by_name);
 

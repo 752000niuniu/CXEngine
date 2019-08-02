@@ -48,7 +48,6 @@ end
 
 function on_script_system_draw()
     scene_manager_draw()
-    actor_manager_draw()
 end
 
 function on_script_system_deinit()

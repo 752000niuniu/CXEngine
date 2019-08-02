@@ -119,7 +119,23 @@ int actor_set_dir(lua_State* L)
 	return 0;
 }
 
+int actor_get_x(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	lua_pushnumber(L, actor->GetX());
+	return 1;
+}
 
+int actor_get_y(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	lua_pushnumber(L, actor->GetY());
+	return 1;
+}
+
+int actor_get_dir(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	lua_pushnumber(L, actor->GetDir());
+	return 1;
+}
 
 luaL_Reg mt_actor[] = {
 	{ "SetProperty",actor_method_set_property },
@@ -129,6 +145,10 @@ luaL_Reg mt_actor[] = {
 { "draw",actor_draw },
 { "set_pos",actor_set_pos},
 { "set_dir",actor_set_dir },
+{"GetX", actor_get_x},
+{"GetY", actor_get_y},
+{"GetDir", actor_get_dir},
+
 { NULL, NULL }
 };
 

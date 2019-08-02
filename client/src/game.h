@@ -22,5 +22,4 @@ private:
 
 #define GAME_INSTANCE Game::GetInstance()
 
-
-
+void luaopen_game(lua_State* L);

@@ -225,22 +225,23 @@ function FuncProtoMT:ToString()
 end
 
 function FuncProtoMT:CalcSupported()
+    if self.name == 'GetMainViewport' then
+        self.supported = false
+        return 
+    end
     local supported = true
     if self.args then
         for i,arg in ipairs(self.args) do
             -- print('//arg'..i, arg:Type(), arg.name, '=', arg.def or '')
-            if not arg:IsSupported()then
-                supported = false
-                break
-            end
-            if arg.type == 'ImVec2' or
-                arg.type == 'ImVec4' or
-                arg:Type() == 'const char*' or
-                (arg.type == 'int' or arg.type =='unsigned int' or arg.type =='unsigned short' or imgui_typedefs[arg.type] == 'int' or imgui_typedefs[arg.type] == 'unsigned int')  or
-                (arg.type =='float' or arg.type =='double') or
-                arg.type == 'bool' then
-            else 
-                supported = false
+            supported = arg:IsSupported() and (
+                    arg.type == 'ImVec2' or
+                    arg.type == 'ImVec4' or
+                    arg:Type() == 'const char*' or
+                    (arg.type == 'int' or arg.type =='unsigned int' or arg.type =='unsigned short' or imgui_typedefs[arg.type] == 'int' or imgui_typedefs[arg.type] == 'unsigned int')  or
+                    (arg.type =='float' or arg.type =='double') or
+                    arg.type == 'bool'
+                )
+            if not supported then
                 break
             end
         end
@@ -494,6 +495,13 @@ end
     3. 用c的返回类型转换成lua的pushxxx
     4. 打完收工
 ]]
+function hook_write_fname(prop_name)
+    if prop_name == 'Combo2' then
+        return 'Combo'
+    end
+    return prop_name
+end
+
 function output_imguiapis()
     print([[#include "cximgui.h"]]) 
     print([[#include <imgui.h>]]) 
@@ -698,9 +706,9 @@ function output_imguiapis()
         if proto.supported then
             if last_name ~= proto.name then
                 name_identifier = 2
-                print(string.format('\t{"%s",%s},', proto.name,'cximgui_'.. proto:WrapName()) )   
+                print(string.format('\t{"%s",%s},', hook_write_fname(proto.name),'cximgui_'.. proto:WrapName()) )   
             else
-                print(string.format('\t{"%s",%s},', proto.name..name_identifier,'cximgui_'.. proto:WrapName()) )   
+                print(string.format('\t{"%s",%s},', hook_write_fname(proto.name..name_identifier),'cximgui_'.. proto:WrapName()) )   
                 name_identifier = name_identifier+1
             end
         end
@@ -798,13 +806,46 @@ int cximgui_GetMainViewport(lua_State*L) {
 	return 5;
 }
 
+int cximgui_ListBox_5_spipsii(lua_State* L) {
+	int __argi__ = 1;
+	const char* label = lua_tostring(L, __argi__++);
+	int current_item = (int)lua_tointeger(L, __argi__++);
+	
+	int len =(int)luaL_len(L, __argi__);
+	char** items = new char*[len];
+	int i = 0;
+	lua_pushnil(L);
+	while (lua_next(L, __argi__) != 0) {
+		size_t str_len = 0;
+		const char* str = lua_tolstring(L, -1, &str_len);
+		items[i] = new char[str_len + 1];
+		strcpy(items[i], str);
+		i++;
+		lua_pop(L, 1);
+	}
+	__argi__++;
+	int height_in_items = (int)luaL_optinteger(L, __argi__, -1);
+	if (height_in_items != -1)__argi__++;
+
+	bool __ret__ = ImGui::ListBox(label, &current_item, (const char* const*)items, len, height_in_items);
+	for (int i = 0; i < len; i++) {
+		delete[] items[i];
+	}
+	delete[] items;
+
+	lua_pushboolean(L, __ret__);
+	lua_pushinteger(L, current_item);
+	return 2;
+}
+
 luaL_Reg cximgui_extra_methods[] = {
 	{ "CreateStrbuf", cximgui_strbuf_create },
 { "DestroyStrbuf", cximgui_strbuf_destroy },
 { "InputText",cximgui_InputText_3_sui },
 { "Text", cximgui_TextUnformatted_2_ss },
 { "DockSpace", cximgui_DockSpace_3_iv2i },
-{ "GetMainViewport", cximgui_GetMainViewport},
+{ "GetMainViewport", cximgui_GetMainViewport },
+{ "ListBox", cximgui_ListBox_5_spipsii },
 };
 
 void luaopen_cximgui(lua_State* L) {
