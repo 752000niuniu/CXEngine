@@ -1,5 +1,6 @@
-local AccountSB = imgui.CreateStrbuf('Ocean藏心',1024)
-local PosXYSB = imgui.CreateStrbuf('200,2790',1024)
+local AccountSB = imgui.CreateStrbuf('Ocean藏心',256)
+local PosX = imgui.CreateStrbuf('200',128)
+local PosY = imgui.CreateStrbuf('2790',128)
 local show_demo = false
 
 function on_enter_editor_update()    
@@ -15,8 +16,12 @@ function on_enter_editor_update()
 	imgui.InputText("##account", AccountSB);
     
     imgui.Text("Pos :");
-	imgui.SameLine()
-    imgui.InputText("##pos", PosXYSB)
+    imgui.SameLine()
+    imgui.PushItemWidth(80)
+    imgui.InputText("##posX", PosX)
+    imgui.SameLine()
+    imgui.InputText("##posY", PosY)
+    imgui.PopItemWidth()
     
     if imgui.Button("Sigin Up") then 
     end
@@ -26,7 +31,9 @@ function on_enter_editor_update()
 
     if imgui.Button("EnterGame") then 
         scene_manager_switch_scene_by_name(DefaultSceneName)
-        scene_send_login_message(AccountSB:str(),PosXYSB:str())
+        local pos_x = tonumber(PosX:str())
+        local pos_y = tonumber(PosY:str())
+        scene_send_login_message( AccountSB:str(),1070,  pos_x,pos_y,1 ,40,1)
     end
     
     if imgui.Button("EnterBattle") then

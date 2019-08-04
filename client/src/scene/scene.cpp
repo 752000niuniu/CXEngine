@@ -423,25 +423,42 @@ void BattleScene::Draw()
 	}
 }
 
-void scene_send_login_message(const char* account , const char* pos_x_y)
+
+int scene_send_login_message(lua_State* L)
 {
+	int __argi__ = 1;
+	int __argn__ = lua_gettop(L);
+	const char* account = lua_tostring(L, __argi__++);
+	int scene_id = (int)lua_tointeger(L, __argi__++);
+	float pos_x  = (float)lua_tonumber(L, __argi__++);
+	float pos_y = (float)lua_tonumber(L, __argi__++);
+	int role_id = (int)lua_tointeger(L, __argi__++);
+	int weapon_id = (int)luaL_optinteger(L, __argi__, -1);
+	if (weapon_id != -1)__argi__++;
+	else weapon_id = 0;
+
+	int dir = (int)luaL_optinteger(L, __argi__, -1);
+	if (dir != -1)__argi__++;
+	else dir = 0;
+
+
 	MSGC2SLogin msg;
 	std::string pname(account);
 	msg.type = PTO_C2S_LOGIN;
 	msg.namelen = (int)pname.length();
 	msg.name = pname;
-	msg.scene_id = 1070;
-	msg.dir = 1;
-	msg.role_id = 9;
-	msg.weapon_id = 5;
-	auto poses = utils::split_by_cnt(pos_x_y, ',', 2);
-	msg.pos_x = std::stof(poses[0]);
-	msg.pos_y = std::stof(poses[1]);
+	msg.scene_id = scene_id;
+	msg.dir = dir;
+	msg.role_id = role_id;
+	msg.weapon_id = weapon_id;
+	msg.pos_x = pos_x;
+	msg.pos_y = pos_y;
 	net_send_login_message(&msg);
+	return 0;
 }
 
 void luaopen_scene(lua_State* L)
 {
-	script_system_register_function(L,scene_send_login_message);
+	script_system_register_luac_function(L,scene_send_login_message);
 	
 }
