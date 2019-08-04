@@ -63,39 +63,18 @@ function on_scene_manager_init()
     for name,v in pairs(scene_list) do
         table.insert(scene_list_name, name)
     end
-
     scene_manager_switch_scene_by_name(current_scene_name)
-    
 end
 
 function on_scene_manager_init_scene(name)
     scene_list[name].OnSceneInit() 
 end
 
-
-function dock_window_flags()
-    return ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking 
-    |ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
-    |ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-
-end
-
 local select_scene_name = 0
 local str_templ_name = imgui.CreateStrbuf('', 512)
 local  copy_actor_type = ACTOR_TYPE_PLAYER
 function on_scene_manager_update(name)
-    local vid, x,y,w,h = imgui.GetMainViewport()
-    imgui.SetNextWindowPos(x,y)
-    imgui.SetNextWindowSize(w,h)
-    imgui.SetNextWindowViewport(vid)
-    imgui.Begin('Dock', true, dock_window_flags())
-    local dockspace_id = imgui.GetID('MyDockSpace')
-    imgui.DockSpace(dockspace_id, 0,0, 0)
-    imgui.End()
-
-    
     imgui.Begin('Scene')
-
     local mx, my = imgui.GetMousePos()
 	local cur_x ,cur_y = imgui.GetCursorScreenPos()
 	if imgui.IsMousePosValid(mx,my) then

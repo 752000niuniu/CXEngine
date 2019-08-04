@@ -13,8 +13,10 @@ public:
 	void Show();
 
 	GLFWwindow* GetGLFWwindow(){ return m_pWindow;};
-	int GetWidth();
-	int GetHeight();
+	int GetWidth() { return m_Width; };
+	int GetHeight() { return m_Height; };
+	int GetWindowWidth() { return m_WindowWidth; };
+	int GetWindowHeight() { return m_WindowHeight; };
 	float GetCenterX() { return GetWidth()/ 2.f; }
 	float GetCenterY() { return GetHeight()/ 2.f; }
 	float GetDeltaTime();
@@ -23,6 +25,8 @@ public:
 private:
 	int m_Width;
 	int m_Height;
+	int m_WindowWidth;
+	int m_WindowHeight;
 	float m_FPS;
 	GLFWwindow *m_pWindow;
 };

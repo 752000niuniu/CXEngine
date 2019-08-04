@@ -13,6 +13,7 @@
 #include "file_system.h"
 #include "window.h"
 #include "net.h"
+#include "../imgui_internal.h"
 
 
 static bool s_DrawMask, s_DrawStrider, s_DrawCell, s_DrawMap, s_DrawAnnouncement, s_AutoRun;
@@ -245,38 +246,37 @@ void SceneManager::Draw()
 	if (m_SwitchingScene)return;
 	if(m_pCurrentScene)
 	{
-		int screenWidth = WINDOW_INSTANCE->GetWidth();
-		int screenHeight = WINDOW_INSTANCE->GetHeight();
+		int gameWidth = WINDOW_INSTANCE->GetWidth();
+		int gameHeight = WINDOW_INSTANCE->GetHeight();
 		
+		ImGui::Begin("Game");
+		ImGui::BeginChild("##main", ImVec2((float)gameWidth, (float)gameHeight));
 		glBindFramebuffer(GL_FRAMEBUFFER, SCENE_MANAGER_INSTANCE->GetFboID());
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		glViewport(0, 0, 800, 600);
+		glViewport(0, 0, gameWidth, gameHeight);
 		m_pCurrentScene->Draw();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		ImGui::SetNextWindowSize(ImVec2(800, 620));
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-		ImGui::Begin("SceneManager");
-		ImGui::PopStyleVar(1);
+		ImVec2 cursorPos = ImGui::GetCursorPos();
+		ImGui::GetWindowDrawList()->AddCallback(function_to_select_shader_or_blend_state, nullptr);
+		ImGui::Image((void*)(uint64_t)m_TextureColor, ImVec2((float)gameWidth, (float)gameHeight), ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::GetWindowDrawList()->AddCallback(function_to_restore_shader_or_blend_state , nullptr);
+		ImGui::SetCursorPos(cursorPos);
 
 		auto* player = m_pCurrentScene->GetLocalPlayer();
 		if (player) {
 			if (ImGui::IsMouseClicked(0)) {
 				ImVec2 mpos = ImGui::GetMousePos();
-				ImVec2 wpos= ImGui::GetWindowPos();
+				ImVec2 wpos = ImGui::GetWindowPos();
 				mpos.x = mpos.x - wpos.x;
-				mpos.y = mpos.y - wpos.y - 20;
+				mpos.y = mpos.y - wpos.y ;
 				Pos dest = GAME_INSTANCE->ScreenPosToMapPos({ mpos.x, mpos.y });
 				player->MoveTo(m_pCurrentScene->GetGameMap(), (int)dest.x, (int)dest.y);
 				net_send_move_to_pos_message(player->GetNickName(), dest.x, dest.y);
 			}
 		}
-		
-		ImGui::GetWindowDrawList()->AddCallback(function_to_select_shader_or_blend_state, nullptr);
-		ImGui::Image((ImTextureID)m_TextureColor, ImVec2(screenWidth, screenHeight), ImVec2(0, 1), ImVec2(1, 0));
-		ImGui::GetWindowDrawList()->AddCallback(function_to_restore_shader_or_blend_state , nullptr);
-
+		ImGui::EndChild();
 		ImGui::End();
 	}
 };

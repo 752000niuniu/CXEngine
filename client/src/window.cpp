@@ -15,7 +15,8 @@
 
 static const float MS_PER_UPDATE = 1000 / 60.f / 1000;
 
-
+#define GAME_SCREEN_WIDTH 800
+#define GAME_SCREEN_HEIGHT 600
 static void glfw_framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	WINDOW_INSTANCE->OnFrameBufferSizeCallback(width, height);
@@ -52,7 +53,7 @@ static void glfw_error_callback(int error, const char* description) {
 
 
 Window::Window()
-	:m_Width(0), m_Height(0), m_FPS(MS_PER_UPDATE), m_pWindow(nullptr){
+	:m_Width(GAME_SCREEN_WIDTH), m_Height(GAME_SCREEN_HEIGHT), m_FPS(MS_PER_UPDATE), m_pWindow(nullptr){
 	
 }
 
@@ -94,7 +95,7 @@ void Window::Init(int w,int h)
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
-	glfwGetWindowSize(m_pWindow, &m_Width, &m_Height);
+	glfwGetWindowSize(m_pWindow, &m_WindowWidth, &m_WindowHeight);
 	glfwMakeContextCurrent(m_pWindow);
 	GLenum err = glewInit();
 	if (GLEW_OK !=err) {
@@ -102,9 +103,6 @@ void Window::Init(int w,int h)
 		return;
 	}
 	glfwSwapInterval(1);
-
-	int fwidth, fheight;
-	glfwGetFramebufferSize(m_pWindow, &fwidth, &fheight);
 
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -129,6 +127,7 @@ void Window::Init(int w,int h)
 void Window::Show()
 {	
 	script_system_init();
+
 	double previous = glfwGetTime();
 	double lag = 0;
 	double delta = 0;
@@ -142,6 +141,13 @@ void Window::Show()
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+
+		ImGui::Begin("Dock", NULL, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking
+			| ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
+			| ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus);
+		int dockspace_id = ImGui::GetID("MyDockSpace");
+		ImGui::DockSpace(dockspace_id);
+		ImGui::End();
 
 		script_system_update();
 		script_system_draw();
@@ -177,16 +183,6 @@ void Window::Show()
 	ne_thread = nullptr;
 }
 
-int Window::GetWidth()
-{
-	return 800;
-}
-
-int Window::GetHeight()
-{
-	return 600;
-}
-
 float Window::GetDeltaTime()
 {
 	return m_FPS;
@@ -200,12 +196,10 @@ float Window::GetDeltaTimeMilliseconds()
 
 void Window::OnFrameBufferSizeCallback(int width, int height)
 {
-	m_Width = width;
-	m_Height = height;
-
-	glViewport(0, 0, m_Width, m_Height);
+	m_WindowWidth = width;
+	m_WindowHeight = height;
+	glViewport(0, 0, m_WindowWidth, m_WindowHeight);
 }
-
 
 void window_system_init(int w, int h)
 {
