@@ -45,7 +45,6 @@ public:
 	
 	std::map<String, BaseScene*>& GetAllScene() { return m_Scenes; };
 	
-	bool IsHoverImGui();
 	bool IsDrawMask();
 	bool IsDrawStrider();
 	bool IsDrawCell();

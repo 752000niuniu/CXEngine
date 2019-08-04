@@ -88,33 +88,10 @@ void Scene::OnLoad()
 	
 	m_ShowSmap = false;
 
-	
-	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_W, [this]() {
-		if (m_LocalPlayer != nullptr)
-		{
-			m_LocalPlayer->TranslateY(-30);
-		}
-	});
-
-	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_A, [this]() {
-		if (m_LocalPlayer != nullptr)
-		{
-			m_LocalPlayer->TranslateX(-30);
-		}
-	});
-
-	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_S, [this]() {
-		if (m_LocalPlayer != nullptr)
-		{
-			m_LocalPlayer->TranslateY(30);
-		}
-	});
-
-	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_D, [this]() {
-		if (m_LocalPlayer != nullptr)
-		{
-			m_LocalPlayer->TranslateX(30);
-		}
+	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_F, [this]()
+	{
+		if (!m_LocalPlayer) return;
+		s_IsCombat = !s_IsCombat;
 	});
 
 	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_TAB, [this]() {
@@ -175,68 +152,8 @@ void Scene::Update()
 	{
 		m_SmapTv->OnUpdate();
 	}
-
-	
 }
 
-float amout = 1;
-void Scene::ProcessInput()
-{
-	if(INPUT_MANAGER_INSTANCE->IsKeyUp(GLFW_KEY_W))
-	{
-		if (!m_LocalPlayer) return;
-		m_LocalPlayer->TranslateY(-amout);
-	};
-
-	if(INPUT_MANAGER_INSTANCE->IsKeyUp(GLFW_KEY_A))
-	{
-		if (!m_LocalPlayer) return;
-		m_LocalPlayer->TranslateX(-amout);
-	};
-
-
-	if(INPUT_MANAGER_INSTANCE->IsKeyUp(GLFW_KEY_S))
-	{
-		if (!m_LocalPlayer) return;
-		m_LocalPlayer->TranslateY(amout);
-	};
-
-
-	if(INPUT_MANAGER_INSTANCE->IsKeyUp(GLFW_KEY_D))
-	{
-		if (!m_LocalPlayer) return;
-		m_LocalPlayer->TranslateX(amout);
-	};
-
-	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_F,[this]()
-	{
-		if (!m_LocalPlayer) return;
-		s_IsCombat=!s_IsCombat;
-	});
-
-	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_1,
-		[this]() {
-		if (!m_LocalPlayer) return;
-		m_LocalPlayer->ChangeAction(0);
-	}
-	);
-
-	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_2,
-		[this]() {
-		if (!m_LocalPlayer) return;
-		m_LocalPlayer->ChangeRole(0);
-
-	}
-	);
-
-	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_3,
-		[this]() {
-		if (!m_LocalPlayer) return;
-		m_LocalPlayer->ChangeWeapon(0);
-	}
-	);
-
-}
 
 void Scene::Draw()
 {

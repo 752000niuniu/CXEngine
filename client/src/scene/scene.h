@@ -47,7 +47,6 @@ public:
 
 	void OnSmapClick(float x, float y, float w, float h);
 protected:
-	void ProcessInput();
 	
 	FrameAnimation* m_NpcDialogBG ;
 	FrameAnimation* m_SmapPic;

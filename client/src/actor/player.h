@@ -35,9 +35,6 @@ public:
 	float GetMoveDestDistSquare(Pos dest);
 	float GetMoveDestAngle(Pos dest);
 
-	void TranslateX(float x) { m_Pos.x += x; }
-	void TranslateY(float y) { m_Pos.y += y; }
-
 	void MoveTo(float x, float y);
 
 	void MoveTo(GameMap* gameMapPtr, int destX, int destY);

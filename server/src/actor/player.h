@@ -111,7 +111,6 @@ protected:
 	int m_ActorID;
 	int m_RoleID;				//current role
 
-	int m_ActorType;
 	std::string m_NickName;
 
 	int m_WeaponID;				//current weapon

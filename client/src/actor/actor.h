@@ -59,6 +59,9 @@ public:
 	void SetX(float x) { m_Pos.x = x; }
 	void SetY(float y) { m_Pos.y = y; }
 
+	void TranslateX(float x) { m_Pos.x += x; }
+	void TranslateY(float y) { m_Pos.y += y; }
+
 	void SetNickName(std::string name) { m_NickName = name; };
 	std::string GetNickName() { return m_NickName; };
 
@@ -91,6 +94,7 @@ public:
 	float GetFrameSpeed() { return m_FrameSpeed; };
 	void SetFrameSpeed(float frame_speed) { m_FrameSpeed = frame_speed; };
 
+	int GetType() { return m_ActorType; }
 protected:
 	float m_X;
 	float m_Y;
@@ -128,10 +132,7 @@ protected:
 	bool m_bCalcMoveList;
 	float m_HP;
 	float m_MP;
-
-
 	int m_SayDuration;
-
 	bool m_IsLocalPlayer;
 };
 

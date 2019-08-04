@@ -72,8 +72,45 @@ function on_scene_manager_update(name)
     scene_list[name].OnSceneUpdate()
 end
 
-
+local KEY_RELEASE_MOVE_AMOUT = 30
 function on_game_imgui_update()
+    local player = scene_manager_fetch_local_player()
+    if player then
+        if imgui.IsKeyReleased(string.byte('W') ) then
+            player:TranslateY(-KEY_RELEASE_MOVE_AMOUT)
+        end
 
+        if imgui.IsKeyReleased(string.byte('A')) then
+            player:TranslateX(-KEY_RELEASE_MOVE_AMOUT)
+        end
+
+        if imgui.IsKeyReleased(string.byte('S')) then
+            player:TranslateY(KEY_RELEASE_MOVE_AMOUT)
+        end
+
+        if imgui.IsKeyReleased(string.byte('D')) then
+            player:TranslateX(KEY_RELEASE_MOVE_AMOUT)
+        end
+
+        if imgui.IsKeyReleased(string.byte('F')) then
+            player:TranslateX(KEY_RELEASE_MOVE_AMOUT)
+        end
+
+        if imgui.IsKeyReleased(string.byte('1')) then
+            player:ChangeAction(0)
+        end
+
+
+        if imgui.IsKeyReleased(string.byte('2')) then
+            player:ChangeRole(0)
+        end
+
+        if imgui.IsKeyReleased(string.byte('3')) then
+            player:ChangeWeapon(0)
+        end
+
+
+    end
+    
 end
 

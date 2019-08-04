@@ -17,7 +17,6 @@
 
 
 static bool s_DrawMask, s_DrawStrider, s_DrawCell, s_DrawMap, s_DrawAnnouncement, s_AutoRun;
-static bool g_IsMouseInImGui;
 /*
 lua 尽快完成tsv解析  然后把scene创建放在lua
 */
@@ -141,10 +140,6 @@ void SceneManager::RemoveScene(String name)
 	}
 }
 
-bool SceneManager::IsHoverImGui()
-{
-	return	g_IsMouseInImGui;
-}
 
 bool SceneManager::IsDrawMask()
 {
@@ -225,12 +220,6 @@ void SceneManager::Update()
 			script_system_call_function(script_system_get_luastate(),"on_scene_manager_update", m_pCurrentScene->GetName());
 		}
 	} 
-	auto mouseX = INPUT_MANAGER_INSTANCE->GetMouseX();
-	auto mouseY = INPUT_MANAGER_INSTANCE->GetMouseY();
-	ImVec2 pos = ImGui::GetWindowPos();
-	ImVec2 size = ImGui::GetWindowSize();
-	Bound bound{ pos.x, pos.x + size.x, pos.y, pos.y + size.y };
-	g_IsMouseInImGui = utils::BoundHitTest(bound, Pos{ mouseX, mouseY });
 };
 
 void function_to_select_shader_or_blend_state(const ImDrawList* parent_list, const ImDrawCmd* cmd){

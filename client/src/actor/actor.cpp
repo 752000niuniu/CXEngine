@@ -144,6 +144,57 @@ int actor_set_action_id(lua_State* L) {
 	return 0;
 }
 
+
+int actor_translate_x(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	float x = (float)luaL_optnumber(L, 2, 0.f);
+	actor->TranslateX(x);
+	return 0;
+}
+
+int actor_translate_y(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	float y = (float)luaL_optnumber(L, 2, 0.f);
+	actor->TranslateY(y);
+	return 0;
+}
+
+int actor_change_action(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	int action = (int)luaL_optinteger(L, 2, 0);
+	if (actor->GetType() != ACTOR_TYPE_PLAYER) return 0;
+
+	Player* player = dynamic_cast<Player*>(actor);
+	player->ChangeAction(action);
+	return 0;
+}
+
+
+int actor_change_weapon(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	int weapon= (int)luaL_optinteger(L, 2, 0);
+	if (actor->GetType() != ACTOR_TYPE_PLAYER) return 0;
+
+	Player* player = dynamic_cast<Player*>(actor);
+	player->ChangeWeapon(weapon);
+	return 0;
+
+}
+
+
+int actor_change_role(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	int role = (int)luaL_optinteger(L, 2, 0);
+	if (actor->GetType() != ACTOR_TYPE_PLAYER) return 0;
+
+	Player* player = dynamic_cast<Player*>(actor);
+	player->ChangeRole(role);
+	return 0;
+
+}
+
+
+
 luaL_Reg mt_actor[] = {
 	{ "SetProperty",actor_method_set_property },
 { "GetProperty",actor_method_get_property },
@@ -156,6 +207,12 @@ luaL_Reg mt_actor[] = {
 {"GetY", actor_get_y},
 {"GetDir", actor_get_dir},
 {"SetActionID", actor_set_action_id},
+{"TranslateX", actor_translate_x},
+{ "TranslateY", actor_translate_y },
+
+{ "ChangeAction", actor_change_action },
+{ "ChangeWeapon", actor_change_weapon },
+{ "ChangeRole", actor_change_role },
 
 { NULL, NULL }
 };
