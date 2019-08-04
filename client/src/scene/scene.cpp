@@ -89,21 +89,6 @@ void Scene::OnLoad()
 	m_ShowSmap = false;
 
 	
-
-	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_MOUSE_BUTTON_LEFT, [this]() {
-		if (SCENE_MANAGER_INSTANCE->IsHoverImGui()) return;
-		if (m_ShowSmap) return;
-		if (m_LocalPlayer != nullptr)
-		{
-			auto mouseX = INPUT_MANAGER_INSTANCE->GetMouseX();
-			auto mouseY = INPUT_MANAGER_INSTANCE->GetMouseY();
-			Pos dest = GAME_INSTANCE->ScreenPosToMapPos({ mouseX, mouseY });
-			m_LocalPlayer->MoveTo(m_Map,(int) dest.x, (int)dest.y);
-
-			net_send_move_to_pos_message(m_LocalPlayer->GetNickName(), dest.x, dest.y);
-		}
-	});
-
 	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_W, [this]() {
 		if (m_LocalPlayer != nullptr)
 		{

@@ -240,7 +240,6 @@ void function_to_restore_shader_or_blend_state(const ImDrawList* parent_list, co
 	glEnable(GL_BLEND);
 }
 
-
 void SceneManager::Draw() 
 {
 	if (m_SwitchingScene)return;
@@ -256,28 +255,28 @@ void SceneManager::Draw()
 		m_pCurrentScene->Draw();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		ImGui::SetNextWindowSize(ImVec2(800, 600));
+		ImGui::SetNextWindowSize(ImVec2(800, 620));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImGui::Begin("SceneManager");
+		ImGui::PopStyleVar(1);
 
 		auto* player = m_pCurrentScene->GetLocalPlayer();
 		if (player) {
 			if (ImGui::IsMouseClicked(0)) {
 				ImVec2 mpos = ImGui::GetMousePos();
-				ImVec2 cursorPos = ImGui::GetCursorScreenPos();
-				if (ImGui::IsMousePosValid(&mpos)) {
-					mpos.x = mpos.x - cursorPos.x;
-					mpos.y = mpos.y - cursorPos.y;
-					Pos dest = GAME_INSTANCE->ScreenPosToMapPos({ mpos.x, mpos.y });
-					player->MoveTo(m_pCurrentScene->GetGameMap(), (int)dest.x, (int)dest.y);
-					net_send_move_to_pos_message(player->GetNickName(), dest.x, dest.y);
-				}
+				ImVec2 wpos= ImGui::GetWindowPos();
+				mpos.x = mpos.x - wpos.x;
+				mpos.y = mpos.y - wpos.y - 20;
+				Pos dest = GAME_INSTANCE->ScreenPosToMapPos({ mpos.x, mpos.y });
+				player->MoveTo(m_pCurrentScene->GetGameMap(), (int)dest.x, (int)dest.y);
+				net_send_move_to_pos_message(player->GetNickName(), dest.x, dest.y);
 			}
 		}
 		
 		ImGui::GetWindowDrawList()->AddCallback(function_to_select_shader_or_blend_state, nullptr);
 		ImGui::Image((ImTextureID)m_TextureColor, ImVec2(screenWidth, screenHeight), ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::GetWindowDrawList()->AddCallback(function_to_restore_shader_or_blend_state , nullptr);
-		
+
 		ImGui::End();
 	}
 };
