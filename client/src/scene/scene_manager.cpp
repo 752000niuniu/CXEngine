@@ -11,6 +11,8 @@
 #include "game.h"
 #include "cxmath.h"
 #include "file_system.h"
+#include "window.h"
+#include "net.h"
 
 
 static bool s_DrawMask, s_DrawStrider, s_DrawCell, s_DrawMap, s_DrawAnnouncement, s_AutoRun;
@@ -57,6 +59,27 @@ SceneManager::~SceneManager()
 void SceneManager::Init() 
 {
 	script_system_call_function(script_system_get_luastate(), "on_scene_manager_init");
+
+	glGenFramebuffers(1, &m_Fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_Fbo);
+
+	int screenWidth = WINDOW_INSTANCE->GetWidth(); 
+	int screenHeight = WINDOW_INSTANCE->GetHeight();
+	glGenTextures(1, &m_TextureColor);
+	glBindTexture(GL_TEXTURE_2D, m_TextureColor);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, screenWidth, screenHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TextureColor, 0);
+
+	glGenRenderbuffers(1, &m_Rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, m_Rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screenWidth, screenHeight);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_Rbo); 
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		cxlog_err("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 };
 
 void SceneManager::SwitchScene(String name)
@@ -200,7 +223,7 @@ void SceneManager::Update()
 			m_pCurrentScene->Update();
 			script_system_call_function(script_system_get_luastate(),"on_scene_manager_update", m_pCurrentScene->GetName());
 		}
-	}
+	} 
 	auto mouseX = INPUT_MANAGER_INSTANCE->GetMouseX();
 	auto mouseY = INPUT_MANAGER_INSTANCE->GetMouseY();
 	ImVec2 pos = ImGui::GetWindowPos();
@@ -209,13 +232,53 @@ void SceneManager::Update()
 	g_IsMouseInImGui = utils::BoundHitTest(bound, Pos{ mouseX, mouseY });
 };
 
+void function_to_select_shader_or_blend_state(const ImDrawList* parent_list, const ImDrawCmd* cmd){
+	glDisable(GL_BLEND);
+}
+
+void function_to_restore_shader_or_blend_state(const ImDrawList* parent_list, const ImDrawCmd* cmd){
+	glEnable(GL_BLEND);
+}
+
 
 void SceneManager::Draw() 
 {
 	if (m_SwitchingScene)return;
 	if(m_pCurrentScene)
 	{
+		int screenWidth = WINDOW_INSTANCE->GetWidth();
+		int screenHeight = WINDOW_INSTANCE->GetHeight();
+		
+		glBindFramebuffer(GL_FRAMEBUFFER, SCENE_MANAGER_INSTANCE->GetFboID());
+		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		glViewport(0, 0, 800, 600);
 		m_pCurrentScene->Draw();
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		ImGui::SetNextWindowSize(ImVec2(800, 600));
+		ImGui::Begin("SceneManager");
+
+		auto* player = m_pCurrentScene->GetLocalPlayer();
+		if (player) {
+			if (ImGui::IsMouseClicked(0)) {
+				ImVec2 mpos = ImGui::GetMousePos();
+				ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+				if (ImGui::IsMousePosValid(&mpos)) {
+					mpos.x = mpos.x - cursorPos.x;
+					mpos.y = mpos.y - cursorPos.y;
+					Pos dest = GAME_INSTANCE->ScreenPosToMapPos({ mpos.x, mpos.y });
+					player->MoveTo(m_pCurrentScene->GetGameMap(), (int)dest.x, (int)dest.y);
+					net_send_move_to_pos_message(player->GetNickName(), dest.x, dest.y);
+				}
+			}
+		}
+		
+		ImGui::GetWindowDrawList()->AddCallback(function_to_select_shader_or_blend_state, nullptr);
+		ImGui::Image((ImTextureID)m_TextureColor, ImVec2(screenWidth, screenHeight), ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::GetWindowDrawList()->AddCallback(function_to_restore_shader_or_blend_state , nullptr);
+		
+		ImGui::End();
 	}
 };
 

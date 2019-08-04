@@ -27,6 +27,7 @@ public:
         return instance;
     }
     // Renders a defined quad textured with given sprite
+	void DrawTexture(unsigned int textureID, glm::vec2 position, glm::vec2 size = glm::vec2(0, 0), GLfloat rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f));
 	void DrawTexture(Texture* texture, glm::vec2 position, glm::vec2 size = glm::vec2(0, 0), GLfloat rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f));
     void DrawSprite(Texture* texture, glm::vec2 position, glm::vec2 size = glm::vec2(0, 0), GLfloat rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f));
     void DrawMask(Texture* texture, glm::vec2 position, glm::vec2 size = glm::vec2(0, 0), GLfloat rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f));

@@ -11,6 +11,7 @@
 #include "script_system.h"
 #include "input_manager.h"
 #include "file_loading.h"
+#include "scene/scene_manager.h"
 
 static const float MS_PER_UPDATE = 1000 / 60.f / 1000;
 
@@ -104,7 +105,6 @@ void Window::Init(int w,int h)
 
 	int fwidth, fheight;
 	glfwGetFramebufferSize(m_pWindow, &fwidth, &fheight);
-	glViewport(0, 0, fwidth, fheight);
 
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -135,13 +135,10 @@ void Window::Show()
 	ImGuiIO& io = ImGui::GetIO();
     while (!glfwWindowShouldClose(m_pWindow))
 	{
-		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);		
 		auto now = glfwGetTime();
 		m_FPS = (float)(now - previous);
 		previous = now;
-		
-		// Start the Dear ImGui frame
+	
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -182,12 +179,12 @@ void Window::Show()
 
 int Window::GetWidth()
 {
-	return m_Width;
+	return 800;
 }
 
 int Window::GetHeight()
 {
-	return m_Height;
+	return 600;
 }
 
 float Window::GetDeltaTime()

@@ -84,21 +84,21 @@ local select_scene_name = 0
 local str_templ_name = imgui.CreateStrbuf('', 512)
 local  copy_actor_type = ACTOR_TYPE_PLAYER
 function on_scene_manager_update(name)
+    local vid, x,y,w,h = imgui.GetMainViewport()
+    imgui.SetNextWindowPos(x,y)
+    imgui.SetNextWindowSize(w,h)
+    imgui.SetNextWindowViewport(vid)
+    imgui.Begin('Dock', true, dock_window_flags())
+    local dockspace_id = imgui.GetID('MyDockSpace')
+    imgui.DockSpace(dockspace_id, 0,0, 0)
+    imgui.End()
 
     
-    -- local vid, x,y,w,h = imgui.GetMainViewport()
-    -- imgui.SetNextWindowPos(x,y)
-    -- imgui.SetNextWindowSize(w,h)
-    -- imgui.SetNextWindowViewport(vid)
-    -- imgui.Begin('Dock', true, dock_window_flags())
-    -- local dockspace_id = imgui.GetID('MyDockSpace')
-    -- imgui.DockSpace(dockspace_id, 0,0, 0)
-    -- imgui.End()
     imgui.Begin('Scene')
 
     local mx, my = imgui.GetMousePos()
 	local cur_x ,cur_y = imgui.GetCursorScreenPos()
-	if imgui.IsMousePosValid(mouse_x,mouse_y) then
+	if imgui.IsMousePosValid(mx,my) then
 		mx = mx - cur_x
 		my = my - cur_y
     end
@@ -128,7 +128,6 @@ function on_scene_manager_update(name)
     res, cbx_auto_run = imgui.Checkbox('AutoRun', cbx_auto_run)
     
     scene_manager_sync_draw_cbx(cbx_draw_map,cbx_draw_cell,cbx_draw_strider,cbx_draw_mask,cbx_draw_announcement,cbx_auto_run)
-
 
     if imgui.CollapsingHeader('CHSceneList') then
         res, select_scene_name  = imgui.ListBox('##SceneList', select_scene_name  , scene_list_name)
@@ -179,7 +178,6 @@ function on_scene_manager_update(name)
     if imgui.Button('SwitchToBattle') then
         scene_manager_switch_scene_by_name('BattleScene')
     end
-
     imgui.End()
 
 

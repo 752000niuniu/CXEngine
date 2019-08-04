@@ -27,8 +27,6 @@ public:
 
 	void Update();
 
-	void DrawImGUI();
-
 	void Draw();
 
 	BaseScene* GetCurrentScene();
@@ -55,6 +53,10 @@ public:
 	bool IsDrawAnnounce();
 	bool IsAutoRun();
 
+	unsigned int GetFboID() { return m_Fbo; };
+	unsigned int GetRboID() { return m_Rbo; };
+	unsigned int GetTextureID() { return m_TextureColor; };
+
 	TransportStation* GetTransportStationInfo(String uuid);
 private:	
 	std::map<String,BaseScene*> m_Scenes;
@@ -73,6 +75,11 @@ private:
 	int m_PlayerEnterX;
 	int m_PlayerEnterY;
 	bool m_SwitchingScene;
+
+	unsigned int m_Fbo;
+	unsigned int m_Rbo;
+	unsigned int m_TextureColor;
+
 
 };
 

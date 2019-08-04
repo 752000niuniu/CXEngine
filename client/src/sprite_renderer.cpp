@@ -54,6 +54,32 @@ void SpriteRenderer::DrawTexture(Texture* texture, glm::vec2 position, glm::vec2
 	DrawFrameSprite(texture, position, size);
 }
 
+void SpriteRenderer::DrawTexture(unsigned int textureID, glm::vec2 position, glm::vec2 size /*= glm::vec2(0, 0)*/, GLfloat rotate /*= 0.0f*/, glm::vec3 color /*= glm::vec3(1.0f)*/)
+{
+	// Prepare transformations
+	m_pShader->Bind();
+	glm::mat4 model;
+	model = glm::translate(model, glm::vec3(position, 0.0f));  // First translate (transformations are: scale happens first, then rotation and then finall translation happens; reversed order)
+	model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f)); // Move origin of rotation to center of quad
+	model = glm::rotate(model, rotate, glm::vec3(0.0f, 0.0f, 1.0f)); // Then rotate
+	model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f)); // Move origin back
+	model = glm::scale(model, glm::vec3(size, 1.0f)); // Last scale
+
+	glUniformMatrix4fv(glGetUniformLocation(m_pShader->GetProgramID(), "model"), 1, GL_FALSE, (GLfloat*)(&model));
+
+	// Render textured quad
+	glUniform3f(glGetUniformLocation(m_pShader->GetProgramID(), "spriteColor"), color.x, color.y, color.z);
+	glUniform1f(glGetUniformLocation(m_pShader->GetProgramID(), "alpha"), 1.0f);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	glBindVertexArray(this->quadVAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
+	m_pShader->Unbind();
+}
+
 void SpriteRenderer::DrawSprite(Texture* texture, glm::vec2 position, glm::vec2 size, GLfloat rotate, glm::vec3 color)
 {
     // Prepare transformations
