@@ -1,3 +1,6 @@
+
+<img src="https://github.com/oceancx/SimpleEngine/blob/master/imgui.gif" width="50%" height="50%">
+
 ### Notice
 
 this project is not suitable for you to commit now. also, not so friendly for you to run. some fundamental works haven't done yet. thanks for you watching this project. when I am done those works, let's make a complete 2D turn-based game together!!!
