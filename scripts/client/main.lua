@@ -1,7 +1,7 @@
 luadbg_listen(9527)
 
-SCREEN_WIDTH = 1600
-SCREEN_HEIGHT = 900
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 800
 DefaultMapID = 1001
 
 script_system_dofile('vfs.lua')

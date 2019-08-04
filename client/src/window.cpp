@@ -96,6 +96,12 @@ void Window::Init(int w,int h)
 		exit(EXIT_FAILURE);
 	}
 	glfwGetWindowSize(m_pWindow, &m_WindowWidth, &m_WindowHeight);
+
+	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+	int monitorW = 0, monitorH = 0;
+	glfwGetMonitorWorkarea(monitor, nullptr, nullptr, &monitorW, &monitorH);
+	glfwSetWindowPos(m_pWindow, (monitorW - m_WindowWidth) / 2, (monitorH - m_WindowHeight) / 2);
+
 	glfwMakeContextCurrent(m_pWindow);
 	GLenum err = glewInit();
 	if (GLEW_OK !=err) {
@@ -141,6 +147,11 @@ void Window::Show()
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+
+		ImGuiViewport* mainViewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(mainViewport->Pos);
+		ImGui::SetNextWindowSize(mainViewport->Size);
+		ImGui::SetNextWindowViewport(mainViewport->ID);
 
 		ImGui::Begin("Dock", NULL, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking
 			| ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove

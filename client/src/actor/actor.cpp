@@ -204,7 +204,7 @@ int actor_get_metatable(lua_State* L){
 }
 
 int action_system_get_action_size() {
-	return action_get_size();
+	return (int)action_get_size();
 }
 
 std::string action_system_get_action_name(int action) {
