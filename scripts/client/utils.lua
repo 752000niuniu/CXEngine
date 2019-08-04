@@ -10,8 +10,6 @@ function utils_string_split(str, cut)
     return res
 end
 
-
-
 function utils_dump_table(t)
     if not t or type(t)~='table' then return end
    
