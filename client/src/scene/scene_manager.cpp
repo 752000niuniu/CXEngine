@@ -264,6 +264,8 @@ void SceneManager::Draw()
 		ImGui::GetWindowDrawList()->AddCallback(function_to_restore_shader_or_blend_state , nullptr);
 		ImGui::SetCursorPos(cursorPos);
 
+		script_system_call_function(script_system_get_luastate(), "on_game_imgui_update");
+
 		auto* player = m_pCurrentScene->GetLocalPlayer();
 		if (player) {
 			if (ImGui::IsMouseClicked(0)) {

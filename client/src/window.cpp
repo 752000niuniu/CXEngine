@@ -24,15 +24,18 @@ static void glfw_framebuffer_size_callback(GLFWwindow* window, int width, int he
 
 static void glfw_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
+	ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
 	INPUT_MANAGER_INSTANCE->MouseButtonCallback(window, button, action, mods);
 }
 
 static void glfw_key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
+	ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mode);
 	INPUT_MANAGER_INSTANCE->KeyCallbackFunc(window, key, scancode, action, mode);
 }
 static void glfw_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
+	ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
 	INPUT_MANAGER_INSTANCE->ScrollCallbackFunc(window, (float)xoffset, (float)yoffset);
 }
 
@@ -115,7 +118,7 @@ void Window::Init(int w,int h)
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-	ImGui_ImplGlfw_InitForOpenGL(m_pWindow, true);
+	ImGui_ImplGlfw_InitForOpenGL(m_pWindow, false);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
 	ImGui::GetStyle().WindowRounding = 0.0f;
@@ -153,10 +156,10 @@ void Window::Show()
 		ImGui::SetNextWindowSize(mainViewport->Size);
 		ImGui::SetNextWindowViewport(mainViewport->ID);
 
-		ImGui::Begin("Dock", NULL, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking
+		ImGui::Begin("MainDock", NULL,  ImGuiWindowFlags_NoDocking
 			| ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
 			| ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus);
-		int dockspace_id = ImGui::GetID("MyDockSpace");
+		int dockspace_id = ImGui::GetID("MainDockSpace");
 		ImGui::DockSpace(dockspace_id);
 		ImGui::End();
 
