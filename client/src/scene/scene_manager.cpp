@@ -6,7 +6,7 @@
 #include "script_system.h"
 #include "profile.h"
 #include "test_scene.h"
-#include "Scene.h"
+#include "scene.h"
 #include "input_manager.h"
 #include "game.h"
 #include "cxmath.h"

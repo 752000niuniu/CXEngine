@@ -8,7 +8,7 @@
 #include "profile.h"
 #include "file_loading.h"
 #include "scene/scene_manager.h"
-#include "scene/Scene.h"
+#include "scene/scene.h"
 #include "cxmath.h"
 #include "game.h"
 #include "utils.h"

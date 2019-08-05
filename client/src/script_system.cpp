@@ -14,7 +14,7 @@
 #include "imgui/cximgui.h"
 #include "net_thread_queue.h"
 #include "lua_net.h"
-#include "scene/Scene.h"
+#include "scene/scene.h"
 #include "time/time_manager.h"
 #include "luadbg.h"
 #include "time/timer_manager.h"

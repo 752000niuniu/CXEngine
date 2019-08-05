@@ -66,8 +66,6 @@ target_include_directories(SimpleServer
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     PRIVATE
-        # ${CMAKE_CURRENT_SOURCE_DIR}/..
-        # ${CMAKE_CURRENT_SOURCE_DIR}/../common
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/../external/dist/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../external/dist/include/freetype2
