@@ -3,33 +3,34 @@
 #include "ezio/socket_address.h"
 #include "kbase/at_exit_manager.h"
 #include "ezio/io_service_context.h"
+#include "script_system.h"
+
+
+ezio::EventLoop loop;
+void main_game_update() {
+	if (!script_system_update()) {
+		loop.Quit();
+	}
+}
 
 int main(int argc, char const *argv[])
 {
 	kbase::AtExitManager exit_manager;
 	ezio::IOServiceContext::Init();
 
+	script_system_read_config(argc, argv);
 
-	int port = 45000;
-	for (int i = 0; i < argc; i++)
-	{
-		auto params = utils::split_by_cnt(argv[i], '=', 2);
-		if (params[0] == "--port")
-		{
-			if (params[1] != "")
-			{
-				port = std::stoi(params[1]);
-			}
-			else
-			{
-				port = 45000;
-			}
-		}
-	}
-	ezio::EventLoop loop;
-	ezio::SocketAddress addr(port);
-	GameServer server(&loop,addr,"GameServer");
-	server.Start();
+	script_system_prepare_init();
+
+	script_system_dofile("main.lua");
+	
+	script_system_init();
+
+	loop.RunTaskEvery(main_game_update, TimeDuration(16));
 	loop.Run();
+
+	script_system_deinit();
+
+	
 	return 0;
 }

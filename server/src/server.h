@@ -7,6 +7,9 @@
 #include "ezio/tcp_server.h"
 #include "actor/player.h"
 using namespace ezio;
+
+
+
 class GameServer 
 {
 public:
@@ -17,19 +20,26 @@ public:
 	DISALLOW_MOVE(GameServer);
 
 	void Start();
+	void Stop();
 private:
 	void SendS2CPlayerEnter(const TCPConnectionPtr& conn, Player* player,bool is_local);
 
 	void SendS2CPlayer(const TCPConnectionPtr& conn, char* data,int size);
 
-	void OnFrameUpdate();
 	void OnConnection(const TCPConnectionPtr& conn);
 	void OnMessage(const TCPConnectionPtr& conn, Buffer& buf, TimePoint ts);
 	int m_Port;
 	EventLoop* m_EventLoop;
 	TCPServer m_Server;
-	typedef std::set<TCPConnectionPtr> ConnectionList;
+	
+	typedef std::set< TCPConnectionPtr> ConnectionList;
 	ConnectionList m_Connections;
 
+	std::map<int, TCPConnectionPtr> m_PlayerConnections;
 };
 
+void game_server_start(int port);
+void game_server_update();
+void game_server_stop();
+
+void luaopen_game_server(lua_State* L);

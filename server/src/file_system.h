@@ -1,16 +1,18 @@
 #pragma once
 
 
-#include <string>
-#include <vector>
-using String = std::string;
-class FileSystem 
+#include "define_types.h"
+
+
+class FileSystem
 {
 public:
 	FileSystem();
 	~FileSystem();
 
 	static std::string GetPath();
+	static std::string MakePath(String rpath);
+	static std::string FormatPath(String path);
 	static String GetTSVPath(String name);
 	static String GetTablePath(String name);
 	static std::string GetAbsPath(std::string localPath);
@@ -23,7 +25,6 @@ public:
 	static std::string GetFontPath(std::string path);
 	static std::string GetIconPath(std::string path);
 
-	static std::vector<std::string> ListFiles(std::string path);
-	static std::vector<std::string> ListAllFiles(std::string path);
 };
 
+void luaopen_filesystem(lua_State*L);

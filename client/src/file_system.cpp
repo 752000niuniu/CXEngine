@@ -62,7 +62,6 @@ std::string FileSystem::GetShaderPath(std::string path)
 }
 std::string FileSystem::GetLuaPath(std::string path)
 {
-	//return GetPath() + "/external/lib/lua/" + path;
 	return GetPath() + "/scripts/client/" + path;
 }
 std::string FileSystem::GetWDFPath(std::string path)

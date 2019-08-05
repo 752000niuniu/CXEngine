@@ -32,3 +32,18 @@ function utils_dump_table(t)
         end    
     end
 end 
+
+
+function on_script_system_init()
+    game_server_start()
+end
+
+function on_script_system_update()
+    game_server_update()
+    return true
+end
+
+
+function on_script_system_deinit()
+    game_server_stop()
+end

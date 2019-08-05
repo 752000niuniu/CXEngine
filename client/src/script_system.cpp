@@ -29,7 +29,7 @@ extern "C" int luaopen_cjson(lua_State *L);
 using GameConfig = std::map<std::string, std::string>;
 GameConfig g_GameConfig;
 
-void script_system_read_config(int argc, char** argv)
+void script_system_read_config(int argc, char const *argv[])
 {
 	for (int i = 1; i < argc; i++)
 	{
@@ -104,10 +104,13 @@ void script_system_init()
 	script_system_call_function(L , "on_script_system_init");
 }
 
-void script_system_update()
+bool script_system_update()
 {
-	script_system_call_function(L , "on_script_system_update");
+	std::vector<any> rets = script_system_call_function(L, "on_script_system_update");
+	bool success = any_cast<bool>(rets[0]);
+	return success;
 }
+
 
 void script_system_draw()
 {

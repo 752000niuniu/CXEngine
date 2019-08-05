@@ -50,6 +50,11 @@ extern "C"
 #include <lauxlib.h>
 }
 
+#include <NESupport.h>
+
+#include "lua_bind.h"
+#include "singleton.h"
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #ifdef _WIN32
@@ -58,10 +63,5 @@ extern "C"
 #include <GLFW/glfw3native.h> 
 #endif
 #include <imgui.h>
-#include <nlohmann/json.hpp>
-#include <NESupport.h>
-
-#include "lua_bind.h"
-#include "singleton.h"
 
 #include "define_types.h"

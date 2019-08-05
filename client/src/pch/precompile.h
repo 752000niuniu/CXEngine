@@ -50,7 +50,6 @@ extern "C"
 #include <lauxlib.h>
 }
 
-#include <nlohmann/json.hpp>
 #include <NESupport.h>
 
 #include "lua_bind.h"
@@ -65,7 +64,6 @@ extern "C"
 #endif
 #include <imgui.h>
 #include "define_types.h"
-#include "logger.h"
 //#include <assimp/Importer.hpp>
 //#include <assimp/scene.h>
 //#include <assimp/postprocess.h>

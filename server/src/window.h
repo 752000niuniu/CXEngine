@@ -17,8 +17,8 @@ public:
 	int GetHeight() { return m_Height; };
 	int GetWindowWidth() { return m_WindowWidth; };
 	int GetWindowHeight() { return m_WindowHeight; };
-	float GetCenterX() { return GetWidth()/ 2.f; }
-	float GetCenterY() { return GetHeight()/ 2.f; }
+	float GetCenterX() { return GetWidth() / 2.f; }
+	float GetCenterY() { return GetHeight() / 2.f; }
 	float GetDeltaTime();
 	float GetDeltaTimeMilliseconds();
 	void OnFrameBufferSizeCallback(int width, int height);

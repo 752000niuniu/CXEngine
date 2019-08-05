@@ -1,16 +1,17 @@
 #pragma once
+
 #include "lua_bind.h"
 
-void script_system_read_config(int argc, char** argv);
+void script_system_read_config(int argc, char const *argv[]);
 
 void script_system_prepare_init();
 
 void script_system_dofile(const char* file);
 
-std::string script_system_get_config(std::string key);
+const char* script_system_get_config(const char* key);
 
 void script_system_init();
-void script_system_update();
+bool script_system_update();
 void script_system_draw();
 void script_system_deinit();
 
