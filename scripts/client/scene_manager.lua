@@ -73,6 +73,8 @@ function on_scene_manager_update(name)
 end
 
 local KEY_RELEASE_MOVE_AMOUT = 30
+local roleID = 0 
+local weaponID = 0 
 function on_game_imgui_update()
     local player = scene_manager_fetch_local_player()
     if player then
@@ -96,17 +98,26 @@ function on_game_imgui_update()
             player:TranslateX(KEY_RELEASE_MOVE_AMOUT)
         end
 
+
         if imgui.IsKeyReleased(string.byte('1')) then
             player:ChangeAction(0)
         end
 
 
         if imgui.IsKeyReleased(string.byte('2')) then
-            player:ChangeRole(0)
+            player:ChangeRole(roleID)
+            roleID = roleID + 1
+            if roleID == 12 then
+                roleID = 1
+            end
         end
 
         if imgui.IsKeyReleased(string.byte('3')) then
-            player:ChangeWeapon(0)
+            player:ChangeWeapon(weaponID)
+            weaponID = weaponID + 1
+            if weaponID == 10 then
+                weaponID =0
+            end
         end
 
 
