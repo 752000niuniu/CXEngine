@@ -1,32 +1,33 @@
 #pragma once
 
+#include "define_types.h"
+
 #include "game_map.h"
 #include "actor/player.h"
 #include "base_scene.h"
 
-using String = std::string;
+
 /*
 场景对象对应一张大地图
 场景加载的时候应该加载player ， npc ，场景物件 等等
 场景里也包含任务 工会 聊天 战斗等等
 为了场景系统跟其他系统接口 ，需要能传递消息
 */
-class Scene  : public BaseScene 
+class Scene : public BaseScene
 {
 public:
-	Scene(int sceneID,String sceneName);
+	Scene(int sceneID, String sceneName);
 
 	virtual ~Scene();
 
 	void ApplyTemplate(const std::map<String, String>& templ);
 
 	virtual void OnLoad() override;
-	
+
 	virtual void OnUnLoad() override;
 
 	virtual void Update() override;
 
-	
 	int GetMapOffsetX();
 
 	int GetMapOffsetY();
@@ -34,19 +35,16 @@ public:
 	void SwitchBattle();
 
 	void SetAnnouncement(const char* text);
-	
-	void SetChat(const char* text);
 
+	void SetChat(const char* text);
 
 	void OnSmapClick(float x, float y, float w, float h);
 protected:
-	void ProcessInput();
-	
 	uint32_t m_SmapWas;
-	bool m_ShowSmap; 
+	bool m_ShowSmap;
 	std::vector<String> m_TransportUUIDs;
 	bool m_Switching;
-	
+
 };
 
 
@@ -64,9 +62,8 @@ public:
 
 	virtual void Update() override;
 
-
 protected:
-
 };
 
 
+void luaopen_scene(lua_State* L);

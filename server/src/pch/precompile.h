@@ -50,6 +50,14 @@ extern "C"
 #include <lauxlib.h>
 }
 
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#ifdef _WIN32
+#undef APIENTRY
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3native.h> 
+#endif
+#include <imgui.h>
 #include <nlohmann/json.hpp>
 #include <NESupport.h>
 

@@ -11,7 +11,7 @@
 #include "text_renderer.h"
 #include "input_manager.h"
 #include "net.h"
-#include "cximgui.h"
+#include "imgui/cximgui.h"
 #include "net_thread_queue.h"
 #include "lua_net.h"
 #include "scene/Scene.h"

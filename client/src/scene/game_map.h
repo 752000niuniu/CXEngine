@@ -4,9 +4,9 @@
 #include "astar/heap.h"
 #include "astar/astar.h"
 
-#include "image.h"
+#include "graphics/image.h"
 #include "pos.h"
-#include "core/texture.h"
+#include "graphics/texture.h"
 
 /*
 游戏地图类的封装

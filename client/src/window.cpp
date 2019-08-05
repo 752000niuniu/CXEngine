@@ -1,7 +1,6 @@
 #include "window.h"
 
-#include "global.h"
-#include "core/shader.h"
+#include "graphics/shader.h"
 #include "file_system.h"
 #include "input_manager.h"
 #include "imgui.h"
@@ -91,7 +90,7 @@ void Window::Init(int w,int h)
 	auto floatConfig = script_system_get_config("window_float");
 	glfwWindowHint(GLFW_FLOATING, strcmp(floatConfig , "1")==0);
 
-	m_pWindow = glfwCreateWindow(w, h, WINDOW_TITLE, nullptr, nullptr);
+	m_pWindow = glfwCreateWindow(w, h, "SimpleEngine", nullptr, nullptr);
 	if (m_pWindow == nullptr)
 	{
 		cxlog_err("glfwCreateWindow failed!");

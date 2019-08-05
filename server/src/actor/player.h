@@ -1,154 +1,97 @@
 #pragma once
+
+
 #include "pos.h"
+#include "entity.h"
+#include "action.h"
+#include "actor.h"
 #include "scene/game_map.h"
+#include "state.h"
+#include "animation/frame_animation.h"
 
-enum EActorType
-{
-	ACTOR_TYPE_DEFAULT = 0,
-	ACTOR_TYPE_PLAYER,
-	ACTOR_TYPE_PET,
-	ACTOR_TYPE_NPC
-};
-
-class Player
+class Player : public Actor, public BaseGameEntity
 {
 public:
+
 	Player(int roleID = 0);
 	virtual ~Player();
 
-	void SetRoleID(int roleid) { m_RoleID = roleid; };
-	int GetRoleID() { return m_RoleID; };
+	void ClearFrames();
+	void ReloadFrames();
+	void ResetDirAll(int dir);
+	void ResetDir(int dir);
 
-	void SetSceneID(int sceneid) { m_SceneID = sceneid; }
-	int GetSceneID() {return  m_SceneID; }
-	void SetDir(int dir) { m_Dir = dir; };
-	int GetDir() { return m_Dir; };
 
 	int GetDirByDegree(float degree);
 	void ReverseDir();
-	
-	float GetMoveDestDistSquare(Pos dest);
-	float GetMoveDestAngle(Pos dest);
-	void SetActionID(int state) { m_ActionID = state; };
-	int GetActionID() { return m_ActionID; }
-
-	void SetWeaponID(int weapon) { m_WeaponID = weapon; }
-	int GetWeaponID() { return m_WeaponID; }
 
 	virtual void OnUpdate(float dt);
-	void SetPos(float x, float y) { m_Pos.x = x; m_Pos.y = y; };
-	void SetPos(Pos p) { m_Pos = p; };
-	Pos GetPos() { return m_Pos; };
-	Pos GetMoveToPos() { return m_MoveToPos; };
+	virtual void OnDraw(GameMap* gameMapPtr);
+	virtual void OnDraw(int px, int py);
 
-	void SetCombatPos(float x, float y) { m_CombatPos.x = x; m_CombatPos.y = y; };
-	void SetCombatPos(Pos pos) { m_CombatPos = pos; };
-	Pos GetCombatPos() { return m_CombatPos; };
+	float GetCombatDistSquare();
+	float GetCombatAngle();
+	float GetMoveDestDistSquare(Pos dest);
+	float GetMoveDestAngle(Pos dest);
 
-	void SetCombatBackupPos(Pos pos) { m_CombatPosBackup = pos; };
-	Pos GetCombatBackupPos() { return m_CombatPosBackup; };
+	void MoveTo(float x, float y);
 
-	Pos GetCombatTargetPos() { return m_CombatTargetPos; };
-
-	int GetX() { return static_cast<int>(m_Pos.x); }
-	int GetY() { return  static_cast<int>(m_Pos.y); }
-
-	void SetX(float x) { m_Pos.x = x; }
-	void SetY(float y) { m_Pos.y = y; }
-
-	void SetBox();
-	void SetBoxX(int x) { m_Box.x = x; };
-	void SetBoxY(int y) { m_Box.y = y; }
-	int GetBoxX() { return static_cast<int>(m_Pos.x / 20); }
-	int GetBoxY() { return static_cast<int>(m_Pos.y / 20); }
-
-
-	void TranslateX(float x) { m_Pos.x += x; }
-	void TranslateY(float y) { m_Pos.y += y; }
-
-	void MoveTo(GameMap* gameMap, int destX, int destY);
+	void MoveTo(GameMap* gameMapPtr, int destX, int destY);
 	void MoveToRandom();
-	void SetVelocity(float velocity) { m_MoveVelocity = velocity; };
-	float GetVelocity() { return  m_MoveVelocity; };
+
+	int GetDrawY();
 
 	bool IsMove() { return m_IsMove; }
-	void SetCombatTargetPos(Pos pos) { m_CombatTargetPos = pos; };
+	void SaveFrame(int index);
+	void ChangeRole(int roleID);
+	void ChangeWeapon(int WeaponID);
+	void ChangeAction(int actionID);
 
-	void SetNickName(std::string name) { m_NickName = name; };
-	std::string GetNickName() { return m_NickName; };
-	void SetIsCombat(bool bcombat) { m_bInCombat = bcombat; }
-	bool IsCombat() { return m_bInCombat; }
+	
+	StateMachine<Player>* GetFSM() { return m_pFSM; };
 
-	void SetTargetID(int id) { m_TargetID = id; }
-	int GetTargetID() { return m_TargetID; }
-
+	bool HandleMessage(const Telegram& msg) override;
 	std::list<Pos>& GetMoveList() { return m_MoveList; };
 	std::list<Pos>& GetBackupMoveList() { return m_BackupMoveList; };
+	void LogInfo();
 
-	bool IsAutoRun() { return m_IsAutoRun; };
-	void SetAutoRun(bool autoRun) { m_IsAutoRun = autoRun; };
-	void SetActorID(int id) { m_ActorID = id; };
-	int GetActorID() { return m_ActorID; };
 	void Say(std::wstring Text);
+	void Say(std::string Text);
 	bool CanMove();
-	void SetHP(float hp) { m_HP = hp; }
-	float GetHP() { return m_HP; }
-	void AddHP(float hp) { m_HP += hp; }
-
-	void SetMP(float mp) { m_MP = mp; }
-	float GetMP() { return m_MP; }
-	void AddMP(float mp) { m_MP += mp; }
 
 	void AddTarget(Player* target) { m_Targets.push_back(target); }
 	std::vector<Player*> GetTargets() { return m_Targets; }
 	void ClearTargets() { m_Targets.clear(); }
+	float GetWidth();
+	float GetHeight();
 
-	void ChangeAction(int actionID) { m_ActionID = actionID; }
-	void ChangeWeapon(int WeaponID) { m_WeaponID = WeaponID; }
-	void ChangeRole(int roleID) { m_RoleID = roleID; }
+	Bound GetScreenBound();
+
+	void SetBox();
+	void SetDir(int dir);
+	void SetActionID(int state);
+
+	FrameAnimation* GetPlayerFrame(int actionID);
+	FrameAnimation* GetCurrentPlayerFrame();
+	FrameAnimation* GetCurrentWeaponFrame();
+	void SetSkillFrame(FrameAnimation* anim);
+	FrameAnimation& GetSkillFrame() { return *m_SkillFrame; }
+
 protected:
-	bool m_IsAutoRun;
-	int m_ActorID;
-	int m_RoleID;				//current role
+	void LoadRoleFrame();
+	void LoadWeaponFrame();
+	void SyncRoleWeaponFrame();
 
-	std::string m_NickName;
+	StateMachine<Player>* m_pFSM;
 
-	int m_WeaponID;				//current weapon
-	int m_ActionID;				//current action
-	int m_ActorType;
-	Pos m_Pos;
-	Pos m_MoveToPos;
-
-	BoxPos m_Box;
 	std::list<Pos> m_MoveList;
 	std::list<Pos> m_BackupMoveList;
-
-	int m_Dir;
-
-	int m_DirCount;
-
-	bool m_IsMove;
-	float m_MoveVelocity;
-
-	bool m_bInCombat;
-	Pos m_CombatPos;
-	Pos m_CombatPosBackup;
-	Pos m_CombatTargetPos;
-	int m_TargetID;
-
 	std::vector<Player*> m_Targets;
 
-	bool m_bSkillFrameShow;
-
-	bool m_bCalcMoveList;
-	float m_HP;
-	float m_MP;
-
-	int m_SayDuration;
-
-	int m_SceneID;
+	std::map<int, FrameAnimation*> m_PlayerFrames;
+	std::map<int, FrameAnimation*> m_WeaponFrames;
+	FrameAnimation* m_SkillFrame;
 };
-
 
 
 struct NpcTemplate
@@ -158,13 +101,17 @@ struct NpcTemplate
 
 };
 
-class Npc : public Player
+class Npc : public Player 
 {
 public:
-
+	Npc(int role_id) :Player(role_id) {};
 	Npc(const char* player_name, float x, float y, int dir, int role_id, int action_id, std::string msg);
 	virtual ~Npc();
-	
+	virtual void OnDraw(GameMap* m_GameMapPtr) override;
+
+	bool HandleMessage(const Telegram& msg);
+
+	void ShowDialog(std::string msg);
 private:
 	bool m_ShowDialog;
 	std::string m_DialogContent;
@@ -174,14 +121,16 @@ private:
 class Pet : public Player
 {
 public:
+	Pet(int role_id) :Player(role_id) { m_ActorType = ACTOR_TYPE_PET; };
 	Pet(const char* player_name, float x, float y, int dir, int role_id, int action_id);
+	virtual void OnDraw(int px, int py);
+
 	virtual ~Pet();
 };
 
-
-Player* actor_manager_create_player(int role_id,const char* name);
-Player* actor_manager_find_player_by_name(const char* name);
-void actor_manager_remove_player_by_name(const char* name);
+Player *actor_manager_create_player(int role_id, const char *name);
+Player *actor_manager_find_player_by_name(const char *name);
+void actor_manager_remove_player_by_name(const char *name);
 void actor_manager_clear_player();
 
-std::vector<Player*> actor_manager_fetch_all_players();
+std::vector<Player *> actor_manager_fetch_all_players();

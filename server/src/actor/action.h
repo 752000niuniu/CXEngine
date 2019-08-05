@@ -1,8 +1,10 @@
 #pragma once
 
-static std::vector<std::string> s_ActionSet= { u8"idle",u8"walk",u8"sit",u8"angry",u8"sayhi",u8"dance",u8"salute",u8"clps",u8"cry",u8"batidle",u8"attack",u8"cast",u8"behit",u8"runto",u8"runback",u8"defend" };;
+#include <string>
 
-
+std::string action_get_name(int i);
+size_t action_get_size();
+std::string action_system_get_action(int i);
 class Action
 {
 public:

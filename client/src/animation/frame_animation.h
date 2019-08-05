@@ -1,7 +1,7 @@
 #pragma once 
 
 
-#include "core/texture.h"
+#include "graphics/texture.h"
 #include "texture_manager.h"
 #include <vector>
 #include "sprite_renderer.h"

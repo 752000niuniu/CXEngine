@@ -1,4 +1,7 @@
 #pragma once
+
+#include "define_types.h"
+#include "entity.h"
 #include "game_map.h"
 #include "actor/player.h"
 
@@ -6,22 +9,22 @@
 场景对象的基类
 可以拆分出SplashScene , UIScene , Scene（游戏场景）
 */
-
 class BaseScene
 {
 public:
-	BaseScene(int sceneID, std::string sceneName);
+	BaseScene(int sceneID, String sceneName);
 
 	virtual ~BaseScene();
 
 	virtual void Update() = 0;
 
+	virtual void Draw() {};
 
-	void AddPlayer(const char* player_name, float x, float y, int dir ,int role_id, int action_id) ;
+	void AddPlayer(const char* player_name, float x, float y, int dir, int role_id, int action_id);
 
-	void AddNpc(const char* player_name, float x, float y, int dir, int role_id, int action_id, const char* msg) ;
+	void AddNpc(const char* player_name, float x, float y, int dir, int role_id, int action_id, const char* msg);
 
-	void AddPet(const char* player_name, int x, int y, int dir, int role_id, int action_id) ;
+	void AddPet(const char* player_name, int x, int y, int dir, int role_id, int action_id);
 
 	void AddPlayer(Player* player);
 
@@ -34,7 +37,7 @@ public:
 	void SetSceneID(int id) { m_SceneID = id; };
 
 	int GetSceneID() { return m_SceneID; };
-	
+
 	bool IsLoading() { return m_IsLoading; }
 
 	void SetLoading(bool load) { m_IsLoading = load; }
@@ -58,9 +61,9 @@ public:
 	Player* GetPlayerByNickname(const char* nickname);
 
 	Player* GetPlayerByIndex(int index) { if (index < 0 || index >= m_Players.size())return nullptr; else return m_Players[index]; }
-	
+
 	GameMap* GetGameMap() { return m_Map; };
-	
+
 	size_t GetPlayersCount() { return m_Players.size(); }
 
 	void Load();
@@ -75,7 +78,7 @@ protected:
 	std::string m_Name;
 
 	int m_SceneID;
-	
+
 	int m_Width;
 
 	int m_Height;
@@ -83,13 +86,13 @@ protected:
 	int m_OffsetX;
 
 	int m_OffsetY;
-	
+
 	bool m_IsLoading;
 
 	bool m_Loaded;
 
 	Pos m_BirthPos;
-	
+
 	Pos m_LoadingCenter;
 
 	GameMap* m_Map;
@@ -99,6 +102,5 @@ protected:
 	std::vector<Player*> m_Players;
 
 };
-
 
 

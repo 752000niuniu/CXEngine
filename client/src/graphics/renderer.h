@@ -6,7 +6,7 @@
 #include "texture.h"
 #include "file_system.h"
 #include "window.h"
-#include "core/Transform.h"
+#include "graphics/Transform.h"
 #include "object_2d.h"
 #include "graphics_2d.h"
 #include "singleton.h"

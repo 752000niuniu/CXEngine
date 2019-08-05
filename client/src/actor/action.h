@@ -4,7 +4,7 @@
 
 std::string action_get_name(int i);
 size_t action_get_size();
-
+std::string action_system_get_action(int i);
 class Action
 {
 public:

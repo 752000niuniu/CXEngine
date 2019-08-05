@@ -8,10 +8,9 @@
  ******************************************************************/
 #include "sprite_renderer.h"
 #include "resource_manager.h"
-#include "global.h"
 #include "window.h"
 #include "file_system.h"
-#include "core/Renderer.h"
+#include "graphics/Renderer.h"
 
 
 SpriteRenderer::SpriteRenderer()

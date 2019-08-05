@@ -2,12 +2,14 @@
 
 #include <functional>
 #include <thread>
-#include "../file_system.h"
-#include "cxmath.h"
+#include "profile.h"
+#include "file_loading.h"
 #include "cxrandom.h"
-#include <stdint.h>
+#include "file_system.h"
+#include "cxmath.h"
+#include "window.h"
 
-GameMap::GameMap(uint32_t mapID)
+GameMap::GameMap(uint32 mapID)
 	:m_XyqMap(nullptr)
 {
 	m_MapID = mapID;
@@ -17,35 +19,42 @@ GameMap::GameMap(uint32_t mapID)
 	m_Astar = nullptr;
 
 	m_MapOffsetX = m_MapOffsetY = 0;
-
-	m_MapTileWidth = 320;
-	m_MapTileHeight = 240;
-
-	//这才是资源
-	m_XyqMap = new NE::MAP(fileName);
-
-	m_MapWidth = m_XyqMap->MapWidth();
-
-	m_MapHeight = m_XyqMap->MapHeight();
-
-	m_Width = m_XyqMap->SliceWidth();
-	m_Height = m_XyqMap->SliceHeight();
-
-	m_Row = m_XyqMap->Row();
-	m_Col = m_XyqMap->Col();
-	printf("初始化GameMap %d %d ", m_Row, m_Col);
-
-	m_CellWidth = m_Col * 16;
-	m_CellHeight = m_Row * 12;
-	m_Cell.resize(m_CellWidth, { 0 });
-
-	for (int i = 0; i < m_CellWidth; i++)
+	auto* iothread = file_loading_thread();
+	if (!iothread->IsFileLoadOk(fileName.c_str()))
 	{
-		m_Cell[i].resize(m_CellHeight, 0);
+		iothread->PostTask(fileName.c_str(), [this](const char* path)->bool
+		{
+			//这才是资源
+			m_XyqMap = new NE::MAP(path);
+
+			m_MapWidth = m_XyqMap->MapWidth();
+
+			m_MapHeight = m_XyqMap->MapHeight();
+
+			m_Width = m_XyqMap->SliceWidth();
+			m_Height = m_XyqMap->SliceHeight();
+
+			m_Row = m_XyqMap->Row();
+			m_Col = m_XyqMap->Col();
+			printf("初始化GameMap %d %d ", m_Row, m_Col);
+
+			m_CellWidth = m_Col * 16;
+			m_CellHeight = m_Row * 12;
+			m_Cell.resize(m_CellWidth, { 0 });
+
+			for (int i = 0; i < m_CellWidth; i++)
+			{
+				m_Cell[i].resize(m_CellHeight, 0);
+			}
+			UpdateCell();
+			return true;
+		}
+		);
+
+		m_MapTileWidth = 320;
+		m_MapTileHeight = 240;
+		m_MapTileCoef = WINDOW_INSTANCE->GetWidth() / 2 / m_MapTileWidth + 1;
 	}
-	UpdateCell();
-
-
 }
 
 void GameMap::clamp(int val, int min, int max)
@@ -66,7 +75,7 @@ bool GameMap::CanArriveDirect(Pos src, Pos dest)
 	if (dx == 0)
 	{
 		int opt = dy < 0 ? -1 : 1;
-		for (int i = 0; i<dy*opt; i++)
+		for (int i = 0; i < dy*opt; i++)
 		{
 			int cellX = static_cast<int>(src.x);
 			int cellY = static_cast<int>(src.y + i * opt);
@@ -79,7 +88,7 @@ bool GameMap::CanArriveDirect(Pos src, Pos dest)
 	if (dy == 0)
 	{
 		int opt = dx < 0 ? -1 : 1;
-		for (int i = 0; i<dx*opt; i++)
+		for (int i = 0; i < dx*opt; i++)
 		{
 			int cellX = static_cast<int>(src.x + i * opt);
 			int cellY = static_cast<int>(src.y);
@@ -171,7 +180,7 @@ std::list<Pos> GameMap::Move(int sx, int sy, int ex, int ey)
 		int nextNode = 1;
 		std::list<Pos> smoothMoveList;
 
-		if (moveList.size()>0)
+		if (moveList.size() > 0)
 		{
 			smoothMoveList.push_back(moveList[currentNode]);
 			while (nextNode != moveList.size())
@@ -196,6 +205,16 @@ std::list<Pos> GameMap::Move(int sx, int sy, int ex, int ey)
 
 GameMap::~GameMap()
 {
+	auto* iothread = file_loading_thread();
+	if (iothread)
+	{
+		std::string fileName = FileSystem::GetMapPath(std::to_string(m_MapID));
+		iothread->RemoveTaskState(fileName.c_str());
+	}
+
+	
+
+
 	if (m_Astar != nullptr)
 	{
 		delete m_Astar;
@@ -210,6 +229,9 @@ GameMap::~GameMap()
 
 void GameMap::Update()
 {
+	auto* iothread = file_loading_thread();
+	std::string fileName = FileSystem::GetMapPath(std::to_string(m_MapID));
+	if (!iothread->IsFileLoadOk(fileName.c_str()))return;
 }
 int GameMap::GetMapOffsetX()
 {
@@ -221,3 +243,21 @@ int GameMap::GetMapOffsetY()
 }
 
 
+void GameMap::Draw(int playerX, int playerY)
+{
+}
+
+
+void GameMap::DrawCell(int cur_x, int cur_y)
+{
+}
+
+void GameMap::DrawCell()
+{
+	DrawCell(m_MapOffsetX, m_MapOffsetY);
+}
+
+void GameMap::DrawMask(int playerX, int playerY, int drawY)
+{
+	
+}

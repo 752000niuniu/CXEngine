@@ -9,8 +9,8 @@
 #pragma once
 
 
-#include "core/texture.h"
-#include "core/shader.h"
+#include "graphics/texture.h"
+#include "graphics/shader.h"
 
 
 

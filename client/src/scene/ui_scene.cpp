@@ -1,16 +1,16 @@
 #include "ui_scene.h"
 #include "scene_manager.h"
 #include "was_viewer_scene.h"
-#include "../core/graphics_2d.h"
-#include "../core/Renderer.h"
+#include "../graphics/graphics_2d.h"
+#include "../graphics/Renderer.h"
 #include "resource_manager.h"
 #include "cxrandom.h"
 #include "profile.h"
 #include "Time/Time.h"
-#include "Bitmap.h"
+#include "graphics/bitmap.h"
 #include "input_manager.h"
 #include "cxmath.h"
-#include "core/object_2d.h"
+#include "graphics/object_2d.h"
 
 
 float tv_start = -1.f;

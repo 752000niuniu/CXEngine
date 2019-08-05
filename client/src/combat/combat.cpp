@@ -1,11 +1,10 @@
 #include "Combat.h"
 #include "../engine.h"
-#include "../global.h"
 #include "../message.h"
 #include "../animation/frame_animation.h"
 #include "Skill.h"
 #include "../actor/player_state.h"
-#include "../core/Renderer.h"
+#include "../graphics/renderer.h"
 #include "input_manager.h"
 
 static	FrameAnimation* s_CombatBG;

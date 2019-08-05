@@ -25,25 +25,23 @@ add_executable(SimpleEngine
     src/algorithm.cpp
     src/animation/frame_animation.cpp
     src/astar/astar.cpp
-    src/bitmap.cpp
     src/camera.cpp
     src/combat/combat.cpp
     src/combat/skill.cpp
     src/components/base_component.cpp
     src/components/transform_component.cpp
-    src/core/graphics_2d.cpp
-    src/core/object_2d.cpp
-    src/core/renderer.cpp
-    src/core/shader.cpp
-    src/core/texture.cpp
-    src/core/transform.cpp
+    src/graphics/graphics_2d.cpp
+    src/graphics/object_2d.cpp
+    src/graphics/renderer.cpp
+    src/graphics/shader.cpp
+    src/graphics/texture.cpp
+    src/graphics/transform.cpp
+    src/graphics/bitmap.cpp
     src/cube_batch.cpp
     src/engine.cpp
     src/entity.cpp
     src/file_system.cpp
     src/game.cpp
-    src/imgui/imgui_impl_glfw.cpp
-    src/imgui/imgui_impl_opengl3.cpp
     src/input_manager.cpp
     src/logger.cpp
     src/message.cpp
@@ -76,7 +74,10 @@ add_executable(SimpleEngine
     src/ui.cpp
     src/vertex.cpp
     src/window.cpp
-    src/cximgui.cpp
+    src/imgui/imgui_impl_glfw.cpp
+    src/imgui/imgui_impl_opengl3.cpp
+    src/imgui/cximgui.cpp
+    
 )
 
 if(MSVC)
@@ -108,6 +109,7 @@ target_compile_definitions(SimpleEngine
 	-DIMGUI_IMPL_OPENGL_LOADER_GLEW
     -DWORK_DIR="${ENGINE_DIR}"
     -DNODEFAULTLIB
+    -DSIMPLE_ENGINE 
 )
 if(WIN32)
 target_compile_definitions(SimpleEngine 

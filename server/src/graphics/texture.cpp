@@ -1,7 +1,8 @@
 #include "texture.h"
 #include <SOIL.h>
-#include "image.h"
-#include "Bitmap.h"
+#include "graphics/image.h"
+#include "graphics/bitmap.h"
+#include "logger.h"
 
 
 Texture::Texture(CreationType type, const uint8* buff,int left,int top, int width, int height)

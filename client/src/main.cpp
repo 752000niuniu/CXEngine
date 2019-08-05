@@ -1,4 +1,3 @@
-#include "global.h"
 #include "window.h"
 #include "script_system.h"
 #include "kbase/at_exit_manager.h"

@@ -4,7 +4,7 @@
 
 #include "i_update_draw.h"
 #include "event/event.h"
-#include "core/texture.h"
+#include "graphics/texture.h"
 #include "game_map.h"
 #include "actor/player.h"
 #include "base_scene.h"

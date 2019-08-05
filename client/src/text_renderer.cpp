@@ -1,7 +1,6 @@
 #include "text_renderer.h"
 #include "file_system.h"
 
-#include "global.h"
 #include "window.h"
 #include "profile.h"
 #include <assert.h>

@@ -13,12 +13,12 @@ enum EActorType
 	ACTOR_TYPE_NPC
 };
 
-class Actor 
+class Actor
 {
 public:
-	
+
 	Actor(int roleID = 0);
-	
+
 	virtual ~Actor();
 	virtual void OnUpdate(float dt) {};
 	virtual void OnDraw(GameMap* gameMapPtr) {};
@@ -29,6 +29,12 @@ public:
 
 	void SetActionID(int state) { m_ActionID = state; };
 	int GetActionID() { return m_ActionID; }
+
+	void SetSceneID(int id) { m_SceneID = id; };
+	int GetSceneID() { return m_SceneID; };
+
+	void SetRoleID(int id) { m_RoleID = id; };
+	int GetRoleID() { return m_RoleID; };
 
 	void SetWeaponID(int weapon) { m_WeaponID = weapon; }
 	int GetWeaponID() { return m_WeaponID; }
@@ -48,7 +54,7 @@ public:
 
 	void SetCombatTargetPos(Pos pos) { m_CombatTargetPos = pos; };
 	Pos GetCombatTargetPos() { return m_CombatTargetPos; };
-	
+
 	void SetBoxX(int x) { m_Box.x = x; };
 	void SetBoxY(int y) { m_Box.y = y; }
 	int GetBoxX() { return static_cast<int>(m_Pos.x / 20); }
@@ -108,6 +114,7 @@ protected:
 	std::string m_NickName;
 	// bool m_HasWeapon;
 
+	int m_SceneID;
 	int m_WeaponID;				//current weapon
 	int m_ActionID;				//current action
 

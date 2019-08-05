@@ -1,6 +1,5 @@
 #include "player.h"
 #include "logger.h"
-#include "global.h"
 #include "../message.h"
 #include "../combat/Combat.h"
 #include "../combat/Skill.h"

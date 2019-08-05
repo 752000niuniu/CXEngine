@@ -4,7 +4,7 @@
 #include "scene/scene_manager.h"
 #include "utils.h"
 #include "lua.hpp"
-#include "Window.h"
+#include "window.h"
 
 #define ACTOR_METATABLE_NAME "mt_actor"
 

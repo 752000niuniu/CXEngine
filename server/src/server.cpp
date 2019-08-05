@@ -5,6 +5,7 @@
 #include "protocol.h"
 #include "ezio/endian_utils.h"
 #include "ezio/buffer.h"
+#include "actor/player.h"
 
 GameServer::GameServer(EventLoop* loop, SocketAddress addr, const char* name)
 	:m_EventLoop(loop),

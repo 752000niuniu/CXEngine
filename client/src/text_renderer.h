@@ -4,8 +4,8 @@
 //GLFW
 #include <GLFW/glfw3.h>
 
-#include "core/shader.h"
-#include "core/texture.h"
+#include "graphics/shader.h"
+#include "graphics/texture.h"
 #include <map>
 
 #include <freetype2/ft2build.h>

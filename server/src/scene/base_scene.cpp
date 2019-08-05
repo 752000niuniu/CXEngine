@@ -1,16 +1,16 @@
 #include "base_scene.h"
 #include "scene.h"
-#include "actor/action.h"
+#include "game.h"
 #include "utils.h"
-using String = std::string;
+
 BaseScene::BaseScene(int id, String name)
-:m_Name(name),
-m_SceneID(id),
-m_Map(nullptr),
-m_LocalPlayer(nullptr),
-m_Loaded(false)
+	:m_Name(name),
+	m_SceneID(id),
+	m_Map(nullptr),
+	m_LocalPlayer(nullptr),
+	m_Loaded(false)
 {
-	
+
 }
 
 BaseScene::~BaseScene()
@@ -30,7 +30,7 @@ BaseScene::~BaseScene()
 
 Player* BaseScene::GetPlayerByNickname(const char* nickname)
 {
-	for (auto* player: m_Players)
+	for (auto* player : m_Players)
 	{
 		if (player->GetNickName() == nickname)
 		{
@@ -65,19 +65,19 @@ void BaseScene::UnLoad()
 
 		SafeDelete(m_Map);
 
-		m_LocalPlayer = nullptr;
+		//m_LocalPlayer = nullptr;
 
 		for (auto* player : m_Players)
 		{
 			SafeDelete(player);
 		}
 		m_Players.clear();
-		
+		m_LocalPlayer = nullptr;
 		m_Loaded = false;
 	}
 }
 
-void BaseScene::AddPlayer(const char* player_name, float x, float y,int dir, int role_id, int weapon_id)
+void BaseScene::AddPlayer(const char* player_name, float x, float y, int dir, int role_id, int weapon_id)
 {
 	Player* player = new Player(role_id);
 	player->SetWeaponID(weapon_id);
@@ -111,7 +111,7 @@ void BaseScene::ClearAllPlayers()
 	m_Players.clear();
 }
 
-void BaseScene::AddNpc(const char* player_name, float x, float y, int dir, int role_id, int action_id,const char* msg)
+void BaseScene::AddNpc(const char* player_name, float x, float y, int dir, int role_id, int action_id, const char* msg)
 {
 	Npc* npc = new Npc(player_name, x, y, dir, role_id, action_id, msg);
 	m_Players.push_back(npc);
@@ -119,7 +119,7 @@ void BaseScene::AddNpc(const char* player_name, float x, float y, int dir, int r
 
 void BaseScene::AddPet(const char* player_name, int x, int y, int dir, int role_id, int action_id)
 {
-	Pet* pet = new Pet(player_name, x, y, dir, role_id, action_id);
+	Pet* pet = new Pet(player_name, (float)x, (float)y, dir, role_id, action_id);
 	m_Players.push_back(pet);
 }
 

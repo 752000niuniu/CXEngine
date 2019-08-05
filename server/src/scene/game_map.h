@@ -1,6 +1,6 @@
 #pragma once
-#include <stdint.h>
-#include "NESupport.h"
+
+#include <NESupport.h>
 #include "astar/heap.h"
 #include "astar/astar.h"
 
@@ -9,11 +9,11 @@
 /*
 游戏地图类的封装
 */
-class GameMap  
+class GameMap
 {
 public:
-	GameMap(uint32_t mapID);
-	
+	GameMap(uint32 mapID);
+
 	~GameMap();
 
 	std::list<Pos> Move(int sx, int sy, int ex, int ey);
@@ -32,9 +32,16 @@ public:
 
 	void Update();
 
-	int GetWidth(){return m_Width;}
+	void Draw(int playerX, int playerY);
 
-	int GetHeight(){return m_Height;}
+	void DrawMask(int playerX, int playerY, int playerHeight);
+
+	void DrawCell(int cur_x, int cur_y);
+	void DrawCell();
+
+	int GetWidth() { return m_Width; }
+
+	int GetHeight() { return m_Height; }
 
 	int GetMapWidth() { return m_MapWidth; }
 
@@ -66,28 +73,30 @@ private:
 	障碍信息
 	*/
 	std::vector<std::vector<int>> m_Cell;
-	
+
 	int m_MapTileWidth;
-	
+
 	int m_MapTileHeight;
-	
+
 	int m_MapTileCoef;
-	
+
 	int m_Row;
-	
+
 	int m_Col;
-	
+
 	NE::MAP* m_XyqMap;
-	
+
 	Astar* m_Astar;
-	
+
 	int m_MapID;
-	
+
 	int m_MapOffsetX;
-	
+
 	int m_MapOffsetY;
-	
+
 	std::map<int, std::set<int>> m_UnitMasks;
+
+	
 };
 
 
