@@ -115,7 +115,7 @@ protected:
 
 	int m_WeaponID;				//current weapon
 	int m_ActionID;				//current action
-
+	int m_ActorType;
 	Pos m_Pos;
 	Pos m_MoveToPos;
 
