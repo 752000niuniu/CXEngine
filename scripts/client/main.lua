@@ -43,6 +43,7 @@ function on_script_system_update()
     resource_manager_update()
     scene_manager_update()
     actor_manager_update()
+    return true
 end
 
 function on_script_system_draw()

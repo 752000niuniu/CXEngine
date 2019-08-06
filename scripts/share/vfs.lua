@@ -1,5 +1,4 @@
 local work_dir = vfs_get_workdir()
-
 function vfs_getpath()
 	return work_dir
 end

@@ -68,6 +68,7 @@ void script_system_prepare_init()
 	luaopen_actor(L);
 	luaopen_game(L);
 	luaopen_game_server(L);
+
 }
 
 void script_system_dofile(const char* file)
@@ -150,4 +151,6 @@ void luaopen_script_system(lua_State* L)
 	script_system_register_function(L, script_system_get_config);
 
 	script_system_register_function(L, lua_file_path);
+
+	
 }

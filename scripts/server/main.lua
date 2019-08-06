@@ -1,7 +1,7 @@
 
 
-script_system_dofile('share/vfs.lua')
-script_system_dofile('share/utils.lua')
+script_system_dofile('../share/vfs.lua')
+script_system_dofile('../share/utils.lua')
 
 
 local player_database = {}
@@ -18,16 +18,15 @@ function read_player_database()
     
     local db =  cjson.decode(data)
     if db then
-        for i,v in ipairs(db)
+        for i,v in ipairs(db) do
             player_database[v.pid] = v
         end
     end
 end
 
 function on_script_system_init()
-    read_player_database()
-
-    game_server_start()
+    -- read_player_database()
+    game_server_start(45000)
 end
 
 function on_script_system_update()
@@ -41,12 +40,9 @@ function on_script_system_deinit()
 end
 
 
-function __parse_pt(pt)
-    local len =  pt:ReadAsInt()
-    return pt:ReadAsString(len)
-end
 
 function game_server_dispatch_message(pt)
+    print('game_server_dispatch_message' , pt:Preview(pt:readable_size()))
     local type = pt:ReadAsInt()
     if  type == PTO_C2S_LOGIN then
         --[[
@@ -57,17 +53,17 @@ function game_server_dispatch_message(pt)
             其他玩家收到后, 也创建玩家 不设置local 
             同时同步所有玩家到某某玩家
         ]]
-        local msg = __parse_pt(pt)
+        local msgjs =  pt:ReadAllAsString()
+        local msg = cjson.decode(msgjs)
 
-             
+        net_send_message(msg.pid,PTO_S2C_PLAYER_ENTER,"{}")
 
     elseif type == PTO_C2S_LOGOUT then
-        local msg = __parse_pt(pt)
+        -- local msg = __parse_pt(pt)
     elseif type == PTO_C2S_MOVE_TO_POS then
-        local msg = __parse_pt(pt)
+        -- local msg = __parse_pt(pt)
     elseif type == PTO_C2S_CHAT then
-        local msg = __parse_pt(pt)
-        
+        -- local msg = __parse_pt(pt)/
         
 
     end

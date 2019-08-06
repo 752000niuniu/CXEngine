@@ -13,7 +13,7 @@
 #include "file_system.h"
 #include "window.h"
 #include "net.h"
-#include "../imgui_internal.h"
+#include "logger.h"
 
 
 static bool s_DrawMask, s_DrawStrider, s_DrawCell, s_DrawMap, s_DrawAnnouncement, s_AutoRun;

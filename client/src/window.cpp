@@ -11,7 +11,7 @@
 #include "input_manager.h"
 #include "file_loading.h"
 #include "scene/scene_manager.h"
-
+#include "logger.h"
 static const float MS_PER_UPDATE = 1000 / 60.f / 1000;
 
 #define GAME_SCREEN_WIDTH 800

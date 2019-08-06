@@ -17,6 +17,7 @@
 #include "scene/base_scene.h"
 #include "kbase/pickle.h"
 #include "scene/scene_manager.h"
+#include "logger.h"
 
 using namespace ezio;
 
@@ -40,6 +41,8 @@ public:
 
 	void SendMessageToGame(char* buf, size_t len);
 
+	void SendMessageToServer(int proto, const char* msg);
+
 	void Disconnect() { m_Client.Disconnect(); };
 
 private:
@@ -48,11 +51,12 @@ private:
 	void OnMessage(const TCPConnectionPtr&, Buffer&, TimePoint);
 
 	TCPClient m_Client;
+	EventLoop* m_EventLoop;
 };
 
 
 NetClient::NetClient(EventLoop* loop, const SocketAddress& serverAddr,const char* name)
-	:m_Client(loop, serverAddr, name)
+	:m_Client(loop, serverAddr, name),m_EventLoop(loop)
 {
 	m_Client.set_on_connection(std::bind(&NetClient::OnConnection, this, std::placeholders::_1));
 	m_Client.set_on_message(std::bind(&NetClient::OnMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
@@ -108,10 +112,35 @@ void NetClient::SendMSGC2SChat(MSGC2SChat * msg)
 
 void NetClient::SendMessageToGame(char* buf, size_t len)
 {
+	m_EventLoop->RunTask([this, buf, len]() {
+		if (m_Client.connection() != nullptr && m_Client.connection()->connected())
+		{
+			cxlog_info("%s", kbase::StringView(buf, len));
+			m_Client.connection()->Send(kbase::StringView(buf, len));
+		}
+	});
+	
+}
+
+void NetClient::SendMessageToServer(int proto, const char* msg)
+{
+	ezio::Buffer buf;
+	buf.Write(proto);
+	buf.Write(msg, strlen(msg));
+	int cnt = (int)buf.readable_size();
+	buf.Prepend(cnt);
 	if (m_Client.connection() != nullptr && m_Client.connection()->connected())
 	{
-		m_Client.connection()->Send(kbase::StringView(buf, len));
+		//cxlog_info("%s\n", kbase::StringView(buf.Peek(), buf.readable_size()));
+		m_Client.connection()->Send(kbase::StringView(buf.Peek(), buf.readable_size()));
 	}
+	//m_EventLoop->RunTask([this, buf]() {
+	//	if (m_Client.connection() != nullptr && m_Client.connection()->connected())
+	//	{
+	//		//cxlog_info("%s\n", kbase::StringView(buf.Peek(), buf.readable_size()));
+	//		m_Client.connection()->Send(kbase::StringView(buf.Peek(), buf.readable_size()));
+	//	}
+	//});
 }
 
 void NetClient::OnConnection(const TCPConnectionPtr& conn)
@@ -343,9 +372,14 @@ void net_manager_connect()
 	}
 }
 
+void net_send_message(int proto, const char* msg) {
+	g_Client->SendMessageToServer(proto, msg);
+}
+
 void luaopen_net(lua_State* L)
 {
 #define REG_ENUM(name)  (lua_pushinteger(L, name),lua_setglobal(L, #name))
+	REG_ENUM(PTO_C2S_SIGNUP);
 	REG_ENUM(PTO_C2S_LOGIN);
 	REG_ENUM(PTO_C2S_LOGOUT);
 	REG_ENUM(PTO_C2S_MOVE_TO_POS);
@@ -360,4 +394,8 @@ void luaopen_net(lua_State* L)
 	script_system_register_function(L, net_manager_init);
 	script_system_register_function(L, net_manager_update);
 	script_system_register_function(L, net_manager_deinit);
+
+	script_system_register_function(L, net_send_message);
+
+	
 }

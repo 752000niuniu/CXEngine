@@ -1,10 +1,9 @@
-
-dofile('../share/vfs.lua')
-dofile('../share/utils.lua')
+script_system_dofile('../share/vfs.lua')
+script_system_dofile('../share/utils.lua')
 
 local player_database = {}
 function read_player_database()
-    local path = vfs_makepath('storage/server/player.data') 
+    local path = vfs_get_workdir() .. '/storage/server/player.data'
     local file = io.open(path,'r')
     if not file then
         local fw = io.open(path,'w')
@@ -16,15 +15,10 @@ function read_player_database()
     
     local db =  cjson.decode(data)
     if db then
-        for i,v in ipairs(db)
+        for i,v in ipairs(db) do
             player_database[v.pid] = v
         end
     end
-end
-
-
-function valid_player_login(msg)
-	return true
 end
 
 function server_thread_start()
@@ -37,13 +31,44 @@ function server_thread_on_message(conn, buf, netq)
 		if buf:readable_size() >= len + CX_MSG_HEADER_LEN then
 			buf:Consume(CX_MSG_HEADER_LEN)
 			local type = buf:PeekAsInt()
-			if type == PTO_C2S_LOGIN then
+			if type == PTO_C2S_SIGNUP then
 				buf:Consume(4)
-				local msg = buf:ReadAsString(buf,len-4)
-				local pinfo = valid_player_login(msg)
-				if pinfo then
-					insert_pid_connection_pair(pinfo.pid, conn)
-					net_send_message(pinfo.pid, PTO_S2C_LOGIN, pinfo)
+				local msgjs = buf:ReadAsString(len-4)
+				local msg = cjson.decode(msgjs)
+				print('PTO_C2S_SIGNUP', msg)
+				local pinfo = {}
+				pinfo.pid = os.time()
+				pinfo.account = msg.account
+				pinfo.password = msg.password
+				player_database[pinfo.pid] = pinfo
+
+			elseif type == PTO_C2S_LOGIN then
+				buf:Consume(4)
+				local msgjs = buf:ReadAsString(len-4)
+				print('PTO_C2S_LOGIN', msgjs)
+				local msg = cjson.decode(msgjs)
+				local pid 
+				for _pid, pinfo in pairs(player_database) do
+					print('player_database',_pid, cjson.encode(pinfo))
+					if pinfo.account == msg.account and pinfo.password == msg.password then
+						pid = _pid
+						break
+					end
+				end
+				if pid then
+					print('pid', pid)
+					insert_pid_connection_pair(pid, conn)
+					msg.pid = pid
+					netq_push_login_msg(netq, cjson.encode( msg))
+
+					-- local new_buf = ezio_buffer_create()
+					-- new_buf:WriteInt(type)
+					-- new_buf:WriteString(cjson.encode(msg))
+					
+					-- local allstr = new_buf:ReadAllAsString()
+					-- print('netq: allstr', allstr)
+					-- netq:push_back(0, allstr)
+					-- ezio_buffer_destroy(new_buf)
 				end
 			else
 				netq:push_back(0,buf:ReadAsString(len))

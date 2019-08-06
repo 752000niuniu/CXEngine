@@ -10,4 +10,5 @@ void log_print(const char *str)
 void luaopen_logger(lua_State* L)
 {
 	script_system_register_function(L, log_print);
+	
 }

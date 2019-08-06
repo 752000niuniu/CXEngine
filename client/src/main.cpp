@@ -3,7 +3,7 @@
 #include "kbase/at_exit_manager.h"
 #include "ezio/io_service_context.h"
 
-int main(int argc,char** argv)
+int main(int argc, char const *argv[])
 {
 #ifdef WIN32
 	SetConsoleOutputCP(CP_UTF8);
