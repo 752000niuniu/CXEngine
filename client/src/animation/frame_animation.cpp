@@ -3,6 +3,7 @@
 #include "profile.h"
 #include "window.h"
 #include "resource_manager.h"
+#include "logger.h"
 
 #define  FRAME_TIME_BASE_DEFAULT (1.0f/60*4)
 

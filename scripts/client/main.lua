@@ -4,10 +4,9 @@ SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
 DefaultMapID = 1001
 
-script_system_dofile('vfs.lua')
-script_system_dofile('tsv.lua')
+script_system_dofile('../share/vfs.lua')
+script_system_dofile('../share/utils.lua')
 
-script_system_dofile 'utils.lua'
 script_system_dofile 'content_system.lua'
 script_system_dofile 'actor_metatable.lua'
 script_system_dofile 'scene_manager.lua'

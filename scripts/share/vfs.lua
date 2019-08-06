@@ -27,9 +27,15 @@ end
 function vfs_get_shaderpath(path)
 	return work_dir..'/res/shader'..path
 end
+
 function vfs_get_luapath(path)
-	return work_dir..'/scritps/client/'..path
+	if SIMPLE_SERVER then
+		return work_dir..'/scritps/server/'..path
+	else
+		return work_dir..'/scritps/client/'..path
+	end
 end
+
 function vfs_get_wdfpath(path)
 	return work_dir..'/res/data/' ..path
 end

@@ -6,13 +6,6 @@
 #include "script_system.h"
 
 
-ezio::EventLoop loop;
-void main_game_update() {
-	if (!script_system_update()) {
-		loop.Quit();
-	}
-}
-
 int main(int argc, char const *argv[])
 {
 	kbase::AtExitManager exit_manager;
@@ -24,13 +17,7 @@ int main(int argc, char const *argv[])
 
 	script_system_dofile("main.lua");
 	
-	script_system_init();
-
-	loop.RunTaskEvery(main_game_update, TimeDuration(16));
-	loop.Run();
-
-	script_system_deinit();
-
+	game_main_run();
 	
 	return 0;
 }

@@ -21,10 +21,16 @@ public:
 
 	void Start();
 	void Stop();
-private:
-	void SendS2CPlayerEnter(const TCPConnectionPtr& conn, Player* player,bool is_local);
+	
+	void SendS2CPlayerEnter(const TCPConnectionPtr& conn, Player* player, bool is_local);
+	void SendS2CPlayer(const TCPConnectionPtr& conn, char* data, int size);
 
-	void SendS2CPlayer(const TCPConnectionPtr& conn, char* data,int size);
+	void SendMessageToPlayer(int pid, int proto, const char* msg);
+	void SendMessageToPlayers(std::vector<uint64_t> pids, int proto, const char* msg);
+
+	EventLoop* GetLoop() { return m_EventLoop; }
+private:
+	
 
 	void OnConnection(const TCPConnectionPtr& conn);
 	void OnMessage(const TCPConnectionPtr& conn, Buffer& buf, TimePoint ts);
@@ -34,12 +40,12 @@ private:
 	
 	typedef std::set< TCPConnectionPtr> ConnectionList;
 	ConnectionList m_Connections;
-
-	std::map<int, TCPConnectionPtr> m_PlayerConnections;
+	lua_State* m_L;
 };
 
+void game_main_run();
+
 void game_server_start(int port);
-void game_server_update();
 void game_server_stop();
 
 void luaopen_game_server(lua_State* L);

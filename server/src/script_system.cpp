@@ -94,10 +94,13 @@ const char* script_system_get_config(const char* key)
 	}
 }
 
+
 void script_system_init()
 {
 	script_system_call_function(L, "on_script_system_init");
 }
+
+
 
 bool script_system_update()
 {
@@ -136,8 +139,13 @@ const char* lua_file_path(const char* luafile)
 	return v.c_str();
 }
 
+
 void luaopen_script_system(lua_State* L)
 {
+#define REG_ENUM(name)  (lua_pushinteger(L, name),lua_setglobal(L, #name))
+	REG_ENUM(SIMPLE_SERVER);
+#undef REG_ENUM
+
 	script_system_register_function(L, script_system_dofile);
 	script_system_register_function(L, script_system_get_config);
 

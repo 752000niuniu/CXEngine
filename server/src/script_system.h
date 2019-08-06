@@ -15,6 +15,8 @@ bool script_system_update();
 void script_system_draw();
 void script_system_deinit();
 
+
+
 lua_State* script_system_get_luastate();
 
 any script_system_get_globle(const char* name);

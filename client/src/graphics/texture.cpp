@@ -2,7 +2,7 @@
 #include <SOIL.h>
 #include "graphics/image.h"
 #include "graphics/bitmap.h"
-
+#include "logger.h"
 
 Texture::Texture(CreationType type, const uint8* buff,int left,int top, int width, int height)
 	:m_TextureID(0),m_Left(left),m_Top(top), m_Width(width), m_Height(height)

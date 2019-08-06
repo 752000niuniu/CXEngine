@@ -144,6 +144,10 @@ const char* lua_file_path(const char* luafile)
 
 void luaopen_script_system(lua_State* L)
 {
+#define REG_ENUM(name)  (lua_pushinteger(L, name),lua_setglobal(L, #name))
+	REG_ENUM(SIMPLE_ENGINE);
+#undef REG_ENUM
+
 	script_system_register_function(L, script_system_dofile);
 	script_system_register_function(L, script_system_get_config);
 
