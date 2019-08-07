@@ -44,27 +44,18 @@ end
 function game_server_dispatch_message(pt)
     print('game_server_dispatch_message' , pt:Preview(pt:readable_size()))
     local type = pt:ReadAsInt()
+    local msgjs = pt:ReadAllAsString()
+    local msg = cjson.decode(msgjs)
     if  type == PTO_C2S_LOGIN then
-        --[[
-            登录协议, 接收到消息 , 读数据库里的数据, 对登陆信息进行验证,
-            验证成功后 服务器创建player 
-            同步给所有客户端 某某玩家登陆
-            某某玩家收到后, 本地创建玩家 设置成local 
-            其他玩家收到后, 也创建玩家 不设置local 
-            同时同步所有玩家到某某玩家
-        ]]
-        local msgjs =  pt:ReadAllAsString()
-        local msg = cjson.decode(msgjs)
-
-        net_send_message(msg.pid,PTO_S2C_PLAYER_ENTER,msgjs)
-
-    elseif type == PTO_C2S_LOGOUT then
-        -- local msg = __parse_pt(pt)
-    elseif type == PTO_C2S_MOVE_TO_POS then
-        -- local msg = __parse_pt(pt)
-    elseif type == PTO_C2S_CHAT then
-        -- local msg = __parse_pt(pt)/
+        local player = actor_manager_create_player(msg.pid)
         
-
+        net_send_message_to_all_players(PTO_S2C_PLAYER_ENTER,msgjs)
+        
+    elseif type == PTO_C2S_LOGOUT then
+        
+    elseif type == PTO_C2S_MOVE_TO_POS then
+        net_send_message_to_all_players(PTO_C2S_MOVE_TO_POS, msgjs)
+    elseif type == PTO_C2S_CHAT then
+        net_send_message_to_all_players(PTO_C2S_CHAT, msgjs)
     end
 end

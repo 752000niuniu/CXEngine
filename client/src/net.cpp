@@ -131,25 +131,18 @@ void NetClient::SendMessageToServer(int proto, const char* msg)
 	buf.Write(msg, strlen(msg));
 	int cnt = (int)buf.readable_size();
 	buf.Prepend(cnt);
-	if (m_Client.connection() != nullptr && m_Client.connection()->connected())
-	{
-		//cxlog_info("%s\n", kbase::StringView(buf.Peek(), buf.readable_size()));
-		m_Client.connection()->Send(kbase::StringView(buf.Peek(), buf.readable_size()));
-	}
-	//m_EventLoop->RunTask([this, buf]() {
-	//	if (m_Client.connection() != nullptr && m_Client.connection()->connected())
-	//	{
-	//		//cxlog_info("%s\n", kbase::StringView(buf.Peek(), buf.readable_size()));
-	//		m_Client.connection()->Send(kbase::StringView(buf.Peek(), buf.readable_size()));
-	//	}
-	//});
+	m_EventLoop->RunTask([this, buf]() {
+		if (m_Client.connection() != nullptr && m_Client.connection()->connected()) {
+			cxlog_info("%s\n", kbase::StringView(buf.Peek(), buf.readable_size()));
+			m_Client.connection()->Send(kbase::StringView(buf.Peek(), buf.readable_size()));
+		}
+	});
 }
 
 void NetClient::OnConnection(const TCPConnectionPtr& conn)
 {
 	const char* state = conn->connected() ? "connected" : "disconnected";
-	printf("Connection %s is %s\n", conn->peer_addr().ToHostPort().c_str(), state);
-
+	cxlog_info("Connection %s is %s\n", conn->peer_addr().ToHostPort().c_str(), state);
 }
 
 void NetClient::OnMessage(const TCPConnectionPtr& conn, Buffer& buf, TimePoint time)
@@ -327,6 +320,13 @@ void net_send_message(int proto, const char* msg) {
 	g_Client->SendMessageToServer(proto, msg);
 }
 
+
+void net_manager_reconnect(){
+	g_Client->Disconnect();
+	g_Client->Connect();
+}
+
+
 void luaopen_net(lua_State* L)
 {
 #define REG_ENUM(name)  (lua_pushinteger(L, name),lua_setglobal(L, #name))
@@ -346,7 +346,6 @@ void luaopen_net(lua_State* L)
 	script_system_register_luac_function(L, net_manager_update);
 	script_system_register_function(L, net_manager_deinit);
 
-	script_system_register_function(L, net_send_message);
-
-	
+	script_system_register_function(L, net_manager_reconnect);
+	script_system_register_function(L, net_send_message);	
 }

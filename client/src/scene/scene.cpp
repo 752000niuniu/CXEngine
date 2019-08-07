@@ -47,7 +47,6 @@ void Scene::ApplyTemplate(const std::map<String, String>& templ)
 		m_SmapTv = new ImageView(SmapWDF, m_SmapWas);
 	}
 	m_TransportUUIDs = utils::split_by_cuts(templ.at("transport_stations"), ',');
-	
 }
 
 void Scene::OnLoad()
@@ -289,8 +288,6 @@ void BattleScene::OnUnLoad()
 }
 
 static std::vector<std::string> s_CommandSet = { u8"attack",u8"cast" };;
-
-
 void BattleScene::Update()
 {
 	//auto* m_Player = GetLocalPlayer();
@@ -383,41 +380,8 @@ void BattleScene::Draw()
 }
 
 
-int scene_send_login_message(lua_State* L)
-{
-	int __argi__ = 1;
-	int __argn__ = lua_gettop(L);
-	const char* account = lua_tostring(L, __argi__++);
-	int scene_id = (int)lua_tointeger(L, __argi__++);
-	float pos_x  = (float)lua_tonumber(L, __argi__++);
-	float pos_y = (float)lua_tonumber(L, __argi__++);
-	int role_id = (int)lua_tointeger(L, __argi__++);
-	int weapon_id = (int)luaL_optinteger(L, __argi__, -1);
-	if (weapon_id != -1)__argi__++;
-	else weapon_id = 0;
-
-	int dir = (int)luaL_optinteger(L, __argi__, -1);
-	if (dir != -1)__argi__++;
-	else dir = 0;
-
-
-	MSGC2SLogin msg;
-	std::string pname(account);
-	msg.type = PTO_C2S_LOGIN;
-	msg.namelen = (int)pname.length();
-	msg.name = pname;
-	msg.scene_id = scene_id;
-	msg.dir = dir;
-	msg.role_id = role_id;
-	msg.weapon_id = weapon_id;
-	msg.pos_x = pos_x;
-	msg.pos_y = pos_y;
-	net_send_login_message(&msg);
-	return 0;
-}
-
 void luaopen_scene(lua_State* L)
 {
-	script_system_register_luac_function(L,scene_send_login_message);
+
 	
 }

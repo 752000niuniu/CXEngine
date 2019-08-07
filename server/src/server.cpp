@@ -156,7 +156,7 @@ void GameServer::SendMessageToPlayer(int pid, int proto, const char* msg)
 
 void GameServer::SendMessageToPlayers(std::vector<uint64_t> pids, int proto, const char* msg)
 {
-	m_EventLoop->RunTask([this, pids, proto, msg]() {
+	m_EventLoop->RunTask([this,  pids, proto, msg]() {
 		ezio::Buffer buf;
 		buf.Write(proto);
 		buf.Write(msg, strlen(msg));
@@ -258,9 +258,27 @@ int net_send_message_to_all(lua_State* L) {
 	return 0;
 }
 
+int net_send_message_to_all_players(lua_State* L) {
+	int proto = lua_tointeger(L, 1);
+	const char* msg = lua_tostring(L, 2);
+	ezio::Buffer buf;
+	buf.Write(proto);
+	buf.Write(msg, strlen(msg));
+	buf.Prepend((int)buf.readable_size());
+	CXGameServer->GetLoop()->RunTask([buf]() {
+		for (auto& it : g_PlayerConnections) {
+			it.second->Send({ buf.Peek(),buf.readable_size() });
+		}
+	}); 
+	return 0;
+}
+
 int insert_pid_connection_pair(lua_State* L){
 	uint64_t pid = (uint64_t)lua_tointeger(L, 1);
 	TCPConnection* conn = lua_check_tcpconnection(L, 2);
+	if (g_PlayerConnections.find(pid) != g_PlayerConnections.end()) {
+		return 0;
+	}
 	g_PlayerConnections.insert({ pid,TCPConnectionPtr(conn) });
 	return 0;
 }
@@ -290,7 +308,7 @@ void luaopen_game_server(lua_State* L)
 	script_system_register_luac_function(L, game_server_update);
 	script_system_register_function(L, game_server_stop);
 
-	
+
 
 }
 

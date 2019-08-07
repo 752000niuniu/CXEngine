@@ -41,7 +41,6 @@ function server_thread_on_message(conn, buf, netq)
 				pinfo.account = msg.account
 				pinfo.password = msg.password
 				player_database[pinfo.pid] = pinfo
-
 			elseif type == PTO_C2S_LOGIN then
 				buf:Consume(4)
 				local msgjs = buf:ReadAsString(len-4)
@@ -49,7 +48,6 @@ function server_thread_on_message(conn, buf, netq)
 				local msg = cjson.decode(msgjs)
 				local pid 
 				for _pid, pinfo in pairs(player_database) do
-					print('player_database',_pid, cjson.encode(pinfo))
 					if pinfo.account == msg.account and pinfo.password == msg.password then
 						pid = _pid
 						break
@@ -59,21 +57,14 @@ function server_thread_on_message(conn, buf, netq)
 					print('pid', pid)
 					insert_pid_connection_pair(pid, conn)
 					msg.pid = pid
-					netq_push_login_msg(netq, cjson.encode( msg))
-
-					-- local new_buf = ezio_buffer_create()
-					-- new_buf:WriteInt(type)
-					-- new_buf:WriteString(cjson.encode(msg))
-					
-					-- local allstr = new_buf:ReadAllAsString()
-					-- print('netq: allstr', allstr)
-					-- netq:push_back(0, allstr)
-					-- ezio_buffer_destroy(new_buf)
+					local newmsg = ezio_buffer_create()
+					newmsg:WriteInt(PTO_C2S_LOGIN)
+					newmsg:WriteString(cjson.encode(msg))
+					netq:push_back(0, newmsg,newmsg:readable_size())
+					ezio_buffer_destroy(newmsg)					
 				end
 			else
-				print('type',  type,'len',len )
-				-- local msgstr = buf:ReadAsString(len)
-				print('msg', buf:Preview(len))
+				-- print('type',  type,'len',len ,'msg', buf:Preview(len))
 				netq:push_back(0, buf,len)
 				buf:Consume(len)
 			end

@@ -107,12 +107,39 @@ Player* actor_manager_create_player(uint64_t pid) {
 	return player;
 }
 
+int lua_actor_manager_fetch_player_by_id(lua_State*L) {
+	uint64_t pid = (uint64_t)lua_tointeger(L, 1);
+	auto it = g_Players.find(pid);
+	if (it != g_Players.end()) {
+		lua_push_actor(L, it->second);
+		return 1;
+	}
+	return 0;
+}
+
+
+int lua_actor_manager_fetch_all_players(lua_State*L) {
+	lua_newtable(L);
+	int i = 1;
+	for(auto& it : g_Players){
+		lua_push_actor(L, it.second);
+		lua_seti(L, i++, -1);
+	}
+	return 1;
+}
+
 void luaopen_actor_manager(lua_State* L) {
 	script_system_register_luac_function_with_name(L, "actor_manager_create_player", lua_actor_manager_create_player);
 	
 	script_system_register_luac_function_with_name(L, "actor_manager_fetch_local_player", lua_actor_manager_fetch_local_player);
+
+	script_system_register_luac_function_with_name(L, "actor_manager_fetch_player_by_id", lua_actor_manager_fetch_player_by_id);
+
 	
 	script_system_register_luac_function_with_name(L, "scene_manager_fetch_local_player", lua_actor_manager_fetch_local_player);
+
+	script_system_register_luac_function_with_name(L, "actor_manager_fetch_all_players", lua_actor_manager_fetch_all_players);
+	
 
 	script_system_register_luac_function(L, actor_manager_set_local_player);
 	

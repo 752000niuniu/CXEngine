@@ -1,4 +1,4 @@
-luadbg_listen(9527)
+luadbg_listen(9528)
 
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
@@ -93,18 +93,22 @@ function game_dispatch_message(pt)
     print('game_dispatch_message' , pt:Preview(pt:readable_size()))
     local type = pt:ReadAsInt()
     if  type == PTO_S2C_PLAYER_ENTER then
-			local msg = cjson.decode(pt:ReadAllAsString())
-			local player = actor_manager_create_player(msg.pid)
-			player:SetName(msg.name)
-			player:SetSceneID(msg.scene_id)
-			player:SetRoleID(msg.role_id)
-			-- player:SetWeaponID(msg.weapon_id)
-			player:SetX(msg.pos_x)
-			player:SetY(msg.pos_y)
+		local msg = cjson.decode(pt:ReadAllAsString())
+		local player = actor_manager_create_player(msg.pid)
+		player:SetName(msg.name)
+		player:SetSceneID(msg.scene_id)
+		player:SetRoleID(msg.role_id)
+		player:SetWeaponID(40)
+		player:SetX(msg.x)
+		player:SetY(msg.y)
 
-			actor_manager_set_local_player(msg.pid)
-			scene_manager_switch_scene_by_id(msg.scene_id)
-    elseif type == PTO_S2C_CHAT then
-    elseif type == PTO_S2C_MOVE_TO_POS then
+		actor_manager_set_local_player(msg.pid)
+		scene_manager_switch_scene_by_id(msg.scene_id)
+	elseif type == PTO_S2C_CHAT then
+		
+	elseif type == PTO_S2C_MOVE_TO_POS then
+		local msg = cjson.decode(pt:ReadAllAsString())
+		local player = actor_manager_fetch_player_by_id(msg.pid)
+		player:MoveTo(msg.x,msg.y)
     end
 end

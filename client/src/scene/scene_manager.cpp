@@ -257,7 +257,7 @@ void SceneManager::Draw()
 		ImGui::SetCursorPos(cursorPos);
 
 		script_system_call_function(script_system_get_luastate(), "on_game_imgui_update");
-
+		
 		Player* player = actor_manager_fetch_local_player();
 		if (player) {
 			if (ImGui::IsMouseClicked(0)) {

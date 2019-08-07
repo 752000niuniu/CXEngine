@@ -35,25 +35,22 @@ function on_enter_editor_update()
         net_send_message(PTO_C2S_SIGNUP, cjson.encode(msg))
     end
     imgui.SameLine()
-    if imgui.Button("Sigin In") then
+    if imgui.Button("Login") then
         local msg = {}
         msg.account = AccountSB:str()
         msg.password = PasswordSB:str()
         msg.name = 'oceancx'
         msg.scene_id = 1135
         msg.role_id = 1
-        msg.pos_x = 200
-        msg.pos_y = 2790
+        msg.x = 200
+        msg.y = 2790
         net_send_message(PTO_C2S_LOGIN, cjson.encode(msg))
     end
-
-    if imgui.Button("EnterGame") then 
-        scene_manager_switch_scene_by_name(DefaultSceneName)
-        local pos_x = tonumber(PosX:str())
-        local pos_y = tonumber(PosY:str())
-        scene_send_login_message( AccountSB:str(),1070,  pos_x,pos_y,1 ,40,1)
-    end
     
+
+    if imgui.Button('重连服务器') then
+        net_manager_reconnect()
+    end
     if imgui.Button("EnterBattle") then
         scene_manager_switch_scene_by_name('BattleScene')
     end
