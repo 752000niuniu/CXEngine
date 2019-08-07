@@ -1,9 +1,9 @@
 #include "scene.h"
 
-#include "../animation/frame_animation.h"
+#include "animation/frame_animation.h"
 #include "logger.h"
 #include "cxrandom.h"
-#include "../combat/combat.h"
+#include "combat/combat.h"
 #include "script_system.h"
 #include "profile.h"
 #include "scene_manager.h"

@@ -1,8 +1,8 @@
 #include "Combat.h"
-#include "../message.h"
-#include "../animation/frame_animation.h"
+#include "message.h"
+#include "animation/frame_animation.h"
 #include "Skill.h"
-#include "../actor/player_state.h"
+#include "actor/player_state.h"
 #include "window.h"
 
 static	FrameAnimation* s_CombatBG;

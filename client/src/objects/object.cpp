@@ -1,6 +1,6 @@
 #include "Object.h"
 #include "logger.h"
-#include "../Components/transform_component.h"
+#include "Components/transform_component.h"
 #include "utils.h"
 
 Object::Object()

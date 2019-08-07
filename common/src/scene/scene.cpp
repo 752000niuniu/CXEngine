@@ -1,10 +1,10 @@
 #include "scene.h"
 
-#include "../animation/frame_animation.h"
+#include "animation/frame_animation.h"
 #include "logger.h"
 #include "cxrandom.h"
-#include "../graphics/Renderer.h"
-#include "../combat/Combat.h"
+#include "graphics/Renderer.h"
+#include "combat/Combat.h"
 #include "script_system.h"
 #include "profile.h"
 #include "scene_manager.h"

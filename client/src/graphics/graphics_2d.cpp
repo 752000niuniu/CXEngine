@@ -1,9 +1,9 @@
 #include "graphics_2d.h"
 #include "object_2d.h"
 #include "Renderer.h"
-#include "../file_system.h"
-#include "../window.h"
-#include "../texture_manager.h"
+#include "file_system.h"
+#include "window.h"
+#include "texture_manager.h"
 Graphics2D::Graphics2D()
 :m_SpriteVertices({{
         // Pos      // Tex

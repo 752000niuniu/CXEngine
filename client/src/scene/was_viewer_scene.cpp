@@ -1,7 +1,7 @@
 #include "was_viewer_scene.h"
 #include "scene/splash_scene.h"
 #include "window.h"
-#include "scene_manager.h"
+#include "scene/scene_manager.h"
 #include "file_system.h"
 #include "utils.h"
 

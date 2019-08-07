@@ -1,6 +1,6 @@
 #include "player_state.h"
 #include "player.h"
-#include "../combat/Skill.h"
+#include "combat/Skill.h"
 #include "window.h"
 #include "cxmath.h"
 #include "cxrandom.h"
