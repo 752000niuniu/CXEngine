@@ -3,8 +3,9 @@
 #include "define_types.h"
 #include "pos.h"
 #include "scene/game_map.h"
+#include "entity.h"
 
-
+class BaseScene;
 enum EActorType
 {
 	ACTOR_TYPE_DEFAULT = 0,
@@ -13,16 +14,16 @@ enum EActorType
 	ACTOR_TYPE_NPC
 };
 
-class Actor
+class Actor : public BaseGameEntity
 {
 public:
-
-	Actor(int roleID = 0);
+	Actor(uint64_t id);
 
 	virtual ~Actor();
 	virtual void OnUpdate(float dt) {};
 	virtual void OnDraw(GameMap* gameMapPtr) {};
 	virtual void OnDraw(int x, int y) {};
+	virtual bool HandleMessage(const Telegram& msg) { return false; };
 
 	void SetDir(int dir) { m_Dir = dir; };
 	int GetDir() { return m_Dir; };
@@ -101,10 +102,12 @@ public:
 	void SetFrameSpeed(float frame_speed) { m_FrameSpeed = frame_speed; };
 
 	int GetType() { return m_ActorType; }
+	bool IsMove() { return m_IsMove; }
+
+	BaseScene* GetScene();
 protected:
 	float m_X;
 	float m_Y;
-
 	int m_RoleID;				//current role
 	int m_ActorID;
 	bool m_IsAutoRun;
@@ -141,6 +144,7 @@ protected:
 	float m_MP;
 	int m_SayDuration;
 	bool m_IsLocalPlayer;
+
 };
 
 void lua_push_actor(lua_State*L, Actor* actor);

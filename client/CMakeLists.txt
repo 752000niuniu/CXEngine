@@ -20,6 +20,7 @@ add_executable(SimpleEngine
     ${PRIVATE_HEADERS}
     src/actor/action.cpp
     src/actor/actor.cpp
+    src/actor/actor_manager.cpp
     src/actor/player.cpp
     src/actor/player_state.cpp
     src/algorithm.cpp

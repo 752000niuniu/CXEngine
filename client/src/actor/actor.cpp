@@ -8,31 +8,35 @@
 
 #define ACTOR_METATABLE_NAME "mt_actor"
 
-
-Actor::Actor(int roleID):
-m_RoleID(roleID),
-m_NickName(""),
-m_WeaponID(-1),
-m_ActionID(Action::Idle),
-m_Pos(0, 0),
-m_MoveToPos(0, 0),
-m_Dir(Direction::S),
-m_IsMove(false),
-m_MoveVelocity(150),
-m_bInCombat(false),
-m_TargetID(-1),
-m_bSkillFrameShow(false),
-m_IsLocalPlayer(false),
-m_IsAutoRun(false),
-m_FrameSpeed(0.080f)
+Actor::Actor(uint64_t pid)
+	:BaseGameEntity(pid),
+	m_RoleID(0),
+	m_NickName(""),
+	m_WeaponID(-1),
+	m_ActionID(Action::Idle),
+	m_Pos(0, 0),
+	m_MoveToPos(0, 0),
+	m_Dir(Direction::S),
+	m_IsMove(false),
+	m_MoveVelocity(150),
+	m_bInCombat(false),
+	m_TargetID(-1),
+	m_bSkillFrameShow(false),
+	m_IsLocalPlayer(false),
+	m_IsAutoRun(false),
+	m_FrameSpeed(0.080f)
 {
-
+	
 }
-
 Actor::~Actor()
 {
 
 
+}
+
+BaseScene* Actor::GetScene()
+{
+	return scene_manager_fetch_scene(m_SceneID);
 }
 
 Actor* lua_check_actor(lua_State*L, int index)
@@ -41,21 +45,6 @@ Actor* lua_check_actor(lua_State*L, int index)
 	return *ptr;
 }
 
-void player_set_frame_speed(int frame_speed)
-{
-	Player* player = SCENE_MANAGER_INSTANCE->GetCurrentScene()->GetLocalPlayer();
-	if (player) {
-		player->SetFrameSpeed((float)frame_speed);
-	}
-}
-
-void player_set_move_speed(int move_speed)
-{
-	Player* player = SCENE_MANAGER_INSTANCE->GetCurrentScene()->GetLocalPlayer();
-	if (player) {
-		player->SetVelocity((float)move_speed);
-	}
-}
 
 int actor_method_set_property(lua_State* L)
 {
@@ -178,9 +167,7 @@ int actor_change_weapon(lua_State* L) {
 	Player* player = dynamic_cast<Player*>(actor);
 	player->ChangeWeapon(weapon);
 	return 0;
-
 }
-
 
 int actor_change_role(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
@@ -190,9 +177,51 @@ int actor_change_role(lua_State* L) {
 	Player* player = dynamic_cast<Player*>(actor);
 	player->ChangeRole(role);
 	return 0;
-
 }
 
+int actor_set_x(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	float x = (float)lua_tonumber(L, 2);
+	actor->SetX(x);
+	return 0;
+}
+int actor_set_y(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	float y = (float)lua_tonumber(L, 2);
+	actor->SetY(y);
+	return 0;
+}
+int actor_set_scene_id(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	int sceneID = (int)lua_tointeger(L, 2);
+	actor->SetSceneID(sceneID);
+	return 0;
+}
+int actor_set_name(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	const char* name = lua_tostring(L, 2);
+	actor->SetName(name);
+	return 0;
+}
+int actor_get_name(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	auto name = actor->GetName();
+	lua_pushstring(L, name.c_str());
+	return 1;
+}
+
+int actor_set_role_id(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	int roleID = (int)lua_tointeger(L, 2);
+	actor->SetRoleID(roleID);
+	return 0;
+}
+int actor_set_weapon_id(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	int weaponID = (int)lua_tointeger(L, 2);
+	actor->SetWeaponID(weaponID);
+	return 0;
+}
 
 
 luaL_Reg mt_actor[] = {
@@ -205,6 +234,15 @@ luaL_Reg mt_actor[] = {
 { "set_dir",actor_set_dir },
 {"GetX", actor_get_x},
 {"GetY", actor_get_y},
+
+{"SetX", actor_set_x},
+{"SetY", actor_set_y},
+{"SetSceneID", actor_set_scene_id},
+{"SetName", actor_set_name},
+{"GetName", actor_get_name},
+{"SetRoleID", actor_set_role_id},
+{"SetWeaponID", actor_set_weapon_id},
+
 {"GetDir", actor_get_dir},
 {"SetActionID", actor_set_action_id},
 {"TranslateX", actor_translate_x},
@@ -270,8 +308,6 @@ std::string action_system_get_action_name(int action) {
 
 void luaopen_actor(lua_State* L)
 {
-	script_system_register_function(L, player_set_frame_speed);
-	script_system_register_function(L, player_set_move_speed);
 	script_system_register_luac_function(L, lua_new_actor);
 	script_system_register_luac_function(L, actor_get_metatable);
 

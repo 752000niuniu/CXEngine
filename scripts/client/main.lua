@@ -59,3 +59,52 @@ function on_script_system_deinit()
     scene_manager_deinit()
     actor_manager_deinit()
 end
+
+
+
+		-- break;
+		-- case PTO_S2C_CHAT:
+		-- {
+		-- 	MSGC2SChat chatmsg;
+		-- 	chatmsg.namelen = pt->ReadAsInt32();
+		-- 	chatmsg.name = pt->ReadAsString(chatmsg.namelen);
+		-- 	chatmsg.ctlen = pt->ReadAsInt32();
+		-- 	chatmsg.content = pt->ReadAsString(chatmsg.ctlen);
+		-- 	Player* player = scene_find_player(chatmsg.name.c_str());
+		-- 	if (player) player->Say(chatmsg.content);
+		-- }
+		-- break;
+		-- case PTO_S2C_MOVE_TO_POS:
+		-- {
+		-- 	int namelen = pt->ReadAsInt32();
+		-- 	std::string name = pt->ReadAsString(namelen);
+		-- 	float pos_x = pt->ReadAsFloat();
+		-- 	float pos_y = pt->ReadAsFloat();
+		-- 	Player* player = scene_find_player(name.c_str());
+		-- 	if (player) player->MoveTo(pos_x, pos_y);
+		-- }
+		-- break;
+		-- default:
+		-- 	break;
+		-- }
+        -- delete pt;
+        
+function game_dispatch_message(pt)
+    print('game_dispatch_message' , pt:Preview(pt:readable_size()))
+    local type = pt:ReadAsInt()
+    if  type == PTO_S2C_PLAYER_ENTER then
+			local msg = cjson.decode(pt:ReadAllAsString())
+			local player = actor_manager_create_player(msg.pid)
+			player:SetName(msg.name)
+			player:SetSceneID(msg.scene_id)
+			player:SetRoleID(msg.role_id)
+			-- player:SetWeaponID(msg.weapon_id)
+			player:SetX(msg.pos_x)
+			player:SetY(msg.pos_y)
+
+			actor_manager_set_local_player(msg.pid)
+			scene_manager_switch_scene_by_id(msg.scene_id)
+    elseif type == PTO_S2C_CHAT then
+    elseif type == PTO_S2C_MOVE_TO_POS then
+    end
+end

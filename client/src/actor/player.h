@@ -9,11 +9,10 @@
 #include "state.h"
 #include "ui.h"
 
-class Player : public Actor, public BaseGameEntity
+class Player : public Actor
 {
 public:
-
-	Player(int roleID = 0);
+	Player(uint64_t pid);
 	virtual ~Player();
 
 	void ClearFrames();
@@ -41,7 +40,6 @@ public:
 
 	int GetDrawY();
 
-	bool IsMove() { return m_IsMove; }
 	void SaveFrame(int index);
 	void ChangeRole(int roleID);
 	void ChangeWeapon(int WeaponID);
@@ -106,7 +104,7 @@ struct NpcTemplate
 class Npc : public Player, public View
 {
 public:
-	Npc(int role_id) :Player(role_id) {};
+	Npc(uint64_t id) :Player(id) {};
 	Npc(const char* player_name, float x, float y, int dir, int role_id, int action_id, std::string msg);
 	virtual ~Npc();
 	virtual void OnDraw(GameMap* m_GameMapPtr) override;
@@ -127,7 +125,7 @@ private:
 class Pet : public Player
 {
 public:
-	Pet(int role_id) :Player(role_id) { m_ActorType = ACTOR_TYPE_PET; };
+	Pet(uint64_t id) :Player(id) { m_ActorType = ACTOR_TYPE_PET; };
 	Pet(const char* player_name, float x, float y, int dir, int role_id, int action_id);
 	virtual void OnDraw(int px, int py);
 

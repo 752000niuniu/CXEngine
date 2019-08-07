@@ -19,6 +19,7 @@
 #include "luadbg.h"
 #include "time/timer_manager.h"
 #include "game.h"
+#include "actor/actor_manager.h"
 
 static lua_State* L = nullptr;
 void luaopen_script_system(lua_State* L);
@@ -72,6 +73,7 @@ void script_system_prepare_init()
 	luaopen_netlib(L);
 	luaopen_net(L);
 	luaopen_actor(L);
+	luaopen_actor_manager(L);
 	luaopen_game(L);
 }
 

@@ -76,7 +76,7 @@ local KEY_RELEASE_MOVE_AMOUT = 30
 local roleID = 0 
 local weaponID = 0 
 function on_game_imgui_update()
-    local player = scene_manager_fetch_local_player()
+    local player = actor_manager_fetch_local_player()
     if player then
         if imgui.IsKeyReleased(string.byte('W') ) then
             player:TranslateY(-KEY_RELEASE_MOVE_AMOUT)

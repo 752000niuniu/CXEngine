@@ -56,7 +56,7 @@ function game_server_dispatch_message(pt)
         local msgjs =  pt:ReadAllAsString()
         local msg = cjson.decode(msgjs)
 
-        net_send_message(msg.pid,PTO_S2C_PLAYER_ENTER,"{}")
+        net_send_message(msg.pid,PTO_S2C_PLAYER_ENTER,msgjs)
 
     elseif type == PTO_C2S_LOGOUT then
         -- local msg = __parse_pt(pt)

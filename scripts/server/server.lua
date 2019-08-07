@@ -71,7 +71,11 @@ function server_thread_on_message(conn, buf, netq)
 					-- ezio_buffer_destroy(new_buf)
 				end
 			else
-				netq:push_back(0,buf:ReadAsString(len))
+				print('type',  type,'len',len )
+				-- local msgstr = buf:ReadAsString(len)
+				print('msg', buf:Preview(len))
+				netq:push_back(0, buf,len)
+				buf:Consume(len)
 			end
 		else 
 			break

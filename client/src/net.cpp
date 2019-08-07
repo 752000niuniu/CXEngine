@@ -18,11 +18,12 @@
 #include "kbase/pickle.h"
 #include "scene/scene_manager.h"
 #include "logger.h"
+#include "net_thread_queue.h"
+#include "lua_net.h"
 
 using namespace ezio;
 
-std::mutex g_MsgQLock;
-std::deque<Buffer*> g_ReadPacketQueue;
+NetThreadQueue g_ReadPacketQueue;
 
 class NetClient
 {
@@ -112,11 +113,12 @@ void NetClient::SendMSGC2SChat(MSGC2SChat * msg)
 
 void NetClient::SendMessageToGame(char* buf, size_t len)
 {
-	m_EventLoop->RunTask([this, buf, len]() {
+	std::string msg(buf, len);
+	m_EventLoop->RunTask([this,msg]() {
 		if (m_Client.connection() != nullptr && m_Client.connection()->connected())
 		{
-			cxlog_info("%s", kbase::StringView(buf, len));
-			m_Client.connection()->Send(kbase::StringView(buf, len));
+			cxlog_info("%s", msg.c_str());
+			m_Client.connection()->Send(msg);
 		}
 	});
 	
@@ -152,20 +154,15 @@ void NetClient::OnConnection(const TCPConnectionPtr& conn)
 
 void NetClient::OnMessage(const TCPConnectionPtr& conn, Buffer& buf, TimePoint time)
 {
+
 	while (buf.readable_size() >= CX_MSG_HEADER_LEN)
 	{
 		int len = buf.PeekAsInt32();
 		if (buf.readable_size() >= len + CX_MSG_HEADER_LEN)
 		{
 			buf.Consume(CX_MSG_HEADER_LEN);
-			
-			Buffer* msg = new Buffer(len);
-			msg->Write(buf.Peek(), len);
+			g_ReadPacketQueue.PushBack(NetThreadQueue::Read, buf.Peek(), len);
 			buf.Consume(len);
-
-			g_MsgQLock.lock();
-			g_ReadPacketQueue.push_back(msg);
-			g_MsgQLock.unlock();
 		}
 		else
 		{
@@ -183,7 +180,7 @@ public:
 	NetThread();
 	~NetThread();
 	void Init();
-	void Update();
+	void Update(lua_State* L);
 	void Deinit();
 	void Run(std::string ip,int port);
 private:
@@ -229,65 +226,17 @@ void NetThread::Init()
 	m_Thread = new std::thread(std::bind(&NetThread::Run, this, std::placeholders::_1, std::placeholders::_2), ip, port);
 }
 
-void NetThread::Update()
+void NetThread::Update(lua_State* L )
 {
-	while (!g_ReadPacketQueue.empty())
+	while (!g_ReadPacketQueue.Empty(NetThreadQueue::Read))
 	{
-		Buffer* pt = g_ReadPacketQueue.front();
-		g_MsgQLock.lock();
-		g_ReadPacketQueue.pop_front();
-		g_MsgQLock.unlock();
-
-		int type = pt->ReadAsInt32();
-		switch (type)
-		{
-		case PTO_S2C_PLAYER_ENTER:
-		{
-			MSGS2CPlayerEnter msg;
-			int namelen = pt->ReadAsInt32();
-			msg.name = pt->ReadAsString(namelen);
-			msg.scene_id = pt->ReadAsInt32();
-			msg.dir = pt->ReadAsInt32();
-			msg.role_id = pt->ReadAsInt32();
-			msg.weapon_id = pt->ReadAsInt32();
-			msg.pos_x = pt->ReadAsFloat();
-			msg.pos_y = pt->ReadAsFloat();
-			msg.is_local = pt->ReadAsInt32();
-
-			if (scene_find_player(msg.name.c_str()))return;
-			scene_add_player(msg.name.c_str(), (int)msg.pos_x, (int)msg.pos_y, msg.dir, msg.role_id, msg.weapon_id);
-			if (msg.is_local)
-			{
-				scene_set_player(msg.name.c_str());
-			}
-		}
-		break;
-		case PTO_S2C_CHAT:
-		{
-			MSGC2SChat chatmsg;
-			chatmsg.namelen = pt->ReadAsInt32();
-			chatmsg.name = pt->ReadAsString(chatmsg.namelen);
-			chatmsg.ctlen = pt->ReadAsInt32();
-			chatmsg.content = pt->ReadAsString(chatmsg.ctlen);
-			Player* player = scene_find_player(chatmsg.name.c_str());
-			if (player) player->Say(chatmsg.content);
-		}
-		break;
-		case PTO_S2C_MOVE_TO_POS:
-		{
-			int namelen = pt->ReadAsInt32();
-			std::string name = pt->ReadAsString(namelen);
-			float pos_x = pt->ReadAsFloat();
-			float pos_y = pt->ReadAsFloat();
-			Player* player = scene_find_player(name.c_str());
-			if (player) player->MoveTo(pos_x, pos_y);
-		}
-		break;
-		default:
-			break;
-		}
-		delete pt;
+		Buffer& pt = g_ReadPacketQueue.Front(NetThreadQueue::Read);
+		lua_getglobal(L , "game_dispatch_message");
+		lua_push_ezio_buffer(L, pt);
+		int res = lua_pcall(L, 1, 0, 0);
+		g_ReadPacketQueue.PopFront(NetThreadQueue::Read);
 	}
+
 }
 
 void NetThread::Deinit()
@@ -302,9 +251,10 @@ void net_manager_init()
 	NetThread::GetInstance()->Init();
 } 
 
-void net_manager_update()
+int net_manager_update(lua_State*L)
 {
-	NetThread::GetInstance()->Update();
+	NetThread::GetInstance()->Update(L);
+	return 0;
 }
 
 void net_manager_deinit()
@@ -341,9 +291,10 @@ void net_send_move_to_pos_message(std::string name ,float x,float y)
 	buf.Write((int)PTO_C2S_MOVE_TO_POS);
 	buf.Write((int)name.length());
 	buf.Write(name.data(), name.size());
-	buf.Write(x);
-	buf.Write(y);
+	buf.Write((int)x);
+	buf.Write((int)y);
 	buf.Prepend((int)buf.readable_size());
+
 	g_Client->SendMessageToGame((char*)buf.Peek(), buf.readable_size());
 }
 
@@ -392,7 +343,7 @@ void luaopen_net(lua_State* L)
 #undef REG_ENUM
 
 	script_system_register_function(L, net_manager_init);
-	script_system_register_function(L, net_manager_update);
+	script_system_register_luac_function(L, net_manager_update);
 	script_system_register_function(L, net_manager_deinit);
 
 	script_system_register_function(L, net_send_message);

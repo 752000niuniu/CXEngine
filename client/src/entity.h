@@ -6,9 +6,9 @@ class BaseGameEntity
 {
 public:
 
-	BaseGameEntity(const std::string& name) : m_Name(name), m_ID(NextEntityID()) {}
-
-	BaseGameEntity():BaseGameEntity(""){}
+	BaseGameEntity(uint64_t id) :m_Name(""), m_ID(id) {}
+	BaseGameEntity(const std::string& name) :m_Name(m_Name), m_ID(NextEntityID()) {}
+	BaseGameEntity() : BaseGameEntity(NextEntityID()) {}
 
 	virtual ~BaseGameEntity() {} 
 
@@ -22,6 +22,11 @@ public:
 
     virtual void Update(){};// = 0;
 
+	static uint64_t NextEntityID()
+	{
+		static uint64_t id = 0x10ABCDEF;
+		return id++;
+	}
 protected:
 	std::string m_Name;
 private:
@@ -29,11 +34,7 @@ private:
 	uint64_t m_ID;
 
 private:
-	static uint64_t NextEntityID()
-	{
-		static uint64_t id = 0x10ABCDEF;
-		return id++;
-	}
+	
 };
 
 class GameEntityManager final: public Singleton<GameEntityManager>

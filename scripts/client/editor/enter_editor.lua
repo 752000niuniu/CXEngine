@@ -40,7 +40,7 @@ function on_enter_editor_update()
         msg.account = AccountSB:str()
         msg.password = PasswordSB:str()
         msg.name = 'oceancx'
-        msg.scene_id = 1070
+        msg.scene_id = 1135
         msg.role_id = 1
         msg.pos_x = 200
         msg.pos_y = 2790

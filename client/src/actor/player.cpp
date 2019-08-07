@@ -17,9 +17,8 @@
 #include "utils.h"
 
 
-Player::Player(int roleID):
-Actor(roleID),
-BaseGameEntity(),
+Player::Player(uint64_t pid):
+Actor(pid),
 m_pFSM(nullptr),
 m_SkillFrame(nullptr)
 {

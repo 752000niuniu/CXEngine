@@ -14,6 +14,7 @@
 #include "window.h"
 #include "net.h"
 #include "logger.h"
+#include "actor/actor_manager.h"
 
 
 static bool s_DrawMask, s_DrawStrider, s_DrawCell, s_DrawMap, s_DrawAnnouncement, s_AutoRun;
@@ -202,11 +203,13 @@ void SceneManager::Update()
 			script_system_call_function(script_system_get_luastate(), "on_scene_manager_init_scene" ,m_pCurrentScene->GetName());
 
 			//m_pCurrentScene->SetPlayerByIndex(0);
-			if (m_pCurrentScene->GetLocalPlayer())
+			Player* player = actor_manager_fetch_local_player();
+			if (player)
 			{
+
 				if (m_PlayerEnterX != 0 && m_PlayerEnterY != 0)
 				{
-					m_pCurrentScene->GetLocalPlayer()->SetPos((float)m_PlayerEnterX, (float)m_PlayerEnterY);
+					player->SetPos((float)m_PlayerEnterX, (float)m_PlayerEnterY);
 				}
 			}
 		}
@@ -255,7 +258,7 @@ void SceneManager::Draw()
 
 		script_system_call_function(script_system_get_luastate(), "on_game_imgui_update");
 
-		auto* player = m_pCurrentScene->GetLocalPlayer();
+		Player* player = actor_manager_fetch_local_player();
 		if (player) {
 			if (ImGui::IsMouseClicked(0)) {
 				ImVec2 mpos = ImGui::GetMousePos();
@@ -264,7 +267,7 @@ void SceneManager::Draw()
 				mpos.y = mpos.y - wpos.y ;
 				Pos dest = GAME_INSTANCE->ScreenPosToMapPos({ mpos.x, mpos.y });
 				player->MoveTo(m_pCurrentScene->GetGameMap(), (int)dest.x, (int)dest.y);
-				net_send_move_to_pos_message(player->GetNickName(), dest.x, dest.y);
+				net_send_move_to_pos_message(player->GetName(), dest.x, dest.y);
 			}
 		}
 		ImGui::EndChild();
@@ -280,89 +283,43 @@ BaseScene* SceneManager::GetCurrentScene()
 
 Player* scene_find_player(const char* player_name)
 {
-	BaseScene* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if (scene)
-	{
-		return scene->GetPlayerByNickname(player_name);
-	}
-	else 
-		return nullptr;
+	return actor_manager_find_player_by_name(player_name);
 }
 
 void scene_set_player(const char* player_name)
 {
-	BaseScene* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if(scene)
-	{
-		scene->SetPlayerByName(player_name);
-	}
+	
 }
 
 void scene_add_player(const char* player_name, int x, int y, int dir,int role_id, int weapon_id)
 {
-	BaseScene* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if (scene)
-	{
-		scene->AddPlayer(player_name, (float)x, (float)y, dir, role_id, weapon_id);
+	
+}
+
+BaseScene* scene_manager_fetch_scene(int sceneID)
+{
+	auto& scenes = SCENE_MANAGER_INSTANCE->GetAllScene();
+	for(auto& it : scenes){
+		if(it.second->GetSceneID() == sceneID){
+			return it.second;
+		}
 	}
+	return nullptr;
 }
 
 void scene_add_npc(const char* player_name, int  x, int  y, int dir, int role_id, int action_id, const char* msg)
 {
-	BaseScene* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if (scene)
-	{
-		scene->AddNpc(player_name, (float)x, (float)y,dir, role_id, action_id, msg);
-	}
+	
 }
 
 void scene_add_pet(const char* player_name, int  x, int  y, int dir, int role_id, int action_id)
 {
-	BaseScene* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if (scene)
-	{
-		scene->AddPet(player_name, x, y, dir, role_id, action_id);
-	}
+	
 }
 
 void scene_add_player_by_templ_name(const char* templ_name, int actorType)
 {
-	BaseScene* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if (scene)
-	{
-		Player* localPlayer = scene->GetLocalPlayer();
-		Player* player = nullptr;
-		
-		int roleID = GAME_INSTANCE->GetRoleIDByName(actorType, templ_name);
-		switch (actorType)
-		{
-		case ACTOR_TYPE_PLAYER:
-			player = new Player(roleID);
-			break;
-		case ACTOR_TYPE_NPC:
-			player = new Npc(templ_name, 0, 0, 0, roleID, 0, "");
-			break;
-		case ACTOR_TYPE_PET:
-			player = new Pet(templ_name,0,0,0,roleID,0);
-			break;
-		default:
-			break;
-		}
-		std::string player_name(templ_name);
-		player_name.append("_");
-		player_name.append(std::to_string(scene->GetPlayersCount()));
-		player->SetNickName(player_name.c_str());
-		if (localPlayer != nullptr)
-		{
-			player->SetPos(localPlayer->GetPos());
-			player->SetCombatPos(player->GetPos());
-			player->SetBox();
-			player->SetDir(localPlayer->GetDir());
-			player->SetWeaponID(-1);
-			player->ChangeAction(Action::Idle);
-		}
-		scene->AddPlayer(player);
-	}
+	
 }
 
 void scene_manager_init()
@@ -410,6 +367,17 @@ void scene_manager_switch_scene_by_name(const char* name)
 	SCENE_MANAGER_INSTANCE->SwitchScene(name);
 }
 
+void scene_manager_switch_scene_by_id(int id)
+{
+	auto& scenes=  SCENE_MANAGER_INSTANCE->GetAllScene();
+	for(auto& it :scenes){
+		if(it.second->GetSceneID()==id){
+			SCENE_MANAGER_INSTANCE->SwitchScene(it.second->GetName());
+			return;
+		}
+	}
+}
+
 void scene_manager_add_scene(int id , const char* name)
 {
 	SCENE_MANAGER_INSTANCE->AddScene(new Scene( id , name ));
@@ -441,19 +409,9 @@ void scene_manager_add_custom_scene(int id, const char* name)
 }
 
 
-int scene_manager_fetch_local_player(lua_State* L){
-	auto* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if (scene == nullptr) return 0;
-	auto* player = scene->GetLocalPlayer();
-	if (player == nullptr)return 0;
-	lua_push_actor(L, player);
-	return 1;
-}
 
 void scene_manager_set_player_by_index(int index) {
-	auto* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if (scene == nullptr) return;
-	scene->SetPlayerByIndex(index);
+	
 }
 
 void scene_manager_sync_draw_cbx(bool draw_map, bool draw_cell, bool draw_strider, bool draw_mask, bool draw_announcement, bool auto_run) {
@@ -475,8 +433,8 @@ void luaopen_scene_manager(lua_State* L)
 	script_system_register_function(L, scene_manager_add_custom_scene);
 
 
-	script_system_register_luac_function(L, scene_manager_fetch_local_player);
-
+	
+	script_system_register_function(L, scene_manager_switch_scene_by_id);
 	script_system_register_function(L, scene_manager_switch_scene_by_name);
 
 	script_system_register_function(L, scene_manager_set_player_by_index);
