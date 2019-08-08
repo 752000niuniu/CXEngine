@@ -1,4 +1,4 @@
-luadbg_listen(9527)
+-- luadbg_listen(9527)
 
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
@@ -60,43 +60,16 @@ function on_script_system_deinit()
     actor_manager_deinit()
 end
 
-
-
-		-- break;
-		-- case PTO_S2C_CHAT:
-		-- {
-		-- 	MSGC2SChat chatmsg;
-		-- 	chatmsg.namelen = pt->ReadAsInt32();
-		-- 	chatmsg.name = pt->ReadAsString(chatmsg.namelen);
-		-- 	chatmsg.ctlen = pt->ReadAsInt32();
-		-- 	chatmsg.content = pt->ReadAsString(chatmsg.ctlen);
-		-- 	Player* player = scene_find_player(chatmsg.name.c_str());
-		-- 	if (player) player->Say(chatmsg.content);
-		-- }
-		-- break;
-		-- case PTO_S2C_MOVE_TO_POS:
-		-- {
-		-- 	int namelen = pt->ReadAsInt32();
-		-- 	std::string name = pt->ReadAsString(namelen);
-		-- 	float pos_x = pt->ReadAsFloat();
-		-- 	float pos_y = pt->ReadAsFloat();
-		-- 	Player* player = scene_find_player(name.c_str());
-		-- 	if (player) player->MoveTo(pos_x, pos_y);
-		-- }
-		-- break;
-		-- default:
-		-- 	break;
-		-- }
-        -- delete pt;
         
 function game_dispatch_message(pt)
 	local type = pt:ReadAsInt()
 	local js = pt:ReadAllAsString()
 	local req = cjson.decode(js)
-	cxlog_info('game_dispatch_message', type, js )
+	print('game_dispatch_message', type, js)
+	local local_pinfo 
 	if  type == PTO_S2C_PLAYER_ENTER then
 		local pinfos = req 
-		for k,pinfo in pairs(pinfos) do
+		for k,pinfo in ipairs(pinfos) do
 			local player = actor_manager_create_player(pinfo.pid)
 			player:SetName(pinfo.name)
 			player:SetSceneID(pinfo.scene_id)
@@ -105,15 +78,20 @@ function game_dispatch_message(pt)
 			player:SetX(pinfo.x)
 			player:SetY(pinfo.y)
 			if pinfo.is_local then
-				actor_manager_set_local_player(pinfo.pid)
-				scene_manager_switch_scene_by_id(pinfo.scene_id)
+				local_pinfo = pinfo
 			end
 		end
+
+		actor_manager_set_local_player(local_pinfo.pid)
+		scene_manager_switch_scene_by_id(local_pinfo.scene_id)
+		
 	elseif type == PTO_S2C_CHAT then
 		
 	elseif type == PTO_S2C_MOVE_TO_POS then
-		local msg = cjson.decode(pt:ReadAllAsString())
-		local player = actor_manager_fetch_player_by_id(msg.pid)
-		player:MoveTo(msg.x,msg.y)
+		local player = actor_manager_fetch_local_player()
+		if player:GetID() ~= req.pid then
+			local other = actor_manager_fetch_player_by_id(req.pid)
+			other:MoveTo(req.x,req.y)
+		end
     end
 end

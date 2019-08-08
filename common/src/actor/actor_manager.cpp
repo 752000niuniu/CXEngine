@@ -106,6 +106,10 @@ int lua_actor_manager_create_player(lua_State*L)
 }
 
 Player* actor_manager_create_player(uint64_t pid) {
+	if(g_Players.find(pid) != g_Players.end()){
+		delete g_Players[pid];
+		g_Players.erase(pid);
+	}
 	Player* player = new Player(pid);
 	g_Players.insert({ pid, player });
 	return player;

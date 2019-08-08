@@ -19,6 +19,7 @@ function on_script_system_deinit()
 end
 
 function pto_c2s_login(req)
+
     local req_player = actor_manager_create_player(req.pid)
     req_player:SetName(req.name)
     req_player:SetSceneID(req.scene_id)
@@ -26,16 +27,17 @@ function pto_c2s_login(req)
     req_player:SetWeaponID(req.weapon_id)
     req_player:SetX(req.x)
     req_player:SetY(req.y)
-    req.is_local = true
     local players = actor_manager_fetch_all_players()    
-    print("players", #players)
-    for k,player in pairs(players) do
+    print('players', #players)
+    for k,player in ipairs(players) do
         local pid = player:GetID()        
         if req.pid == pid then
             local pinfos = {}
-            table.insert(pinfos, req)
-            for _, other in pairs(players) do
-                if other.pid ~= req.pid then
+            req.is_local = true
+            table.insert(pinfos,req)
+            
+            for _, other in ipairs(players) do
+                if other:GetID() ~= req.pid then
                     local pinfo = {}
                     pinfo.pid = other:GetID()
                     pinfo.name = other:GetName()
@@ -47,11 +49,14 @@ function pto_c2s_login(req)
                     table.insert(pinfos, pinfo)
                 end
             end
-            print(cjson.encode(pinfos))
+            print('req.pid == pid', cjson.encode(pinfos))
             net_send_message(pid,PTO_S2C_PLAYER_ENTER, cjson.encode(pinfos))        
         else
-            print(cjson.encode({req}))
-            net_send_message(pid,PTO_S2C_PLAYER_ENTER, cjson.encode({req}))
+            local pinfos = {}
+            req.is_local = false
+            table.insert(pinfos,req)
+            print('req.pid ~= pid', cjson.encode(pinfos))
+            net_send_message(pid,PTO_S2C_PLAYER_ENTER, cjson.encode(pinfos))
         end        
     end
 end
@@ -66,8 +71,8 @@ function game_server_dispatch_message(pt)
     elseif type == PTO_C2S_LOGOUT then
         
     elseif type == PTO_C2S_MOVE_TO_POS then
-        -- net_send_message_to_all_players(PTO_C2S_MOVE_TO_POS,msgjs)
+        net_send_message_to_all_players(PTO_C2S_MOVE_TO_POS,js)
     elseif type == PTO_C2S_CHAT then
-        -- net_send_message_to_all_players(PTO_C2S_CHAT,msgjs)
+        net_send_message_to_all_players(PTO_C2S_CHAT,js)
     end
 end

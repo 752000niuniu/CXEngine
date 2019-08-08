@@ -25,6 +25,7 @@ function server_thread_start()
 	read_player_database()
 end
 
+local idincr= 1
 function server_thread_on_message(conn, buf, netq)
 	while buf:readable_size() >= CX_MSG_HEADER_LEN do 
 		local len = buf:PeekAsInt()
@@ -37,7 +38,8 @@ function server_thread_on_message(conn, buf, netq)
 				local msg = cjson.decode(msgjs)
 				print('PTO_C2S_SIGNUP', msg)
 				local pinfo = {}
-				pinfo.pid = os.time()
+				pinfo.pid = os.time() + idincr
+				idincr = idincr + 1
 				pinfo.account = msg.account
 				pinfo.password = msg.password
 				player_database[pinfo.pid] = pinfo
@@ -55,6 +57,7 @@ function server_thread_on_message(conn, buf, netq)
 				end
 				if pid then
 					print('pid', pid)
+					erase_pid_connection_pair(pid)
 					insert_pid_connection_pair(pid, conn)
 					msg.pid = pid
 					local newmsg = ezio_buffer_create()

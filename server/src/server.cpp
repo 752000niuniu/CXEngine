@@ -188,6 +188,7 @@ void GameServer::OnConnection(const TCPConnectionPtr& conn)
 				break;
 			}
 		}
+	}else {
 	}
 }
 

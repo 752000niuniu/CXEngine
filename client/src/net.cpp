@@ -131,9 +131,10 @@ void NetClient::SendMessageToServer(int proto, const char* msg)
 	buf.Write(msg, strlen(msg));
 	int cnt = (int)buf.readable_size();
 	buf.Prepend(cnt);
+	printf("proto:%d msg:%s\n", proto, msg);
+
 	m_EventLoop->RunTask([this, buf]() {
 		if (m_Client.connection() != nullptr && m_Client.connection()->connected()) {
-			cxlog_info("%s\n", kbase::StringView(buf.Peek(), buf.readable_size()));
 			m_Client.connection()->Send(kbase::StringView(buf.Peek(), buf.readable_size()));
 		}
 	});
@@ -224,6 +225,7 @@ void NetThread::Update(lua_State* L )
 	while (!g_ReadPacketQueue.Empty(NetThreadQueue::Read))
 	{
 		Buffer& pt = g_ReadPacketQueue.Front(NetThreadQueue::Read);
+		printf("%s\n", std::string(pt.Peek(), pt.readable_size()).c_str());
 		lua_getglobal(L , "game_dispatch_message");
 		lua_push_ezio_buffer(L, pt);
 		int res = lua_pcall(L, 1, 0, 0);
