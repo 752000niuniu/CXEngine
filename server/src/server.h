@@ -37,9 +37,6 @@ private:
 	int m_Port;
 	EventLoop* m_EventLoop;
 	TCPServer m_Server;
-	
-	typedef std::set< TCPConnectionPtr> ConnectionList;
-	ConnectionList m_Connections;
 	lua_State* m_L;
 };
 

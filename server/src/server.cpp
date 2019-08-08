@@ -12,7 +12,7 @@
 #include "lua_net.h"
 #include "file_system.h"
 
-std::map<uint64_t, TCPConnectionPtr> g_PlayerConnections;
+std::map<uint64_t, TCPConnection*> g_PlayerConnections;
 NetThreadQueue g_ReadPacketQueue;
 
 struct ServerPacket
@@ -177,17 +177,12 @@ void GameServer::OnConnection(const TCPConnectionPtr& conn)
 	cxlog_info("Connection %s is %s\n", conn->peer_addr().ToHostPort().c_str(), state);
 	if (conn->connected())
 	{
-		m_Connections.insert(conn);
-	}
-	else
-	{
 		for (auto& it : g_PlayerConnections) {
-			if (it.second == conn) {
+			if (it.second == conn.get()) {
 				g_PlayerConnections.erase(it.first);
 				break;
 			}
 		}
-		m_Connections.erase(conn);
 	}
 }
 
@@ -279,7 +274,8 @@ int insert_pid_connection_pair(lua_State* L){
 	if (g_PlayerConnections.find(pid) != g_PlayerConnections.end()) {
 		return 0;
 	}
-	g_PlayerConnections.insert({ pid,TCPConnectionPtr(conn) });
+	
+	g_PlayerConnections.insert({ pid,conn });
 	return 0;
 }
 
