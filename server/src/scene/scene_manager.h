@@ -2,7 +2,7 @@
 
 #include <define_types.h>
 #include <tsv.h>
-#include "scene.h"
+#include "scene/scene.h"
 
 struct TransportStation
 {
@@ -89,4 +89,5 @@ void scene_set_player(const char* player_name);
 void scene_add_player_by_templ_name(const char* templ_name, int actorType);
 void scene_add_player(const char* player_name, int x, int y, int dir, int role_id, int weapon_id);
 
+BaseScene*  scene_manager_fetch_scene(int sceneID);
 void luaopen_scene_manager(lua_State* L);

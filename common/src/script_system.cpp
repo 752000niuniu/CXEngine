@@ -6,11 +6,7 @@
 #include "logger.h"
 #include "window.h"
 #include "scene/scene_manager.h"
-#include "ui.h"
 #include "file_loading.h"
-#include "text_renderer.h"
-#include "input_manager.h"
-#include "net.h"
 #include "imgui/cximgui.h"
 #include "net_thread_queue.h"
 #include "lua_net.h"
@@ -20,6 +16,18 @@
 #include "time/timer_manager.h"
 #include "game.h"
 #include "actor/actor_manager.h"
+
+#ifndef SIMPLE_SERVER
+#include "ui.h"
+#include "text_renderer.h"
+#include "input_manager.h"
+#include "net.h"
+#else
+#include "server.h"
+#endif // !SIMPLE_SERVER
+
+
+
 
 static lua_State* L = nullptr;
 void luaopen_script_system(lua_State* L);
@@ -59,22 +67,26 @@ void script_system_prepare_init()
 	luaopen_logger(L);
 	luaopen_ne_support(L);
 	luaopen_window(L);
-	luaopen_resource_manager(L);
 	luaopen_timer_manager(L);
+	luaopen_scene(L);
+	luaopen_scene_manager(L);
+	luaopen_tsv(L);
+	luaopen_net_thread_queue(L);
+	luaopen_netlib(L);
+	luaopen_actor(L);
+	luaopen_actor_manager(L);
+	luaopen_game(L);
+#ifndef SIMPLE_SERVER
+	luaopen_resource_manager(L);
 	luaopen_input_manager(L);
 	luaopen_ui(L);
 	luaopen_sprite_renderer(L);
 	luaopen_text_renderer(L);
-	luaopen_scene(L);
-	luaopen_scene_manager(L);
 	luaopen_frame_animation(L);
-	luaopen_tsv(L);
-	luaopen_net_thread_queue(L);
-	luaopen_netlib(L);
 	luaopen_net(L);
-	luaopen_actor(L);
-	luaopen_actor_manager(L);
-	luaopen_game(L);
+#else
+	luaopen_game_server(L);
+#endif // !SIMPLE_SERVER
 }
 
 void script_system_dofile(const char* file)
@@ -146,8 +158,13 @@ const char* lua_file_path(const char* luafile)
 
 void luaopen_script_system(lua_State* L)
 {
-#define REG_ENUM(name)  (lua_pushinteger(L, name),lua_setglobal(L, #name))
-	REG_ENUM(SIMPLE_ENGINE);
+
+#define REG_ENUM(name, macro)  (lua_pushinteger(L, macro),lua_setglobal(L, name))
+#ifdef SIMPLE_SERVER
+	REG_ENUM("SIMPLE_SERVER",SIMPLE_SERVER);
+#else
+	REG_ENUM("SIMPLE_ENGINE", SIMPLE_ENGINE);
+#endif // SIMPLE_SERVER
 #undef REG_ENUM
 
 	script_system_register_function(L, script_system_dofile);

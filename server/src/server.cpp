@@ -252,14 +252,14 @@ int net_send_message_to_all(lua_State* L) {
 		i++;
 		lua_pop(L, 1);
 	}
-	int proto = lua_tointeger(L, 2);
+	int proto = (int)lua_tointeger(L, 2);
 	const char* msg = lua_tostring(L, 3);
 	CXGameServer->SendMessageToPlayers(pids, proto, msg);
 	return 0;
 }
 
 int net_send_message_to_all_players(lua_State* L) {
-	int proto = lua_tointeger(L, 1);
+	int proto = (int)lua_tointeger(L, 1);
 	const char* msg = lua_tostring(L, 2);
 	ezio::Buffer buf;
 	buf.Write(proto);

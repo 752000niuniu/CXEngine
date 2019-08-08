@@ -296,16 +296,6 @@ void scene_add_player(const char* player_name, int x, int y, int dir,int role_id
 	
 }
 
-BaseScene* scene_manager_fetch_scene(int sceneID)
-{
-	auto& scenes = SCENE_MANAGER_INSTANCE->GetAllScene();
-	for(auto& it : scenes){
-		if(it.second->GetSceneID() == sceneID){
-			return it.second;
-		}
-	}
-	return nullptr;
-}
 
 void scene_add_npc(const char* player_name, int  x, int  y, int dir, int role_id, int action_id, const char* msg)
 {
@@ -421,6 +411,17 @@ void scene_manager_sync_draw_cbx(bool draw_map, bool draw_cell, bool draw_stride
 	s_DrawMask = draw_mask;
 	s_DrawAnnouncement = draw_announcement;
 	s_AutoRun = auto_run;
+}
+
+BaseScene* scene_manager_fetch_scene(int sceneID)
+{
+	auto& scenes = SCENE_MANAGER_INSTANCE->GetAllScene();
+	for (auto& it : scenes) {
+		if (it.second->GetSceneID() == sceneID) {
+			return it.second;
+		}
+	}
+	return nullptr;
 }
 
 void luaopen_scene_manager(lua_State* L)

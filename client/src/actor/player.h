@@ -3,11 +3,15 @@
 
 #include "pos.h"
 #include "entity.h"
-#include "action.h"
-#include "actor.h"
+#include "actor/action.h"
+#include "actor/actor.h"
 #include "scene/game_map.h"
 #include "state.h"
+#ifndef SIMPLE_SERVER
 #include "ui.h"
+#endif // SIMPLE_SERVER
+
+
 
 class Player : public Actor
 {
@@ -68,13 +72,13 @@ public:
 	void SetBox();
 	void SetDir(int dir);
 	void SetActionID(int state);
-
+#ifndef SIMPLE_SERVER
 	FrameAnimation* GetPlayerFrame(int actionID);
 	FrameAnimation* GetCurrentPlayerFrame();
 	FrameAnimation* GetCurrentWeaponFrame();
 	void SetSkillFrame(FrameAnimation* anim);
 	FrameAnimation& GetSkillFrame() { return *m_SkillFrame; }
-
+#endif
 
 protected:
 	void LoadRoleFrame();
@@ -86,21 +90,22 @@ protected:
 	std::list<Pos> m_MoveList;
 	std::list<Pos> m_BackupMoveList;
 	std::vector<Player*> m_Targets;
-
+#ifndef SIMPLE_SERVER
 	std::map<int, FrameAnimation*> m_PlayerFrames;
 	std::map<int, FrameAnimation*> m_WeaponFrames;
 	FrameAnimation* m_SkillFrame;
 	TextView* m_SayWidget;
+#endif
 };
 
 
+#ifndef SIMPLE_SERVER
 struct NpcTemplate
 {
 	uint32_t Pack;
 	uint32_t SpriteID;
 
 };
-
 class Npc : public Player, public View
 {
 public:
@@ -131,4 +136,4 @@ public:
 
 	virtual ~Pet();
 };
-
+#endif

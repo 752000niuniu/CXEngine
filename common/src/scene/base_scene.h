@@ -1,7 +1,6 @@
 #pragma once
 
 #include "define_types.h"
-#include "i_update_draw.h"
 #include "entity.h"
 #include "game_map.h"
 #include "actor/player.h"
@@ -19,7 +18,10 @@ public:
 
 	virtual void Update() = 0;
 
+#ifndef SIMPLE_SERVER
 	virtual void Draw() = 0;
+#endif
+	
 
 
 	void SetSceneID(int id) { m_SceneID = id; };

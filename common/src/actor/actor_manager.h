@@ -1,7 +1,7 @@
 #pragma once
 
 #include "actor.h"
-#include "player.h"
+#include "actor/player.h"
 
 
 Player* actor_manager_fetch_local_player();

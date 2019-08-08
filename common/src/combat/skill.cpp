@@ -1,4 +1,6 @@
 #include "skill.h"
+
+#ifndef SIMPLE_SERVER
 #include "file_system.h"
 #include <tsv.h>
 
@@ -36,3 +38,4 @@ Buff::Buff()
 Buff::~Buff()
 {
 }
+#endif

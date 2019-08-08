@@ -15,45 +15,21 @@ file(GLOB_RECURSE  SOURCES_HEADER_PUB "src/*.h" )
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "Source Files"  FILES ${SOURCES_CPP})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "Source Files"  FILES ${SOURCES_HEADER_PUB})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../common/src PREFIX "Source Files"  FILES ${GAME_SOURCES_CPP})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../common/src PREFIX "Source Files"  FILES ${GAME_SOURCES_HEADER})
 
 
 add_executable(SimpleServer 
   ${PRIVATE_HEADERS}
-  src/actor/action.cpp
-  src/actor/actor.cpp
+  ${GAME_SOURCES_HEADER}
+  ${GAME_COMMON_SRCS}
   src/actor/player.cpp
-  src/actor/player_state.cpp
-  src/animation/frame_animation.cpp
-  src/astar/astar.cpp
-  src/combat/combat.cpp
-  src/combat/skill.cpp
-  src/graphics/shader.cpp
-  src/graphics/texture.cpp
-  src/graphics/bitmap.cpp
-  src/entity.cpp
-  src/file_system.cpp
-  src/game.cpp
-  src/logger.cpp
-  src/message.cpp
-  src/file_loading.cpp
-  src/profile.cpp
-  src/main.cpp
-  src/resource_manager.cpp
-  src/scene/base_scene.cpp
-  src/scene/game_map.cpp
   src/scene/scene.cpp
   src/scene/scene_manager.cpp
-  src/script_system.cpp
-  src/state.cpp
+  src/game.cpp
+  src/main.cpp
   src/server.cpp
-  src/time/time.cpp
-  src/time/time_manager.cpp
-  src/time/timer.cpp
-  src/time/timer_manager.cpp
   src/window.cpp
-  src/imgui/imgui_impl_glfw.cpp
-  src/imgui/imgui_impl_opengl3.cpp
-  src/imgui/cximgui.cpp
 )
 
 if(MSVC)
@@ -67,6 +43,7 @@ target_include_directories(SimpleServer
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/../common/src
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/../external/dist/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../external/dist/include/freetype2

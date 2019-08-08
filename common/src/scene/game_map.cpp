@@ -7,9 +7,13 @@
 #include "file_loading.h"
 #include "cxrandom.h"
 #include "file_system.h"
-#include "sprite_renderer.h"
 #include "cxmath.h"
+
+#ifndef SIMPLE_SERVER
 #include "SOIL.h"
+#include "sprite_renderer.h"
+#endif
+
 
 GameMap::GameMap(uint32 mapID)
 	:m_XyqMap(nullptr)
@@ -56,10 +60,14 @@ GameMap::GameMap(uint32 mapID)
 		m_MapTileWidth = 320;
 		m_MapTileHeight = 240;
 		m_MapTileCoef = WINDOW_INSTANCE->GetWidth() / 2 / m_MapTileWidth + 1;
+
+#ifndef SIMPLE_SERVER
 		m_MapTiles.clear();
 
 		m_MaskTiles.clear();
 		m_CellPic = new Texture(FileSystem::GetAssetsPath("X.png"));
+#endif
+		
 	}
 }
 
@@ -218,6 +226,7 @@ GameMap::~GameMap()
 		iothread->RemoveTaskState(fileName.c_str());
 	}
 
+#ifndef SIMPLE_SERVER
 	for (auto& it : m_MapTiles)
 	{
 		std::string unitpath(std::to_string(m_MapID));
@@ -225,7 +234,7 @@ GameMap::~GameMap()
 		unitpath.append(std::to_string(it.first));
 		if (iothread)iothread->RemoveTaskState(unitpath.c_str());
 		delete it.second;
-	}
+}
 	m_MapTiles.clear();
 
 	for (auto& it : m_MaskTiles)
@@ -237,6 +246,9 @@ GameMap::~GameMap()
 		delete it.second;
 	}
 	m_MaskTiles.clear();
+#endif
+
+	
 
 	if (m_Astar != nullptr)
 	{
@@ -265,7 +277,7 @@ int GameMap::GetMapOffsetY()
 	return m_MapOffsetY;
 }
 
-
+#ifndef SIMPLE_SERVER
 void GameMap::Draw(int playerX, int playerY)
 {
 	auto* iothread = file_loading_thread();
@@ -508,3 +520,4 @@ void GameMap::DrawMask(int playerX, int playerY, int drawY)
 		}
 	}
 }
+#endif

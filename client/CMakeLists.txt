@@ -21,6 +21,10 @@ add_executable(SimpleEngine
     ${SOURCES_HEADER_PRI}
     ${GAME_SOURCES_HEADER}
     ${GAME_COMMON_SRCS}
+    src/actor/player.cpp
+    src/actor/player_state.cpp
+    src/scene/scene.cpp
+	src/scene/scene_manager.cpp
     src/algorithm.cpp
     src/animation/frame_animation.cpp
     src/camera.cpp
@@ -40,7 +44,6 @@ add_executable(SimpleEngine
     src/net.cpp
     src/objects/map_object.cpp
     src/objects/object.cpp
-    src/profile.cpp
     src/main.cpp
     src/resource_manager.cpp
     src/scene/splash_scene.cpp

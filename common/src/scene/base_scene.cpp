@@ -1,5 +1,5 @@
 #include "base_scene.h"
-#include "scene.h"
+#include "scene/scene.h"
 #include "game.h"
 #include "utils.h"
 

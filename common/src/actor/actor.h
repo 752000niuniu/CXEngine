@@ -101,8 +101,14 @@ public:
 	float GetFrameSpeed() { return m_FrameSpeed; };
 	void SetFrameSpeed(float frame_speed) { m_FrameSpeed = frame_speed; };
 
+	void SetType(int type) { m_ActorType = type; }
 	int GetType() { return m_ActorType; }
 	bool IsMove() { return m_IsMove; }
+
+	float GetCombatDistSquare();
+	float GetCombatAngle();
+	float GetMoveDestDistSquare(Pos dest);
+	float GetMoveDestAngle(Pos dest);
 
 	BaseScene* GetScene();
 protected:

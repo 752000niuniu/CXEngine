@@ -1,6 +1,6 @@
 #include "actor_manager.h"
 #include "actor.h"
-#include "player.h"
+#include "actor/player.h"
 #include "window.h"
 #include "scene/scene_manager.h"
 
@@ -52,6 +52,8 @@ void actor_manager_update()
 
 void actor_manager_draw()
 {
+#ifndef SIMPLE_SERVER
+
 	auto* localPlayer = actor_manager_fetch_local_player();
 	if (localPlayer == nullptr)return;
 
@@ -60,7 +62,7 @@ void actor_manager_draw()
 	for (auto& it : g_Players)
 	{
 		Actor* player = it.second;
-		if (localPlayer== player)
+		if (localPlayer == player)
 		{
 			int screenWidth = WINDOW_INSTANCE->GetWidth();
 			int screenHeight = WINDOW_INSTANCE->GetHeight();
@@ -70,7 +72,7 @@ void actor_manager_draw()
 			int mapHeight = scene->GetGameMap()->GetHeight();
 
 			int px = localPlayer->GetX();
-			int py = localPlayer ->GetY();
+			int py = localPlayer->GetY();
 
 			int maxMapOffsetX = mapWidth - halfScreenWidth;
 			int maxMapOffsetY = mapHeight - halfScreenHeight;
@@ -87,10 +89,12 @@ void actor_manager_draw()
 				scene->GetGameMap()->DrawMask(localPlayer->GetX(), localPlayer->GetY(), dynamic_cast<Player*>(localPlayer)->GetDrawY());
 			}
 
-		}else{
+		}
+		else {
 			player->OnDraw(scene->GetGameMap());
 		}
 	}
+#endif // !SIMPLE_SERVER
 }
 int lua_actor_manager_create_player(lua_State*L)
 {

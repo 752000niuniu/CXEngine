@@ -2,7 +2,7 @@
 
 #include <define_types.h>
 #include <tsv.h>
-#include "scene.h"
+#include "scene/scene.h"
 
 struct TransportStation
 {

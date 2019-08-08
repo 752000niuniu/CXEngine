@@ -1,15 +1,17 @@
-#include "Combat.h"
+#include "combat.h"
+#ifndef SIMPLE_SERVER
+
 #include "message.h"
 #include "animation/frame_animation.h"
-#include "Skill.h"
+#include "skill.h"
 #include "actor/player_state.h"
 #include "graphics/renderer.h"
 #include "input_manager.h"
 
 static	FrameAnimation* s_CombatBG;
 CombatSystem::CombatSystem()
-: m_Ourselves(0),
-m_Enemies(0)
+	: m_Ourselves(0),
+	m_Enemies(0)
 {
 	SKILL_MANAGER_INSTANCE;
 	auto f = [](int role_id, float x, float y, std::wstring nickname)
@@ -52,9 +54,9 @@ m_Enemies(0)
 		sp = ResourceManager::GetInstance()->LoadWASSprite(AddonWDF, 0x708C11A0);
 
 	}
-	TextureManager::GetInstance()->LoadTexture(sp->mPath, sp->mWidth,sp->mHeight , true, (uint8_t*)sp->mFrames[0].src.data());
+	TextureManager::GetInstance()->LoadTexture(sp->mPath, sp->mWidth, sp->mHeight, true, (uint8_t*)sp->mFrames[0].src.data());
 	m_CombatBGPath = sp->mPath;
-	
+
 	// RENDERER_2D_INSTANCE->AddObject(new Image(
 	// 	s_CombatBG->GetFramePath(0), Vec2(0, 0), Vec2(WINDOW_INSTANCE->GetWidth(), WINDOW_INSTANCE->GetHeight()))
 	// );
@@ -65,16 +67,16 @@ CombatSystem::~CombatSystem()
 
 }
 
-void CombatSystem::AddEnemy(int pos,Player* enemy)
+void CombatSystem::AddEnemy(int pos, Player* enemy)
 {
-	int dir  = static_cast<int>(Direction::S_E);
+	int dir = static_cast<int>(Direction::S_E);
 	enemy->ResetDirAll(dir);
-	enemy->SetActorID(10+pos);
+	enemy->SetActorID(10 + pos);
 	GAME_ENTITY_MANAGER_INSTANCE->RegisterEntity(enemy);
 	m_Enemies.push_back(enemy);
 }
 
-void CombatSystem::AddSelf(int pos,Player* self)
+void CombatSystem::AddSelf(int pos, Player* self)
 {
 	int dir = static_cast<int>(Direction::N_W);
 	self->ResetDirAll(dir);
@@ -85,69 +87,69 @@ void CombatSystem::AddSelf(int pos,Player* self)
 
 void CombatSystem::Update()
 {
-//	ProcessInput();
+	//	ProcessInput();
 
-	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_1 ,
-			[this](){
-				int selfID = RANDOM_INSTANCE->NextInt(0,(int)m_Ourselves.size()-1);
-				int enemyID = RANDOM_INSTANCE->NextInt(0, (int)m_Enemies.size()-1);
-				auto& self = m_Ourselves[selfID];
-				auto& enemy = m_Enemies[enemyID];
-    			self->SetCombatTargetPos({enemy->GetCombatPos().x + 88 , enemy->GetCombatPos().y + 73});
-				self->SetTargetID(enemyID+10);
-				self->GetFSM()->ChangeState(PlayerCombatMoveState::GetInstance());
-			}
-		);
-	
-	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_2 ,
-		[this](){
-			int selfID = RANDOM_INSTANCE->NextInt(0,(int)m_Enemies.size()-1);
-			auto& self = m_Ourselves[selfID];
-			self->GetFSM()->ChangeState(PlayerCombatCastAttackState::GetInstance());
-		}
-	);	
-	
-	
+	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_1,
+		[this]() {
+		int selfID = RANDOM_INSTANCE->NextInt(0, (int)m_Ourselves.size() - 1);
+		int enemyID = RANDOM_INSTANCE->NextInt(0, (int)m_Enemies.size() - 1);
+		auto& self = m_Ourselves[selfID];
+		auto& enemy = m_Enemies[enemyID];
+		self->SetCombatTargetPos({ enemy->GetCombatPos().x + 88 , enemy->GetCombatPos().y + 73 });
+		self->SetTargetID(enemyID + 10);
+		self->GetFSM()->ChangeState(PlayerCombatMoveState::GetInstance());
+	}
+	);
+
+	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_2,
+		[this]() {
+		int selfID = RANDOM_INSTANCE->NextInt(0, (int)m_Enemies.size() - 1);
+		auto& self = m_Ourselves[selfID];
+		self->GetFSM()->ChangeState(PlayerCombatCastAttackState::GetInstance());
+	}
+	);
+
+
 	float dt = WINDOW_INSTANCE->GetDeltaTime();
-	for(auto* self: m_Ourselves)
+	for (auto* self : m_Ourselves)
 	{
-		if(self!=nullptr)
+		if (self != nullptr)
 		{
 			self->OnUpdate(dt);
 		}
 	}
 
-	for(auto* enemy: m_Enemies)
+	for (auto* enemy : m_Enemies)
 	{
-		if(enemy!=nullptr)
+		if (enemy != nullptr)
 		{
 			enemy->OnUpdate(dt);
 		}
 	}
-	
+
 }
 
 void CombatSystem::Draw()
 {
 	auto* texture = TextureManager::GetInstance()->GetTexture(m_CombatBGPath);
 	SPRITE_RENDERER_INSTANCE->DrawFrameSprite(texture,
-		glm::vec2(0,0),
-		glm::vec2(WINDOW_INSTANCE->GetWidth(),WINDOW_INSTANCE->GetWidth()), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+		glm::vec2(0, 0),
+		glm::vec2(WINDOW_INSTANCE->GetWidth(), WINDOW_INSTANCE->GetWidth()), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	//RENDERER_2D_INSTANCE->Render();
 
-	for(auto* enemy: m_Enemies)
+	for (auto* enemy : m_Enemies)
 	{
-		if(enemy!=nullptr)
+		if (enemy != nullptr)
 		{
 			Pos pos = enemy->GetCombatPos();
-			enemy->OnDraw(static_cast<int>( pos.x), static_cast<int>( pos.y));
+			enemy->OnDraw(static_cast<int>(pos.x), static_cast<int>(pos.y));
 		}
 	}
 
-    for(auto* self: m_Ourselves)
+	for (auto* self : m_Ourselves)
 	{
-		if(self!=nullptr)
+		if (self != nullptr)
 		{
 			Pos pos = self->GetCombatPos();
 			self->OnDraw(static_cast<int>(pos.x), static_cast<int>(pos.y));
@@ -159,62 +161,93 @@ void CombatSystem::Draw()
 void CombatSystem::ProcessInput()
 {
 	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_3,
-		[this](){
-			for(auto* self: m_Ourselves)
+		[this]() {
+		for (auto* self : m_Ourselves)
+		{
+			if (self != nullptr)
 			{
-				if(self!=nullptr)
-				{
-					self->ChangeRole(0);
-				}
+				self->ChangeRole(0);
 			}
 		}
+	}
 	);
 
-	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_4 ,
-		[this](){
-			for(auto* self: m_Ourselves)
+	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_4,
+		[this]() {
+		for (auto* self : m_Ourselves)
+		{
+			if (self != nullptr)
 			{
-				if(self!=nullptr)
-				{
-					self->ChangeWeapon(0);
-				}
+				self->ChangeWeapon(0);
 			}
 		}
+	}
 	);
 
 	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_5,
-		[this](){
-			for(auto* enemy: m_Enemies)
+		[this]() {
+		for (auto* enemy : m_Enemies)
+		{
+			if (enemy != nullptr)
 			{
-				if(enemy!=nullptr)
-				{
-					enemy->ChangeAction(0);
-				}
+				enemy->ChangeAction(0);
 			}
 		}
+	}
 	);
 
 	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_6,
-		[this](){
-			for(auto* enemy: m_Enemies)
+		[this]() {
+		for (auto* enemy : m_Enemies)
+		{
+			if (enemy != nullptr)
 			{
-				if(enemy!=nullptr)
-				{
-					enemy->ChangeRole(0);
-				}
+				enemy->ChangeRole(0);
 			}
 		}
+	}
 	);
 
 	InputManager::GetInstance()->RegisterOnKeyClickEvent(GLFW_KEY_7,
-		[this](){
-			for(auto* enemy: m_Enemies)
+		[this]() {
+		for (auto* enemy : m_Enemies)
+		{
+			if (enemy != nullptr)
 			{
-				if(enemy!=nullptr)
-				{
-					enemy->ChangeWeapon(0);
-				}
+				enemy->ChangeWeapon(0);
 			}
 		}
+	}
 	);
 }
+#else
+CombatSystem::CombatSystem()
+	: m_Ourselves(0),
+	m_Enemies(0)
+{
+}
+
+CombatSystem::~CombatSystem()
+{
+
+}
+
+void CombatSystem::AddEnemy(int pos, Player* enemy)
+{
+}
+
+void CombatSystem::AddSelf(int pos, Player* self)
+{
+}
+
+void CombatSystem::Update()
+{
+	
+}
+
+void CombatSystem::Draw()
+{
+}
+
+void CombatSystem::ProcessInput(){}
+#endif // !SIMPLE_SERVER

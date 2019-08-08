@@ -1,5 +1,5 @@
 #include "timer.h"
-#include "engine.h"
+#include "window.h"
 
 Timer::Timer()
 	:m_TargetTime(1.0f)
@@ -83,7 +83,7 @@ bool Timer::Update()
 	}
 	if (m_CountingDown && m_CurrentTime >= 0)
 	{
-		m_CurrentTime -= ENGINE_INSTANCE->GetDeltaTimeMilliseconds() ;
+		m_CurrentTime -= WINDOW_INSTANCE->GetDeltaTimeMilliseconds() ;
 		if (m_CurrentTime < 0)
 		{
 			m_ExcecutingFunction();
@@ -98,7 +98,7 @@ bool Timer::Update()
 	}
 	else if (!m_CountingDown && m_CurrentTime <= m_TargetTime)
 	{
-		m_CurrentTime = ENGINE_INSTANCE->GetDeltaTimeMilliseconds() ;
+		m_CurrentTime = WINDOW_INSTANCE->GetDeltaTimeMilliseconds() ;
 		if (m_CurrentTime > m_TargetTime)
 		{
 			m_ExcecutingFunction();

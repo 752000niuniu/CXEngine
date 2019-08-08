@@ -4,9 +4,12 @@
 #include "astar/heap.h"
 #include "astar/astar.h"
 
-#include "graphics/image.h"
 #include "pos.h"
+#ifndef SIMPLE_SERVER
+#include "graphics/image.h"
 #include "graphics/texture.h"
+#endif // SIMPLE_SERVER
+
 
 /*
 游戏地图类的封装
@@ -34,13 +37,6 @@ public:
 
 	void Update();
 
-	void Draw(int playerX, int playerY);
-
-	void DrawMask( int playerX, int playerY ,int playerHeight);
-
-	void DrawCell( int cur_x, int cur_y);
-	void DrawCell();
-
 	int GetWidth(){return m_Width;}
 
 	int GetHeight(){return m_Height;}
@@ -53,26 +49,16 @@ public:
 
 	int GetMapOffsetY();
 
-
+#ifndef SIMPLE_SERVER
+	void Draw(int playerX, int playerY);
+	void DrawMask(int playerX, int playerY, int playerHeight);
+	void DrawCell(int cur_x, int cur_y);
+	void DrawCell();
+#endif
 private:
 	bool CanArriveDirect(Pos src, Pos dest);
 
 	void UpdateCell();
-
-	/*
-	整张地图
-	*/
-	std::map<int,Texture *> m_MapTiles;
-
-	/*
-	整张地图的遮罩
-	*/
-	std::map<int,Texture *> m_MaskTiles;
-
-	/*
-	障碍Icon
-	*/
-	Texture* m_CellPic;
 
 	int m_Width;
 
@@ -112,6 +98,23 @@ private:
 	int m_MapOffsetY;
 	
 	std::map<int, std::set<int>> m_UnitMasks;
+
+#ifndef SIMPLE_SERVER
+	/*
+	整张地图
+	*/
+	std::map<int, Texture *> m_MapTiles;
+
+	/*
+	整张地图的遮罩
+	*/
+	std::map<int, Texture *> m_MaskTiles;
+
+	/*
+	障碍Icon
+	*/
+	Texture* m_CellPic;
+#endif // SIMPLE_SERVER
 };
 
 

@@ -1,10 +1,11 @@
 #include "actor.h"
 #include "action.h"
-#include "player.h"
+#include "actor/player.h"
 #include "scene/scene_manager.h"
 #include "utils.h"
 #include "lua.hpp"
 #include "window.h"
+#include "cxmath.h"
 
 #define ACTOR_METATABLE_NAME "mt_actor"
 
@@ -32,6 +33,24 @@ Actor::~Actor()
 {
 
 
+}
+
+float Actor::GetCombatDistSquare()
+{
+	return ::GMath::Astar_GetDistanceSquare(m_CombatPos.x, m_CombatPos.y, m_CombatTargetPos.x, m_CombatTargetPos.y);
+}
+
+float Actor::GetMoveDestDistSquare(Pos dest)
+{
+	return ::GMath::Astar_GetDistanceSquare(m_Pos.x, m_Pos.y, dest.x, dest.y);
+}
+float Actor::GetCombatAngle()
+{
+	return ::GMath::Astar_GetAngle(m_CombatPos.x, m_CombatPos.y, m_CombatTargetPos.x, m_CombatTargetPos.y);
+}
+float Actor::GetMoveDestAngle(Pos dest)
+{
+	return ::GMath::Astar_GetAngle(m_Pos.x, m_Pos.y, dest.x, dest.y);
 }
 
 BaseScene* Actor::GetScene()
@@ -292,16 +311,8 @@ int lua_new_actor(lua_State* L)
 	int type = (int)luaL_optinteger(L, 1, ACTOR_TYPE_DEFAULT);
 	int rold_id = (int)luaL_optinteger(L, 2, 0);
 	
-	Actor* actor = nullptr;
-	if (type == ACTOR_TYPE_PLAYER) {
-		actor = new Player(rold_id);
-	}
-	else if (type == ACTOR_TYPE_PET){
-		actor = new Pet(rold_id);
-	}
-	else if (type == ACTOR_TYPE_NPC){
-		actor = new Npc(rold_id);
-	}
+	Actor* actor = new Player(rold_id);
+	actor->SetType(type);
 	
 	lua_push_actor(L, actor);
 	return 1;

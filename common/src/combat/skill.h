@@ -1,11 +1,10 @@
 #pragma once
 
+#ifndef SIMPLE_SERVER
 
 #include <cxrandom.h>
 #include "define_types.h"
 #include "animation/frame_animation.h"
-
-
 class SkillManager : public Singleton<SkillManager>
 {
 	friend class Singleton<SkillManager>;
@@ -63,3 +62,4 @@ private:
 
 };
 
+#endif 

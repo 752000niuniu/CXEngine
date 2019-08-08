@@ -2,9 +2,9 @@
 
 #include "define_types.h"
 
-#include "game_map.h"
+#include "scene/game_map.h"
 #include "actor/player.h"
-#include "base_scene.h"
+#include "scene/base_scene.h"
 
 
 /*
@@ -14,7 +14,7 @@
 为了场景系统跟其他系统接口 ，需要能传递消息
 */
 class Scene : public BaseScene
-{ 
+{
 public:
 	Scene(int sceneID, String sceneName);
 
@@ -28,6 +28,7 @@ public:
 
 	virtual void Update() override;
 
+
 	int GetMapOffsetX();
 
 	int GetMapOffsetY();
@@ -38,8 +39,10 @@ public:
 
 	void SetChat(const char* text);
 
+
 	void OnSmapClick(float x, float y, float w, float h);
 protected:
+
 	uint32_t m_SmapWas;
 	bool m_ShowSmap;
 	std::vector<String> m_TransportUUIDs;
@@ -62,7 +65,9 @@ public:
 
 	virtual void Update() override;
 
+
 protected:
+
 };
 
 

@@ -2,12 +2,13 @@
 #include "cxrandom.h"
 #include "script_system.h"
 #include "profile.h"
+#include "scene.h"
 #include "game.h"
 #include "cxmath.h"
 #include "file_system.h"
 #include "window.h"
-#include "../imgui_internal.h"
 #include "logger.h"
+#include "actor/actor_manager.h"
 
 
 static bool s_DrawMask, s_DrawStrider, s_DrawCell, s_DrawMap, s_DrawAnnouncement, s_AutoRun;
@@ -54,26 +55,7 @@ void SceneManager::Init()
 {
 	script_system_call_function(script_system_get_luastate(), "on_scene_manager_init");
 
-	glGenFramebuffers(1, &m_Fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_Fbo);
-
-	int screenWidth = WINDOW_INSTANCE->GetWidth();
-	int screenHeight = WINDOW_INSTANCE->GetHeight();
-	glGenTextures(1, &m_TextureColor);
-	glBindTexture(GL_TEXTURE_2D, m_TextureColor);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, screenWidth, screenHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TextureColor, 0);
-
-	glGenRenderbuffers(1, &m_Rbo);
-	glBindRenderbuffer(GL_RENDERBUFFER, m_Rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screenWidth, screenHeight);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_Rbo);
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		cxlog_err("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
-	}
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	
 };
 
 void SceneManager::SwitchScene(String name)
@@ -196,11 +178,13 @@ void SceneManager::Update()
 			script_system_call_function(script_system_get_luastate(), "on_scene_manager_init_scene", m_pCurrentScene->GetName());
 
 			//m_pCurrentScene->SetPlayerByIndex(0);
-			if (m_pCurrentScene->GetLocalPlayer())
+			Player* player = actor_manager_fetch_local_player();
+			if (player)
 			{
+
 				if (m_PlayerEnterX != 0 && m_PlayerEnterY != 0)
 				{
-					m_pCurrentScene->GetLocalPlayer()->SetPos((float)m_PlayerEnterX, (float)m_PlayerEnterY);
+					player->SetPos((float)m_PlayerEnterX, (float)m_PlayerEnterY);
 				}
 			}
 		}
@@ -216,53 +200,9 @@ void SceneManager::Update()
 	}
 };
 
-void function_to_select_shader_or_blend_state(const ImDrawList* parent_list, const ImDrawCmd* cmd) {
-	glDisable(GL_BLEND);
-}
-
-void function_to_restore_shader_or_blend_state(const ImDrawList* parent_list, const ImDrawCmd* cmd) {
-	glEnable(GL_BLEND);
-}
-
 void SceneManager::Draw()
 {
-	if (m_SwitchingScene)return;
-	if (m_pCurrentScene)
-	{
-		int gameWidth = WINDOW_INSTANCE->GetWidth();
-		int gameHeight = WINDOW_INSTANCE->GetHeight();
-
-		ImGui::Begin("Game");
-		ImGui::BeginChild("##main", ImVec2((float)gameWidth, (float)gameHeight));
-		glBindFramebuffer(GL_FRAMEBUFFER, SCENE_MANAGER_INSTANCE->GetFboID());
-		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		glViewport(0, 0, gameWidth, gameHeight);
-		m_pCurrentScene->Draw();
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		ImVec2 cursorPos = ImGui::GetCursorPos();
-		ImGui::GetWindowDrawList()->AddCallback(function_to_select_shader_or_blend_state, nullptr);
-		ImGui::Image((void*)(uint64_t)m_TextureColor, ImVec2((float)gameWidth, (float)gameHeight), ImVec2(0, 1), ImVec2(1, 0));
-		ImGui::GetWindowDrawList()->AddCallback(function_to_restore_shader_or_blend_state, nullptr);
-		ImGui::SetCursorPos(cursorPos);
-
-		script_system_call_function(script_system_get_luastate(), "on_game_imgui_update");
-
-		auto* player = m_pCurrentScene->GetLocalPlayer();
-		if (player) {
-			if (ImGui::IsMouseClicked(0)) {
-				ImVec2 mpos = ImGui::GetMousePos();
-				ImVec2 wpos = ImGui::GetWindowPos();
-				mpos.x = mpos.x - wpos.x;
-				mpos.y = mpos.y - wpos.y;
-				Pos dest = GAME_INSTANCE->ScreenPosToMapPos({ mpos.x, mpos.y });
-				player->MoveTo(m_pCurrentScene->GetGameMap(), (int)dest.x, (int)dest.y);
-			}
-		}
-		ImGui::EndChild();
-		ImGui::End();
-	}
+	
 };
 
 BaseScene* SceneManager::GetCurrentScene()
@@ -273,89 +213,33 @@ BaseScene* SceneManager::GetCurrentScene()
 
 Player* scene_find_player(const char* player_name)
 {
-	BaseScene* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if (scene)
-	{
-		return scene->GetPlayerByNickname(player_name);
-	}
-	else
-		return nullptr;
+	return actor_manager_find_player_by_name(player_name);
 }
 
 void scene_set_player(const char* player_name)
 {
-	BaseScene* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if (scene)
-	{
-		scene->SetPlayerByName(player_name);
-	}
+
 }
 
 void scene_add_player(const char* player_name, int x, int y, int dir, int role_id, int weapon_id)
 {
-	BaseScene* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if (scene)
-	{
-		scene->AddPlayer(player_name, (float)x, (float)y, dir, role_id, weapon_id);
-	}
+
 }
+
 
 void scene_add_npc(const char* player_name, int  x, int  y, int dir, int role_id, int action_id, const char* msg)
 {
-	BaseScene* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if (scene)
-	{
-		scene->AddNpc(player_name, (float)x, (float)y, dir, role_id, action_id, msg);
-	}
+
 }
 
 void scene_add_pet(const char* player_name, int  x, int  y, int dir, int role_id, int action_id)
 {
-	BaseScene* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if (scene)
-	{
-		scene->AddPet(player_name, x, y, dir, role_id, action_id);
-	}
+
 }
 
 void scene_add_player_by_templ_name(const char* templ_name, int actorType)
 {
-	BaseScene* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if (scene)
-	{
-		Player* localPlayer = scene->GetLocalPlayer();
-		Player* player = nullptr;
 
-		int roleID = GAME_INSTANCE->GetRoleIDByName(actorType, templ_name);
-		switch (actorType)
-		{
-		case ACTOR_TYPE_PLAYER:
-			player = new Player(roleID);
-			break;
-		case ACTOR_TYPE_NPC:
-			player = new Npc(templ_name, 0, 0, 0, roleID, 0, "");
-			break;
-		case ACTOR_TYPE_PET:
-			player = new Pet(templ_name, 0, 0, 0, roleID, 0);
-			break;
-		default:
-			break;
-		}
-		std::string player_name(templ_name);
-		player_name.append("_");
-		player_name.append(std::to_string(scene->GetPlayersCount()));
-		player->SetNickName(player_name.c_str());
-		if (localPlayer != nullptr)
-		{
-			player->SetPos(localPlayer->GetPos());
-			player->SetCombatPos(player->GetPos());
-			player->SetBox();
-			player->SetDir(localPlayer->GetDir());
-			player->SetWeaponID(-1);
-			player->ChangeAction(Action::Idle);
-		}
-		scene->AddPlayer(player);
-	}
 }
 
 void scene_manager_init()
@@ -403,6 +287,17 @@ void scene_manager_switch_scene_by_name(const char* name)
 	SCENE_MANAGER_INSTANCE->SwitchScene(name);
 }
 
+void scene_manager_switch_scene_by_id(int id)
+{
+	auto& scenes = SCENE_MANAGER_INSTANCE->GetAllScene();
+	for (auto& it : scenes) {
+		if (it.second->GetSceneID() == id) {
+			SCENE_MANAGER_INSTANCE->SwitchScene(it.second->GetName());
+			return;
+		}
+	}
+}
+
 void scene_manager_add_scene(int id, const char* name)
 {
 	SCENE_MANAGER_INSTANCE->AddScene(new Scene(id, name));
@@ -414,19 +309,9 @@ void scene_manager_add_custom_scene(int id, const char* name)
 }
 
 
-int scene_manager_fetch_local_player(lua_State* L) {
-	auto* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if (scene == nullptr) return 0;
-	auto* player = scene->GetLocalPlayer();
-	if (player == nullptr)return 0;
-	lua_push_actor(L, player);
-	return 1;
-}
 
 void scene_manager_set_player_by_index(int index) {
-	auto* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if (scene == nullptr) return;
-	scene->SetPlayerByIndex(index);
+
 }
 
 void scene_manager_sync_draw_cbx(bool draw_map, bool draw_cell, bool draw_strider, bool draw_mask, bool draw_announcement, bool auto_run) {
@@ -436,6 +321,17 @@ void scene_manager_sync_draw_cbx(bool draw_map, bool draw_cell, bool draw_stride
 	s_DrawMask = draw_mask;
 	s_DrawAnnouncement = draw_announcement;
 	s_AutoRun = auto_run;
+}
+
+BaseScene* scene_manager_fetch_scene(int sceneID)
+{
+	auto& scenes = SCENE_MANAGER_INSTANCE->GetAllScene();
+	for (auto& it : scenes) {
+		if (it.second->GetSceneID() == sceneID) {
+			return it.second;
+		}
+	}
+	return nullptr;
 }
 
 void luaopen_scene_manager(lua_State* L)
@@ -448,8 +344,8 @@ void luaopen_scene_manager(lua_State* L)
 	script_system_register_function(L, scene_manager_add_custom_scene);
 
 
-	script_system_register_luac_function(L, scene_manager_fetch_local_player);
 
+	script_system_register_function(L, scene_manager_switch_scene_by_id);
 	script_system_register_function(L, scene_manager_switch_scene_by_name);
 
 	script_system_register_function(L, scene_manager_set_player_by_index);
