@@ -62,7 +62,11 @@ std::string FileSystem::GetShaderPath(std::string path)
 }
 std::string FileSystem::GetLuaPath(std::string path)
 {
+#ifdef SIMPLE_SERVER
+	return GetPath() + "/scripts/server/" + path;
+#else
 	return GetPath() + "/scripts/client/" + path;
+#endif // SIMPLE_SERVER
 }
 std::string FileSystem::GetWDFPath(std::string path)
 {

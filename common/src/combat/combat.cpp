@@ -1,5 +1,4 @@
 #include "Combat.h"
-#include "../engine.h"
 #include "message.h"
 #include "animation/frame_animation.h"
 #include "Skill.h"

@@ -6,7 +6,7 @@
 int main(int argc, char const *argv[])
 {
 #ifdef WIN32
-	SetConsoleOutputCP(CP_UTF8);
+	//SetConsoleOutputCP(CP_UTF8);
 #endif // WIN32
 	kbase::AtExitManager exit_manager;
 	ezio::IOServiceContext::Init();

@@ -24,8 +24,6 @@ add_executable(SimpleEngine
     src/algorithm.cpp
     src/animation/frame_animation.cpp
     src/camera.cpp
-    src/combat/combat.cpp
-    src/combat/skill.cpp
     src/components/base_component.cpp
     src/components/transform_component.cpp
     src/graphics/graphics_2d.cpp
@@ -48,16 +46,11 @@ add_executable(SimpleEngine
     src/scene/splash_scene.cpp
     src/scene/ui_scene.cpp
     src/scene/was_viewer_scene.cpp
-    src/script_system.cpp
     src/sprite_batch.cpp
     src/sprite_renderer.cpp
     src/test_scene.cpp
     src/text_renderer.cpp
     src/texture_manager.cpp
-    src/time/time.cpp
-    src/time/time_manager.cpp
-    src/time/timer.cpp
-    src/time/timer_manager.cpp
     src/tiny_thread_pool.cpp
     src/ui.cpp
     src/vertex.cpp

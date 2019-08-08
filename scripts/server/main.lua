@@ -42,14 +42,14 @@ end
 
 
 function game_server_dispatch_message(pt)
-    print('game_server_dispatch_message' , pt:Preview(pt:readable_size()))
     local type = pt:ReadAsInt()
     local msgjs = pt:ReadAllAsString()
+    print('game_server_dispatch_message' , type, msgjs)
     local msg = cjson.decode(msgjs)
     if  type == PTO_C2S_LOGIN then
-        local player = actor_manager_create_player(msg.pid)
-        
-        net_send_message_to_all_players(PTO_S2C_PLAYER_ENTER,msgjs)
+        -- local player = actor_manager_create_player(msg.pid)
+        print('send ', msg.pid, PTO_S2C_PLAYER_ENTER, msgjs)
+        net_send_message(msg.pid,PTO_S2C_PLAYER_ENTER,msgjs)
         
     elseif type == PTO_C2S_LOGOUT then
         

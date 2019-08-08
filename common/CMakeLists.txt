@@ -6,21 +6,31 @@ set(GAME_SOURCES_HEADER ${_GAME_SOURCES_HEADER} PARENT_SCOPE)
 set(GAME_COMMON_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actor/action.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actor/actor.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/actor/player_state.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/actor/actor_manager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actor/player.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/actor/player_state.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/astar/astar.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/combat/combat.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/combat/skill.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/imgui/cximgui.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/imgui/imgui_impl_glfw.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/imgui/imgui_impl_opengl3.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/scene/base_scene.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/scene/game_map.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/scene/scene_manager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/scene/scene.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/scene/scene_manager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/time/time.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/time/time_manager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/time/timer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/time/timer_manager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/entity.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/file_loading.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/file_system.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/logger.cpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/message.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/script_system.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/state.cpp
+
+
     PARENT_SCOPE
 )

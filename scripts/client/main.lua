@@ -1,4 +1,4 @@
-luadbg_listen(9528)
+luadbg_listen(9527)
 
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
@@ -90,9 +90,11 @@ end
         -- delete pt;
         
 function game_dispatch_message(pt)
-    print('game_dispatch_message' , pt:Preview(pt:readable_size()))
+	print('game_dispatch_message' )
+	print( pt:Preview(pt:readable_size()))
     local type = pt:ReadAsInt()
     if  type == PTO_S2C_PLAYER_ENTER then
+		print('PTO_S2C_PLAYER_ENTER', type)
 		local msg = cjson.decode(pt:ReadAllAsString())
 		local player = actor_manager_create_player(msg.pid)
 		player:SetName(msg.name)
