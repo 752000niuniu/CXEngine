@@ -9,17 +9,7 @@ class Logger final : public Singleton<Logger>
 public:
 	static void Error(std::string msg) { std::cout<<"Error:"<<msg<<std::endl; }
 	static void Warning(std::string msg) { std::cout<<"Warning:"<<msg<<std::endl; }
-	static void Print(const char *format, ...) {
-
-		va_list ap;
-
-		va_start(ap, format);
-
-		vprintf(format, ap);
-
-		va_end(ap);
-		
-	}
+	static void Print(const char *format, ...);
 
 	static void XXXPrint(int level,std::string log,std::string x) {
 		std::cout << "LogPrint:" << log << std::endl;
@@ -37,7 +27,7 @@ public:
 
 #define cxlog_err(format,...) Logger::GetInstance()->Print(format,__VA_ARGS__)
 
-#define cxlog_warn(format,...) Logger::GetInstance()->Print(format,"")
+#define cxlog_warn(format,...) Logger::GetInstance()->Print(format,__VA_ARGS__)
 
 enum struct LogLevel : int
 {

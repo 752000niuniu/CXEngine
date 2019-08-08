@@ -303,9 +303,6 @@ void luaopen_game_server(lua_State* L)
 	script_system_register_function(L, game_server_start);
 	script_system_register_luac_function(L, game_server_update);
 	script_system_register_function(L, game_server_stop);
-
-
-
 }
 
 void main_game_update() {
