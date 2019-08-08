@@ -30,7 +30,9 @@ ezio::EventLoop g_MainLoop;
 
 void net_send_message(int pid, int proto, const char* msg);
 
-int net_send_message_to_all(lua_State* L);
+int net_send_message_to_players(lua_State* L);
+
+int net_send_message_to_all_players(lua_State* L);
 
 int insert_pid_connection_pair(lua_State* L);
 
@@ -40,6 +42,13 @@ int netq_push_login_msg(lua_State*L);
 #define luaL_requirelib(L,name,fn) (luaL_requiref(L, name, fn, 1),lua_pop(L, 1))
 extern "C"  int luaopen_cjson(lua_State *L);
 
+
+
+
+void check_lua_error(lua_State* L, int res)
+{
+	if (res != LUA_OK) { printf("%s\n", lua_tostring(L, -1)); }
+}
 
 void thread_init_script_system(lua_State*L) {
 #define REG_ENUM(name)  (lua_pushinteger(L, name),lua_setglobal(L, #name))
@@ -56,12 +65,8 @@ void thread_init_script_system(lua_State*L) {
 #undef REG_ENUM
 	(lua_pushinteger(L, CX_MSG_HEADER_LEN), lua_setglobal(L, "CX_MSG_HEADER_LEN"));
 	script_system_register_function(L, net_send_message);
-	script_system_register_luac_function(L, net_send_message_to_all);
-}
-
-void check_lua_error(lua_State* L, int res)
-{
-	if (res != LUA_OK) { printf("%s\n", lua_tostring(L, -1)); }
+	script_system_register_luac_function(L, net_send_message_to_players);
+	script_system_register_luac_function(L, net_send_message_to_all_players);
 }
 
 GameServer::GameServer(EventLoop* loop, SocketAddress addr, const char* name)
@@ -231,12 +236,10 @@ void game_server_stop()
 }
 
 void net_send_message(int pid, int proto, const char* msg) {
-	
 	CXGameServer->SendMessageToPlayer(pid, proto, msg);
-	
 }
 
-int net_send_message_to_all(lua_State* L) {
+int net_send_message_to_players(lua_State* L) {
 	std::vector<uint64_t> pids;
 	int len = (int)luaL_len(L, 1);
 	int i = 0;
@@ -294,6 +297,7 @@ int netq_push_login_msg(lua_State*L) {
 	q->PushBack(NetThreadQueue::Read, buf.Peek(), buf.readable_size());
 	return 0;
 }
+
 
 
 void luaopen_game_server(lua_State* L)

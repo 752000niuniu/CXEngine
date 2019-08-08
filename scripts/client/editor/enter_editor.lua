@@ -42,6 +42,7 @@ function on_enter_editor_update()
         msg.name = 'oceancx'
         msg.scene_id = 1135
         msg.role_id = 1
+        msg.weapon_id = 40
         msg.x = 200
         msg.y = 2790
         net_send_message(PTO_C2S_LOGIN, cjson.encode(msg))

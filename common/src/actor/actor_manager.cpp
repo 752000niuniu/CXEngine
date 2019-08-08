@@ -127,7 +127,7 @@ int lua_actor_manager_fetch_all_players(lua_State*L) {
 	int i = 1;
 	for(auto& it : g_Players){
 		lua_push_actor(L, it.second);
-		lua_seti(L, i++, -1);
+		lua_seti(L, -2, i++);
 	}
 	return 1;
 }

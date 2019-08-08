@@ -64,7 +64,6 @@ function server_thread_on_message(conn, buf, netq)
 					ezio_buffer_destroy(newmsg)					
 				end
 			else
-				-- print('type',  type,'len',len ,'msg', buf:Preview(len))
 				netq:push_back(0, buf,len)
 				buf:Consume(len)
 			end

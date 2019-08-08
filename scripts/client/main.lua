@@ -90,22 +90,25 @@ end
         -- delete pt;
         
 function game_dispatch_message(pt)
-	print('game_dispatch_message' )
-	print( pt:Preview(pt:readable_size()))
-    local type = pt:ReadAsInt()
-    if  type == PTO_S2C_PLAYER_ENTER then
-		print('PTO_S2C_PLAYER_ENTER', type)
-		local msg = cjson.decode(pt:ReadAllAsString())
-		local player = actor_manager_create_player(msg.pid)
-		player:SetName(msg.name)
-		player:SetSceneID(msg.scene_id)
-		player:SetRoleID(msg.role_id)
-		player:SetWeaponID(40)
-		player:SetX(msg.x)
-		player:SetY(msg.y)
-
-		actor_manager_set_local_player(msg.pid)
-		scene_manager_switch_scene_by_id(msg.scene_id)
+	local type = pt:ReadAsInt()
+	local js = pt:ReadAllAsString()
+	local req = cjson.decode(js)
+	cxlog_info('game_dispatch_message', type, js )
+	if  type == PTO_S2C_PLAYER_ENTER then
+		local pinfos = req 
+		for k,pinfo in pairs(pinfos) do
+			local player = actor_manager_create_player(pinfo.pid)
+			player:SetName(pinfo.name)
+			player:SetSceneID(pinfo.scene_id)
+			player:SetRoleID(pinfo.role_id)
+			player:SetWeaponID(pinfo.weapon_id)
+			player:SetX(pinfo.x)
+			player:SetY(pinfo.y)
+			if pinfo.is_local then
+				actor_manager_set_local_player(pinfo.pid)
+				scene_manager_switch_scene_by_id(pinfo.scene_id)
+			end
+		end
 	elseif type == PTO_S2C_CHAT then
 		
 	elseif type == PTO_S2C_MOVE_TO_POS then
