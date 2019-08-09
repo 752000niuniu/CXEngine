@@ -25,6 +25,7 @@
 #else
 #include "server.h"
 #endif // !SIMPLE_SERVER
+#include "protocol.h"
 
 
 
@@ -45,17 +46,19 @@ void check_lua_error(lua_State* L, int res)
 
 void script_system_read_config(int argc, char const *argv[])
 {
+	g_GameConfig["argv0"] = argv[0];
 	for (int i = 1; i < argc; i++)
 	{
-		std::cout << argv[i] << std::endl;
-		auto kv = utils::split(argv[i], '=');
-		if (kv.size() == 2)
-		{
+		std::string argi = argv[i];
+		cxlog_info("%s\n", argi.c_str());
+
+		if(argi.substr(0,2) == "--"){
+			argi = argi.substr(2, argi.size());
+			auto kv = utils::split(argi, '=');
 			g_GameConfig[kv[0]] = kv[1];
-		}
-		else if (kv.size() == 1)
-		{
-			g_GameConfig[kv[0]] = "";
+		}else if(argi.substr(0, 1) == "-") {
+			argi = argi.substr(1, argi.size());
+			g_GameConfig[argi] = "";
 		}
 	}
 }
@@ -66,8 +69,9 @@ void script_system_prepare_init()
 	luaL_openlibs(L);
 	luaopen_luadbg(L);
 	luaL_requirelib(L, "cjson", luaopen_cjson);
-	luaopen_script_system(L);
 	luaopen_filesystem(L);
+	luaopen_script_system(L);
+	luaopen_tsv(L);
 	luaopen_cximgui(L);
 	luaopen_logger(L);
 	luaopen_ne_support(L);
@@ -75,12 +79,12 @@ void script_system_prepare_init()
 	luaopen_timer_manager(L);
 	luaopen_scene(L);
 	luaopen_scene_manager(L);
-	luaopen_tsv(L);
-	luaopen_net_thread_queue(L);
-	luaopen_netlib(L);
 	luaopen_actor(L);
 	luaopen_actor_manager(L);
 	luaopen_game(L);
+	luaopen_net_thread_queue(L);
+	luaopen_netlib(L);
+	luaopen_protocol(L);
 #ifndef SIMPLE_SERVER
 	luaopen_resource_manager(L);
 	luaopen_input_manager(L);
@@ -105,16 +109,16 @@ void script_system_dofile(const char* file)
 	}
 }
 
-const char* script_system_get_config(const char* key)
+std::string script_system_get_config(const char* key)
 {
 	auto it = g_GameConfig.find(key);
 	if (it != g_GameConfig.end())
 	{
-		return it->second.c_str();
+		return it->second;
 	}
 	else
 	{
-		return "";
+		return "nil";
 	}
 }
 

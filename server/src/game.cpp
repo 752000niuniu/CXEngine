@@ -6,9 +6,18 @@
 #include "file_system.h"
 #include "actor/action.h"
 
+static utils::tsv* s_AvatarRoleTable;
+static utils::tsv* s_AvatarWeapon90Table;
+static utils::tsv* s_AvatarWeaponTable;
+static utils::tsv* s_AvatarNpcTable;
+static utils::tsv* s_AvatarBBTable;
 Game::Game()
 {
-
+	s_AvatarRoleTable = new  utils::tsv(FileSystem::GetTablePath("avatar_role.1.tsv"));
+	s_AvatarWeapon90Table = new  utils::tsv(FileSystem::GetTablePath("avatar_weapon.1.tsv"));
+	s_AvatarWeaponTable = new  utils::tsv(FileSystem::GetTablePath("avatar_weapon.2.tsv"));
+	s_AvatarNpcTable = new  utils::tsv(FileSystem::GetTablePath("avatar_npc.1.tsv"));
+	s_AvatarBBTable = new  utils::tsv(FileSystem::GetTablePath("avatar_bb.1.tsv"));
 }
 
 Game::~Game()
@@ -49,18 +58,13 @@ bool Game::IsRunning()
 	return curScene->GetGameMap() != nullptr;
 }
 
-static utils::tsv s_AvatarRoleTable(FileSystem::GetTablePath("avatar_role.1.tsv"));
-static utils::tsv s_AvatarWeapon90Table(FileSystem::GetTablePath("avatar_weapon.1.tsv"));
-static utils::tsv s_AvatarWeaponTable(FileSystem::GetTablePath("avatar_weapon.2.tsv"));
-static utils::tsv s_AvatarNpcTable(FileSystem::GetTablePath("avatar_npc.1.tsv"));
-static utils::tsv s_AvatarBBTable(FileSystem::GetTablePath("avatar_bb.1.tsv"));
 
 uint32_t Game::GetActionWasID(int type, int roleID, int actionID)
 {
 	if (actionID < 0) return -1;
 	if (roleID < 0) return -1;
 
-	auto* rowTable = &s_AvatarRoleTable;
+	auto* rowTable = s_AvatarRoleTable;
 	switch (type)
 	{
 	case ACTOR_TYPE_DEFAULT:
@@ -68,10 +72,10 @@ uint32_t Game::GetActionWasID(int type, int roleID, int actionID)
 	case ACTOR_TYPE_PLAYER:
 		break;
 	case ACTOR_TYPE_PET:
-		rowTable = &s_AvatarBBTable;
+		rowTable = s_AvatarBBTable;
 		break;
 	case ACTOR_TYPE_NPC:
-		rowTable = &s_AvatarNpcTable;
+		rowTable = s_AvatarNpcTable;
 		break;
 	default:
 		break;
@@ -104,14 +108,14 @@ uint32_t Game::GetWeaponWasID(int weaponID, int actionID)
 	std::string wasIDstr("");
 	if (actionID == Action::Idle || actionID == Action::Batidle)
 	{
-		auto wasIdle = s_AvatarWeapon90Table.Rows[weaponID][action_get_name(Action::Idle)];
-		auto wasBatidle = s_AvatarWeapon90Table.Rows[weaponID][action_get_name(Action::Batidle)];
+		auto wasIdle = s_AvatarWeapon90Table->Rows[weaponID][action_get_name(Action::Idle)];
+		auto wasBatidle = s_AvatarWeapon90Table->Rows[weaponID][action_get_name(Action::Batidle)];
 		if (wasIdle != "")wasIDstr = wasIdle;
 		else wasIDstr = wasBatidle;
 	}
 	else
 	{
-		wasIDstr = s_AvatarWeapon90Table.Rows[weaponID][action_get_name(actionID)];
+		wasIDstr = s_AvatarWeapon90Table->Rows[weaponID][action_get_name(actionID)];
 	}
 	if (wasIDstr == "")return-1;
 	uint32 wasID = std::stoul(wasIDstr, 0, 16);
@@ -120,7 +124,7 @@ uint32_t Game::GetWeaponWasID(int weaponID, int actionID)
 
 int Game::GetRoleIDByName(int actorType, const char* templ_name)
 {
-	auto* rowTable = &s_AvatarRoleTable;
+	auto* rowTable = s_AvatarRoleTable;
 	switch (actorType)
 	{
 	case ACTOR_TYPE_DEFAULT:
@@ -128,10 +132,10 @@ int Game::GetRoleIDByName(int actorType, const char* templ_name)
 	case ACTOR_TYPE_PLAYER:
 		break;
 	case ACTOR_TYPE_PET:
-		rowTable = &s_AvatarBBTable;
+		rowTable = s_AvatarBBTable;
 		break;
 	case ACTOR_TYPE_NPC:
-		rowTable = &s_AvatarNpcTable;
+		rowTable = s_AvatarNpcTable;
 		break;
 	default:
 		break;

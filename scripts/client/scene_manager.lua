@@ -27,12 +27,12 @@ function on_scene_manager_init()
     end
 
     scene_manager_add_scene(-1, current_scene_name)
-    -- scene_manager_add_custom_scene(-2, "BattleScene");
-	-- scene_manager_add_custom_scene(-100, "Splash");
-	-- scene_manager_add_custom_scene(-101, "WASViewer");
-	-- scene_manager_add_custom_scene(-102, "UIScene");
-	-- scene_manager_add_custom_scene(-103, "TestScene");
-    -- scene_manager_add_custom_scene(-105, "AnimationEditor");
+    scene_manager_add_custom_scene(-2, "BattleScene");
+	scene_manager_add_custom_scene(-100, "Splash");
+	scene_manager_add_custom_scene(-101, "WASViewer");
+	scene_manager_add_custom_scene(-102, "UIScene");
+	scene_manager_add_custom_scene(-103, "TestScene");
+    scene_manager_add_custom_scene(-105, "AnimationEditor");
     
     for i,v in ipairs(scene_lua_files) do
         local path = lua_file_path(v.file)
@@ -141,7 +141,7 @@ function on_game_imgui_update()
                 msg.pid = player:GetID()
                 msg.x = dest_x
                 msg.y = dest_y
-                net_send_message(PTO_C2S_MOVE_TO_POS, cjson.encode(msg))
+                net_send_message(PTO_C2C_MOVE_TO_POS, cjson.encode(msg))
             end
         end
     end

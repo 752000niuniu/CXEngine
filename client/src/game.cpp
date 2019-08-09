@@ -13,8 +13,6 @@ static utils::tsv* s_AvatarNpcTable;
 static utils::tsv* s_AvatarBBTable;
 Game::Game()
 {
-	
-
 	s_AvatarRoleTable = new  utils::tsv(FileSystem::GetTablePath("avatar_role.1.tsv"));
 	s_AvatarWeapon90Table = new  utils::tsv(FileSystem::GetTablePath("avatar_weapon.1.tsv"));
 	s_AvatarWeaponTable = new  utils::tsv(FileSystem::GetTablePath("avatar_weapon.2.tsv"));

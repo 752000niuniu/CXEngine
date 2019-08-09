@@ -22,9 +22,7 @@ public:
 	void Start();
 	void Stop();
 	
-	void SendS2CPlayerEnter(const TCPConnectionPtr& conn, Player* player, bool is_local);
-	void SendS2CPlayer(const TCPConnectionPtr& conn, char* data, int size);
-
+	void OnClose();
 	void SendMessageToPlayer(uint64_t pid, int proto, const char* msg);
 	void SendMessageToPlayers(std::vector<uint64_t> pids, int proto, const char* msg);
 

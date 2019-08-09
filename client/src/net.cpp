@@ -137,6 +137,8 @@ NetThread::~NetThread()
 
 void NetThread::Run(const char* ip,int port)
 {
+	kbase::AtExitManager exit_manager;
+	ezio::IOServiceContext::Init();
 	EventLoop loop;
 	g_Loop = &loop;
 	SocketAddress addr(ip, port);
@@ -176,6 +178,7 @@ void NetThread::Deinit()
 
 void net_manager_init(const char* ip, int port)
 {
+
 	NetThread::GetInstance()->Init(ip, port);
 } 
 
@@ -217,18 +220,6 @@ void net_manager_reconnect(){
 
 void luaopen_net(lua_State* L)
 {
-#define REG_ENUM(name)  (lua_pushinteger(L, name),lua_setglobal(L, #name))
-	REG_ENUM(PTO_C2S_SIGNUP);
-	REG_ENUM(PTO_C2S_LOGIN);
-	REG_ENUM(PTO_C2S_LOGOUT);
-	REG_ENUM(PTO_C2S_MOVE_TO_POS);
-	REG_ENUM(PTO_C2S_CHAT);
-	REG_ENUM(PTO_S2C_PLAYER_ENTER);
-	REG_ENUM(PTO_S2C_MOVE_TO_POS);
-	REG_ENUM(PTO_S2C_CHAT);
-	REG_ENUM(PTO_C2S_CONNECT);
-	REG_ENUM(PTO_C2S_DISCONNECT);
-#undef REG_ENUM
 
 	script_system_register_function(L, net_manager_init);
 	script_system_register_luac_function(L, net_manager_update);

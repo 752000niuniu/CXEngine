@@ -1,2 +1,2 @@
-start ./bin/Debug/SimpleEngine.exe
+start ./bin/Debug/SimpleEngine.exe --cwd=./
 

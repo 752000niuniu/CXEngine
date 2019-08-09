@@ -11,6 +11,8 @@
 #include "net_thread_queue.h"
 #include "lua_net.h"
 #include "file_system.h"
+#include "kbase/at_exit_manager.h"
+#include "ezio/io_service_context.h"
 
 std::map<uint64_t, TCPConnection*> g_PlayerConnections;
 NetThreadQueue g_ReadPacketQueue;
@@ -35,25 +37,12 @@ int net_send_message_to_all_players(lua_State* L);
 int insert_pid_connection_pair(lua_State* L);
 
 int erase_pid_connection_pair(lua_State*L);
-int netq_push_login_msg(lua_State*L);
 
 #define luaL_requirelib(L,name,fn) (luaL_requiref(L, name, fn, 1),lua_pop(L, 1))
 extern "C"  int luaopen_cjson(lua_State *L);
 
 void thread_init_script_system(lua_State*L) {
-#define REG_ENUM(name)  (lua_pushinteger(L, name),lua_setglobal(L, #name))
-	REG_ENUM(PTO_C2S_SIGNUP);
-	REG_ENUM(PTO_C2S_LOGIN);
-	REG_ENUM(PTO_C2S_LOGOUT);
-	REG_ENUM(PTO_C2S_MOVE_TO_POS);
-	REG_ENUM(PTO_C2S_CHAT);
-	REG_ENUM(PTO_S2C_PLAYER_ENTER);
-	REG_ENUM(PTO_S2C_MOVE_TO_POS);
-	REG_ENUM(PTO_S2C_CHAT);
-	REG_ENUM(PTO_C2S_CONNECT);
-	REG_ENUM(PTO_C2S_DISCONNECT);
-#undef REG_ENUM
-	(lua_pushinteger(L, CX_MSG_HEADER_LEN), lua_setglobal(L, "CX_MSG_HEADER_LEN"));
+	
 	script_system_register_function(L, net_send_message);
 	script_system_register_luac_function(L, net_send_message_to_players);
 	script_system_register_luac_function(L, net_send_message_to_all_players);
@@ -80,11 +69,11 @@ void GameServer::Start()
 	luaL_requirelib(m_L, "cjson", luaopen_cjson);
 	luaopen_netlib(m_L);
 	luaopen_net_thread_queue(m_L);
+	luaopen_protocol(m_L);
 	luaopen_filesystem(m_L);
-
 	thread_init_script_system(m_L);
+
 	script_system_register_function(m_L, script_system_dofile);
-	script_system_register_luac_function(m_L, netq_push_login_msg);
 	script_system_register_luac_function(m_L, insert_pid_connection_pair);
 	script_system_register_luac_function(m_L, erase_pid_connection_pair);
 
@@ -107,6 +96,13 @@ void GameServer::Stop()
 	lua_close(m_L);
 	cxlog_info("server stop\n");
 	m_EventLoop->Quit();
+}
+
+void GameServer::OnClose()
+{
+	lua_getglobal(m_L, "save_player_database");
+	int res = lua_pcall(m_L, 1, 0, 0);
+	check_lua_error(m_L, res);
 }
 
 void GameServer::SendMessageToPlayer(uint64_t pid, int proto, const char* msg)
@@ -147,13 +143,14 @@ void GameServer::OnConnection(const TCPConnectionPtr& conn)
 	cxlog_info("Connection %s is %s\n", conn->peer_addr().ToHostPort().c_str(), state);
 	if (conn->connected())
 	{
+
+	}else {
 		for (auto& it : g_PlayerConnections) {
 			if (it.second == conn.get()) {
 				g_PlayerConnections.erase(it.first);
 				break;
 			}
 		}
-	}else {
 	}
 }
 
@@ -168,6 +165,8 @@ void GameServer::OnMessage(const TCPConnectionPtr& conn, Buffer& buf, TimePoint 
 }
 
 void game_server_run(int port) {
+	kbase::AtExitManager exit_manager;
+	ezio::IOServiceContext::Init();
 	ezio::EventLoop loop;
 	ezio::SocketAddress addr(port);
 	CXGameServer = new GameServer(&loop, addr, "GameServer");
@@ -244,7 +243,6 @@ int insert_pid_connection_pair(lua_State* L){
 	if (g_PlayerConnections.find(pid) != g_PlayerConnections.end()) {
 		return 0;
 	}
-	
 	g_PlayerConnections.insert({ pid,conn });
 	return 0;
 }
@@ -254,18 +252,6 @@ int erase_pid_connection_pair(lua_State*L ) {
 	g_PlayerConnections.erase(pid);
 	return 0;
 }
-
-int netq_push_login_msg(lua_State*L) {
-	NetThreadQueue* q = lua_check_net_thread_queue(L, 1);
-	const char* msg = lua_tostring(L, 2);
-	Buffer buf;
-	buf.Write((int)PTO_C2S_LOGIN);
-	buf.Write(msg, strlen(msg));
-	q->PushBack(NetThreadQueue::Read, buf.Peek(), buf.readable_size());
-	return 0;
-}
-
-
 
 void luaopen_game_server(lua_State* L)
 {

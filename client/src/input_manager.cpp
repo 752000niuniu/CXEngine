@@ -217,7 +217,7 @@ void InputManager::ScrollCallbackFunc(GLFWwindow* window, float xoffset, float y
 
 void InputManager::MouseCallbackFunc(GLFWwindow* window, float xpos, float ypos)
 {
-	cxlog_info("MouseCallbackFunc xpos:%f ypos:%f wx:%f wy:%f\n", xpos, ypos, m_WindowPos.x, m_WindowPos.y);
+	//cxlog_info("MouseCallbackFunc xpos:%f ypos:%f wx:%f wy:%f\n", xpos, ypos, m_WindowPos.x, m_WindowPos.y);
 	xpos = xpos - m_WindowPos.x;
 	ypos = ypos - m_WindowPos.y;
 	if (m_FirstMouse)

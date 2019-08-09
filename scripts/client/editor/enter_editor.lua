@@ -49,7 +49,7 @@ function on_enter_editor_update()
         local msg = {}
         msg.account = AccountSB:str()
         msg.password = PasswordSB:str()
-        net_send_message(PTO_C2S_SIGNUP, cjson.encode(msg))
+        net_send_message(PTO_C2C_SIGNUP, cjson.encode(msg))
     end
     imgui.SameLine()
     if imgui.Button("Login") then
@@ -62,7 +62,15 @@ function on_enter_editor_update()
         msg.weapon_id = 40
         msg.x = 200
         msg.y = 2790
-        net_send_message(PTO_C2S_LOGIN, cjson.encode(msg))
+        net_send_message(PTO_C2C_LOGIN, cjson.encode(msg))
+    end
+    imgui.SameLine()
+    
+    if imgui.Button("刷新角色数据库") then
+        local player = actor_manager_fetch_local_player()
+        local msg = {}
+        msg.pid = player:GetID()
+        net_send_message(PTO_C2C_SAVE_PLAYER_DATABASE, cjson.encode(msg))
     end
     
 
@@ -72,7 +80,6 @@ function on_enter_editor_update()
     if imgui.Button("EnterBattle") then
         scene_manager_switch_scene_by_name('BattleScene')
     end
-
     
     if imgui.Button('Reload') then 
         -- script_system_dofile('scene/test_net_scene.lua')

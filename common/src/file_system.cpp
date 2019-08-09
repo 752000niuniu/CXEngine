@@ -2,8 +2,9 @@
 #if defined(_WIN32)
 #include <corecrt_io.h>
 #endif
+#include "script_system.h"
 
-static String VFS_WORK_PATH = WORK_DIR;
+static String VFS_WORK_PATH="";
 
 FileSystem::FileSystem()
 {
@@ -85,18 +86,26 @@ std::string FileSystem::GetIconPath(std::string path)
 	return GetPath() + "/res/icon/" + path;
 }
 
-void FileSystem::SetWorkPath(std::string path)
+void FileSystem::InitWorkPath()
 {
-	std::string PATH_SEP("");
-	std::string CWD = "";
-	if (path.find_last_of("\\") != std::string::npos) {
-		PATH_SEP = "\\";
-	}
-	else if (path.find_last_of("/") != std::string::npos)
+	std::string cwd = script_system_get_config("cwd");
+	if (cwd != "nil")
 	{
-		PATH_SEP = "/";
+		VFS_WORK_PATH = cwd;
 	}
-	VFS_WORK_PATH = path.substr(0, path.find_last_of(PATH_SEP));
+	else {
+		std::string path = script_system_get_config("argv0");
+		std::string PATH_SEP("");
+		std::string CWD = "";
+		if (path.find_last_of("\\") != std::string::npos) {
+			PATH_SEP = "\\";
+		}
+		else if (path.find_last_of("/") != std::string::npos)
+		{
+			PATH_SEP = "/";
+		}
+		VFS_WORK_PATH = path.substr(0, path.find_last_of(PATH_SEP));
+	}
 }
 
 std::vector<std::string> VFS_ListFiles(std::string path)
@@ -212,11 +221,10 @@ int vfs_get_workdir(lua_State* L)
 
 void luaopen_filesystem(lua_State*L)
 {
+	
+
 	script_system_register_function(L, fs_get_tsv_path);
-
 	script_system_register_luac_function(L, vfs_list_files);
-
 	script_system_register_luac_function(L, vfs_set_workdir);
 	script_system_register_luac_function(L, vfs_get_workdir);
-
 }

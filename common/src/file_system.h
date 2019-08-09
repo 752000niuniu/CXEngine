@@ -24,7 +24,7 @@ public:
 	static std::string GetMapPath(std::string path);
 	static std::string GetFontPath(std::string path);
 	static std::string GetIconPath(std::string path);
-	static void SetWorkPath(std::string path);
+	static void InitWorkPath();
 
 };
 

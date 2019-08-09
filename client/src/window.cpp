@@ -87,8 +87,8 @@ void Window::Init(int w,int h)
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 #endif
 	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);	
-	auto floatConfig = script_system_get_config("window_float");
-	glfwWindowHint(GLFW_FLOATING, strcmp(floatConfig , "1")==0);
+	std::string floatConfig = script_system_get_config("window_float");
+	glfwWindowHint(GLFW_FLOATING, floatConfig == "1");
 
 	m_pWindow = glfwCreateWindow(w, h, "SimpleEngine", nullptr, nullptr);
 	if (m_pWindow == nullptr)

@@ -68,7 +68,7 @@ function on_player_send_chat_message(msg)
 	local req = {}
 	req.pid = player:GetID()
 	req.msg = msg
-	net_send_message(PTO_C2S_CHAT, cjson.encode(req))
+	net_send_message(PTO_C2C_CHAT, cjson.encode(req))
 	
 end
 
@@ -78,7 +78,7 @@ function game_dispatch_message(pt)
 	local req = cjson.decode(js)
 	print('game_dispatch_message', type, js)
 	local local_pinfo 
-	if  type == PTO_S2C_PLAYER_ENTER then
+	if  type == PTO_C2C_PLAYER_ENTER then
 		local pinfos = req 
 		for k,pinfo in ipairs(pinfos) do
 			local player = actor_manager_create_player(pinfo.pid)
@@ -96,12 +96,12 @@ function game_dispatch_message(pt)
 			actor_manager_set_local_player(local_pinfo.pid)
 			scene_manager_switch_scene_by_id(local_pinfo.scene_id)
 		end
-	elseif type == PTO_C2S_CHAT then
+	elseif type == PTO_C2C_CHAT then
 		local player = actor_manager_fetch_player_by_id(req.pid)
 		if not player:IsLocal() then
 			player:Say(req.msg)
 		end
-	elseif type == PTO_C2S_MOVE_TO_POS then
+	elseif type == PTO_C2C_MOVE_TO_POS then
 		local player = actor_manager_fetch_player_by_id(req.pid)
 		if not player:IsLocal() then
 			player:MoveTo(req.x,req.y)

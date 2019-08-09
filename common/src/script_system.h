@@ -8,7 +8,7 @@ void script_system_prepare_init();
 
 void script_system_dofile(const char* file);
 
-const char* script_system_get_config(const char* key);
+std::string script_system_get_config(const char* key);
 
 void script_system_init();
 bool script_system_update();
