@@ -81,9 +81,11 @@ function game_dispatch_message(pt)
 				local_pinfo = pinfo
 			end
 		end
-
-		actor_manager_set_local_player(local_pinfo.pid)
-		scene_manager_switch_scene_by_id(local_pinfo.scene_id)
+		if local_pinfo then
+			actor_manager_set_local_player(local_pinfo.pid)
+			scene_manager_switch_scene_by_id(local_pinfo.scene_id)
+		end
+		
 		
 	elseif type == PTO_S2C_CHAT then
 		

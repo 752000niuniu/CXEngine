@@ -38,6 +38,11 @@ extern "C" int luaopen_cjson(lua_State *L);
 using GameConfig = std::map<std::string, std::string>;
 GameConfig g_GameConfig;
 
+void check_lua_error(lua_State* L, int res)
+{
+	if (res != LUA_OK) { printf("%s\n", lua_tostring(L, -1)); }
+}
+
 void script_system_read_config(int argc, char const *argv[])
 {
 	for (int i = 1; i < argc; i++)

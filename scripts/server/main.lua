@@ -19,7 +19,7 @@ function on_script_system_deinit()
 end
 
 function pto_c2s_login(req)
-
+    print('pto_c2s_login req', cjson.encode(req))
     local req_player = actor_manager_create_player(req.pid)
     req_player:SetName(req.name)
     req_player:SetSceneID(req.scene_id)
@@ -31,13 +31,15 @@ function pto_c2s_login(req)
     print('players', #players)
     for k,player in ipairs(players) do
         local pid = player:GetID()        
+        print('loop',req.pid, pid)
         if req.pid == pid then
+            print('req.pid == pid',req.pid, pid)
             local pinfos = {}
             req.is_local = true
             table.insert(pinfos,req)
-            
-            for _, other in ipairs(players) do
-                if other:GetID() ~= req.pid then
+            local others = actor_manager_fetch_all_players()    
+            for _, other in ipairs(others) do
+                if other:GetID() ~= pid then
                     local pinfo = {}
                     pinfo.pid = other:GetID()
                     pinfo.name = other:GetName()
@@ -49,7 +51,7 @@ function pto_c2s_login(req)
                     table.insert(pinfos, pinfo)
                 end
             end
-            print('req.pid == pid', cjson.encode(pinfos))
+            -- print('req.pid == pid', cjson.encode(pinfos))
             net_send_message(pid,PTO_S2C_PLAYER_ENTER, cjson.encode(pinfos))        
         else
             local pinfos = {}
@@ -71,7 +73,7 @@ function game_server_dispatch_message(pt)
     elseif type == PTO_C2S_LOGOUT then
         
     elseif type == PTO_C2S_MOVE_TO_POS then
-        net_send_message_to_all_players(PTO_C2S_MOVE_TO_POS,js)
+        net_send_message_to_all_players(PTO_S2C_MOVE_TO_POS,js)
     elseif type == PTO_C2S_CHAT then
         net_send_message_to_all_players(PTO_C2S_CHAT,js)
     end

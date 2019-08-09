@@ -38,7 +38,7 @@ function server_thread_on_message(conn, buf, netq)
 				local msg = cjson.decode(msgjs)
 				print('PTO_C2S_SIGNUP', msg)
 				local pinfo = {}
-				pinfo.pid = os.time() + idincr
+				pinfo.pid = math.tointeger(os.time() + idincr)
 				idincr = idincr + 1
 				pinfo.account = msg.account
 				pinfo.password = msg.password
@@ -63,6 +63,7 @@ function server_thread_on_message(conn, buf, netq)
 					local newmsg = ezio_buffer_create()
 					newmsg:WriteInt(PTO_C2S_LOGIN)
 					newmsg:WriteString(cjson.encode(msg))
+					print('newmsg', cjson.encode(msg))
 					netq:push_back(0, newmsg,newmsg:readable_size())
 					ezio_buffer_destroy(newmsg)					
 				end

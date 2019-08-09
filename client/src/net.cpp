@@ -229,6 +229,7 @@ void NetThread::Update(lua_State* L )
 		lua_getglobal(L , "game_dispatch_message");
 		lua_push_ezio_buffer(L, pt);
 		int res = lua_pcall(L, 1, 0, 0);
+		check_lua_error(L, res);
 		g_ReadPacketQueue.PopFront(NetThreadQueue::Read);
 	}
 

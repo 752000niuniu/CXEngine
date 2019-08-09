@@ -14,6 +14,7 @@ void script_system_init();
 bool script_system_update();
 void script_system_draw();
 void script_system_deinit();
+void check_lua_error(lua_State* L, int res);
 
 lua_State* script_system_get_luastate();
 

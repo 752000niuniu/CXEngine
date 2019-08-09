@@ -258,18 +258,6 @@ void SceneManager::Draw()
 
 		script_system_call_function(script_system_get_luastate(), "on_game_imgui_update");
 		
-		Player* player = actor_manager_fetch_local_player();
-		if (player) {
-			if (ImGui::IsMouseClicked(0)) {
-				ImVec2 mpos = ImGui::GetMousePos();
-				ImVec2 wpos = ImGui::GetWindowPos();
-				mpos.x = mpos.x - wpos.x;
-				mpos.y = mpos.y - wpos.y ;
-				Pos dest = GAME_INSTANCE->ScreenPosToMapPos({ mpos.x, mpos.y });
-				player->MoveTo(m_pCurrentScene->GetGameMap(), (int)dest.x, (int)dest.y);
-				net_send_move_to_pos_message(player->GetName(), dest.x, dest.y);
-			}
-		}
 		ImGui::EndChild();
 		ImGui::End();
 	}

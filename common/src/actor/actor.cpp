@@ -158,6 +158,11 @@ int actor_set_action_id(lua_State* L) {
 	return 0;
 }
 
+int actor_get_action_id(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	lua_pushinteger(L, actor->GetActionID());
+	return 1;
+}
 
 int actor_translate_x(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
@@ -233,6 +238,12 @@ int actor_set_scene_id(lua_State* L) {
 	actor->SetSceneID(sceneID);
 	return 0;
 }
+
+int actor_get_scene_id(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	lua_pushinteger(L, actor->GetSceneID());
+	return 1;
+}
 int actor_set_name(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	const char* name = lua_tostring(L, 2);
@@ -252,6 +263,11 @@ int actor_set_role_id(lua_State* L) {
 	actor->SetRoleID(roleID);
 	return 0;
 }
+int actor_get_role_id(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	lua_pushinteger(L, actor->GetRoleID());
+	return 1;
+}
 int actor_set_weapon_id(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	int weaponID = (int)lua_tointeger(L, 2);
@@ -259,6 +275,11 @@ int actor_set_weapon_id(lua_State* L) {
 	return 0;
 }
 
+int actor_get_weapon_id(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	lua_pushinteger(L, actor->GetWeaponID());
+	return 1;
+}
 
 luaL_Reg mt_actor[] = {
 	{ "SetProperty",actor_method_set_property },
@@ -266,23 +287,24 @@ luaL_Reg mt_actor[] = {
 { "Destroy",actor_destroy },
 { "update",actor_update},
 { "draw",actor_draw },
-{ "set_pos",actor_set_pos},
-{ "set_dir",actor_set_dir },
-{"GetX", actor_get_x},
-{"GetY", actor_get_y},
-
-{"GetID", actor_get_id},
-
+{ "SetPos",actor_set_pos},
 {"SetX", actor_set_x},
+{"GetX", actor_get_x},
 {"SetY", actor_set_y},
+{"GetY", actor_get_y},
+{"GetID", actor_get_id},
 {"SetSceneID", actor_set_scene_id},
+{"GetSceneID", actor_get_scene_id},
 {"SetName", actor_set_name},
 {"GetName", actor_get_name},
 {"SetRoleID", actor_set_role_id},
+{"GetRoleID", actor_get_role_id},
 {"SetWeaponID", actor_set_weapon_id},
-
+{"GetWeaponID", actor_get_weapon_id},
+{"SetDir", actor_set_dir},
 {"GetDir", actor_get_dir},
 {"SetActionID", actor_set_action_id},
+{"GetActionID", actor_get_action_id},
 {"TranslateX", actor_translate_x},
 { "TranslateY", actor_translate_y },
 { "ChangeAction", actor_change_action },

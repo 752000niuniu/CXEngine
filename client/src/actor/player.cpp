@@ -397,7 +397,7 @@ void Player::MoveTo(GameMap* gameMapPtr, int destX, int destY)
 
 void Player::MoveTo(float x, float y)
 {
-	Scene* scene = dynamic_cast<Scene*>(SCENE_MANAGER_INSTANCE->GetCurrentScene());
+	BaseScene* scene = GetScene();
 	GameMap* gameMapPtr = scene->GetGameMap();
 	if (!gameMapPtr)return;
 

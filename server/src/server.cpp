@@ -45,10 +45,7 @@ extern "C"  int luaopen_cjson(lua_State *L);
 
 
 
-void check_lua_error(lua_State* L, int res)
-{
-	if (res != LUA_OK) { printf("%s\n", lua_tostring(L, -1)); }
-}
+
 
 void thread_init_script_system(lua_State*L) {
 #define REG_ENUM(name)  (lua_pushinteger(L, name),lua_setglobal(L, #name))
@@ -225,6 +222,7 @@ int game_server_update(lua_State* L) {
 		lua_getglobal(L, "game_server_dispatch_message");
 		lua_push_ezio_buffer(L, pt);
 		int res = lua_pcall(L, 1, 0, 0);
+		check_lua_error(L, res);
 		g_ReadPacketQueue.PopFront(NetThreadQueue::Read);
 	}
 	return 0;
