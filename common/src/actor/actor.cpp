@@ -6,6 +6,7 @@
 #include "lua.hpp"
 #include "window.h"
 #include "cxmath.h"
+#include "actor_manager.h"
 
 #define ACTOR_METATABLE_NAME "mt_actor"
 
@@ -126,6 +127,26 @@ int actor_set_dir(lua_State* L)
 	actor->SetDir((int)dir);
 	return 0;
 }
+int actor_get_dir(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	lua_pushnumber(L, actor->GetDir());
+	return 1;
+}
+
+
+int actor_set_local(lua_State* L)
+{
+	Actor* actor = lua_check_actor(L, 1);
+	bool  local = (bool)lua_toboolean(L, 2);
+	actor->SetLocal(local);
+	return 0;
+}
+
+int actor_is_local(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	lua_pushboolean(L, actor_manager_is_local_player(actor));
+	return 1;
+}
 
 int actor_get_x(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
@@ -145,11 +166,7 @@ int actor_get_id(lua_State* L) {
 	return 1;
 }
 
-int actor_get_dir(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	lua_pushnumber(L, actor->GetDir());
-	return 1;
-}
+
 
 int actor_set_action_id(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
@@ -216,6 +233,15 @@ int actor_move_to(lua_State* L){
 	if (actor->GetType()==ACTOR_TYPE_PLAYER){
 		Player* player = dynamic_cast<Player*> (actor);
 		player->MoveTo(x, y);
+	}
+	return 0;
+}
+int actor_say(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	const char* msg = lua_tostring(L, 2);
+	if (actor->GetType() == ACTOR_TYPE_PLAYER) {
+		Player* player = dynamic_cast<Player*> (actor);
+		player->Say(msg);
 	}
 	return 0;
 }
@@ -303,6 +329,8 @@ luaL_Reg mt_actor[] = {
 {"GetWeaponID", actor_get_weapon_id},
 {"SetDir", actor_set_dir},
 {"GetDir", actor_get_dir},
+{"SetLocal", actor_set_local},
+{"IsLocal", actor_is_local},
 {"SetActionID", actor_set_action_id},
 {"GetActionID", actor_get_action_id},
 {"TranslateX", actor_translate_x},
@@ -311,6 +339,7 @@ luaL_Reg mt_actor[] = {
 { "ChangeWeapon", actor_change_weapon },
 { "ChangeRole", actor_change_role },
 {"MoveTo", actor_move_to},
+{"Say", actor_say},
 { NULL, NULL }
 };
 

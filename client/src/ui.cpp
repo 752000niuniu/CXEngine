@@ -79,7 +79,6 @@ TextView::TextView()
 
 TextView::~TextView()
 {
-
 	INPUT_MANAGER_INSTANCE->UnRegisterView(this);
 	SafeDelete(Cursor);
 	SafeDelete(Background);

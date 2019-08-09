@@ -13,6 +13,10 @@ int actor_manager_set_local_player(lua_State*L) {
 	return 0;
 }
 
+bool actor_manager_is_local_player(Actor* actor) {
+	return actor->GetID() == g_LocalPid;
+}
+
 int lua_actor_manager_fetch_local_player(lua_State*L)
 {
 	auto it = g_Players.find(g_LocalPid);

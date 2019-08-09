@@ -25,7 +25,7 @@ public:
 	void SendS2CPlayerEnter(const TCPConnectionPtr& conn, Player* player, bool is_local);
 	void SendS2CPlayer(const TCPConnectionPtr& conn, char* data, int size);
 
-	void SendMessageToPlayer(int pid, int proto, const char* msg);
+	void SendMessageToPlayer(uint64_t pid, int proto, const char* msg);
 	void SendMessageToPlayers(std::vector<uint64_t> pids, int proto, const char* msg);
 
 	EventLoop* GetLoop() { return m_EventLoop; }

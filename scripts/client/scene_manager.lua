@@ -75,7 +75,15 @@ end
 local KEY_RELEASE_MOVE_AMOUT = 30
 local roleID = 0 
 local weaponID = 0 
+
+function fix_input_manager_mouse_pos()
+    local wx,wy = imgui.GetWindowPos()
+    local vid,x,y  = imgui.GetMainViewport()
+    input_manager_set_window_pos(wx-x,wy-y)
+end
+
 function on_game_imgui_update()
+    fix_input_manager_mouse_pos()
     local player = actor_manager_fetch_local_player()
     if player then
         if imgui.IsKeyReleased(string.byte('W') ) then
@@ -119,6 +127,7 @@ function on_game_imgui_update()
                 weaponID =0
             end
         end
+        
         if imgui.IsWindowFocused() then
             if imgui.IsMouseClicked(0) then
                 local mx,my = imgui.GetMousePos()
@@ -135,9 +144,6 @@ function on_game_imgui_update()
                 net_send_message(PTO_C2S_MOVE_TO_POS, cjson.encode(msg))
             end
         end
-        
-
     end
-    
 end
 

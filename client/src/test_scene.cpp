@@ -439,8 +439,8 @@ AnimationEditorScene::AnimationEditorScene(int id, String name)
 
 		auto playerFrameWasID = GAME_INSTANCE->GetActionWasID(ACTOR_TYPE_PLAYER, 9, Action::Walk);
 		auto* sprite = new BaseSprite(ShapeWDF, playerFrameWasID);
-		sprite->Pos.x = col * sprite->Width+20*col;
-		sprite->Pos.y = row * sprite->Height + 20 * row;
+		sprite->Pos.x = (float)(col * sprite->Width + 20 * col);
+		sprite->Pos.y = (float)(row * sprite->Height + 20 * row);
 		sprite->Dir = row;
 		sprite->FrameInterval = 0.016f*(col+2);
 		spriteExamples.push_back(sprite);
@@ -476,8 +476,8 @@ void AnimationEditorScene::Update() {
 			int row = i / 5;
 			int col = i % 5;
 			auto* sprite = spriteExamples[i];
-			spriteExamples[i]->Pos.x = col * sprite->Width + 20 * col;;
-			spriteExamples[i]->Pos.y = row * sprite->Height + 20 * row;
+			spriteExamples[i]->Pos.x = (float)(col * sprite->Width + 20 * col);
+			spriteExamples[i]->Pos.y = (float)(row * sprite->Height + 20 * row);
 		}
 
 	}

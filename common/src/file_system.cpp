@@ -85,6 +85,22 @@ std::string FileSystem::GetIconPath(std::string path)
 	return GetPath() + "/res/icon/" + path;
 }
 
+void FileSystem::SetWorkPath(std::string path)
+{
+	std::string PATH_SEP("");
+	std::string CWD = "";
+	if (path.find_last_of("\\") != std::string::npos) {
+		PATH_SEP = "\\";
+	}
+	else if (path.find_last_of("/") != std::string::npos)
+	{
+		PATH_SEP = "/";
+	}
+	std::string str = path.substr(0, path.find_last_of(PATH_SEP));
+	CWD = str + PATH_SEP;
+	VFS_WORK_PATH = CWD;
+}
+
 std::vector<std::string> VFS_ListFiles(std::string path)
 {
 #if defined(_WIN32)

@@ -4,6 +4,8 @@
 #include "actor/player.h"
 
 
+bool actor_manager_is_local_player(Actor* actor);
+
 Player* actor_manager_fetch_local_player();
 
 Player* actor_manager_find_player_by_name(const char* name);

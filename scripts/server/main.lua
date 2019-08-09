@@ -31,9 +31,7 @@ function pto_c2s_login(req)
     print('players', #players)
     for k,player in ipairs(players) do
         local pid = player:GetID()        
-        print('loop',req.pid, pid)
         if req.pid == pid then
-            print('req.pid == pid',req.pid, pid)
             local pinfos = {}
             req.is_local = true
             table.insert(pinfos,req)
@@ -51,13 +49,11 @@ function pto_c2s_login(req)
                     table.insert(pinfos, pinfo)
                 end
             end
-            -- print('req.pid == pid', cjson.encode(pinfos))
             net_send_message(pid,PTO_S2C_PLAYER_ENTER, cjson.encode(pinfos))        
         else
             local pinfos = {}
             req.is_local = false
             table.insert(pinfos,req)
-            print('req.pid ~= pid', cjson.encode(pinfos))
             net_send_message(pid,PTO_S2C_PLAYER_ENTER, cjson.encode(pinfos))
         end        
     end
@@ -73,7 +69,10 @@ function game_server_dispatch_message(pt)
     elseif type == PTO_C2S_LOGOUT then
         
     elseif type == PTO_C2S_MOVE_TO_POS then
-        net_send_message_to_all_players(PTO_S2C_MOVE_TO_POS,js)
+        local player = actor_manager_fetch_player_by_id(req.pid)
+        player:SetX(req.x)
+        player:SetY(req.y)
+        net_send_message_to_all_players(PTO_C2S_MOVE_TO_POS,js)
     elseif type == PTO_C2S_CHAT then
         net_send_message_to_all_players(PTO_C2S_CHAT,js)
     end

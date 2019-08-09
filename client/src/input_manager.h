@@ -66,6 +66,7 @@ public:
 	void RequestFocus(View* view);
 
 	void SetCamera(Camera* camera);
+	void SetWindowPos(float x, float y);
 private:
 	
 	InputManager();
@@ -81,6 +82,7 @@ private:
 
 	bool m_FirstMouse;
 
+	Pos m_WindowPos;
 	Pos m_MousePos;
 	std::map<int, std::vector<std::function<void()>>> m_ClickEvents;
 	std::map<int, std::vector<std::function<void()>>> m_KeyDownEvents;

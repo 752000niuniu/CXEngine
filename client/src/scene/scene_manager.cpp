@@ -388,9 +388,6 @@ void scene_manager_add_custom_scene(int id, const char* name)
 
 
 
-void scene_manager_set_player_by_index(int index) {
-	
-}
 
 void scene_manager_sync_draw_cbx(bool draw_map, bool draw_cell, bool draw_strider, bool draw_mask, bool draw_announcement, bool auto_run) {
 	s_DrawMap = draw_map;
@@ -426,7 +423,6 @@ void luaopen_scene_manager(lua_State* L)
 	script_system_register_function(L, scene_manager_switch_scene_by_id);
 	script_system_register_function(L, scene_manager_switch_scene_by_name);
 
-	script_system_register_function(L, scene_manager_set_player_by_index);
 
 	script_system_register_function(L, scene_set_player);
 	script_system_register_function(L, scene_add_player);

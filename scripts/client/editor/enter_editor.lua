@@ -1,5 +1,9 @@
 local AccountSB = imgui.CreateStrbuf('oceancx',256)
 local PasswordSB = imgui.CreateStrbuf('123456',256)
+
+local IPSB = imgui.CreateStrbuf('127.0.0.1',256)
+local PortSB = imgui.CreateStrbuf('45000',256)
+
 local PosX = imgui.CreateStrbuf('200',128)
 local PosY = imgui.CreateStrbuf('2790',128)
 local show_demo = false
@@ -10,6 +14,19 @@ function on_enter_editor_update()
     ret, show_demo = imgui.Checkbox('Demo', show_demo)
     if show_demo then
         imgui.ShowDemoWindow(show_demo)
+    end
+    imgui.Text('IP  :')
+    imgui.SameLine()
+    imgui.InputText('##IP', IPSB)
+
+    imgui.Text('Port  :')
+    imgui.SameLine()
+    imgui.InputText('##Port', PortSB)
+
+    if imgui.Button('连接服务器') then
+        local ip = IPSB:str()
+        local port = math.tointeger(PortSB:str())
+        net_manager_init(ip, port)
     end
 
     imgui.Text("Account   :");

@@ -26,7 +26,7 @@ end
 function on_script_system_init()
     -- generate_avatar_role_tsv()
     content_system_init()
-    net_manager_init()
+    -- net_manager_init()
     text_renderer_init()
     timer_manager_init()
     input_manager_init()
@@ -60,7 +60,18 @@ function on_script_system_deinit()
     actor_manager_deinit()
 end
 
-        
+function on_player_send_chat_message(msg)
+	local player = actor_manager_fetch_local_player()
+	player:Say(msg)
+	clear_chat_text_cache()
+
+	local req = {}
+	req.pid = player:GetID()
+	req.msg = msg
+	net_send_message(PTO_C2S_CHAT, cjson.encode(req))
+	
+end
+
 function game_dispatch_message(pt)
 	local type = pt:ReadAsInt()
 	local js = pt:ReadAllAsString()
@@ -85,15 +96,15 @@ function game_dispatch_message(pt)
 			actor_manager_set_local_player(local_pinfo.pid)
 			scene_manager_switch_scene_by_id(local_pinfo.scene_id)
 		end
-		
-		
-	elseif type == PTO_S2C_CHAT then
-		
-	elseif type == PTO_S2C_MOVE_TO_POS then
-		local player = actor_manager_fetch_local_player()
-		if player:GetID() ~= req.pid then
-			local other = actor_manager_fetch_player_by_id(req.pid)
-			other:MoveTo(req.x,req.y)
+	elseif type == PTO_C2S_CHAT then
+		local player = actor_manager_fetch_player_by_id(req.pid)
+		if not player:IsLocal() then
+			player:Say(req.msg)
+		end
+	elseif type == PTO_C2S_MOVE_TO_POS then
+		local player = actor_manager_fetch_player_by_id(req.pid)
+		if not player:IsLocal() then
+			player:MoveTo(req.x,req.y)
 		end
     end
 end

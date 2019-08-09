@@ -3,6 +3,7 @@
 #include "cxmath.h"
 #include "scene/scene_manager.h"
 #include "window.h"
+#include "logger.h"
 
 
 InputManager::InputManager()
@@ -11,6 +12,7 @@ m_Keys(1024,false),
 m_KeyStates(1024,0),
 m_FirstMouse(true),
 m_MousePos(0,0),
+m_WindowPos(0,0),
 m_FocusView(nullptr),
 m_Camera(nullptr)
 {
@@ -215,6 +217,9 @@ void InputManager::ScrollCallbackFunc(GLFWwindow* window, float xoffset, float y
 
 void InputManager::MouseCallbackFunc(GLFWwindow* window, float xpos, float ypos)
 {
+	cxlog_info("MouseCallbackFunc xpos:%f ypos:%f wx:%f wy:%f\n", xpos, ypos, m_WindowPos.x, m_WindowPos.y);
+	xpos = xpos - m_WindowPos.x;
+	ypos = ypos - m_WindowPos.y;
 	if (m_FirstMouse)
 	{
 		m_MousePos.x = xpos;
@@ -328,7 +333,11 @@ Pos InputManager::GetMousePos()
 {
 	return m_MousePos;
 }
-
+void InputManager::SetWindowPos(float x, float y)
+{
+	m_WindowPos.x = x;
+	m_WindowPos.y = y;
+}
 void input_manager_init()
 {
 	INPUT_MANAGER_INSTANCE->Init();
@@ -338,9 +347,24 @@ void input_manager_deinit()
 {
 	INPUT_MANAGER_INSTANCE->DeleteSingleton();
 }
+int input_manager_get_mouse_pos(lua_State*L){
+	auto pos = INPUT_MANAGER_INSTANCE->GetMouseIntPos();
+	lua_pushnumber(L, pos.x);
+	lua_pushnumber(L, pos.y);
+	return 2;
+}
+
+int input_manager_set_window_pos(lua_State*L) {
+	float x = (float)lua_tonumber(L, 1);
+	float y = (float)lua_tonumber(L, 2);
+	INPUT_MANAGER_INSTANCE->SetWindowPos(x, y);
+	return 0;
+}
 
 void luaopen_input_manager(lua_State* L)
 {
 	script_system_register_function(L, input_manager_init);
 	script_system_register_function(L, input_manager_deinit);
+	script_system_register_luac_function(L, input_manager_get_mouse_pos);
+	script_system_register_luac_function(L, input_manager_set_window_pos);
 }

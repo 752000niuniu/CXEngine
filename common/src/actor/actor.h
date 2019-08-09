@@ -95,8 +95,8 @@ public:
 	float GetMP() { return m_MP; }
 	void AddMP(float mp) { m_MP += mp; }
 
-	void SetLocalPlayer(bool local) { m_IsLocalPlayer = local; }
-	bool IsLocalPlayer() { return m_IsLocalPlayer; }
+	void SetLocal(bool local) { m_IsLocalPlayer = local; }
+	bool IsLocal() { return m_IsLocalPlayer; }
 
 	float GetFrameSpeed() { return m_FrameSpeed; };
 	void SetFrameSpeed(float frame_speed) { m_FrameSpeed = frame_speed; };

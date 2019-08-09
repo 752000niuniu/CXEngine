@@ -78,8 +78,6 @@ private:
 	unsigned int m_Fbo;
 	unsigned int m_Rbo;
 	unsigned int m_TextureColor;
-
-
 };
 
 #define SCENE_MANAGER_INSTANCE SceneManager::GetInstance()

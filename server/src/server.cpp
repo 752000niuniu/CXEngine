@@ -20,15 +20,13 @@ struct ServerPacket
 	Buffer* buff;
 	TCPConnectionPtr conn;
 };
-
-
 std::thread* ServerThread;
 GameServer* CXGameServer = NULL;
 
 
 ezio::EventLoop g_MainLoop;
 
-void net_send_message(int pid, int proto, const char* msg);
+void net_send_message(uint64_t pid, int proto, const char* msg);
 
 int net_send_message_to_players(lua_State* L);
 
@@ -41,11 +39,6 @@ int netq_push_login_msg(lua_State*L);
 
 #define luaL_requirelib(L,name,fn) (luaL_requiref(L, name, fn, 1),lua_pop(L, 1))
 extern "C"  int luaopen_cjson(lua_State *L);
-
-
-
-
-
 
 void thread_init_script_system(lua_State*L) {
 #define REG_ENUM(name)  (lua_pushinteger(L, name),lua_setglobal(L, #name))
@@ -97,7 +90,7 @@ void GameServer::Start()
 
 
 	char path[512];
-	sprintf(path, "%sscripts/server/%s", WORK_DIR, "server.lua");
+	sprintf(path, "%sscripts/server/%s", FileSystem::GetPath().c_str(), "server.lua");
 	if (luaL_dofile(m_L, path) != LUA_OK) {
 		const char* msg = lua_tostring(m_L, -1);
 		cxlog_err(msg);
@@ -116,32 +109,7 @@ void GameServer::Stop()
 	m_EventLoop->Quit();
 }
 
-void GameServer::SendS2CPlayerEnter(const TCPConnectionPtr& conn, Player* player, bool is_local)
-{
-	Buffer buf;
-	buf.Write((int)PTO_S2C_PLAYER_ENTER);
-	buf.Write((int)player->GetNickName().size());
-	buf.Write(player->GetNickName().data(), player->GetNickName().size());
-	buf.Write(player->GetSceneID());
-	buf.Write(player->GetDir());
-	buf.Write(player->GetRoleID());
-	buf.Write(player->GetWeaponID());
-	buf.Write(player->GetPos().x);
-	buf.Write(player->GetPos().y);
-	buf.Write((int)(is_local ? 1 : 0));
-	buf.Prepend((int)buf.readable_size());
-	conn->Send(kbase::StringView(buf.Peek(), buf.readable_size()));
-	buf.ConsumeAll();
-}
-
-void GameServer::SendS2CPlayer(const TCPConnectionPtr& conn, char* data, int size)
-{
-	conn->Send(kbase::StringView(data, size));
-}
-
-
-
-void GameServer::SendMessageToPlayer(int pid, int proto, const char* msg)
+void GameServer::SendMessageToPlayer(uint64_t pid, int proto, const char* msg)
 {
 	m_EventLoop->RunTask([this, pid, proto, msg]() {
 		ezio::Buffer buf;
@@ -199,8 +167,6 @@ void GameServer::OnMessage(const TCPConnectionPtr& conn, Buffer& buf, TimePoint 
 	check_lua_error(m_L, res);
 }
 
-
-
 void game_server_run(int port) {
 	ezio::EventLoop loop;
 	ezio::SocketAddress addr(port);
@@ -208,7 +174,6 @@ void game_server_run(int port) {
 	CXGameServer->Start();
 	loop.Run();
 }
-
 
 void game_server_start(int port) {
 	ServerThread = new std::thread(game_server_run,  port);
@@ -234,7 +199,8 @@ void game_server_stop()
 	ServerThread->join();
 }
 
-void net_send_message(int pid, int proto, const char* msg) {
+void net_send_message(uint64_t pid, int proto, const char* msg) {
+	cxlog_info("net_send_message pid:%lld proto:%d js:%s\n", pid, proto, msg);
 	CXGameServer->SendMessageToPlayer(pid, proto, msg);
 }
 
@@ -251,6 +217,7 @@ int net_send_message_to_players(lua_State* L) {
 	}
 	int proto = (int)lua_tointeger(L, 2);
 	const char* msg = lua_tostring(L, 3);
+	cxlog_info("net_send_message_to_players proto:%d js:%s\n",  proto, msg);
 	CXGameServer->SendMessageToPlayers(pids, proto, msg);
 	return 0;
 }
@@ -262,6 +229,7 @@ int net_send_message_to_all_players(lua_State* L) {
 	buf.Write(proto);
 	buf.Write(msg, strlen(msg));
 	buf.Prepend((int)buf.readable_size());
+	cxlog_info("net_send_message_to_all_players proto:%d js:%s\n", proto, msg);
 	CXGameServer->GetLoop()->RunTask([buf]() {
 		for (auto& it : g_PlayerConnections) {
 			it.second->Send({ buf.Peek(),buf.readable_size() });

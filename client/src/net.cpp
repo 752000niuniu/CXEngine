@@ -32,15 +32,6 @@ public:
 
 	~NetClient();
 	void Connect();
-	void SendMoveToPosMsg(MSGC2SMoveToPos* msg);
-
-	void SendMSGC2SLogin(MSGC2SLogin* msg);
-
-	void SendMSGC2SLogout(MSGC2SLogout* msg);
-
-	void SendMSGC2SChat(MSGC2SChat * msg);
-
-	void SendMessageToGame(char* buf, size_t len);
 
 	void SendMessageToServer(int proto, const char* msg);
 
@@ -73,57 +64,6 @@ void NetClient::Connect()
 	m_Client.Connect();
 }
 
-void NetClient::SendMoveToPosMsg(MSGC2SMoveToPos* msg)
-{
-	
-	m_Client.connection()->Send(kbase::StringView((char*)msg, msg->len));
-}
-
-void NetClient::SendMSGC2SLogin(MSGC2SLogin* msg)
-{
-	ezio::Buffer buf;
-	buf.Write(msg->type);
-	buf.Write(msg->namelen);
-	buf.Write(msg->name.data(), msg->namelen);
-	buf.Write(msg->scene_id);
-	buf.Write(msg->dir);
-	buf.Write(msg->role_id);
-	buf.Write(msg->weapon_id);
-	buf.Write(msg->pos_x);
-	buf.Write(msg->pos_y);
-	int cnt = (int)buf.readable_size();
-	buf.Prepend(cnt);
-	auto sv = kbase::StringView(buf.Peek(), buf.readable_size());
-	auto str = sv.ToString();
-	m_Client.connection()->Send(sv);
-}
-
-void NetClient::SendMSGC2SLogout(MSGC2SLogout* msg)
-{
-	m_Client.connection()->Send(kbase::StringView((char*)msg, msg->len));
-}
-
-void NetClient::SendMSGC2SChat(MSGC2SChat * msg)
-{
-	if (m_Client.connection()->connected())
-	{
-		m_Client.connection()->Send(kbase::StringView((char*)msg, msg->len));
-	}
-}
-
-void NetClient::SendMessageToGame(char* buf, size_t len)
-{
-	std::string msg(buf, len);
-	m_EventLoop->RunTask([this,msg]() {
-		if (m_Client.connection() != nullptr && m_Client.connection()->connected())
-		{
-			cxlog_info("%s", msg.c_str());
-			m_Client.connection()->Send(msg);
-		}
-	});
-	
-}
-
 void NetClient::SendMessageToServer(int proto, const char* msg)
 {
 	ezio::Buffer buf;
@@ -131,8 +71,6 @@ void NetClient::SendMessageToServer(int proto, const char* msg)
 	buf.Write(msg, strlen(msg));
 	int cnt = (int)buf.readable_size();
 	buf.Prepend(cnt);
-	printf("proto:%d msg:%s\n", proto, msg);
-
 	m_EventLoop->RunTask([this, buf]() {
 		if (m_Client.connection() != nullptr && m_Client.connection()->connected()) {
 			m_Client.connection()->Send(kbase::StringView(buf.Peek(), buf.readable_size()));
@@ -173,10 +111,10 @@ class NetThread : public Singleton<NetThread>
 public:
 	NetThread();
 	~NetThread();
-	void Init();
+	void Init(const char* ip, int port);
 	void Update(lua_State* L);
 	void Deinit();
-	void Run(std::string ip,int port);
+	void Run(const char* ip, int port);
 private:
 	std::thread* m_Thread;
 };
@@ -191,33 +129,20 @@ NetThread::~NetThread()
 	
 }
 
-// ÍøÂçÏß³Ìº¯Êý
-void NetThread::Run(std::string ip,int port)
+void NetThread::Run(const char* ip,int port)
 {
 	EventLoop loop;
 	g_Loop = &loop;
-	SocketAddress addr(ip.c_str(), port);
+	SocketAddress addr(ip, port);
 	NetClient client(&loop,addr,"Client");
 	g_Client = &client;
 	client.Connect();
 	loop.Run();
 }
 
-void NetThread::Init()
+void NetThread::Init(const char* ip, int port)
 {
-	std::string ip;
-	int port = 45000;
-	ip = script_system_get_config("--server-ip");
-	if (ip == "")
-	{
-		ip = "127.0.0.1";
-	}
-	const char* portstr = script_system_get_config("--server-port");
-	if (strcmp(portstr, "") != 0)
-	{
-		port = std::stoi(portstr);
-	}
-	m_Thread = new std::thread(std::bind(&NetThread::Run, this, std::placeholders::_1, std::placeholders::_2), ip, port);
+	m_Thread = new std::thread(std::bind(&NetThread::Run, this , std::placeholders::_1,std::placeholders::_2), ip, port);
 }
 
 void NetThread::Update(lua_State* L )
@@ -240,11 +165,12 @@ void NetThread::Deinit()
 	g_Client->Disconnect();
 	g_Loop->Quit();
 	m_Thread->join();
+	m_Thread = nullptr;
 }
 
-void net_manager_init()
+void net_manager_init(const char* ip, int port)
 {
-	NetThread::GetInstance()->Init();
+	NetThread::GetInstance()->Init(ip, port);
 } 
 
 int net_manager_update(lua_State*L)
@@ -256,54 +182,6 @@ int net_manager_update(lua_State*L)
 void net_manager_deinit()
 {
 	NetThread::GetInstance()->Deinit();
-}
-
-void net_send_login_message(MSGC2SLogin* msg)
-{
-	ezio::Buffer buf;
-	buf.Write(msg->type);
-	buf.Write(msg->namelen);
-	buf.Write(msg->name.data(), msg->namelen);
-	buf.Write(msg->scene_id);
-	buf.Write(msg->dir);
-	buf.Write(msg->role_id);
-	buf.Write(msg->weapon_id);
-	buf.Write(msg->pos_x);
-	buf.Write(msg->pos_y);
-	int cnt = (int)buf.readable_size();
-	buf.Prepend(cnt);
-	g_Client->SendMessageToGame((char*)buf.Peek(), buf.readable_size());
-
-}
-
-void net_send_logout_message(MSGC2SLogout* msg)
-{
-
-}
-
-void net_send_move_to_pos_message(std::string name ,float x,float y)
-{
-	Buffer buf;
-	buf.Write((int)PTO_C2S_MOVE_TO_POS);
-	buf.Write((int)name.length());
-	buf.Write(name.data(), name.size());
-	buf.Write((int)x);
-	buf.Write((int)y);
-	buf.Prepend((int)buf.readable_size());
-
-	g_Client->SendMessageToGame((char*)buf.Peek(), buf.readable_size());
-}
-
-void net_send_chat_message(std::string player, std::string content)
-{
-	Buffer buf;
-	buf.Write((int)PTO_C2S_CHAT);
-	buf.Write((int)player.length());
-	buf.Write(player.data(),player.size());
-	buf.Write((int)content.length());
-	buf.Write(content.data(), content.size());
-	buf.Prepend((int)buf.readable_size());
-	g_Client->SendMessageToGame((char*)buf.Peek(), buf.readable_size());
 }
 
 void net_connect_to_server()
@@ -320,6 +198,7 @@ void net_manager_connect()
 }
 
 void net_send_message(int proto, const char* msg) {
+	cxlog_info("net_send_message %d %s\n", proto, msg);
 	g_Client->SendMessageToServer(proto, msg);
 }
 

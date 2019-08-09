@@ -2,9 +2,11 @@
 #include "script_system.h"
 #include "kbase/at_exit_manager.h"
 #include "ezio/io_service_context.h"
+#include "file_system.h"
 
 int main(int argc, char const *argv[])
 {
+	FileSystem::SetWorkPath(argv[0]);
 	kbase::AtExitManager exit_manager;
 	ezio::IOServiceContext::Init();
 

@@ -19,6 +19,7 @@
 #include "script_system.h"
 #include "utils.h"
 #include "actor/actor_manager.h"
+#include "lua_bind.h"
 
 bool s_IsCombat = true;
 TextView* s_Announcement;
@@ -68,10 +69,7 @@ void Scene::OnLoad()
 	s_Chat->PaddingVertical = 3;
 	s_Chat->BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WzifeWDF, 0x39D3BD99);
 	s_Chat->OnEnterHit = [this]() {
-		Player* player = actor_manager_fetch_local_player();
-		player->Say(s_Chat->Text);
-		s_Chat->TextCache.clear();
-		net_send_chat_message(player->GetNickName(), utils::WstringToString(s_Chat->Text));
+		script_system_call_function(script_system_get_luastate(), "on_player_send_chat_message", utils::WstringToString(s_Chat->Text).c_str());
 	};
 
 	for (auto id : m_TransportUUIDs)
@@ -379,9 +377,12 @@ void BattleScene::Draw()
 	//}
 }
 
-
+void clear_chat_text_cache()
+{
+	s_Chat->TextCache.clear();
+}
 void luaopen_scene(lua_State* L)
 {
-
-	
+	script_system_register_function(L, clear_chat_text_cache);
+		
 }
