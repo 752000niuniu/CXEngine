@@ -96,9 +96,7 @@ void FileSystem::SetWorkPath(std::string path)
 	{
 		PATH_SEP = "/";
 	}
-	std::string str = path.substr(0, path.find_last_of(PATH_SEP));
-	CWD = str + PATH_SEP;
-	VFS_WORK_PATH = CWD;
+	VFS_WORK_PATH = path.substr(0, path.find_last_of(PATH_SEP));
 }
 
 std::vector<std::string> VFS_ListFiles(std::string path)

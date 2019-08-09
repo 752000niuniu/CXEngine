@@ -35,7 +35,7 @@ public:
 
 	void SendMessageToServer(int proto, const char* msg);
 
-	void Disconnect() { m_Client.Disconnect(); };
+	void Disconnect();
 
 private:
 	void OnConnection(const TCPConnectionPtr&);
@@ -78,6 +78,12 @@ void NetClient::SendMessageToServer(int proto, const char* msg)
 	});
 }
 
+void NetClient::Disconnect()
+{
+	if(m_Client.connection() != nullptr){
+		m_Client.Disconnect();
+	}
+}
 void NetClient::OnConnection(const TCPConnectionPtr& conn)
 {
 	const char* state = conn->connected() ? "connected" : "disconnected";

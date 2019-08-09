@@ -90,7 +90,7 @@ void GameServer::Start()
 
 
 	char path[512];
-	sprintf(path, "%sscripts/server/%s", FileSystem::GetPath().c_str(), "server.lua");
+	sprintf(path, "%s/scripts/server/%s", FileSystem::GetPath().c_str(), "server.lua");
 	if (luaL_dofile(m_L, path) != LUA_OK) {
 		const char* msg = lua_tostring(m_L, -1);
 		cxlog_err(msg);
