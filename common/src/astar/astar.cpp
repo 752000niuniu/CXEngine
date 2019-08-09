@@ -1,6 +1,7 @@
 #include "astar.h"
 #include <fstream>
 #include "cxmath.h"
+#include "logger.h"
 
 // N E S W N_E S_E S_W N_W
 //int dir_x[8] = { 0, 1, 0, -1, 1, 1, -1, -1 };
@@ -83,7 +84,7 @@ bool Astar::PathFinding(int sx, int sy, int ex, int ey)
 		mCloseList.push_back(cur_node);
 
 		if (cur_node->x == ex && cur_node->y == ey) {
-			printf("搜索完成\n");
+			cxlog_info("搜索完成\n");
 			Node* p = cur_node;
 			do {
 				Pos tmpPos;

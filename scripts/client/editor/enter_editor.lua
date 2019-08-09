@@ -26,6 +26,7 @@ function on_enter_editor_update()
     if imgui.Button('连接服务器') then
         local ip = IPSB:str()
         local port = math.tointeger(PortSB:str())
+        net_manager_deinit()
         net_manager_init(ip, port)
     end
 

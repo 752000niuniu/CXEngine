@@ -158,7 +158,6 @@ void NetThread::Update(lua_State* L )
 	while (!g_ReadPacketQueue.Empty(NetThreadQueue::Read))
 	{
 		Buffer& pt = g_ReadPacketQueue.Front(NetThreadQueue::Read);
-		printf("%s\n", std::string(pt.Peek(), pt.readable_size()).c_str());
 		lua_getglobal(L , "game_dispatch_message");
 		lua_push_ezio_buffer(L, pt);
 		int res = lua_pcall(L, 1, 0, 0);
@@ -178,7 +177,6 @@ void NetThread::Deinit()
 
 void net_manager_init(const char* ip, int port)
 {
-
 	NetThread::GetInstance()->Init(ip, port);
 } 
 

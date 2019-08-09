@@ -26,7 +26,7 @@ end
 function on_script_system_init()
     -- generate_avatar_role_tsv()
     content_system_init()
-    -- net_manager_init()
+    net_manager_init('127.0.0.1', 45000)
     text_renderer_init()
     timer_manager_init()
     input_manager_init()
@@ -69,7 +69,6 @@ function on_player_send_chat_message(msg)
 	req.pid = player:GetID()
 	req.msg = msg
 	net_send_message(PTO_C2C_CHAT, cjson.encode(req))
-	
 end
 
 function game_dispatch_message(pt)
