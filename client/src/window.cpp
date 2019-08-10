@@ -233,6 +233,12 @@ float window_system_get_dt()
 {
 	return WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
 }
+int game_get_width(){
+	return WINDOW_INSTANCE->GetWidth();
+}
+int game_get_height(){
+	return WINDOW_INSTANCE->GetHeight();
+}
 
 void luaopen_window(lua_State* L)
 {
@@ -240,4 +246,7 @@ void luaopen_window(lua_State* L)
 	script_system_register_function(L, window_system_show);
 	script_system_register_function(L, window_system_set_floating);
 	script_system_register_function(L, window_system_get_dt);
+
+	script_system_register_function(L, game_get_width);
+	script_system_register_function(L, game_get_height);
 }

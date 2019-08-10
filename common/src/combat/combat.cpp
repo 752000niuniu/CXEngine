@@ -81,6 +81,11 @@ CombatSystem::~CombatSystem()
 
 }
 
+void CombatSystem::AddActor(Actor* actor)
+{
+	m_Actors.push_back(actor);
+}
+
 //void CombatSystem::AddEnemy(int pos, Player* enemy)
 //{
 //	int dir = static_cast<int>(Direction::S_E);
@@ -103,14 +108,6 @@ void CombatSystem::Update()
 {
 	if (m_BattleState == BATTLE_DEFAULT) {
 
-	}
-	else if (m_BattleState == BATTLE_START) {
-		m_TurnCounter = 0;
-		for (auto& it : m_Actors) {
-			it->SetIsCombat(true);
-			it->SetActionID(Action::Batidle);
-		}
-		m_BattleState = BTTALE_TURN_NEXT;
 	}
 	else if (m_BattleState == BATTLE_TURN_STAND_BY) {
 		bool allReady = true;
@@ -202,7 +199,7 @@ void CombatSystem::Draw()
 {
 	if (m_BattleState != BATTLE_DEFAULT && m_BattleState != BATTLE_DEFAULT) {
 		for (auto& it : m_Actors) {
-			it->OnDraw();
+			it->OnDraw(it->GetX(),it->GetY());
 		}
 	}
 	
@@ -267,9 +264,54 @@ void CombatSystem::NextTurn()
 void CombatSystem::StartBattle()
 {
 	m_BattleState = BATTLE_START;
+	m_TurnCounter = 0;
+	for (auto& it : m_Actors) {
+		Pos  pos = it->GetPos();
+		it->SetIsCombat(true);
+		it->SetPos(pos);
+		it->SetActionID(Action::Batidle);
+	}
+	m_BattleState = BTTALE_TURN_NEXT;
 }
 
 void CombatSystem::EndBattle()
 {
 	m_BattleState = BATTLE_END;
+}
+
+int combat_system_add_actor(lua_State* L)
+{
+	Actor* actor = lua_check_actor(L, 1);
+	COMBAT_SYSTEM_INSTANCE->AddActor(actor);
+	return 0;
+}
+
+void combat_system_start_battle()
+{
+	COMBAT_SYSTEM_INSTANCE->StartBattle();
+}
+
+void combat_system_end_battle()
+{
+	COMBAT_SYSTEM_INSTANCE->EndBattle();
+}
+
+void combat_system_update()
+{
+	COMBAT_SYSTEM_INSTANCE->Update();
+}
+
+void combat_system_draw()
+{
+	COMBAT_SYSTEM_INSTANCE->Draw();
+}
+
+
+void luaopen_combat_system(lua_State* L)
+{
+	script_system_register_luac_function(L, combat_system_add_actor);
+	script_system_register_function(L, combat_system_start_battle);
+	script_system_register_function(L, combat_system_end_battle);
+	script_system_register_function(L, combat_system_update);
+	script_system_register_function(L, combat_system_draw);
 }

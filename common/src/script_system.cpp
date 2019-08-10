@@ -26,6 +26,7 @@
 #include "server.h"
 #endif // !SIMPLE_SERVER
 #include "protocol.h"
+#include "combat/combat.h"
 
 
 
@@ -93,6 +94,7 @@ void script_system_prepare_init()
 	luaopen_text_renderer(L);
 	luaopen_frame_animation(L);
 	luaopen_net(L);
+	luaopen_combat_system(L);
 #else
 	luaopen_game_server(L);
 #endif // !SIMPLE_SERVER

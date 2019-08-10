@@ -274,31 +274,7 @@ Player* scene_find_player(const char* player_name)
 	return actor_manager_find_player_by_name(player_name);
 }
 
-void scene_set_player(const char* player_name)
-{
-	
-}
 
-void scene_add_player(const char* player_name, int x, int y, int dir,int role_id, int weapon_id)
-{
-	
-}
-
-
-void scene_add_npc(const char* player_name, int  x, int  y, int dir, int role_id, int action_id, const char* msg)
-{
-	
-}
-
-void scene_add_pet(const char* player_name, int  x, int  y, int dir, int role_id, int action_id)
-{
-	
-}
-
-void scene_add_player_by_templ_name(const char* templ_name, int actorType)
-{
-	
-}
 
 void scene_manager_init()
 {
@@ -423,13 +399,6 @@ void luaopen_scene_manager(lua_State* L)
 	script_system_register_function(L, scene_manager_switch_scene_by_id);
 	script_system_register_function(L, scene_manager_switch_scene_by_name);
 
-
-	script_system_register_function(L, scene_set_player);
-	script_system_register_function(L, scene_add_player);
-	script_system_register_function(L, scene_add_npc);
-	script_system_register_function(L, scene_add_pet);
-
-	script_system_register_function(L, scene_add_player_by_templ_name);
 
 	script_system_register_function(L, scene_set_announcement);
 	script_system_register_function(L, scene_set_chat);

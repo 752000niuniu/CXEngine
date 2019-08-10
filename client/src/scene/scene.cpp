@@ -367,10 +367,11 @@ void BattleScene::Update()
 
 void BattleScene::Draw()
 {
-	SPRITE_RENDERER_INSTANCE->DrawFrameSprite(m_CombatBG,
+	/*SPRITE_RENDERER_INSTANCE->DrawFrameSprite(m_CombatBG,
 		glm::vec2(0, 0),
-		glm::vec2(WINDOW_INSTANCE->GetWidth(), WINDOW_INSTANCE->GetHeight()));
+		glm::vec2(WINDOW_INSTANCE->GetWidth(), WINDOW_INSTANCE->GetHeight()));*/
 
+	
 	//for (auto* player : m_Players)
 	//{
 	//	auto pos = player->GetCombatPos();

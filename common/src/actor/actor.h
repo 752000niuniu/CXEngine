@@ -165,5 +165,6 @@ protected:
 	ActorCombatProps m_CombatProps;
 };
 
+Actor* lua_check_actor(lua_State*L, int index);
 void lua_push_actor(lua_State*L, Actor* actor);
 void luaopen_actor(lua_State* L);

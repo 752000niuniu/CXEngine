@@ -30,7 +30,7 @@ local combat_enemy_pos =
 }
 
 function OnSceneInit()
-    local s  = "Ocean藏心"
+    -- local s  = "Ocean藏心"
     -- scene_add_player(s,math.floor(combat_self_pos[1].x) ,math.floor(combat_self_pos[1].y),2,9,5)
     -- scene_add_pet(s.."1",math.floor(combat_enemy_pos[1].x) ,math.floor(combat_enemy_pos[1].y),0,5,1)
     -- scene_add_npc(s..tostring(1), 530,1110,1,1,1,"asd")
@@ -39,14 +39,24 @@ function OnSceneInit()
     -- scene_add_player(s..tostring(2), 530,1110,2,42)
     -- scene_add_player(s..tostring(3), 530,1110,3,50)
     -- scene_add_player(s..tostring(4), 530,1110,4,2)
-    -- scene_set_player(s)
+	-- scene_set_player(s)
+	cxlog_info('battle scene OnSceneInit')
+	combat_system_start_battle()
 
-    
+	local player = actor_manager_fetch_local_player()
+	if player then
+		cxlog_info('player name', player:GetName())
+		combat_system_add_actor(player)
+		-- player:SetPos( 415.0 / 640 * game_get_width(), 275.0 / 480 *  game_get_height())
+	end
+	
+
 end
 
 function OnSceneUpdate()
+	combat_system_update()
+	combat_system_draw()
 end
 
 function OnSceneDraw()
-
 end

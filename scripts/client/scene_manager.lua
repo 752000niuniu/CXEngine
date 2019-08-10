@@ -10,7 +10,6 @@ script_system_dofile('editor/enter_editor.lua')
 script_system_dofile('editor/scene_editor.lua')
 local scene_lua_files = 
 {
-    {name='default' ,           file= 'scene/scene.lua'},
     {name='AnimationEditor' ,  file= 'scene/animation_editor.lua'},
     {name='BattleScene' ,            file= 'scene/battle_scene.lua'},
     {name='门派_方寸山全景' ,       file= 'scene/fangcunshan_scene.lua'},
@@ -52,6 +51,8 @@ function on_scene_manager_init()
         local fun,err = loadfile(path,'bt',module)
         if fun then
             fun()
+        else
+            cxlog_info(fun,err)
         end
     end
 
@@ -71,6 +72,11 @@ function on_scene_manager_update(name)
 
     scene_list[name].OnSceneUpdate()
 end
+
+function on_scene_manager_draw(name)
+    scene_list[name].OnSceneDraw()
+end
+
 
 local KEY_RELEASE_MOVE_AMOUT = 30
 local roleID = 0 

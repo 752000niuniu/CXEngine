@@ -81,3 +81,4 @@ private:
 
 
 #define COMBAT_SYSTEM_INSTANCE CombatSystem::GetInstance()
+void luaopen_combat_system(lua_State* L);
