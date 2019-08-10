@@ -104,7 +104,7 @@ void FileSystem::InitWorkPath()
 		{
 			PATH_SEP = "/";
 		}
-		VFS_WORK_PATH = path.substr(0, path.find_last_of(PATH_SEP));
+		VFS_WORK_PATH = path.substr(0, path.find_last_of(PATH_SEP) - 1);
 	}
 }
 
