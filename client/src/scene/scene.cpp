@@ -261,6 +261,7 @@ void Scene::SwitchBattle()
 	}
 }
 
+
 BattleScene::BattleScene(int sceneID, String sceneName)
 	:Scene(sceneID,sceneName)
 {

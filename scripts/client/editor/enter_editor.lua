@@ -81,6 +81,7 @@ function on_enter_editor_update()
     if imgui.Button("EnterBattle") then
         scene_manager_switch_scene_by_name('BattleScene')
     end
+
     
     if imgui.Button('Reload') then 
         -- script_system_dofile('scene/test_net_scene.lua')

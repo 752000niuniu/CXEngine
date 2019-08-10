@@ -87,13 +87,7 @@ function on_scene_editor_update()
         end
     end
 
-    if imgui.Button('SwitchToLogin') then
-        scene_manager_switch_scene_by_name('TestNetScene')
-    end
-
-    if imgui.Button('SwitchToBattle') then
-        scene_manager_switch_scene_by_name('BattleScene')
-    end
+    
     imgui.End()
 
 end

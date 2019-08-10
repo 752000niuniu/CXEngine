@@ -144,14 +144,14 @@ void PlayerCombatMoveState::Execute(Player* player)
 {	
 	float dt = WINDOW_INSTANCE->GetDeltaTime();
 	float localVelocity = player->GetVelocity()*dt;
-	Pos combatPos = player->GetCombatPos();
+	Pos combatPos = player->GetPos();
     
     float dist_sqr = player->GetCombatDistSquare();
 	if (dist_sqr > localVelocity*localVelocity) {
 		float degree = player->GetCombatAngle() ;
 		float stepRangeX = cos(DegreeToRadian(degree));
 		float stepRangeY = sin(DegreeToRadian(degree));
-        player->SetCombatPos(combatPos.x + stepRangeX*localVelocity , combatPos.y + stepRangeY*localVelocity);
+        player->SetPos(combatPos.x + stepRangeX*localVelocity , combatPos.y + stepRangeY*localVelocity);
 	}
 	else
 	{
@@ -222,8 +222,8 @@ void PlayerCombatBackState::Execute(Player* player)
 		float degree = player->GetCombatAngle();
 		float stepRangeX = cos(DegreeToRadian(degree));
 		float stepRangeY = sin(DegreeToRadian(degree));
-		Pos combatPos = player->GetCombatPos();
-		player->SetCombatPos( combatPos.x +  stepRangeX*localVelocity,combatPos.y +  stepRangeY*localVelocity);
+		Pos combatPos = player->GetPos();
+		player->SetPos( combatPos.x +  stepRangeX*localVelocity,combatPos.y +  stepRangeY*localVelocity);
 	}
 	else
 	{

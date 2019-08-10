@@ -71,7 +71,9 @@ void Player::ClearFrames()
 
 float Player::GetCombatDistSquare()
 {
-	return ::GMath::Astar_GetDistanceSquare(m_CombatPos.x, m_CombatPos.y, m_CombatTargetPos.x, m_CombatTargetPos.y);
+	Pos& pos = GetPos();
+	Pos& targetPos = GetCombatTargetPos();
+	return ::GMath::Astar_GetDistanceSquare(pos.x, pos.y, targetPos.x, targetPos.y);
 }
 
 float Player::GetMoveDestDistSquare(Pos dest)
@@ -80,7 +82,9 @@ float Player::GetMoveDestDistSquare(Pos dest)
 }
 float Player::GetCombatAngle()
 {
-	return ::GMath::Astar_GetAngle(m_CombatPos.x, m_CombatPos.y, m_CombatTargetPos.x, m_CombatTargetPos.y);
+	Pos& pos = GetPos();
+	Pos& targetPos = GetCombatTargetPos();
+	return ::GMath::Astar_GetAngle(pos.x, pos.y, targetPos.x, targetPos.y);
 }
 float Player::GetMoveDestAngle(Pos dest)
 {
@@ -149,8 +153,9 @@ void Player::SaveFrame(int index)
 }
 
 
-void Player::OnUpdate(float dt)
+void Player::OnUpdate()
 {
+	float dt = WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
 	if (m_pFSM)
 	{
 		m_pFSM->Update();
@@ -373,6 +378,10 @@ void Player::OnDraw(int px,int py)
 }
 
 
+void Player::OnDraw()
+{
+	Player::OnDraw(GetX(), GetY());
+}
 
 void Player::SetBox()
 {
@@ -643,8 +652,6 @@ Npc::Npc(const char* player_name, float x, float y, int dir, int role_id, int ac
 	m_NickName = player_name;
 	m_Pos.x	 = x;
 	m_Pos.y = y;
-	m_CombatPos.x = x;
-	m_CombatPos.y = y;
 	m_DirCount = 4;
 	m_Dir = GMath::Dir8toDir4(dir);
 	m_ActionID = action_id;
@@ -729,8 +736,6 @@ Pet::Pet(const char* player_name, float x, float y, int dir, int role_id, int ac
 	m_NickName = player_name;
 	m_Pos.x = x;
 	m_Pos.y = y;
-	m_CombatPos.x = x;
-	m_CombatPos.y = y;
 	m_DirCount = 4;
 	m_Dir = GMath::Dir8toDir4(dir);
 	m_ActionID = action_id;

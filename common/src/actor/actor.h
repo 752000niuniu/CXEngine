@@ -14,15 +14,28 @@ enum EActorType
 	ACTOR_TYPE_NPC
 };
 
+class ActorCombatProps
+{
+public:
+	using CombatPos = Pos;
+
+	CombatPos  Pos;
+	int GroupType; //self/enemy
+	CombatPos PosBackup;
+	CombatPos TargetPos;
+	bool HasReady;
+};
+
 class Actor : public BaseGameEntity
 {
 public:
 	Actor(uint64_t id);
 
 	virtual ~Actor();
-	virtual void OnUpdate(float dt) {};
+	virtual void OnUpdate() {};
 	virtual void OnDraw(GameMap* gameMapPtr) {};
 	virtual void OnDraw(int x, int y) {};
+	virtual void OnDraw() {};
 	virtual bool HandleMessage(const Telegram& msg) { return false; };
 
 	void SetDir(int dir) { m_Dir = dir; };
@@ -40,31 +53,28 @@ public:
 	void SetWeaponID(int weapon) { m_WeaponID = weapon; }
 	int GetWeaponID() { return m_WeaponID; }
 
-	void SetPos(float x, float y) { m_Pos.x = x; m_Pos.y = y; };
-	void SetPos(Pos p) { m_Pos = p; };
-	Pos GetPos() { return m_Pos; };
+	void SetPos(float x, float y);
+	void SetPos(Pos p);
+	Pos GetPos() { return IsCombat() ? m_CombatProps.Pos : m_Pos; };
 
 	Pos GetMoveToPos() { return m_MoveToPos; };
 
-	void SetCombatPos(float x, float y) { m_CombatPos.x = x; m_CombatPos.y = y; };
-	void SetCombatPos(Pos pos) { m_CombatPos = pos; };
-	Pos GetCombatPos() { return m_CombatPos; };
+	void SetCombatBackupPos(Pos pos) { m_CombatProps.PosBackup = pos; };
+	Pos GetCombatBackupPos() { return m_CombatProps.PosBackup; };
 
-	void SetCombatBackupPos(Pos pos) { m_CombatPosBackup = pos; };
-	Pos GetCombatBackupPos() { return m_CombatPosBackup; };
-
-	void SetCombatTargetPos(Pos pos) { m_CombatTargetPos = pos; };
-	Pos GetCombatTargetPos() { return m_CombatTargetPos; };
+	void SetCombatTargetPos(Pos pos) { m_CombatProps.TargetPos = pos; };
+	Pos GetCombatTargetPos() { return m_CombatProps.TargetPos; };
 
 	void SetBoxX(int x) { m_Box.x = x; };
 	void SetBoxY(int y) { m_Box.y = y; }
-	int GetBoxX() { return static_cast<int>(m_Pos.x / 20); }
-	int GetBoxY() { return static_cast<int>(m_Pos.y / 20); }
+	int GetBoxX() { return static_cast<int>(GetPos().x / 20); }
+	int GetBoxY() { return static_cast<int>(GetPos().y / 20); }
 
-	int GetX() { return static_cast<int>(m_Pos.x); }
-	int GetY() { return  static_cast<int>(m_Pos.y); }
-	void SetX(float x) { m_Pos.x = x; }
-	void SetY(float y) { m_Pos.y = y; }
+	int GetX() { return static_cast<int>(GetPos().x); }
+	int GetY() { return static_cast<int>(GetPos().y); }
+	
+	void SetX(float x) { (IsCombat() ? m_CombatProps.Pos : m_Pos).x = x; }
+	void SetY(float y) { (IsCombat() ? m_CombatProps.Pos : m_Pos).y = y; }
 
 	void TranslateX(float x) { m_Pos.x += x; }
 	void TranslateY(float y) { m_Pos.y += y; }
@@ -110,6 +120,8 @@ public:
 	float GetMoveDestDistSquare(Pos dest);
 	float GetMoveDestAngle(Pos dest);
 
+	void SetTurnReady(bool ready) { m_CombatProps.HasReady = ready; };
+	bool IsTurnReady() { return m_CombatProps.HasReady; };
 	BaseScene* GetScene();
 protected:
 	float m_X;
@@ -138,9 +150,8 @@ protected:
 	float m_MoveVelocity;
 
 	bool m_bInCombat;
-	Pos m_CombatPos;
-	Pos m_CombatPosBackup;
-	Pos m_CombatTargetPos;
+	
+	
 	int m_TargetID;
 
 	bool m_bSkillFrameShow;
@@ -151,6 +162,7 @@ protected:
 	int m_SayDuration;
 	bool m_IsLocalPlayer;
 
+	ActorCombatProps m_CombatProps;
 };
 
 void lua_push_actor(lua_State*L, Actor* actor);

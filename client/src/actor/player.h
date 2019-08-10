@@ -28,9 +28,10 @@ public:
 	int GetDirByDegree(float degree);
 	void ReverseDir();
 
-	virtual void OnUpdate(float dt);
+	virtual void OnUpdate();
 	virtual void OnDraw(GameMap* gameMapPtr);
 	virtual void OnDraw(int px, int py);
+	virtual void OnDraw();
 
 	float GetCombatDistSquare();
 	float GetCombatAngle();

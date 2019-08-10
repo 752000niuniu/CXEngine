@@ -36,9 +36,31 @@ Actor::~Actor()
 
 }
 
+void Actor::SetPos(float x, float y)
+{
+	if (IsCombat()) {
+		m_CombatProps.Pos.x = x;
+		m_CombatProps.Pos.y = y;
+	}
+	else {
+		m_Pos.x = x; m_Pos.y = y;
+	}
+}
+
+void Actor::SetPos(Pos p)
+{
+	if (IsCombat()) {
+		m_CombatProps.Pos = p;
+	}
+	else {
+		m_Pos = p;
+	}
+}
+
 float Actor::GetCombatDistSquare()
 {
-	return ::GMath::Astar_GetDistanceSquare(m_CombatPos.x, m_CombatPos.y, m_CombatTargetPos.x, m_CombatTargetPos.y);
+
+	return ::GMath::Astar_GetDistanceSquare(m_CombatProps.Pos.x, m_CombatProps.Pos.y, m_CombatProps.TargetPos.x, m_CombatProps.TargetPos.y);
 }
 
 float Actor::GetMoveDestDistSquare(Pos dest)
@@ -47,8 +69,9 @@ float Actor::GetMoveDestDistSquare(Pos dest)
 }
 float Actor::GetCombatAngle()
 {
-	return ::GMath::Astar_GetAngle(m_CombatPos.x, m_CombatPos.y, m_CombatTargetPos.x, m_CombatTargetPos.y);
+	return ::GMath::Astar_GetAngle(m_CombatProps.Pos.x, m_CombatProps.Pos.y, m_CombatProps.TargetPos.x, m_CombatProps.TargetPos.y);
 }
+
 float Actor::GetMoveDestAngle(Pos dest)
 {
 	return ::GMath::Astar_GetAngle(m_Pos.x, m_Pos.y, dest.x, dest.y);
@@ -101,7 +124,7 @@ int actor_destroy(lua_State * L)
 }
 int actor_update(lua_State * L) {
 	Actor* actor = lua_check_actor(L, 1);
-	actor->OnUpdate(WINDOW_INSTANCE->GetDeltaTime());
+	actor->OnUpdate( );
 	return 0;
 }
 
@@ -148,15 +171,17 @@ int actor_is_local(lua_State* L) {
 	return 1;
 }
 
-int actor_get_x(lua_State* L) {
+int actor_set_is_combat(lua_State* L)
+{
 	Actor* actor = lua_check_actor(L, 1);
-	lua_pushnumber(L, actor->GetX());
-	return 1;
+	bool  is_combat = (bool)lua_toboolean(L, 2);
+	actor->SetIsCombat(is_combat);
+	return 0;
 }
 
-int actor_get_y(lua_State* L) {
+int actor_is_combat(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
-	lua_pushnumber(L, actor->GetY());
+	lua_pushboolean(L, actor->IsCombat());
 	return 1;
 }
 
@@ -252,12 +277,26 @@ int actor_set_x(lua_State* L) {
 	actor->SetX(x);
 	return 0;
 }
+int actor_get_x(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	lua_pushnumber(L, actor->GetX());
+	return 1;
+}
+
 int actor_set_y(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	float y = (float)lua_tonumber(L, 2);
 	actor->SetY(y);
 	return 0;
 }
+
+int actor_get_y(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	lua_pushnumber(L, actor->GetY());
+	return 1;
+}
+
+
 int actor_set_scene_id(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	int sceneID = (int)lua_tointeger(L, 2);
@@ -318,6 +357,8 @@ luaL_Reg mt_actor[] = {
 {"GetX", actor_get_x},
 {"SetY", actor_set_y},
 {"GetY", actor_get_y},
+{ "SetIsCombat", actor_set_is_combat},
+{ "IsCombat", actor_is_combat },
 {"GetID", actor_get_id},
 {"SetSceneID", actor_set_scene_id},
 {"GetSceneID", actor_get_scene_id},

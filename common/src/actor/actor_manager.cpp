@@ -47,10 +47,9 @@ Player* actor_manager_find_player_by_name(const char* name){
 
 void actor_manager_update()
 {
-	float dt = WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
 	for (auto& it : g_Players)
 	{
-		it.second->OnUpdate(dt);
+		it.second->OnUpdate();
 	}
 }
 

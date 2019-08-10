@@ -20,8 +20,6 @@ public:
 
     virtual bool HandleMessage(const Telegram& msg){return false;};// = 0;
 
-    virtual void Update(){};// = 0;
-
 	static uint64_t NextEntityID()
 	{
 		static uint64_t id = 0x10ABCDEF;
