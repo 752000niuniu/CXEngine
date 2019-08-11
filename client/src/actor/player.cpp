@@ -480,7 +480,7 @@ bool Player::HandleMessage(const Telegram& msg)
 	return GetFSM()->HandleMessage(msg);
 };
 
-void Player::SetActionID(int state)
+void Player::SetAction(int state)
 { 
 	m_ActionID = state; 
 	if (m_bInCombat)

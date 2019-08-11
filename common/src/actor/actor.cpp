@@ -346,6 +346,15 @@ int actor_get_weapon_id(lua_State* L) {
 	return 1;
 }
 
+int actor_clear_frames(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	if(actor->GetType()==ACTOR_TYPE_PLAYER){
+		dynamic_cast<Player*>(actor)->ClearFrames();
+	}
+	return 0;
+}
+
+
 luaL_Reg mt_actor[] = {
 	{ "SetProperty",actor_method_set_property },
 { "GetProperty",actor_method_get_property },
@@ -381,6 +390,7 @@ luaL_Reg mt_actor[] = {
 { "ChangeRole", actor_change_role },
 {"MoveTo", actor_move_to},
 {"Say", actor_say},
+{"ClearFrames", actor_clear_frames},
 { NULL, NULL }
 };
 
@@ -440,16 +450,14 @@ void luaopen_actor(lua_State* L)
 		action_enums.insert({ action_get_name(i), i });
 	}
 
-	lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
-#define REG_ENUM(e) lua_pushinteger(L, e);	lua_setfield(L, -2, #e);
+#define REG_ENUM(name) (lua_pushinteger(L, name), lua_setglobal(L, #name))
 	REG_ENUM(ACTOR_TYPE_DEFAULT);
 	REG_ENUM(ACTOR_TYPE_PLAYER);
 	REG_ENUM(ACTOR_TYPE_PET);
 	REG_ENUM(ACTOR_TYPE_NPC);
 #undef REG_ENUM
 
-
-#define REG_ENUM(nmspc,name) lua_pushinteger(L, nmspc::name);	lua_setfield(L, -2, #nmspc#name);
+#define REG_ENUM(nmspc,name) (lua_pushinteger(L, nmspc::name), lua_setglobal(L, #nmspc#name)) 
 	REG_ENUM(Action, Idle);
 	REG_ENUM(Action, Walk);
 	REG_ENUM(Action, Sit);
@@ -469,7 +477,6 @@ void luaopen_actor(lua_State* L)
 #undef REG_ENUM
 
 
-	lua_pop(L, 1);
 
 
 }

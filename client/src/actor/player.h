@@ -72,7 +72,7 @@ public:
 
 	void SetBox();
 	void SetDir(int dir);
-	void SetActionID(int state);
+	void SetAction(int state);
 #ifndef SIMPLE_SERVER
 	FrameAnimation* GetPlayerFrame(int actionID);
 	FrameAnimation* GetCurrentPlayerFrame();

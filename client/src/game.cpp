@@ -81,12 +81,12 @@ uint32_t Game::GetActionWasID(int type, int roleID, int actionID)
 		break;
 	}
 	std::string wasIDstr("");
-	if (actionID == Action::Idle || actionID == Action::Batidle)
+	if (actionID == Action::Batidle)
 	{
 		auto wasIdle = rowTable->Rows[roleID][action_get_name(Action::Idle)];
 		auto wasBatidle = rowTable->Rows[roleID][action_get_name(Action::Batidle)];
-		if (wasIdle != "")wasIDstr = wasIdle;
-		else wasIDstr = wasBatidle;
+		if (wasBatidle != "")wasIDstr = wasBatidle;
+		else wasBatidle = wasIdle;
 	}
 	else
 	{

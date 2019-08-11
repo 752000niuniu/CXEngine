@@ -124,8 +124,6 @@ public:
 	bool IsTurnReady() { return m_CombatProps.HasReady; };
 	BaseScene* GetScene();
 protected:
-	float m_X;
-	float m_Y;
 	int m_RoleID;				//current role
 	int m_ActorID;
 	bool m_IsAutoRun;

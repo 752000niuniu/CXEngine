@@ -40,9 +40,15 @@ extern "C" int luaopen_cjson(lua_State *L);
 using GameConfig = std::map<std::string, std::string>;
 GameConfig g_GameConfig;
 
-void check_lua_error(lua_State* L, int res)
+bool check_lua_error(lua_State* L, int res, const char* func)
 {
-	if (res != LUA_OK) { printf("%s\n", lua_tostring(L, -1)); }
+	if (res != LUA_OK) {
+		luaL_traceback(L, L, lua_tostring(L, -1), 0);
+		const char* errmsg = lua_tostring(L, -1);
+		cxlog_info("%s\npcall error:\t[func]%s\n", errmsg, func);
+		return false; 
+	}
+	return true;
 }
 
 void script_system_read_config(int argc, char const *argv[])
@@ -102,12 +108,9 @@ void script_system_prepare_init()
 
 void script_system_dofile(const char* file)
 {
-	if (luaL_dofile(L, FileSystem::GetLuaPath(file).c_str()) != LUA_OK)
-	{
-		const char* msg = lua_tostring(L, -1);
-		cxlog_err(msg);
+	int res = luaL_dofile(L, FileSystem::GetLuaPath(file).c_str());
+	if (!check_lua_error(L, res , FileSystem::GetLuaPath(file).c_str())) {
 		DebugBreak();
-		return;
 	}
 }
 

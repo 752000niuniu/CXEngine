@@ -248,6 +248,7 @@ void SceneManager::Draw()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glViewport(0, 0, gameWidth, gameHeight);
 		m_pCurrentScene->Draw();
+		script_system_call_function(script_system_get_luastate(), "on_scene_manager_draw", m_pCurrentScene->GetName());
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		ImVec2 cursorPos = ImGui::GetCursorPos();
