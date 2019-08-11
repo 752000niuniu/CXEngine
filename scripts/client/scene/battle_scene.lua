@@ -31,6 +31,8 @@ function calc_combat_enemy_pos(ratio_x, ratio_y)
 	}
 end
 
+local enemy_actor 
+local self_actor
 function OnSceneInit()
 	local ratio_x = game_get_width()/ 640 
 	local ratio_y = game_get_height()/ 480
@@ -57,18 +59,33 @@ function OnSceneInit()
 		player:SetSceneID(1135)
 		player:SetRoleID(16)
 		player:SetWeaponID(56)
-		player:SetDir(0)
+		player:SetDir(2)
 		actor_manager_set_local_player(player:GetID())
 	end
-	if player then
-		cxlog_info('player name', player:GetName())
-		player:SetPos( combat_self_pos[1].x , combat_self_pos[1].y)
-		combat_system_add_actor(player)
-	end
-	combat_system_start_battle()
-	player:ClearFrames()
 
-	player:SetActionID(ActionBatidle)
+
+	self_actor = player
+	self_actor:SetPos( combat_self_pos[1].x , combat_self_pos[1].y)
+
+
+	enemy_actor = actor_manager_create_player(math.tointeger( os.time()) + 10 )
+	enemy_actor:SetName('oceacx en')
+	enemy_actor:SetSceneID(1135)
+	enemy_actor:SetRoleID(16)
+	enemy_actor:SetWeaponID(56)
+	enemy_actor:SetDir(0)
+	enemy_actor:SetPos(combat_enemy_pos[1].x , combat_enemy_pos[1].y)
+
+
+	combat_system_add_actor(self_actor)
+	combat_system_add_actor(enemy_actor)
+
+	self_actor:SetActionID(ActionBatidle)
+	enemy_actor:SetActionID(ActionBatidle)
+
+	combat_system_start_battle()
+	
+	
 end
 
 function OnSceneUpdate()

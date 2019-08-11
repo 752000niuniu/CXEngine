@@ -367,16 +367,9 @@ void BattleScene::Update()
 
 void BattleScene::Draw()
 {
-	/*SPRITE_RENDERER_INSTANCE->DrawFrameSprite(m_CombatBG,
+	SPRITE_RENDERER_INSTANCE->DrawFrameSprite(m_CombatBG,
 		glm::vec2(0, 0),
-		glm::vec2(WINDOW_INSTANCE->GetWidth(), WINDOW_INSTANCE->GetHeight()));*/
-
-	
-	//for (auto* player : m_Players)
-	//{
-	//	auto pos = player->GetCombatPos();
-	//	player->OnDraw((int)pos.x, (int)pos.y);
-	//}
+		glm::vec2(WINDOW_INSTANCE->GetWidth(), WINDOW_INSTANCE->GetHeight()));
 }
 
 void clear_chat_text_cache()
