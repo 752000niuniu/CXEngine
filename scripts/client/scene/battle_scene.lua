@@ -61,13 +61,13 @@ function OnSceneInit()
 		player:SetWeaponID(56)
 		player:SetDir(2)
 		actor_manager_set_local_player(player:GetID())
+	else 
+		player:SetDir(2)
 	end
-
 
 	self_actor = player
 	self_actor:SetPos( combat_self_pos[1].x , combat_self_pos[1].y)
-
-
+	
 	enemy_actor = actor_manager_create_player(math.tointeger( os.time()) + 10 )
 	enemy_actor:SetName('oceacx en')
 	enemy_actor:SetSceneID(1135)
@@ -76,7 +76,6 @@ function OnSceneInit()
 	enemy_actor:SetDir(0)
 	enemy_actor:SetPos(combat_enemy_pos[1].x , combat_enemy_pos[1].y)
 
-
 	combat_system_add_actor(self_actor)
 	combat_system_add_actor(enemy_actor)
 
@@ -84,8 +83,6 @@ function OnSceneInit()
 	enemy_actor:SetActionID(ActionBatidle)
 
 	combat_system_start_battle()
-	
-	
 end
 
 function OnSceneUpdate()

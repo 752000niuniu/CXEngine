@@ -26,12 +26,7 @@ CombatSystem::CombatSystem()
 	m_BattleState(BATTLE_DEFAULT),
 	m_CombatBGPath("")
 {
-	
-	
 	//SKILL_MANAGER_INSTANCE;
-
-
-
 	/* RENDERER_2D_INSTANCE->AddObject(new Image(
 	 	s_CombatBG->GetFramePath(0), Vec2(0, 0), Vec2(WINDOW_INSTANCE->GetWidth(), WINDOW_INSTANCE->GetHeight()))
 	 );*/
