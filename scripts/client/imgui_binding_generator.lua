@@ -749,6 +749,7 @@ luaL_Reg cximgui_strbuf_methods[] = {
     { "str", cximgui_strbuf_str },
     { "size", cximgui_strbuf_size },
     { "reset", cximgui_strbuf_reset },
+    { NULL,NULL }
 };
 
 int cximgui_strbuf_destroy(lua_State* L) {
@@ -846,6 +847,7 @@ luaL_Reg cximgui_extra_methods[] = {
 { "DockSpace", cximgui_DockSpace_3_iv2i },
 { "GetMainViewport", cximgui_GetMainViewport },
 { "ListBox", cximgui_ListBox_5_spipsii },
+{ NULL,NULL }
 };
 
 void luaopen_cximgui(lua_State* L) {

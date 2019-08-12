@@ -257,7 +257,7 @@ void SceneManager::Draw()
 		ImGui::GetWindowDrawList()->AddCallback(function_to_restore_shader_or_blend_state , nullptr);
 		ImGui::SetCursorPos(cursorPos);
 
-		script_system_call_function(script_system_get_luastate(), "on_game_imgui_update");
+		script_system_call_function(script_system_get_luastate(), "on_game_imgui_update", m_pCurrentScene->GetName());
 		
 		ImGui::EndChild();
 		ImGui::End();
@@ -354,9 +354,6 @@ void scene_manager_add_custom_scene(int id, const char* name)
 	}
 	else if (strcmp(name, "TestScene") == 0) {
 		SCENE_MANAGER_INSTANCE->AddScene(new TestScene(id, name));
-	}
-	else if (strcmp(name, "TestNetScene") == 0) {
-		SCENE_MANAGER_INSTANCE->AddScene(new TestNetScene(id, name));
 	}
 	else if (strcmp(name, "AnimationEditor") == 0) {
 		SCENE_MANAGER_INSTANCE->AddScene(new AnimationEditorScene(id, name));

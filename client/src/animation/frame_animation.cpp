@@ -478,19 +478,6 @@ void frame_animation_set_bezier_curve_p1_p2(float total_frame_time ,float p1_x, 
 	init_bezier_float_array();
 }
 
-void luaopen_frame_animation(lua_State* L)
-{
-	if (luaL_newmetatable(L, "mt_frame_animation")) {
-		luaL_setfuncs(L, mt_frame_animation, 0);
-		lua_setfield(L, -1, "__index");
-	}
-	else {
-		std::cout << "associate mt_frame_animation error!" << std::endl;
-	}
-
-	script_system_register_function(L, frame_animation_set_bezier_curve_p1_p2);
-	init_bezier_float_array();
-}
 
 
 String UtilsGetFramePath(Sprite* m_pSprite, int index)
@@ -507,16 +494,8 @@ Texture* UtilsGetFrameTexture(Sprite* m_pSprite, int index)
 	if (!m_pSprite)return nullptr;
 	if (index >= m_pSprite->mFrameSize * m_pSprite->mGroupSize)return nullptr;
 	auto path = UtilsGetFramePath(m_pSprite, index);
-	auto* texture = TextureManager::GetInstance()->GetTexture(path);
-	if (texture)
-	{
-		return texture;
-	}
-	else
-	{
-		auto& frame = m_pSprite->mFrames[index];
-		return TextureManager::GetInstance()->LoadTexture(path, frame.width, frame.height, true, (uint8_t*)frame.src.data());
-	}
+	auto& frame = m_pSprite->mFrames[index];
+	return TextureManager::GetInstance()->LoadTexture(path, frame.width, frame.height, true, (uint8_t*)frame.src.data());
 }
 
 BaseSprite::BaseSprite(uint64_t resoureID)
@@ -526,6 +505,10 @@ BaseSprite::BaseSprite(uint64_t resoureID)
 	 Height = m_pSprite->mHeight;
 	 KeyX = m_pSprite->mKeyX;
 	 KeyY = m_pSprite->mKeyY;
+	 DirCnt = m_pSprite->mGroupSize;
+	 TotalFrames = m_pSprite->mGroupSize*m_pSprite->mFrameSize;
+	 GroupFrameCount = m_pSprite->mFrameSize;
+	 GroupCount = m_pSprite->mGroupSize;
 
 	 CurrentFrame = 0;
 	 for (int i = 0; i < m_pSprite->mFrameSize*m_pSprite->mGroupSize; i++)
@@ -576,4 +559,194 @@ void BaseSprite::Draw()
 			glm::vec2(Pos.x+ kx, Pos.y +ky),
 			glm::vec2(frame.width, frame.height), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	}
+}
+
+
+
+BaseSprite* lua_check_base_sprite(lua_State*L, int index)
+{
+	BaseSprite** ptr = (BaseSprite**)lua_touserdata(L, index);
+	return *ptr;
+}
+
+int base_sprite_update(lua_State* L){
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	base_sprite->Update();
+	return 0;
+}
+
+int base_sprite_draw(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	base_sprite->Draw();
+	return 0;
+}
+
+int base_sprite_set_pos(lua_State* L){
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	auto x = (float)lua_tonumber(L, 2);
+	auto y = (float)lua_tonumber(L, 3);
+	base_sprite->Pos.x = x;
+	base_sprite->Pos.y = y;
+	return 0;
+}
+
+int base_sprite_get_pos(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	lua_pushnumber(L, base_sprite->Pos.x);
+	lua_pushnumber(L, base_sprite->Pos.y);
+	return 2;
+}
+
+int base_sprite_set_dir(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	auto dir = (int)lua_tointeger(L, 2);
+	base_sprite->Dir = dir;
+	return 0;
+}
+
+int base_sprite_get_dir(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, base_sprite->Dir);
+	return 1;
+}
+
+int base_sprite_set_frame_interval(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	auto interval = (float)lua_tonumber(L, 2);
+	base_sprite->FrameInterval = interval;
+	return 0;
+}
+
+int base_sprite_get_frame_interval(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	lua_pushnumber(L, base_sprite->FrameInterval);
+	return 1;
+}
+
+int base_sprite_get_width(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, base_sprite->Width);
+	return 1;
+}
+
+int base_sprite_get_height(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, base_sprite->Height);
+	return 1;
+}
+
+int base_sprite_get_key_x(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, base_sprite->KeyX);
+	return 1;
+}
+int base_sprite_get_key_y(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, base_sprite->KeyY);
+	return 1;
+}
+int base_sprite_get_play_time(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	lua_pushnumber(L, base_sprite->PlayTime);
+	return 1;
+}
+int base_sprite_get_dir_cnt(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, base_sprite->DirCnt);
+	return 1; 
+}
+int base_sprite_get_total_frames(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, base_sprite->TotalFrames);
+	return 1;
+}
+int base_sprite_get_current_frame(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, base_sprite->CurrentFrame);
+	return 1;
+}
+int base_sprite_get_group_frame_count(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, base_sprite->GroupFrameCount);
+	return 1;
+}
+int base_sprite_get_group_count(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, base_sprite->GroupCount);
+	return 1;
+}
+
+int base_sprite_destroy(lua_State* L){
+	BaseSprite** ptr = (BaseSprite**)lua_touserdata(L, 1);
+	delete *ptr;
+	*ptr = nullptr;
+	return 0;
+}
+
+
+luaL_Reg MT_BASE_SPRITE[] = {
+	{ "Update",base_sprite_update },
+{ "Draw",base_sprite_draw },
+{ "SetPos", base_sprite_set_pos },
+{ "GetPos", base_sprite_get_pos },
+{ "SetDir",base_sprite_set_dir },
+{ "GetDir",base_sprite_get_dir },
+{ "SetFrameInterval",base_sprite_set_frame_interval },
+{ "GetFrameInterval",base_sprite_get_frame_interval },
+{ "GetWidth", base_sprite_get_width },
+{ "GetHeight", base_sprite_get_height },
+{ "GetKeyX", base_sprite_get_key_x},
+{ "GetKeyY", base_sprite_get_key_y },
+{ "GetPlayTime", base_sprite_get_play_time},
+{ "GetDirCnt", base_sprite_get_dir_cnt},
+{ "GetTotalFrames", base_sprite_get_total_frames},
+{ "GetCurrentFrame", base_sprite_get_current_frame},
+{ "GetGroupFrameCount", base_sprite_get_group_frame_count},
+{ "GetGroupCount", base_sprite_get_group_count },
+{ "Destroy", base_sprite_destroy },
+{ NULL, NULL }
+};
+void lua_push_base_sprite(lua_State*L, BaseSprite* sprite)
+{
+	BaseSprite** ptr = (BaseSprite**)lua_newuserdata(L, sizeof(BaseSprite*));
+	*ptr = sprite;
+	if (luaL_newmetatable(L, "MT_BASE_SPRITE")) {
+		luaL_setfuncs(L, MT_BASE_SPRITE, 0);
+		lua_pushvalue(L, -1);
+		lua_setfield(L, -2, "__index");
+	}
+	lua_setmetatable(L, -2);
+}
+
+
+int base_sprite_create(lua_State*L)
+{
+	uint32_t pack = (uint32_t)lua_tointeger(L, 1);
+	uint32_t wasid = (uint32_t)lua_tointeger(L, 2);
+	BaseSprite** ptr = (BaseSprite**)lua_newuserdata(L, sizeof(BaseSprite));
+	*ptr = new BaseSprite(pack, wasid);
+	if (luaL_newmetatable(L, "MT_BASE_SPRITE")) {
+		luaL_setfuncs(L, MT_BASE_SPRITE, 0);
+		lua_pushvalue(L, -1);
+		lua_setfield(L, -2, "__index");
+	}
+	lua_setmetatable(L, -2);
+	return 1;
+}
+void luaopen_frame_animation(lua_State* L)
+{
+	if (luaL_newmetatable(L, "mt_frame_animation")) {
+		luaL_setfuncs(L, mt_frame_animation, 0);
+		lua_setfield(L, -1, "__index");
+	}
+	else {
+		std::cout << "associate mt_frame_animation error!" << std::endl;
+	}
+
+	
+	init_bezier_float_array();
+
+	script_system_register_function(L, frame_animation_set_bezier_curve_p1_p2);
+	script_system_register_luac_function(L, base_sprite_create);
+	
 }

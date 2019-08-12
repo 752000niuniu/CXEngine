@@ -161,6 +161,29 @@ int util_screen_pos_to_map_pos(lua_State* L) {
 }
 
 
+int game_get_action_was_id(lua_State* L)
+{
+	auto type = (int)lua_tointeger(L, 1);
+	auto roleID = (int)lua_tointeger(L, 2);
+	auto actionID = (int)lua_tointeger(L, 3);
+	auto wasid = GAME_INSTANCE->GetActionWasID(type, roleID, actionID);
+	lua_pushinteger(L, wasid);
+	return 1;
+}
+
+int game_get_weapon_was_id(lua_State* L)
+{
+	auto weaponID = (int)lua_tointeger(L, 1);
+	auto actionID = (int)lua_tointeger(L, 2);
+	auto wasid = GAME_INSTANCE->GetWeaponWasID(weaponID,  actionID);
+	lua_pushinteger(L, wasid);
+	return 1;
+}
+
+
 void luaopen_game(lua_State* L) {
 	script_system_register_luac_function(L, util_screen_pos_to_map_pos);
+	script_system_register_luac_function(L, game_get_action_was_id);
+	script_system_register_luac_function(L, game_get_weapon_was_id);
+
 }

@@ -34,22 +34,13 @@ end
 local enemy_actor 
 local self_actor
 function OnSceneInit()
+	cxlog_info('battle scene OnSceneInit')
+
 	local ratio_x = game_get_width()/ 640 
 	local ratio_y = game_get_height()/ 480
 	combat_self_pos =  calc_combat_self_pos(ratio_x, ratio_y)
 	combat_enemy_pos =  calc_combat_enemy_pos(ratio_x, ratio_y)
 	
-    -- local s  = "Ocean藏心"
-    -- scene_add_player(s,math.floor(combat_self_pos[1].x) ,math.floor(combat_self_pos[1].y),2,9,5)
-    -- scene_add_pet(s.."1",math.floor(combat_enemy_pos[1].x) ,math.floor(combat_enemy_pos[1].y),0,5,1)
-    -- scene_add_npc(s..tostring(1), 530,1110,1,1,1,"asd")
-    -- scene_add_pet(s..tostring(2), 560,970,1,5,1)
-    -- scene_add_player(s..tostring(1), 530,1110,1,56)
-    -- scene_add_player(s..tostring(2), 530,1110,2,42)
-    -- scene_add_player(s..tostring(3), 530,1110,3,50)
-    -- scene_add_player(s..tostring(4), 530,1110,4,2)
-	-- scene_set_player(s)
-	cxlog_info('battle scene OnSceneInit')
 	combat_system_start_battle()
 
 	local player = actor_manager_fetch_local_player()
@@ -79,8 +70,8 @@ function OnSceneInit()
 	combat_system_add_actor(self_actor)
 	combat_system_add_actor(enemy_actor)
 
-	self_actor:SetActionID(ActionBatidle)
-	enemy_actor:SetActionID(ActionBatidle)
+	self_actor:SetActionID(ACTION_BATIDLE)
+	enemy_actor:SetActionID(ACTION_BATIDLE)
 
 	combat_system_start_battle()
 end

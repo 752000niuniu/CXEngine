@@ -101,6 +101,55 @@ void ResourceManager::OnUpdate()
 }
 
 
+static std::map<uint32_t, std::string> s_PackPathMap =
+{
+	{ AddonWDF,    "addon.wdf" },
+{ AtomWDF,     "atom.wdf" },
+{ ChatWDF,     "chat.wdf" },
+{ FireworkWDF, "firework.wdf" },
+{ GoodsWDF,    "goods.wdf" },
+{ ItemWDF,     "item.wdf" },
+{ MagicWDF,    "magic.wdf" },
+{ MapaniWDF,   "mapani.wdf" },
+{ MhimageWDF,  "mhimage.wdf" },
+{ MiscWDF,     "misc.wdf" },
+{ MusicWDF,    "music.wdf" },
+{ SceneWDF,    "scene.wdf" },
+{ ShapeWDF,    "shape.wdf" },
+{ ShapeWD1,    "shape.wd1" },
+{ ShapeWD2,    "shape.wd2" },
+{ ShapeWD3,    "shape.wd3" },
+{ ShapeWD4,    "shape.wd4" },
+{ ShapeWD5,    "shape.wd5" },
+{ ShapeWD6,    "shape.wd6" },
+{ ShapeWD7,    "shape.wd7" },
+{ SmapWDF,     "smap.wdf" },
+{ SoundWDF,    "sound.wdf" },
+{ StockWDF,    "stock.wdf" },
+{ WaddonWDF,   "waddon.wdf" },
+{ WzifeWDF,    "wzife.wdf" },
+{ WzifeWD1,    "wzife.wd1" },
+};
+
+namespace utils
+{
+	std::string GetPathByPackID(uint32 packID)
+	{
+		auto it = s_PackPathMap.find(packID);
+		if (it != s_PackPathMap.end())
+		{
+			return FileSystem::GetWDFPath(it->second);
+		}
+		else
+		{
+			printf("GetPathByPackID error!\n");
+			return "";
+		}
+	}
+}
+
+
+
 void resource_manager_init()
 {
 	RESOURCE_MANAGER_INSTANCE;
@@ -119,55 +168,38 @@ void resource_manager_deinit()
 
 void luaopen_resource_manager(lua_State* L)
 {
+#define REG_ENUM(name, macro)  (lua_pushinteger(L, macro),lua_setglobal(L, name))
+	REG_ENUM("AddonWDF", AddonWDF);
+	REG_ENUM("AtomWDF", AtomWDF);
+	REG_ENUM("ChatWDF", ChatWDF);
+	REG_ENUM("FireworkWDF", FireworkWDF);
+	REG_ENUM("GoodsWDF", GoodsWDF);
+	REG_ENUM("ItemWDF", ItemWDF);
+	REG_ENUM("MagicWDF", MagicWDF);
+	REG_ENUM("MapaniWDF", MapaniWDF);
+	REG_ENUM("MhimageWDF", MhimageWDF);
+	REG_ENUM("MiscWDF", MiscWDF);
+	REG_ENUM("MusicWDF", MusicWDF);
+	REG_ENUM("SceneWDF", SceneWDF);
+	REG_ENUM("ShapeWDF", ShapeWDF);
+	REG_ENUM("ShapeWD1", ShapeWD1);
+	REG_ENUM("ShapeWD2", ShapeWD2);
+	REG_ENUM("ShapeWD3", ShapeWD3);
+	REG_ENUM("ShapeWD4", ShapeWD4);
+	REG_ENUM("ShapeWD5", ShapeWD5);
+	REG_ENUM("ShapeWD6", ShapeWD6);
+	REG_ENUM("ShapeWD7", ShapeWD7);
+	REG_ENUM("SmapWDF", SmapWDF);
+	REG_ENUM("SoundWDF", SoundWDF);
+	REG_ENUM("StockWDF", StockWDF);
+	REG_ENUM("WaddonWDF", WaddonWDF);
+	REG_ENUM("WzifeWDF", WzifeWDF);
+	REG_ENUM("WzifeWD1", WzifeWD1);
+#undef REG_ENUM
+
+
 	script_system_register_function(L, resource_manager_init);
 	script_system_register_function(L, resource_manager_update);
 	script_system_register_function(L, resource_manager_deinit);
 	
-}
-
-static std::map<uint32_t,std::string> s_PackPathMap =
-{
-	{ AddonWDF,    "addon.wdf" },
-	{ AtomWDF,     "atom.wdf" },
-	{ ChatWDF,     "chat.wdf" },
-	{ FireworkWDF, "firework.wdf" },
-	{ GoodsWDF,    "goods.wdf" },
-	{ ItemWDF,     "item.wdf" },
-	{ MagicWDF,    "magic.wdf" },
-	{ MapaniWDF,   "mapani.wdf" },
-	{ MhimageWDF,  "mhimage.wdf" },
-	{ MiscWDF,     "misc.wdf" },
-	{ MusicWDF,    "music.wdf" },
-	{ SceneWDF,    "scene.wdf" },
-	{ ShapeWDF,    "shape.wdf" },
-	{ ShapeWD1,    "shape.wd1" },
-	{ ShapeWD2,    "shape.wd2" },
-	{ ShapeWD3,    "shape.wd3" },
-	{ ShapeWD4,    "shape.wd4" },
-	{ ShapeWD5,    "shape.wd5" },
-	{ ShapeWD6,    "shape.wd6" },
-	{ ShapeWD7,    "shape.wd7" },
-	{ SmapWDF,     "smap.wdf" },
-	{ SoundWDF,    "sound.wdf" },
-	{ StockWDF,    "stock.wdf" },
-	{ WaddonWDF,   "waddon.wdf" },
-	{ WzifeWDF,    "wzife.wdf" },
-	{ WzifeWD1,    "wzife.wd1" },
-};
-
-namespace utils
-{
-	std::string GetPathByPackID(uint32 packID)
-	{
-		auto it = s_PackPathMap.find(packID);
-		if (it != s_PackPathMap.end())
-		{
-			return FileSystem::GetWDFPath(it->second);
-		}
-		else
-		{
-			printf("GetPathByPackID error!\n");
-			return "";
-		}
-	}
 }

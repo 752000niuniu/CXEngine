@@ -14,18 +14,18 @@ local scene_lua_files =
     {name='BattleScene' ,            file= 'scene/battle_scene.lua'},
     {name='门派_方寸山全景' ,       file= 'scene/fangcunshan_scene.lua'},
     {name='Splash' ,            file= 'scene/splash_scene.lua'},
-    {name='TestScene' ,          file= 'scene/test_net_scene.lua'}
+    {name='TestScene' ,          file= 'scene/test_scene.lua'}
 }
 
 local scene_list = {}
-local current_scene_name = '门派_方寸山全景'
+local current_scene_name = 'AnimationEditor'
 function on_scene_manager_init()
     local parsed_tsv = utils_parse_tsv_file_as_table(fs_get_tsv_path('map'),false)
     for i,row in ipairs(parsed_tsv) do
         scene_manager_add_scene(tonumber(row.ID), row.name)
     end
 
-    scene_manager_add_scene(-1, current_scene_name)
+    scene_manager_add_scene(-1, '门派_方寸山全景')
     scene_manager_add_custom_scene(-2, "BattleScene");
 	scene_manager_add_custom_scene(-100, "Splash");
 	scene_manager_add_custom_scene(-101, "WASViewer");
@@ -88,8 +88,13 @@ function fix_input_manager_mouse_pos()
     input_manager_set_window_pos(wx-x,wy-y)
 end
 
-function on_game_imgui_update()
+function on_game_imgui_update(name)
     fix_input_manager_mouse_pos()
+
+    if scene_list[name].OnSceneImGuiUpdate then
+        scene_list[name].OnSceneImGuiUpdate()
+    end
+
     local player = actor_manager_fetch_local_player()
     if player then
         if imgui.IsKeyReleased(string.byte('W') ) then

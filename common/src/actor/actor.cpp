@@ -347,10 +347,12 @@ int actor_get_weapon_id(lua_State* L) {
 }
 
 int actor_clear_frames(lua_State* L) {
+#ifndef SIMPLE_SERVER
 	Actor* actor = lua_check_actor(L, 1);
-	if(actor->GetType()==ACTOR_TYPE_PLAYER){
+	if (actor->GetType() == ACTOR_TYPE_PLAYER) {
 		dynamic_cast<Player*>(actor)->ClearFrames();
 	}
+#endif
 	return 0;
 }
 
@@ -457,26 +459,22 @@ void luaopen_actor(lua_State* L)
 	REG_ENUM(ACTOR_TYPE_NPC);
 #undef REG_ENUM
 
-#define REG_ENUM(nmspc,name) (lua_pushinteger(L, nmspc::name), lua_setglobal(L, #nmspc#name)) 
-	REG_ENUM(Action, Idle);
-	REG_ENUM(Action, Walk);
-	REG_ENUM(Action, Sit);
-	REG_ENUM(Action, Angry);
-	REG_ENUM(Action, Sayhi);
-	REG_ENUM(Action, Dance);
-	REG_ENUM(Action, Salute);
-	REG_ENUM(Action, Clps);
-	REG_ENUM(Action, Cry);
-	REG_ENUM(Action, Batidle);
-	REG_ENUM(Action, Attack);
-	REG_ENUM(Action, Cast);
-	REG_ENUM(Action, Behit);
-	REG_ENUM(Action, Runto);
-	REG_ENUM(Action, Runback);
-	REG_ENUM(Action, Defend);
+#define REG_ENUM(name,val) (lua_pushinteger(L, val), lua_setglobal(L, name)) 
+	REG_ENUM("ACTION_IDLE", Action::Idle);
+	REG_ENUM("ACTION_WALK", Action::Walk);
+	REG_ENUM("ACTION_SIT", Action::Sit);
+	REG_ENUM("ACTION_ANGRY", Action::Angry);
+	REG_ENUM("ACTION_SAYHI", Action::Sayhi);
+	REG_ENUM("ACTION_DANCE", Action::Dance);
+	REG_ENUM("ACTION_SALUTE", Action::Salute);
+	REG_ENUM("ACTION_CLPS", Action::Clps);
+	REG_ENUM("ACTION_CRY", Action::Cry);
+	REG_ENUM("ACTION_BATIDLE", Action::Batidle);
+	REG_ENUM("ACTION_ATTACK", Action::Attack);
+	REG_ENUM("ACTION_CAST", Action::Cast);
+	REG_ENUM("ACTION_BEHIT", Action::Behit);
+	REG_ENUM("ACTION_RUNTO", Action::Runto);
+	REG_ENUM("ACTION_RUNBACK", Action::Runback);
+	REG_ENUM("ACTION_DEFEND", Action::Defend);
 #undef REG_ENUM
-
-
-
-
 }

@@ -391,37 +391,6 @@ struct TurtorialLight
 	}
 };
 
-
-TestNetScene::TestNetScene(int id, String name)
-	:BaseScene(id, name)
-{
-
-}
-
-TestNetScene::~TestNetScene()
-{
-
-}
-
-
-
-
-void TestNetScene::Reset()
-{
-
-}
-
-void TestNetScene::Update()
-{
-	float dt = WINDOW_INSTANCE->GetDeltaTime();
-	script_system_call_function(script_system_get_luastate(),"on_test_scene_update", dt);
-}
-
-void TestNetScene::Draw()
-{
-
-}
-
 int demo_count = 1* 5;
 float demo_speed = 20.f;
 float coffient = 20 * 0.064f;
@@ -432,7 +401,7 @@ std::vector<BaseSprite*> spriteExamples;
 AnimationEditorScene::AnimationEditorScene(int id, String name)
 	:BaseScene(id, name)
 {
-	for (int i = 0; i < demo_count; i++)
+	/*for (int i = 0; i < demo_count; i++)
 	{
 		int row = i / 5;
 		int col = i % 5;
@@ -445,7 +414,7 @@ AnimationEditorScene::AnimationEditorScene(int id, String name)
 		sprite->FrameInterval = 0.016f*(col+2);
 		spriteExamples.push_back(sprite);
 	}
-	demo_distance = 0.f;
+	demo_distance = 0.f;*/
 }
 
 AnimationEditorScene::~AnimationEditorScene() {
@@ -453,8 +422,7 @@ AnimationEditorScene::~AnimationEditorScene() {
 }
 
 void AnimationEditorScene::Update() {
-	float dt = WINDOW_INSTANCE->GetDeltaTime();
-	script_system_call_function(script_system_get_luastate(), "on_animation_editor_scene_update", dt);
+	/*float dt = WINDOW_INSTANCE->GetDeltaTime();
 
 	for (int i = 0; i < demo_count; i++)
 	{
@@ -480,15 +448,14 @@ void AnimationEditorScene::Update() {
 			spriteExamples[i]->Pos.y = (float)(row * sprite->Height + 20 * row);
 		}
 
-	}
+	}*/
 };
 
 void AnimationEditorScene::Draw() {
-	for (int i = 0; i < demo_count; i++)
-	{
-
-		spriteExamples[i]->Draw();
-	}
+	//for (int i = 0; i < demo_count; i++)
+	//{
+	//	spriteExamples[i]->Draw();
+	//}
 };
 void AnimationEditorScene::Reset() {}
 
