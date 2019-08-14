@@ -1,4 +1,11 @@
 #include "combat.h"
+#include "message.h"
+#include "skill.h"
+#ifndef SIMPLE_SERVER
+#include "input_manager.h"
+#include "animation/frame_animation.h"
+#include "actor/player_state.h"
+#endif
 
 TurnCommand::TurnCommand()
 {
@@ -11,15 +18,6 @@ TurnCommand::~TurnCommand()
 
 }
 
-#ifndef SIMPLE_SERVER
-#include "message.h"
-#include "animation/frame_animation.h"
-#include "skill.h"
-#include "actor/player_state.h"
-#include "graphics/renderer.h"
-#include "input_manager.h"
-
-static	FrameAnimation* s_CombatBG;
 CombatSystem::CombatSystem()
 	:m_Actors(0),
 	m_TurnCounter(0),
@@ -27,9 +25,6 @@ CombatSystem::CombatSystem()
 	m_CombatBGPath("")
 {
 	//SKILL_MANAGER_INSTANCE;
-	/* RENDERER_2D_INSTANCE->AddObject(new Image(
-	 	s_CombatBG->GetFramePath(0), Vec2(0, 0), Vec2(WINDOW_INSTANCE->GetWidth(), WINDOW_INSTANCE->GetHeight()))
-	 );*/
 }
 
 CombatSystem::~CombatSystem()
@@ -37,13 +32,10 @@ CombatSystem::~CombatSystem()
 
 }
 
-void CombatSystem::AddActor(Actor* actor)
-{
-	m_Actors.push_back(actor);
-}
 
 void CombatSystem::Update()
 {
+#ifndef SIMPLE_SERVER
 	if (m_BattleState == BATTLE_DEFAULT) {
 
 	}
@@ -112,43 +104,26 @@ void CombatSystem::Update()
 	//	self->GetFSM()->ChangeState(PlayerCombatCastAttackState::GetInstance());
 	//}
 	//);
-
+#endif
 }
 
 void CombatSystem::Draw()
 {
+#ifndef SIMPLE_SERVER
 	if (m_BattleState != BATTLE_DEFAULT && m_BattleState != BATTLE_DEFAULT) {
 		for (auto& it : m_Actors) {
 			it->OnDraw(it->GetX(),it->GetY());
 		}
 	}
+#endif
 }
 
 
-
-
-#else
-CombatSystem::CombatSystem()
+void CombatSystem::AddActor(Actor* actor)
 {
+	m_Actors.push_back(actor);
 }
 
-CombatSystem::~CombatSystem()
-{
-
-}
-
-
-
-void CombatSystem::Update()
-{
-	
-}
-
-void CombatSystem::Draw()
-{
-}
-
-#endif // !SIMPLE_SERVER
 
 void CombatSystem::NextTurn()
 {
