@@ -7,7 +7,7 @@ find_package(GLEW CONFIG)
 find_package(glfw3)
 find_package(freetype CONFIG)
 find_package(IMGui)
-find_package(luadbg CONFIG)
+find_package(luadbg)
 
 file(GLOB_RECURSE  SOURCES_CPP "src/*.cpp" )
 file(GLOB_RECURSE  SOURCES_HEADER_PRI "src/*.h"  "src/*.hpp" "src/*.inl")
@@ -114,7 +114,7 @@ target_link_libraries(SimpleEngine
     freetype
     CXBase::CXBase
     IMGui::IMGui
-    luadbg
+    luadbg_static
 )
 
 # add_custom_command(TARGET SimpleEngine

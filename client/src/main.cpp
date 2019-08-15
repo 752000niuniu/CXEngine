@@ -7,6 +7,9 @@
 int main(int argc, char const *argv[])
 {
 	script_system_read_config(argc, argv);
+	
+	kbase::AtExitManager exit_manager;
+	ezio::IOServiceContext::Init();
 	FileSystem::InitWorkPath();
 	script_system_prepare_init();
 	script_system_dofile("main.lua");

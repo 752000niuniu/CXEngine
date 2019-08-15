@@ -137,8 +137,6 @@ NetThread::~NetThread()
 
 void NetThread::Run(const char* ip,int port)
 {
-	kbase::AtExitManager exit_manager;
-	ezio::IOServiceContext::Init();
 	EventLoop loop;
 	g_Loop = &loop;
 	SocketAddress addr(ip, port);

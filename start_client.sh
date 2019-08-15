@@ -1,2 +1,2 @@
-start ./bin/Debug/SimpleEngine.exe --cwd=./
+start ./bin/Debug/SimpleEngine.exe --cwd=E:/Github/SimpleEngine/
 

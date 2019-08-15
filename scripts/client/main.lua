@@ -1,4 +1,4 @@
--- luadbg_listen(9527)
+luadbg_listen(9527)
 
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
