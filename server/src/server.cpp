@@ -13,6 +13,7 @@
 #include "file_system.h"
 #include "kbase/at_exit_manager.h"
 #include "ezio/io_service_context.h"
+#include "cxlua.h"
 
 std::map<uint64_t, TCPConnection*> g_PlayerConnections;
 NetThreadQueue g_ReadPacketQueue;
