@@ -27,6 +27,7 @@
 #endif // !SIMPLE_SERVER
 #include "protocol.h"
 #include "combat/combat.h"
+#include "cxlua.h"
 
 
 
@@ -39,17 +40,6 @@ extern "C" int luaopen_cjson(lua_State *L);
 
 using GameConfig = std::map<std::string, std::string>;
 GameConfig g_GameConfig;
-
-bool check_lua_error(lua_State* L, int res, const char* func)
-{
-	if (res != LUA_OK) {
-		luaL_traceback(L, L, lua_tostring(L, -1), 0);
-		const char* errmsg = lua_tostring(L, -1);
-		cxlog_info("%s\npcall error:\t[func]%s\n", errmsg, func);
-		return false; 
-	}
-	return true;
-}
 
 void script_system_read_config(int argc, char const *argv[])
 {
@@ -112,7 +102,7 @@ void script_system_dofile(const char* file)
 	if (!check_lua_error(L, res , FileSystem::GetLuaPath(file).c_str())) {
 		DebugBreak();
 	}
-}
+} 
 
 std::string script_system_get_config(const char* key)
 {

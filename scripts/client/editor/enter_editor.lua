@@ -8,6 +8,14 @@ local PosX = imgui.CreateStrbuf('200',128)
 local PosY = imgui.CreateStrbuf('2790',128)
 local show_demo = false
 
+local function format_path(path)
+    if string.find(path, '@') == 1 then
+        path = string.sub(path, 2)
+    end
+    path = string.gsub(path,'\\','/')
+    return string.lower(path)
+end
+     
 function on_enter_editor_update()    
     imgui.Begin('Splash')
     local res 
@@ -83,6 +91,29 @@ function on_enter_editor_update()
     end
 
     
+    if imgui.Button('监听调试器') then
+        luadbg_stop()
+        luadbg_listen(9527) 
+    end
+
+    if imgui.Button('启动DebugAdapter') then
+        local path = vfs_makepath('internals/luadebugger/vscode/Debug/vsdbgadapter.exe')
+        local cwd = vfs_makepath('internals/luadebugger/vscode/')
+        cwd = format_path(cwd) 
+        local cmd = string.format('start %s --cwd=%s',path,cwd )
+        os.execute(cmd)
+    end
+
+    if imgui.Button('启动服务器') then
+        local path = vfs_makepath('bin/Debug/SimpleServer.exe')
+        local cwd = vfs_makepath('') 
+        cwd = format_path(cwd) 
+        local cmd = string.format('start %s --cwd=%s',path,cwd )
+        os.execute(cmd)
+    end
+
+    
+
     if imgui.Button('Reload') then 
         -- script_system_dofile('scene/test_net_scene.lua')
         script_system_dofile('utils.lua')

@@ -20,6 +20,7 @@
 #include "logger.h"
 #include "net_thread_queue.h"
 #include "lua_net.h"
+#include "cxlua.h"
 
 using namespace ezio;
 

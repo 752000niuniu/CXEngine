@@ -23,7 +23,7 @@ std::string FileSystem::GetPath()
 
 std::string FileSystem::MakePath(String rpath)
 {
-	return GetPath() + "/" + rpath;
+	return GetPath() + rpath;
 }
 
 std::string FileSystem::FormatPath(String path)
@@ -34,56 +34,56 @@ std::string FileSystem::FormatPath(String path)
 
 String FileSystem::GetTSVPath(String name)
 {
-	return GetPath() + "/res/tables/" + name + ".tsv";
+	return GetPath() + "res/tables/" + name + ".tsv";
 }
 
 String FileSystem::GetTablePath(String name)
 {
-	return GetPath() + "/res/tables/" + name;
+	return GetPath() + "res/tables/" + name;
 }
 
 std::string FileSystem::GetAbsPath(std::string localPath)
 {
-	return GetPath() + "/" + localPath;
+	return GetPath()  + localPath;
 }
 
 std::string FileSystem::GetResourcePath(std::string localPath)
 {
-	return GetPath() + "/res/" + localPath;
+	return GetPath() + "res/" + localPath;
 }
 
 std::string FileSystem::GetAssetsPath(std::string path)
 {
-	return GetPath() + "/res/assets/" + path;
+	return GetPath() + "res/assets/" + path;
 }
 
 std::string FileSystem::GetShaderPath(std::string path)
 {
-	return GetPath() + "/res/shader/" + path;
+	return GetPath() + "res/shader/" + path;
 }
 std::string FileSystem::GetLuaPath(std::string path)
 {
 #ifdef SIMPLE_SERVER
-	return GetPath() + "/scripts/server/" + path;
+	return GetPath() + "scripts/server/" + path;
 #else
-	return GetPath() + "/scripts/client/" + path;
+	return GetPath() + "scripts/client/" + path;
 #endif // SIMPLE_SERVER
 }
 std::string FileSystem::GetWDFPath(std::string path)
 {
-	return GetPath() + "/res/data/" + path;
+	return GetPath() + "res/data/" + path;
 }
 std::string FileSystem::GetMapPath(std::string path)
 {
-	return GetPath() + "/res/data/scene/" + path + ".map";
+	return GetPath() + "res/data/scene/" + path + ".map";
 }
 std::string FileSystem::GetFontPath(std::string path)
 {
-	return GetPath() + "/res/font/" + path;
+	return GetPath() + "res/font/" + path;
 }
 std::string FileSystem::GetIconPath(std::string path)
 {
-	return GetPath() + "/res/icon/" + path;
+	return GetPath() + "res/icon/" + path;
 }
 
 void FileSystem::InitWorkPath()
@@ -104,7 +104,7 @@ void FileSystem::InitWorkPath()
 		{
 			PATH_SEP = "/";
 		}
-		VFS_WORK_PATH = path.substr(0, path.find_last_of(PATH_SEP) - 1);
+		VFS_WORK_PATH = path.substr(0, path.find_last_of(PATH_SEP)) + PATH_SEP;
 	}
 }
 
@@ -221,8 +221,6 @@ int vfs_get_workdir(lua_State* L)
 
 void luaopen_filesystem(lua_State*L)
 {
-	
-
 	script_system_register_function(L, fs_get_tsv_path);
 	script_system_register_luac_function(L, vfs_list_files);
 	script_system_register_luac_function(L, vfs_set_workdir);

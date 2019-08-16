@@ -1,4 +1,3 @@
-luadbg_listen(9527)
 
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
@@ -51,7 +50,6 @@ function on_script_system_draw()
 end
 
 function on_script_system_deinit()
-    luadbg_stop()
     net_manager_deinit()
     timer_manager_deinit()
     input_manager_deinit()
