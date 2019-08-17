@@ -3,7 +3,9 @@
 
 ### Notice
 
-this project is not suitable for you to commit now. also, not so friendly for you to run. some fundamental works haven't done yet. thanks for you watching this project. when I am done those works, let's make a complete 2D turn-based game together!!!
+this repo is not suitable for you to commit now. also, not so friendly for you to run. some fundamental works haven't done yet. thanks for you watching this project. when I am done those works, let's make a complete 2D turn-based game together!!!
+
+this repo is developed in master branch now and stable-0.1 is the stable branch.
 
 ### 对于游戏开发感兴趣的同胞们
 
