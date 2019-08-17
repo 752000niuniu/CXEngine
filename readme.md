@@ -11,14 +11,17 @@ QQ群: 465885387
 
 ### Current Working on
 
-1. achitect lua module
+1. battle system
 2. prepare to publish
 
 ### Introduction
 
 this project is intend to build a relative complete 2D game. using only C++ and OpenGL,fully source code built.
 
-this project is using CMake as build system. the author now is only work on Windows. this repo has 2 projects. one is SimpleEngineAll, the second one is externals. externals is used to build third party libs which are assumed immutable.
+this project is using CMake as build system. I am only working on Windows. 
+this repo has 2 main cmake projects. 
+one is SimpleEngineAll, the second one is externals. 
+externals is used to build third party libs which are assumed immutable.
 SimpleEngineAll is our main project. its CMakeLists.txt in the repo root dir(SimpleEngine/).
 
 ### How to build
@@ -35,13 +38,32 @@ using cmake.exe open SimpleEngine/CMakeLists.txt, set the generate project folde
 	
 4. download resource. [baidu yun disk](https://pan.baidu.com/s/1o7Gn0t8), unzip to SimpleEngine/res/data.
 
-5. run gameserver.exe first, then run SimpleEngine.exe
+5. run SimpleServer.exe first,run SimpleEngine.exe, click sign_up, sign_in, try to play it.
 
-### Program Entrance
+### Repo Architecture
+1. third party libs: freetype2, glew, glfw, glm, SOIL
+2. main internal libs: luadebugger, NESupport, ezio-cmake, imgui, cxlua
+3. main executables: SimpleEngine.exe, SimpleServer.exe
 
-program.cpp -> Window.cpp -> Game.cpp -> Engine.cpp -> SceneManager.cpp -> Scene.cpp
+luadebugger is our a repo focus on debugging lua code for SimpleEngine and SimpleServer. but it also is a standalone project. luadebugger contains two main directories luadbg/ and vscode/, vscode directory is for building vscode luadebugger extension. luadbg directory is for building luadbg.lib which is used to link to the host program(like SimpleEngine.exe). 
+
+NESupport is a lib for decode pack resoures.
+
+ezio-cmake is an simple and clean network lib for our project, it was modified from [ezio](https://github.com/kingsamchen/ezio) which was written by [kingsamchen](https://github.com/kingsamchen).
+
+cxlua is a lib which encapsulate luacjson, lua, and ezio, also with some extra luabindings.
+
+### Current Game Features
+1. sign up, sign in
+2. multiplayer path finding
+3. multiplayer chat
+
 
 ### Extra Resource
 
 https://pan.baidu.com/s/1kV9qrEB
 
+
+### Last
+
+sorry about this poor readme.md, cause making this repo as soon as stable is my first priority. if you have any specify questions want to know, please feel free to issue me or send me an email. i will be grateful to hear your feedbacks.
