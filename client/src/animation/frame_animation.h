@@ -7,11 +7,11 @@
 #include "sprite_renderer.h"
 #include "pos.h"
 #include "resource_manager.h"
+#include "ui.h"
 
 class FrameAnimation
 {
 public:
-
 	struct Frame
 	{
 		int key_x;
@@ -104,7 +104,7 @@ private:
 };
 
 
-class BaseSprite
+class BaseSprite : public View
 {
 
 public:
@@ -124,6 +124,13 @@ public:
 	void Update();
 	
 	void Draw();
+
+	Bound GetViewBounds()  override;
+	int GetViewLayer()const override;
+
+	bool CheckDrag(int dx, int dy) override;
+
+	void OnDragMove(int dx, int dy) override;
 
 	int DirCnt;
 	int TotalFrames;

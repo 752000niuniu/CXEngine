@@ -5,9 +5,10 @@
 #include "profile.h"
 #include <assert.h>
 #include "script_system.h"
-#include "animation/frame_animation.h"
 #include "file_loading.h"
 #include "utils.h"
+#include "input_manager.h"
+#include "graphics/bitmap.h"
 
 std::vector<uint32_t> s_EmotionIDs = { 0x4D3D1188,0x6E7A8E8F,0x403105F2,0xD3C23894,0xEDD63AB1,0xC8AA7848,0xA5D718B1,0xE0C6F0D3,0x572F2A4D,0xA1E13E27,0xB2F4A198,0xEDEBCFCF,0x3B3D19C0,0x9EEC6DE4,0x1B1B8326,0x525FCCF9,0xAD9E8BAD,0xE9A1E271,0x1C7C95C4,0x1500E768,0x30615DBC,0x3694C64F,0xFD438646,0x4FAD347C,0x743AF90F,0x853F3BC9,0xD6436048,0x74E0F5FA,0x8E0063E2,0x5BA9CF5E,0xE8E08FA9,0x888536BF,0xBEDE7D41,0xF06B6B9E,0x58FAA400,0x270D5C71,0xE5FF2DE2,0xBE3150EE,0x11C5EA40,0x73F3BF9D,0xCCD6B7E8,0x66D0E07C,0x9A8BFB91,0xCA47B474,0x590CAA9B,0x4E20C2E6,0x44B657A9,0x978F8F8A,0x522BC68F,0xA8A9B15D,0xE53DE56A,0xE88B5354,0x0417C932,0xC699AB3E,0x19CA9706,0xFCD58523,0xCD8F0AD6,0x978B9123,0x0E658C4C,0x12BE1C3E,0x85AC8CCB,0x707ABF50,0x58C9FAB0,0xAA7B3B42,0xF2FBDA6E,0x4D3D1188,0x4D3D1188,0x4D3D1188,0x4D3D1188,0x4D3D1188,0x4D3D1188,0x4D3D1188,0x4D3D1188,0x4D3D1188,0xFC4215EC,0xD086F684,0xFCCAA9B5,0xACE9C474,0x87621B9F,0xCDC95381,0x396C4E03,0xB06B70C0,0xADE1576E,0xFB472367,0xEDA67286,0x15CA26D9,0xDC9C1E87,0xB5786848,0xC2A7A47D,0x7EEB3422,0x8F20BE2E,0xA1E7B566,0x11729962,0xEF498C25,0xF95512DC,0xF5509B1C,0x7F869E1E,0x107CF5F3,0xF45DCF6A,0x99AFED62,0x4D3D1188,0xC8BBEEA3,0x225ECF82,0xD5C14B62,0xA8BC861D,0x7229A70C,0x4FF6E07A,0xDF1F56AC,0x488EBBD6,0x4806AE3B,0x09574327,0x7A9F28C7,0xB7E060C1,0x5887677B };
 std::vector<FrameAnimation*> s_Emotions;
@@ -562,6 +563,234 @@ void text_renderer_init()
 {
 	TextRenderer::GetInstance();
 }
+
+
+void TextView::OnCharacterInput(uint32_t charcode)
+{
+	TextCache.push_back(charcode);
+}
+
+void TextView::OnClick(int button, int x, int y)
+{
+	INPUT_MANAGER_INSTANCE->RequestFocus(this);
+};
+
+Bound TextView::GetViewBounds()
+{
+	return { (float)X,(float)X + (float)Width,(float)Y,(float)Y + (float)Height };
+};
+
+int TextView::GetViewLayer()const
+{
+	return 1;
+};
+
+bool TextView::CheckDrag(int dx, int dy)
+{
+	return pow(dx, 2) + pow(dy, 2) >= 16;
+}
+
+void TextView::OnDragMove(int dx, int dy)
+{
+	X += dx;
+	Y += dy;
+}
+
+void TextView::OnFocusChanged(bool focus)
+{
+	m_IsEditing = focus;
+}
+
+TextView::TextView()
+	:m_LastTime(0),
+	m_Alpha(1.f),
+	m_Bounce(false),
+	X(0),
+	Y(0),
+	Width(0),
+	Height(0),
+	PaddingHorizontal(0),
+	PaddingVertical(0),
+	Color(1.f),
+	Background(nullptr),
+	m_IsEditing(false),
+	OnEnterHit(nullptr),
+	ShowEmotion(false)
+{
+	BitmapFile bpfile;
+	Bitmap::Load(FileSystem::GetIconPath("text_cursor_w.bmp"), bpfile);
+	Cursor = new Texture(bpfile.infoHeader.biWidth, bpfile.infoHeader.biHeight, true, bpfile.imageData);
+	if (bpfile.imageData != nullptr)
+	{
+		delete bpfile.imageData;
+		bpfile.imageData = nullptr;
+	}
+	BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WzifeWDF, 0x39D3BD99);
+	INPUT_MANAGER_INSTANCE->RegisterView(this);
+
+}
+
+TextView::~TextView()
+{
+	INPUT_MANAGER_INSTANCE->UnRegisterView(this);
+	SafeDelete(Cursor);
+	SafeDelete(Background);
+}
+
+
+void TextView::SetBackground(uint64_t resID)
+{
+	BackgroundResID = resID;
+}
+
+void TextView::RefreshText()
+{
+	Text = std::wstring(TextCache.begin(), TextCache.end());
+	m_MeasureInfo = TextRenderer::GetInstance()->MeasureText(Text, Width - PaddingHorizontal * 2);
+}
+
+void TextView::OnKeyDownEvent(int keyCode)
+{
+	if (m_IsEditing)
+	{
+		if (keyCode == GLFW_KEY_ENTER)
+		{
+			if (OnEnterHit)
+			{
+				OnEnterHit();
+			}
+			else
+			{
+				TextCache.push_back('\n');
+				RefreshText();
+			}
+		}
+		else if (keyCode == GLFW_KEY_BACKSPACE)
+		{
+			if (TextCache.size() > 0)
+				TextCache.pop_back();
+		}
+		else if (keyCode == GLFW_KEY_DELETE)
+		{
+			TextCache.clear();
+		}
+	}
+}
+
+void TextView::OnKeyRepeatEvent(int keyCode)
+{
+	if (m_IsEditing)
+	{
+		if (keyCode == GLFW_KEY_BACKSPACE)
+		{
+			if (TextCache.size() > 0)
+				TextCache.pop_back();
+		}
+	}
+}
+
+void TextView::DrawCenter(float x, float y)
+{
+	throw std::logic_error("The method or operation is not implemented.");
+}
+
+void TextView::OnUpdate()
+{
+	// drawBackgroud
+	auto backgroud = RESOURCE_MANAGER_INSTANCE->LoadWASSpriteByID(BackgroundResID);
+	if (backgroud != nullptr && Background == nullptr)
+	{
+		auto& frame = backgroud->mFrames[0];
+		Background = new Texture(frame.width, frame.height, true, (uint8*)frame.src.data());
+		Width = frame.width;
+		Height = frame.height;
+	}
+	auto now = std::chrono::system_clock::now();
+	uint64_t currentTime = now.time_since_epoch().count() / 10000;
+
+	if (m_LastTime == 0)
+	{
+		m_LastTime = currentTime;
+	}
+
+	if (currentTime - m_LastTime > 500)
+	{
+		m_LastTime = currentTime;
+		m_Bounce = !m_Bounce;
+		RefreshText();
+	}
+	else
+	{
+		if (m_Bounce)
+		{
+			if (currentTime - m_LastTime < 300)
+				m_Alpha = ((currentTime - m_LastTime)) / 300.f;
+			else
+				m_Alpha = 1.f;
+		}
+		else
+		{
+			if (currentTime - m_LastTime < 300)
+				m_Alpha = 1.f - ((currentTime - m_LastTime)) / 300.f;
+			else
+				m_Alpha = 0.f;
+		}
+	}
+}
+
+void TextView::OnDraw()
+{
+	// drawBackgound
+	if (Background != nullptr)
+		SPRITE_RENDERER_INSTANCE->DrawFrameSprite(
+			Background,
+			{ X ,Y },
+			{ Width,Height });
+
+	// drawText
+	TextRenderer::GetInstance()->DrawTextW(
+		Text,
+		X + PaddingHorizontal,
+		Y + PaddingVertical,
+		TextRenderer::LEFT,
+		Width - PaddingHorizontal * 2,
+		Color,
+		ShowEmotion);
+
+	// drawCursor
+	if (Cursor && m_IsEditing)
+		SPRITE_RENDERER_INSTANCE->DrawBitmap(
+			Cursor,
+			{ X + PaddingHorizontal + m_MeasureInfo.LastLineWidth,
+			Y + PaddingVertical + m_MeasureInfo.Height - TextRenderer::GetInstance()->GetFontHeight() },
+			{ Cursor->GetWidth() ,Cursor->GetHeight() },
+			{ 1.f,1.f,1.f },
+			m_Alpha
+		);
+}
+
+
+Button::Button()
+{
+
+}
+
+Button::~Button()
+{
+
+}
+
+void Button::OnUpdate()
+{
+
+}
+
+void Button::OnDraw()
+{
+
+}
+
+
 void luaopen_text_renderer(lua_State* L)
 {
 	script_system_register_function(L, text_renderer_init);

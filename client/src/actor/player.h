@@ -10,6 +10,8 @@
 #ifndef SIMPLE_SERVER
 #include "ui.h"
 #endif // SIMPLE_SERVER
+#include "animation/frame_animation.h"
+#include "text_renderer.h"
 
 
 

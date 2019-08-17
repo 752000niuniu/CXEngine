@@ -15,6 +15,7 @@
 #include "input_manager.h"
 #include "game.h"
 #include "utils.h"
+#include "text_renderer.h"
 
 
 Player::Player(uint64_t pid):

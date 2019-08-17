@@ -4,6 +4,8 @@
 #include "window.h"
 #include "resource_manager.h"
 #include "logger.h"
+#include "ui.h"
+#include "input_manager.h"
 
 #define  FRAME_TIME_BASE_DEFAULT (1.0f/60*4)
 
@@ -519,18 +521,39 @@ BaseSprite::BaseSprite(uint64_t resoureID)
 	 FrameInterval = 0.064f;
 	 PlayTime = 0.f;
 	 Dir = 0;
+	 INPUT_MANAGER_INSTANCE->RegisterView(this);
 }
 
 BaseSprite::BaseSprite(uint32_t pkg, uint32_t wasID) :BaseSprite(RESOURCE_MANAGER_INSTANCE->EncodeWAS(pkg, wasID))
 {
-
+	
 }
 
 BaseSprite::~BaseSprite()
 {
-
+	INPUT_MANAGER_INSTANCE->UnRegisterView(this);
 }
 
+Bound BaseSprite::GetViewBounds()
+{
+	return { Pos.x,Pos.x + (float)Width,Pos.y,Pos.y + (float)Height };
+}
+
+int BaseSprite::GetViewLayer() const
+{
+	return 1;
+}
+
+bool BaseSprite::CheckDrag(int dx, int dy)
+{
+	return pow(dx, 2) + pow(dy, 2) >= 16;
+}
+
+void BaseSprite::OnDragMove(int dx, int dy)
+{
+	Pos.x += dx;
+	Pos.y += dy;
+}
 
 void BaseSprite::Update()
 {
