@@ -111,16 +111,16 @@ function on_enter_editor_update()
         local cmd = string.format('start %s --cwd=%s',path,cwd )
         os.execute(cmd)
     end
-
     
+    if imgui.Button('安装vscode插件') then
+        local dir = vfs_makepath('')
+        local cmd = string.format('sh  %sinternals/luadebugger/install_extension.sh %s',dir,dir)
+        print(cmd)
+        os.execute(cmd)
+    end
 
     if imgui.Button('Reload') then 
-        -- script_system_dofile('scene/test_net_scene.lua')
-        script_system_dofile('utils.lua')
-        script_system_dofile('scene/test_net_scene.lua')
-        
-        debug.sethook()
-        script_system_dofile('debugger.lua')
+        script_system_dofile('editor/enter_editor.lua')
     end
 
     if imgui.Button('printEnv') then
