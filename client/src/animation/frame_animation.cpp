@@ -562,8 +562,8 @@ void BaseSprite::Update()
 	if (PlayTime >= FrameInterval)
 	{
 		PlayTime = (PlayTime - std::floor(PlayTime / FrameInterval)*FrameInterval) ;
-		CurrentFrame= CurrentFrame + 1;
-		if (CurrentFrame == m_pSprite->mFrameSize) {
+		CurrentFrame = CurrentFrame + 1;
+		if (CurrentFrame == GroupFrameCount) {
 			CurrentFrame = 0;
 		}
 	}
@@ -572,10 +572,10 @@ void BaseSprite::Update()
 
 void BaseSprite::Draw()
 {
-	auto* texture = UtilsGetFrameTexture(m_pSprite, Dir*m_pSprite->mFrameSize+ CurrentFrame);
+	auto* texture = UtilsGetFrameTexture(m_pSprite, Dir*GroupFrameCount + CurrentFrame);
 	if (texture)
 	{
-		auto& frame = m_pSprite->mFrames[Dir*m_pSprite->mFrameSize + CurrentFrame];
+		auto& frame = m_pSprite->mFrames[Dir*GroupFrameCount + CurrentFrame];
 		int kx = (m_pSprite->mKeyX- frame.key_x);
 		int ky = (m_pSprite->mKeyY- frame.key_y);
 		SPRITE_RENDERER_INSTANCE->DrawFrameSprite(texture,
@@ -637,6 +637,8 @@ int base_sprite_set_frame_interval(lua_State* L) {
 	auto* base_sprite = lua_check_base_sprite(L, 1);
 	auto interval = (float)lua_tonumber(L, 2);
 	base_sprite->FrameInterval = interval;
+	base_sprite->CurrentFrame = 0;
+	base_sprite->PlayTime = 0.f;
 	return 0;
 }
 
@@ -673,6 +675,7 @@ int base_sprite_get_play_time(lua_State* L) {
 	lua_pushnumber(L, base_sprite->PlayTime);
 	return 1;
 }
+
 int base_sprite_get_dir_cnt(lua_State* L) {
 	auto* base_sprite = lua_check_base_sprite(L, 1);
 	lua_pushinteger(L, base_sprite->DirCnt);
@@ -698,6 +701,23 @@ int base_sprite_get_group_count(lua_State* L) {
 	lua_pushinteger(L, base_sprite->GroupCount);
 	return 1;
 }
+
+int base_sprite_export(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	const char* dir = lua_tostring(L, 2);	
+	const char* prefix = lua_tostring(L, 3);
+	int start = base_sprite->CurrentFrame / base_sprite->GroupFrameCount;
+	for(int i=start;i<start+base_sprite->GroupFrameCount;i++){
+		std::string filename(dir);
+		filename = filename + prefix + std::to_string(i) +".tga";
+		base_sprite->m_pSprite->SaveImage(filename.c_str(), i);
+	}
+	
+	return 0;
+}
+
+
+
 
 int base_sprite_destroy(lua_State* L){
 	BaseSprite** ptr = (BaseSprite**)lua_touserdata(L, 1);
@@ -726,6 +746,7 @@ luaL_Reg MT_BASE_SPRITE[] = {
 { "GetCurrentFrame", base_sprite_get_current_frame},
 { "GetGroupFrameCount", base_sprite_get_group_frame_count},
 { "GetGroupCount", base_sprite_get_group_count },
+{ "Export", base_sprite_export },
 { "Destroy", base_sprite_destroy },
 { NULL, NULL }
 };
@@ -765,11 +786,8 @@ void luaopen_frame_animation(lua_State* L)
 	else {
 		std::cout << "associate mt_frame_animation error!" << std::endl;
 	}
-
 	
 	init_bezier_float_array();
-
 	script_system_register_function(L, frame_animation_set_bezier_curve_p1_p2);
 	script_system_register_luac_function(L, base_sprite_create);
-	
 }

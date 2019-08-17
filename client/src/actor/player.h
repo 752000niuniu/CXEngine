@@ -15,7 +15,7 @@
 
 
 
-class Player : public Actor
+class Player : public Actor , public View
 {
 public:
 	Player(uint64_t pid);
@@ -67,13 +67,13 @@ public:
 	void AddTarget(Player* target) { m_Targets.push_back(target); }
 	std::vector<Player*> GetTargets() { return m_Targets; }
 	void ClearTargets() { m_Targets.clear(); }
-	float GetWidth();
-	float GetHeight();
+	float GetWidth() override;
+	float GetHeight() override;
 
 	Bound GetScreenBound();
 
 	void SetBox();
-	void SetDir(int dir);
+	void SetDir(int dir) override;
 	void SetAction(int state);
 #ifndef SIMPLE_SERVER
 	FrameAnimation* GetPlayerFrame(int actionID);
@@ -81,6 +81,11 @@ public:
 	FrameAnimation* GetCurrentWeaponFrame();
 	void SetSkillFrame(FrameAnimation* anim);
 	FrameAnimation& GetSkillFrame() { return *m_SkillFrame; }
+
+	Bound GetViewBounds() override;
+	bool CheckDrag(int x, int y) override;
+	void OnDragMove(int x, int y)override;
+
 #endif
 
 protected:
@@ -109,7 +114,7 @@ struct NpcTemplate
 	uint32_t SpriteID;
 
 };
-class Npc : public Player, public View
+class Npc : public Player
 {
 public:
 	Npc(uint64_t id) :Player(id) {};
@@ -120,8 +125,7 @@ public:
 	bool HandleMessage(const Telegram& msg);
 
 	void OnClick(int button, int x, int y) override;
-	Bound GetViewBounds()  override;
-	int GetViewLayer()const override;
+	
 	void OnGlobleClick(int x, int y) override;
 	void ShowDialog(std::string msg);
 private:

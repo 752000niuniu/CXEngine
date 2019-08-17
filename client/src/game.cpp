@@ -105,13 +105,14 @@ uint32_t Game::GetWeaponWasID(int weaponID, int actionID)
 	if (actionID < 0) return -1;
 	if (weaponID < 0) return -1;
 
+
 	std::string wasIDstr("");
-	if (actionID == Action::Idle || actionID == Action::Batidle)
+	if (actionID == Action::Batidle)
 	{
 		auto wasIdle = s_AvatarWeapon90Table->Rows[weaponID][action_get_name(Action::Idle)];
 		auto wasBatidle = s_AvatarWeapon90Table->Rows[weaponID][action_get_name(Action::Batidle)];
-		if (wasIdle != "")wasIDstr = wasIdle;
-		else wasIDstr = wasBatidle;
+		if (wasIdle != "")wasIDstr = wasBatidle;
+		else wasBatidle = wasIdle;
 	}
 	else
 	{

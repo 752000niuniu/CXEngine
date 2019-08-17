@@ -297,6 +297,27 @@ int actor_get_y(lua_State* L) {
 }
 
 
+int actor_get_pos(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	lua_pushnumber(L, actor->GetX());
+	lua_pushnumber(L, actor->GetY());
+	return 2;
+}
+
+
+int actor_get_width(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	lua_pushnumber(L, actor->GetWidth());
+	return 1;
+}
+int actor_get_height(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	lua_pushnumber(L, actor->GetHeight());
+	return 1;
+}
+
+
+
 int actor_set_scene_id(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	int sceneID = (int)lua_tointeger(L, 2);
@@ -361,13 +382,16 @@ luaL_Reg mt_actor[] = {
 	{ "SetProperty",actor_method_set_property },
 { "GetProperty",actor_method_get_property },
 { "Destroy",actor_destroy },
-{ "update",actor_update},
-{ "draw",actor_draw },
+{ "Update",actor_update},
+{ "Draw",actor_draw },
 { "SetPos",actor_set_pos},
 {"SetX", actor_set_x},
 {"GetX", actor_get_x},
 {"SetY", actor_set_y},
 {"GetY", actor_get_y},
+{ "GetPos", actor_get_pos },
+{ "GetWidth", actor_get_width},
+{ "GetHeight", actor_get_height },
 { "SetIsCombat", actor_set_is_combat},
 { "IsCombat", actor_is_combat },
 {"GetID", actor_get_id},

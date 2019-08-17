@@ -39,11 +39,13 @@ m_SkillFrame(nullptr)
 
 	m_PlayerFrames.clear();
 	m_WeaponFrames.clear();
+	INPUT_MANAGER_INSTANCE->RegisterView(this);
 }
 
 
 Player::~Player()
 {
+	INPUT_MANAGER_INSTANCE->UnRegisterView(this);
 	if (m_pFSM)
 	{
 		delete m_pFSM;
@@ -554,6 +556,22 @@ void Player::SetSkillFrame(FrameAnimation* anim)
 	m_SkillFrame->ResetAnim(0);
 }
 
+Bound Player::GetViewBounds()
+{
+	return	GetScreenBound();
+}
+
+bool Player::CheckDrag(int dx, int dy)
+{
+	return pow(dx, 2) + pow(dy, 2) >= 16;
+}
+
+void Player::OnDragMove(int dx, int dy)
+{
+	m_Pos.x += dx;
+	m_Pos.y += dy;
+}
+
 void Player::LogInfo()
 {
     
@@ -681,16 +699,6 @@ void Npc::OnGlobleClick(int x,int y)
 	m_ShowDialog = false;
 }
 
-
-Bound Npc::GetViewBounds() 
-{
-	return GetScreenBound();
-}
-
-int Npc::GetViewLayer()const
-{
-	return 1;
-}
 
 void Npc::ShowDialog(std::string msg)
 {

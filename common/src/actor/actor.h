@@ -5,6 +5,7 @@
 #include "scene/game_map.h"
 #include "entity.h"
 
+
 class BaseScene;
 enum EActorType
 {
@@ -26,7 +27,7 @@ public:
 	bool HasReady;
 };
 
-class Actor : public BaseGameEntity
+class Actor : public BaseGameEntity 
 {
 public:
 	Actor(uint64_t id);
@@ -38,7 +39,7 @@ public:
 	virtual void OnDraw() {};
 	virtual bool HandleMessage(const Telegram& msg) { return false; };
 
-	void SetDir(int dir) { m_Dir = dir; };
+	virtual void SetDir(int dir) { m_Dir = dir; };
 	int GetDir() { return m_Dir; };
 
 	void SetActionID(int state) { m_ActionID = state; };
@@ -78,6 +79,9 @@ public:
 
 	void TranslateX(float x) { m_Pos.x += x; }
 	void TranslateY(float y) { m_Pos.y += y; }
+
+	virtual float GetWidth() { return 0; };
+	virtual float GetHeight() { return 0; };
 
 	void SetNickName(std::string name) { m_NickName = name; };
 	std::string GetNickName() { return m_NickName; };

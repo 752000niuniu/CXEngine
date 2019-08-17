@@ -77,6 +77,34 @@ function on_scene_manager_draw(name)
     scene_list[name].OnSceneDraw()
 end
 
+function scene_manager_reload(name)
+
+    for i,v in ipairs(scene_lua_files) do
+        if v.name == name then
+            local path = lua_file_path(v.file)
+            local module = {
+                exports = {},
+                env = _ENV
+            } 
+            scene_list[v.name] = module
+            setmetatable(module,{ __index = function(t,k)
+                local env = rawget(t, "env")
+                local v = rawget(env, k); if v then return v end
+                local exports = rawget(t, "exports")
+                local v = rawget(exports, k); if v then return v end 
+            end})
+            local fun,err = loadfile(path,'bt',module)
+            if fun then
+                fun()
+                scene_list[name].OnSceneInit() 
+                return
+            else
+                cxlog_info(fun,err)
+            end
+        end
+    end
+end
+
 
 local KEY_RELEASE_MOVE_AMOUT = 30
 local roleID = 0 
@@ -90,6 +118,11 @@ end
 
 function on_game_imgui_update(name)
     fix_input_manager_mouse_pos()
+
+    if imgui.Button('reload') then
+        scene_manager_reload(name)
+        return
+    end
 
     if scene_list[name].OnSceneImGuiUpdate then
         scene_list[name].OnSceneImGuiUpdate()

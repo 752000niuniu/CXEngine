@@ -12,7 +12,7 @@ public:
 
 	virtual void OnClick(int button, int x, int y) {};
 	virtual Bound GetViewBounds()  = 0;
-	virtual int GetViewLayer() const = 0;
+	virtual int GetViewLayer()const { return 1; };
 	virtual bool CheckDrag(int x, int y) { return false; };
 	virtual void OnDragStart() { };
 	virtual void OnDragMove(int x, int y) {};
