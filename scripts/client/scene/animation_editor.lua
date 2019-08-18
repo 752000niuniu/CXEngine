@@ -16,18 +16,17 @@ function OnSceneInit()
     player = actor_manager_create_actor(os.time())
     player:SetRoleID(1)
     player:SetWeaponID(40)
-    player:SetActionID(ACTION_IDLE)
-    
-
-    player:SetX( 615.0)
+    player:SetActionID(ACTION_ATTACK)
+    player:SetDir(1)
+    player:SetX(615.0)
     player:SetY(275.0)
 
     enemy  = actor_manager_create_actor(os.time() + 100)
     enemy:SetType(ACTOR_TYPE_PET)
-    enemy:SetRoleID(7)
+    enemy:SetRoleID(6)
     enemy:SetWeaponID(0)
-    enemy:SetActionID(ACTION_IDLE)
-    
+    enemy:SetActionID(ACTION_BEHIT)
+    enemy:SetDir(1)
     enemy:SetX(375.0)
     enemy:SetY(170.0)
     
@@ -116,6 +115,7 @@ end
 
 local actor_dir = 0
 local actor_action = 0
+local actor_frame = 0
 function imgui_draw_actor(actor)
     if actor then
         local x ,y = actor:GetX() , actor:GetY()
@@ -135,7 +135,13 @@ function imgui_draw_actor(actor)
             if actor_action> 15 then actor_action  = 0 end
             actor:SetActionID(math.tointeger(actor_action))
         end
-        
+
+        if imgui.Button('ChangeFrame##'..actor:GetID()) then
+            actor_frame = actor_frame+1
+            if actor_frame >= avatar:GetGroupFrameCount() then actor_frame  = 0 end
+            avatar:Stop()
+            avatar:SetCurrentFrame(actor_frame)    
+        end
         draw_sprite_info(avatar)
         local  orix , oriy = scene_manager_get_imgui_cursor_pos()
         local avx, avy = avatar:GetPos()
@@ -147,9 +153,8 @@ function imgui_draw_actor(actor)
         imgui.AddRect(tlx,tly,brx,bry,0xff00ffff)
         imgui.EndGroup()
     end
-
-
 end
+
 function OnSceneImGuiUpdate()
     imgui.SetCursorPos(0,0)
     imgui.BeginGroup()
@@ -270,8 +275,8 @@ function OnSceneImGuiUpdate()
 end
 
 function OnSceneDraw()
-    player:Draw()
     enemy:Draw()
+    player:Draw()
     for i=1,#sprites_pair do
         sprites_pair[i]:Draw()
     end    

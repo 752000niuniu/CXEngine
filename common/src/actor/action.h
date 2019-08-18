@@ -80,8 +80,10 @@ private:
 class IdleAction : public Action
 {
 public:
-	IdleAction(Actor* actor) :Action(actor) {};
+	IdleAction(Actor* actor) :Action(actor) { };
 	virtual ~IdleAction() {};
+	void Enter();
+	
 };
 
 

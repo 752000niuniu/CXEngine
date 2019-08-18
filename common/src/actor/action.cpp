@@ -382,3 +382,11 @@ void BeHitAction::Enter()
 
 }
 #endif
+
+void IdleAction::Enter()
+{
+	auto* avatar = pASM->GetAvatar();
+	if (avatar) {
+		avatar->bPlay = false;
+	}
+}

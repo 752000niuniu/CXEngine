@@ -16,7 +16,10 @@ public:
 	void Reset();
 	void Stop();
 	void Play();
-
+	int GetFrameKeyX();
+	int GetFrameKeyY();
+	int GetFrameWidth();
+	int GetFrameHeight();
 
 	int TotalFrames;
 	int CurrentFrame;

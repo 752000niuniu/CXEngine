@@ -116,6 +116,34 @@ void BaseSprite::Play()
 	bPlay = true;
 }
 
+int BaseSprite::GetFrameKeyX()
+{
+	int index = Dir * GroupFrameCount + CurrentFrame;
+	if (index >= m_pSprite->mFrames.size())return 0;
+	return m_pSprite->mFrames[index].key_x;
+}
+
+int BaseSprite::GetFrameKeyY()
+{
+	int index = Dir * GroupFrameCount + CurrentFrame;
+	if (index >= m_pSprite->mFrames.size())return 0;
+	return m_pSprite->mFrames[index].key_y;
+}
+
+int BaseSprite::GetFrameWidth()
+{
+	int index = Dir * GroupFrameCount + CurrentFrame;
+	if (index >= m_pSprite->mFrames.size())return 0;
+	return m_pSprite->mFrames[index].width;
+}
+
+int BaseSprite::GetFrameHeight()
+{
+	int index = Dir * GroupFrameCount + CurrentFrame;
+	if (index >= m_pSprite->mFrames.size())return 0;
+	return m_pSprite->mFrames[index].height;
+}
+
 BaseSprite* lua_check_base_sprite(lua_State*L, int index)
 {
 	BaseSprite** ptr = (BaseSprite**)lua_touserdata(L, index);
@@ -162,6 +190,19 @@ int base_sprite_get_dir(lua_State* L) {
 	lua_pushinteger(L, base_sprite->Dir);
 	return 1;
 }
+
+int base_sprite_stop(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	base_sprite->Stop();
+	return 0;
+}
+
+int base_sprite_start(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	base_sprite->bPlay = true;
+	return 0;
+}
+
 
 int base_sprite_set_frame_interval(lua_State* L) {
 	auto* base_sprite = lua_check_base_sprite(L, 1);
@@ -292,6 +333,8 @@ luaL_Reg MT_BASE_SPRITE[] = {
 { "GetPos", base_sprite_get_pos },
 { "SetDir",base_sprite_set_dir },
 { "GetDir",base_sprite_get_dir },
+{ "Stop",base_sprite_stop},
+{ "Start",base_sprite_start},
 { "SetFrameInterval",base_sprite_set_frame_interval },
 { "GetFrameInterval",base_sprite_get_frame_interval },
 { "GetWidth", base_sprite_get_width },

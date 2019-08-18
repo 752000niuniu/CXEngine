@@ -64,6 +64,34 @@ void Actor::OnDraw()
 {
 #ifndef SIMPLE_SERVER
 	m_ASM->Draw();
+	auto* avatar = m_ASM->GetAvatar();
+	if (avatar)
+	{
+		auto origin = SCENE_MANAGER_INSTANCE->GetImGuiCursorPos();
+		ImVec2 centre;
+		centre.x = origin.x + avatar->Pos.x + avatar->KeyX;
+		centre.y = origin.y + avatar->Pos.y + avatar->KeyY;
+		ImGui::GetOverlayDrawList()->AddCircleFilled(centre, 4, 0xff0000ff);
+
+		
+		ImVec2 tl = ImVec2(avatar->Pos.x, avatar->Pos.y);
+		tl.x += origin.x; tl.y += origin.y;
+		ImVec2 br = ImVec2(avatar->Pos.x + avatar->Width, avatar->Pos.y + avatar->Height);
+		br.x += origin.x; br.y += origin.y;
+		ImGui::GetOverlayDrawList()->AddRect(tl, br, 0xff00ffff, 0, 0, 1);
+
+		centre.x = origin.x + avatar->Pos.x + avatar->KeyX - avatar->GetFrameKeyX();
+		centre.y = origin.y + avatar->Pos.y + avatar->KeyY - avatar->GetFrameKeyY();
+		ImGui::GetOverlayDrawList()->AddCircleFilled(centre, 2, 0xff00ff00);
+
+		tl.x = centre.x;
+		tl.y = centre.y;
+		br.x = centre.x + avatar->GetFrameWidth();
+		br.y = centre.y + avatar->GetFrameHeight();
+		ImGui::GetOverlayDrawList()->AddRect(tl, br, 0xff00ff00, 0, 0, 1);
+
+		
+	}
 #endif
 }
 
