@@ -10,6 +10,7 @@
 #ifndef SIMPLE_SERVER
 #include "action.h"
 #endif
+#include "move.h"
 
 #define ACTOR_METATABLE_NAME "mt_actor"
 
@@ -29,8 +30,10 @@ Actor::Actor(uint64_t pid)
 	m_bSkillFrameShow(false),
 	m_IsLocalPlayer(false),
 	m_IsAutoRun(false),
-	m_FrameSpeed(0.080f)
+	m_FrameSpeed(0.080f),
+	m_DirCount(8)
 {
+	m_MoveHandle = new MoveHandle(this);
 #ifndef SIMPLE_SERVER
 	m_ASM = new ActionStateMachine(this);  
 #endif
@@ -38,13 +41,15 @@ Actor::Actor(uint64_t pid)
 }
 Actor::~Actor()
 {
+	SafeDelete(m_MoveHandle);
 #ifndef SIMPLE_SERVER
-	delete m_ASM;
+	SafeDelete(m_ASM);
 #endif
 }
 
 void Actor::OnUpdate()
 {
+	m_MoveHandle->Update();
 #ifndef SIMPLE_SERVER
 	m_ASM->Update();
 #endif
@@ -98,6 +103,21 @@ void Actor::SetMoveToPos(Pos dest)
 {
 	m_MoveToPos.x = dest.x;
 	m_MoveToPos.y = dest.y;
+}
+
+int Actor::GetDirByDegree(float degree)
+{
+	Action* action = m_ASM->GetAction();
+	if (action) {
+		int dircnt = m_ASM->GetDirCount(action->GetID());
+		if (dircnt == 8) {
+			return GMath::Astar_GetDir(degree);
+		}
+		else {
+			return GMath::Astar_GetDir4(degree);
+		}
+	}
+	return GMath::Astar_GetDir4(degree);
 }
 
 float Actor::GetCombatDistSquare()
@@ -282,6 +302,8 @@ int actor_move_to(lua_State* L){
 	if (actor->GetType()==ACTOR_TYPE_PLAYER){
 		Player* player = dynamic_cast<Player*> (actor);
 		player->MoveTo(x, y);
+	}else{
+		actor->GetMoveHandle()->MoveTo(x, y);
 	}
 	return 0;
 }
@@ -410,7 +432,10 @@ int actor_clear_frames(lua_State* L) {
 int actor_play_attack(lua_State*L){
 #ifndef SIMPLE_SERVER
 	Actor* actor = lua_check_actor(L, 1);
-	actor->GetASM()->ChangeAction(new AttackAction(actor));
+	Actor* target = lua_check_actor(L, 2);
+	AttackAction* action = new AttackAction(actor);
+	action->AddTarget(target);
+	actor->GetASM()->ChangeAction(action);
 #endif
 	return 0;
 }

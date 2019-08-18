@@ -6,6 +6,7 @@ set(GAME_SOURCES_HEADER ${_GAME_SOURCES_HEADER} PARENT_SCOPE)
 set(GAME_COMMON_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actor/action.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actor/actor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/actor/move.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actor/actor_manager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/astar/astar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/combat/combat.cpp

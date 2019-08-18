@@ -24,8 +24,6 @@ public:
 	void ResetDir(int dir);
 
 
-	int GetDirByDegree(float degree);
-	void ReverseDir();
 
 	virtual void OnUpdate();
 	virtual void OnDraw(GameMap* gameMapPtr);

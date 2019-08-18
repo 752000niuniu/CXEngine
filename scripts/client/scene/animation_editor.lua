@@ -7,20 +7,32 @@ local demo_distance = 600
 local sprites_pair = {}
 local sel_sps ={}
 local player 
-
+local enemy
 function OnSceneInit()
     player = actor_manager_create_actor(os.time())
-    player:SetRoleID(17)
-    player:SetWeaponID(56)
+
+    player:SetRoleID(1)
+    player:SetWeaponID(40)
     player:SetActionID(ACTION_IDLE)
     
-    player:SetX(330)
-    player:SetY(330)
+
+    player:SetX( 415.0)
+    player:SetY(275.0)
+
+    enemy  = actor_manager_create_actor(os.time() + 100)
+
+    enemy:SetRoleID(2)
+    enemy:SetWeaponID(60)
+    enemy:SetActionID(ACTION_IDLE)
+    
+    enemy:SetX(175.0)
+    enemy:SetY(170.0)
     
 end
 
 function OnSceneUpdate()
     player:Update()
+    enemy:Update()
     for i=1,#sprites_pair do
         local sprite = sprites_pair[i]
         sprite:Update()        
@@ -76,12 +88,36 @@ function OnChangeTimeInterval()
     end
 end
 
+function imgui_draw_actor(actor)
+    if actor then
+        local x ,y = actor:GetX() , actor:GetY()
+        local h = actor:GetHeight()
+        local w = actor:GetWidth()
+        imgui.SetCursorPos(x-w//2,y+20)
+        imgui.BeginGroup()
+        if imgui.Button('ChangeDir##'..actor:GetID()) then
+            local dir  = actor:GetDir()+1
+            if dir > 7 then dir = 0 end
+            actor:SetDir(math.tointeger(dir))
+        end
+
+        if imgui.Button('ChangeAction##'..actor:GetID()) then
+            local action = actor:GetActionID()+1
+            if action  > 15 then action  = 0 end
+            actor:SetActionID(math.tointeger(action))
+        end
+     
+        imgui.EndGroup()
+    end
+
+
+end
 function OnSceneImGuiUpdate()
     imgui.InputText("RoleID", RoleIDSB)
     imgui.InputText("WeaponID", WeaponIDSB)
 
     if imgui.Button('Attack') then
-        player:PlayAttack()
+        player:PlayAttack(enemy)
     end
     if imgui.Button('LoadPlayer') then
         local roleID = math.tointeger(RoleIDSB:str())
@@ -110,12 +146,14 @@ function OnSceneImGuiUpdate()
     if imgui.Button('+TimeInterval') then
         TimeInterval = TimeInterval + 0.016
         player:SetTimeInterval(TimeInterval)
+        enemy:SetTimeInterval(TimeInterval)
         -- OnChangeTimeInterval()
     end
 
     if imgui.Button('-TimeInterval') then
         TimeInterval = TimeInterval -0.016
         player:SetTimeInterval(TimeInterval)
+        enemy:SetTimeInterval(TimeInterval)
         -- OnChangeTimeInterval()
     end
     
@@ -158,28 +196,9 @@ function OnSceneImGuiUpdate()
     if imgui.Button('施法') then
         
     end
-
-    if player then
-        local x ,y = player:GetX() , player:GetY()
-        local h = player:GetHeight()
-        local w = player:GetWidth()
-        imgui.SetCursorPos(x-w//2,y+20)
-        imgui.BeginGroup()
-        if imgui.Button('ChangeDir') then
-            local dir  = player:GetDir()+1
-            if dir > 7 then dir = 0 end
-            player:SetDir(math.tointeger(dir))
-        end
-
-        if imgui.Button('ChangeAction') then
-            local action = player:GetActionID()+1
-            if action  > 15 then action  = 0 end
-            player:SetActionID(math.tointeger(action))
-        end
-     
-        imgui.EndGroup()
-    end
-    
+    imgui_draw_actor(player)
+    imgui_draw_actor(enemy)
+ 
 
     for i=1,#sprites_pair do
         local sprite = sprites_pair[i]
@@ -214,6 +233,7 @@ end
 
 function OnSceneDraw()
     player:Draw()
+    enemy:Draw()
     for i=1,#sprites_pair do
         sprites_pair[i]:Draw()
     end    

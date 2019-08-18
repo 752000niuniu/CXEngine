@@ -5,6 +5,7 @@
 #include "scene/game_map.h"
 #include "entity.h"
 
+class MoveHandle;
 #ifndef SIMPLE_SERVER
 class ActionStateMachine;
 #endif
@@ -45,6 +46,7 @@ public:
 
 	virtual void SetDir(int dir) { m_Dir = dir; };
 	int GetDir() { return m_Dir; };
+	int GetDirByDegree(float degree);
 	void ReverseDir();
 
 	void SetActionID(int state) { m_ActionID = state; };
@@ -64,8 +66,6 @@ public:
 	void SetPos(Pos p);
 	Pos GetPos() { return IsCombat() ? m_CombatProps.Pos : m_Pos; };
 
-	
-	
 	void SetMoveToPos(Pos dest);
 	Pos GetMoveToPos() { return m_MoveToPos; };
 
@@ -136,6 +136,7 @@ public:
 	void SetTurnReady(bool ready) { m_CombatProps.HasReady = ready; };
 	bool IsTurnReady() { return m_CombatProps.HasReady; };
 	BaseScene* GetScene();
+	MoveHandle* GetMoveHandle() { return m_MoveHandle; }
 #ifndef SIMPLE_SERVER
 	ActionStateMachine* GetASM() { return m_ASM; };
 #endif
@@ -173,7 +174,7 @@ protected:
 	int m_SayDuration;
 	bool m_IsLocalPlayer;
 
-	
+	MoveHandle* m_MoveHandle;
 	ActorCombatProps m_CombatProps;
 #ifndef SIMPLE_SERVER
 	ActionStateMachine* m_ASM;

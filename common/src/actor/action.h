@@ -54,6 +54,10 @@ public:
 	AttackAction(Actor* actor);
 	virtual ~AttackAction() {};
 	virtual BaseSprite* OnUpdate(BaseSprite* avatar);
+	void AddTarget(Actor* target);
+private:
+	Actor * m_Target;
+	Pos m_BackupPos;
 };
 
 class MoveAction : public Action
@@ -104,6 +108,7 @@ public:
 	Action* GetAction() { return m_pCurrentAction; }
 	void SetTimeInterval(float ti) { m_TimeInterval = ti; }
 	void Reset();
+	int GetDirCount(int action);
 private:
 	Actor* m_Actor;
 	float m_TimeInterval;

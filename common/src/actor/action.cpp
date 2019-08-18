@@ -2,6 +2,7 @@
 #include "resource_manager.h"
 #include "utils.h"
 #include "game.h"
+#include "actor/move.h"
 
 
 Action::Action(Actor* actor) :
@@ -28,7 +29,7 @@ void Action::Update()
 	
 	if (!m_ASM->HasWeapon() ||!action_is_show_weapon(m_ID))return;
 	auto* weapon = m_ASM->GetWeapon(m_ID);
-	weapon->Update();
+	weapon->CurrentFrame = avatar->CurrentFrame;
 }
 
 void Action::Draw()
@@ -215,10 +216,20 @@ void ActionStateMachine::Reset()
 	SetWeapon(m_Actor->GetWeaponID());
 }
 
+int ActionStateMachine::GetDirCount(int action)
+{
+	if(m_AvatarActions[action]){
+		return m_AvatarActions[action]->GroupCount;
+	}
+	return 4;
+}
+
 AttackAction::AttackAction(Actor* actor)
 	:Action(actor)
 {
+	m_BackupPos = m_Actor->GetPos();
 	m_ID = Action::Batidle;
+	m_Target = nullptr;
 }
 
 BaseSprite* AttackAction::OnUpdate(BaseSprite* avatar)
@@ -227,11 +238,17 @@ BaseSprite* AttackAction::OnUpdate(BaseSprite* avatar)
 	if(avatar->bGroupEndUpdate){
 		if (m_ID == Action::Batidle) {
 			SetID(Action::Runto);
+			m_BackupPos = m_Actor->GetPos();
+			if(m_Target){
+				Pos runto = m_Target->GetPos();
+				m_Actor->GetMoveHandle()->MoveTo(runto.x,runto.y);
+			}
 		}else if(m_ID == Action::Runto){
 			SetID(Action::Attack);
 		}else if(m_ID == Action::Attack){
 			SetID(Action::Runback);
 			m_Actor->ReverseDir();
+			m_Actor->GetMoveHandle()->MoveTo(m_BackupPos.x, m_BackupPos.y);
 		}
 		else if (m_ID == Action::Runback) {
 			m_Actor->ReverseDir();
@@ -242,6 +259,11 @@ BaseSprite* AttackAction::OnUpdate(BaseSprite* avatar)
 		}
 	}
 	return avatar;
+}
+
+void AttackAction::AddTarget(Actor* target)
+{
+	m_Target = target;
 }
 
 MoveAction::MoveAction(Actor* actor)
