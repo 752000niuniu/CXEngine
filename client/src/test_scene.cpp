@@ -14,6 +14,7 @@
 #include "scene/scene_manager.h"
 #include "net.h"
 #include <cctype>
+#include "animation/sprite.h"
 //
 //struct TurtorialAssimp
 //{

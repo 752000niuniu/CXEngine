@@ -94,9 +94,14 @@ void Actor::SetPos(Pos p)
 	}
 }
 
+void Actor::SetMoveToPos(Pos dest)
+{
+	m_MoveToPos.x = dest.x;
+	m_MoveToPos.y = dest.y;
+}
+
 float Actor::GetCombatDistSquare()
 {
-
 	return ::GMath::Astar_GetDistanceSquare(m_CombatProps.Pos.x, m_CombatProps.Pos.y, m_CombatProps.TargetPos.x, m_CombatProps.TargetPos.y);
 }
 
@@ -123,31 +128,6 @@ Actor* lua_check_actor(lua_State*L, int index)
 {
 	Actor** ptr = (Actor**)lua_touserdata(L, index);
 	return *ptr;
-}
-
-
-int actor_method_set_property(lua_State* L)
-{
-	Actor** ptr = (Actor**)lua_touserdata(L, 1);
-	const char* prop_name = lua_tostring(L, 2);
-	const char* prop_val = lua_tostring(L, 3);
-	Actor* actor = *ptr;
-	if (strcmp(prop_name, "name") == 0) {
-		actor->SetNickName(prop_val);
-	}
-	return 0;
-}
-
-int actor_method_get_property(lua_State* L)
-{
-	Actor** ptr = (Actor**)lua_touserdata(L, 1);
-	const char* prop_name = lua_tostring(L, 2);
-	Actor* actor = *ptr;
-	if (strcmp(prop_name, "name") == 0) {
-		lua_pushstring(L, actor->GetNickName().c_str());
-		return 1;
-	}
-	return 0;
 }
 
 int actor_destroy(lua_State * L)
@@ -448,8 +428,6 @@ int actor_set_time_interval(lua_State*L) {
 
 
 luaL_Reg mt_actor[] = {
-	{ "SetProperty",actor_method_set_property },
-{ "GetProperty",actor_method_get_property },
 { "Destroy",actor_destroy },
 { "Update",actor_update},
 { "Draw",actor_draw },

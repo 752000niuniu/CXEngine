@@ -4,6 +4,7 @@
 #include "scene/scene_manager.h"
 #include "file_system.h"
 #include "utils.h"
+#include "animation/frame_animation.h"
 
 static std::vector<uint32> s_WASIDs;
 static std::map<uint32,String> s_WASIDStrings;

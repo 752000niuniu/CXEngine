@@ -3,6 +3,7 @@
 #ifndef SIMPLE_SERVER
 #include "file_system.h"
 #include <tsv.h>
+#include "animation/frame_animation.h"
 
 SkillManager::SkillManager()
 {

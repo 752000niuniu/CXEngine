@@ -27,6 +27,7 @@ add_executable(SimpleEngine
 	src/scene/scene_manager.cpp
     src/algorithm.cpp
     src/animation/frame_animation.cpp
+    src/animation/sprite.cpp
     src/camera.cpp
     src/components/base_component.cpp
     src/components/transform_component.cpp

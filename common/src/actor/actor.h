@@ -64,6 +64,9 @@ public:
 	void SetPos(Pos p);
 	Pos GetPos() { return IsCombat() ? m_CombatProps.Pos : m_Pos; };
 
+	
+	
+	void SetMoveToPos(Pos dest);
 	Pos GetMoveToPos() { return m_MoveToPos; };
 
 	void SetCombatBackupPos(Pos pos) { m_CombatProps.PosBackup = pos; };
@@ -170,6 +173,7 @@ protected:
 	int m_SayDuration;
 	bool m_IsLocalPlayer;
 
+	
 	ActorCombatProps m_CombatProps;
 #ifndef SIMPLE_SERVER
 	ActionStateMachine* m_ASM;

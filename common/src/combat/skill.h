@@ -4,7 +4,7 @@
 
 #include <cxrandom.h>
 #include "define_types.h"
-#include "animation/frame_animation.h"
+class FrameAnimation;
 class SkillManager : public Singleton<SkillManager>
 {
 	friend class Singleton<SkillManager>;

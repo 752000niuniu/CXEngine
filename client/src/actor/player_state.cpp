@@ -6,6 +6,7 @@
 #include "resource_manager.h"
 #include "cxrandom.h"
 #include "actor/action.h"
+#include "animation/frame_animation.h"
 
 void BasePlayerCombatState::Enter(Player* )
 {
@@ -275,8 +276,8 @@ void PlayerCombatBeCastAttackedState::Enter(Player* player)
 
 void PlayerCombatBeCastAttackedState::Execute(Player* player) 
 {
-    auto& skillFrame = player->GetSkillFrame();
-    if(skillFrame.GetCurrentFrame() == std::floor(skillFrame.GetGroupFrameCount()/3.0*2))
+    auto* skillFrame = player->GetSkillFrame();
+    if(skillFrame->GetCurrentFrame() == std::floor(skillFrame->GetGroupFrameCount()/3.0*2))
 	{
 		player->GetFSM()->ChangeState(PlayerCombatBeAttackedState::GetInstance());
 	}

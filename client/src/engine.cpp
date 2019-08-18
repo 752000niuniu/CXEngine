@@ -9,6 +9,7 @@
 #include "scene/splash_scene.h"
 #include "window.h"
 #include "resource_manager.h"
+#include "sprite_renderer.h"
 
 Engine::Engine()
 :m_DeltaTime(0),m_LastTime(0)

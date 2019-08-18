@@ -1,4 +1,5 @@
 #include "action.h"
+#include "resource_manager.h"
 #include "utils.h"
 #include "game.h"
 
@@ -154,8 +155,6 @@ void ActionStateMachine::SetAvatar(int id)
 	m_AvatarID = id;
 }
 
-
-
 void ActionStateMachine::RestoreAction()
 {
 	if(m_pCurrentAction){
@@ -174,8 +173,7 @@ void ActionStateMachine::ChangeAction(Action* action)
 		m_pPreviousAction = nullptr;
 	}
 	m_pPreviousAction = m_pCurrentAction;
-	m_pCurrentAction = action;
-	
+	m_pCurrentAction = action;	
 }
 
 void ActionStateMachine::EnsureLoadAction(int action)
@@ -217,7 +215,6 @@ void ActionStateMachine::Reset()
 	SetWeapon(m_Actor->GetWeaponID());
 }
 
-
 AttackAction::AttackAction(Actor* actor)
 	:Action(actor)
 {
@@ -245,4 +242,15 @@ BaseSprite* AttackAction::OnUpdate(BaseSprite* avatar)
 		}
 	}
 	return avatar;
+}
+
+MoveAction::MoveAction(Actor* actor)
+	:Action(actor)
+{
+
+}
+
+BaseSprite* MoveAction::OnUpdate(BaseSprite* avatar)
+{
+	return nullptr;
 }

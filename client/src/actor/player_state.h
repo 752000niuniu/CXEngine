@@ -4,7 +4,6 @@
 #include "pos.h"
 #include "tsv.h"
 #include "logger.h"
-#include "animation/frame_animation.h"
 #include "state.h"
 #include "message.h"
 class Player;

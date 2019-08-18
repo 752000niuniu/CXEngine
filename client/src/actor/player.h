@@ -7,10 +7,10 @@
 #include "scene/game_map.h"
 #include "state.h"
 #include "ui.h"
-#include "animation/frame_animation.h"
+
 #include "text_renderer.h"
 
-
+class FrameAnimation;
 
 class Player : public Actor , public View
 {
@@ -75,7 +75,7 @@ public:
 	FrameAnimation* GetCurrentPlayerFrame();
 	FrameAnimation* GetCurrentWeaponFrame();
 	void SetSkillFrame(FrameAnimation* anim);
-	FrameAnimation& GetSkillFrame() { return *m_SkillFrame; }
+	FrameAnimation* GetSkillFrame() { return m_SkillFrame; }
 
 	Bound GetViewBounds() override;
 	bool CheckDrag(int x, int y) override;

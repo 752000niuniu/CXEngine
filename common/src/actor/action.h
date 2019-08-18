@@ -2,7 +2,7 @@
 
 #include <string>
 #include "actor.h"
-#include "animation/frame_animation.h"
+#include "animation/sprite.h"
 
 std::string action_get_name(int i);
 size_t action_get_size();
@@ -55,6 +55,16 @@ public:
 	virtual ~AttackAction() {};
 	virtual BaseSprite* OnUpdate(BaseSprite* avatar);
 };
+
+class MoveAction : public Action
+{
+public:
+	MoveAction(Actor* actor);
+	virtual ~MoveAction() {};
+	virtual BaseSprite* OnUpdate(BaseSprite* avatar);
+};
+
+
 
 
 class Direction

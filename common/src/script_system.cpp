@@ -28,6 +28,10 @@
 #include "protocol.h"
 #include "combat/combat.h"
 #include "cxlua.h"
+#include "animation/sprite.h"
+#include "resource_manager.h"
+#include "sprite_renderer.h"
+#include "animation/frame_animation.h"
 
 
 
@@ -89,6 +93,7 @@ void script_system_prepare_init()
 	luaopen_sprite_renderer(L);
 	luaopen_text_renderer(L);
 	luaopen_frame_animation(L);
+	luaopen_sprite(L);
 	luaopen_net(L);
 	luaopen_combat_system(L);
 #else

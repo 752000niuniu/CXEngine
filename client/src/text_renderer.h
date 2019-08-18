@@ -9,13 +9,13 @@
 #include <map>
 
 #include <freetype2/ft2build.h>
-#include "animation/frame_animation.h"
+
 #include "ui.h"
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include FT_BBOX_H
 
-
+class FrameAnimation;
 
 class TextRenderer : public Singleton<TextRenderer>
 {
