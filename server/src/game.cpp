@@ -81,12 +81,12 @@ uint32_t Game::GetActionWasID(int type, int roleID, int actionID)
 		break;
 	}
 	std::string wasIDstr("");
-	if (actionID == Action::Idle || actionID == Action::Batidle)
+	if (actionID == Action::Batidle)
 	{
 		auto wasIdle = rowTable->Rows[roleID][action_get_name(Action::Idle)];
 		auto wasBatidle = rowTable->Rows[roleID][action_get_name(Action::Batidle)];
-		if (wasIdle != "")wasIDstr = wasIdle;
-		else wasIDstr = wasBatidle;
+		if (wasBatidle != "")wasIDstr = wasBatidle;
+		else wasBatidle = wasIdle;
 	}
 	else
 	{
@@ -105,13 +105,14 @@ uint32_t Game::GetWeaponWasID(int weaponID, int actionID)
 	if (actionID < 0) return -1;
 	if (weaponID < 0) return -1;
 
+
 	std::string wasIDstr("");
-	if (actionID == Action::Idle || actionID == Action::Batidle)
+	if (actionID == Action::Batidle)
 	{
 		auto wasIdle = s_AvatarWeapon90Table->Rows[weaponID][action_get_name(Action::Idle)];
 		auto wasBatidle = s_AvatarWeapon90Table->Rows[weaponID][action_get_name(Action::Batidle)];
-		if (wasIdle != "")wasIDstr = wasIdle;
-		else wasIDstr = wasBatidle;
+		if (wasIdle != "")wasIDstr = wasBatidle;
+		else wasBatidle = wasIdle;
 	}
 	else
 	{
@@ -161,6 +162,29 @@ int util_screen_pos_to_map_pos(lua_State* L) {
 }
 
 
+int game_get_action_was_id(lua_State* L)
+{
+	auto type = (int)lua_tointeger(L, 1);
+	auto roleID = (int)lua_tointeger(L, 2);
+	auto actionID = (int)lua_tointeger(L, 3);
+	auto wasid = GAME_INSTANCE->GetActionWasID(type, roleID, actionID);
+	lua_pushinteger(L, wasid);
+	return 1;
+}
+
+int game_get_weapon_was_id(lua_State* L)
+{
+	auto weaponID = (int)lua_tointeger(L, 1);
+	auto actionID = (int)lua_tointeger(L, 2);
+	auto wasid = GAME_INSTANCE->GetWeaponWasID(weaponID, actionID);
+	lua_pushinteger(L, wasid);
+	return 1;
+}
+
+
 void luaopen_game(lua_State* L) {
 	script_system_register_luac_function(L, util_screen_pos_to_map_pos);
+	script_system_register_luac_function(L, game_get_action_was_id);
+	script_system_register_luac_function(L, game_get_weapon_was_id);
+
 }

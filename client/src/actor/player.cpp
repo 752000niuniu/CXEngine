@@ -568,8 +568,8 @@ bool Player::CheckDrag(int dx, int dy)
 
 void Player::OnDragMove(int dx, int dy)
 {
-	m_Pos.x += dx;
-	m_Pos.y += dy;
+	m_Pos.x += (float)dx;
+	m_Pos.y += (float)dy;
 }
 
 void Player::LogInfo()

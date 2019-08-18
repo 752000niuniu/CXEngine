@@ -5,6 +5,10 @@
 #include "scene/game_map.h"
 #include "entity.h"
 
+#ifndef SIMPLE_SERVER
+class ActionStateMachine;
+#endif
+
 
 class BaseScene;
 enum EActorType
@@ -33,10 +37,10 @@ public:
 	Actor(uint64_t id);
 
 	virtual ~Actor();
-	virtual void OnUpdate() {};
+	virtual void OnUpdate();
 	virtual void OnDraw(GameMap* gameMapPtr) {};
 	virtual void OnDraw(int x, int y) {};
-	virtual void OnDraw() {};
+	virtual void OnDraw();
 	virtual bool HandleMessage(const Telegram& msg) { return false; };
 
 	virtual void SetDir(int dir) { m_Dir = dir; };
@@ -53,6 +57,7 @@ public:
 
 	void SetWeaponID(int weapon) { m_WeaponID = weapon; }
 	int GetWeaponID() { return m_WeaponID; }
+
 
 	void SetPos(float x, float y);
 	void SetPos(Pos p);
@@ -127,6 +132,9 @@ public:
 	void SetTurnReady(bool ready) { m_CombatProps.HasReady = ready; };
 	bool IsTurnReady() { return m_CombatProps.HasReady; };
 	BaseScene* GetScene();
+#ifndef SIMPLE_SERVER
+	ActionStateMachine* GetASM() { return m_ASM; };
+#endif
 protected:
 	int m_RoleID;				//current role
 	int m_ActorID;
@@ -150,10 +158,7 @@ protected:
 	int m_DirCount;
 	bool m_IsMove;
 	float m_MoveVelocity;
-
-	bool m_bInCombat;
-	
-	
+	bool m_bInCombat;	
 	int m_TargetID;
 
 	bool m_bSkillFrameShow;
@@ -165,6 +170,9 @@ protected:
 	bool m_IsLocalPlayer;
 
 	ActorCombatProps m_CombatProps;
+#ifndef SIMPLE_SERVER
+	ActionStateMachine* m_ASM;
+#endif
 };
 
 Actor* lua_check_actor(lua_State*L, int index);

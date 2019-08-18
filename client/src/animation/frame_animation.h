@@ -80,18 +80,18 @@ public:
 	bool IsVisible() { return m_bVisible; }
 
 private:
-	int m_TotalFrameCount;  //总帧数
-	int m_CurrentFrame;		//当前帧
-	int m_LastFrame;		//上一帧
-	int m_CurrentGroup;		//当前方向
-	int m_GroupFrameCount;	//组帧数
-	int m_GroupCount;		//组数
+	int m_TotalFrameCount;  
+	int m_CurrentFrame;		
+	int m_LastFrame;		
+	int m_CurrentGroup;		
+	int m_GroupFrameCount;	
+	int m_GroupCount;		
 	int m_KeyX;			
 	int m_KeyY;
 	IntPos m_Pos;		
 	int m_Width;
 	int m_Height;	
-	bool m_bLoop;			//循环播放
+	bool m_bLoop;			
 	bool m_bIsNextFrameRestart;
 	float m_DeltaTime;
 	bool m_bVisible;		
@@ -106,50 +106,43 @@ private:
 
 class BaseSprite : public View
 {
-
 public:
-	struct Frame
-	{
-		int KeyX;
-		int KeyY;
-		int Width;
-		int Height;
-	};
-	using FrameVector = std::vector<Frame>;
-
 	BaseSprite(uint64_t resoureID = 0);
 	BaseSprite(uint32_t pkg, uint32_t wasID);
-	~BaseSprite();
+	virtual ~BaseSprite();
 	
-	void Update();
-	
-	void Draw();
-
 	Bound GetViewBounds()  override;
 	int GetViewLayer()const override;
-
 	bool CheckDrag(int dx, int dy) override;
-
 	void OnDragMove(int dx, int dy) override;
+
+	virtual void Update();
+	void Draw();
+	void SetLoop(bool loop);
+	void Reset();
+	void Stop();
+	void Play();
 
 	int DirCnt;
 	int TotalFrames;
 	int CurrentFrame;
 	int GroupFrameCount;
 	int GroupCount;
-	
 	int Width;
 	int Height;
 	int KeyX;
 	int KeyY;
-
 	int Dir;
+	int bLoop;
+	int bPlay;
+	int bGroupEndUpdate;
 	Pos Pos;
-	FrameVector Frames;
 	Sprite* m_pSprite;
 	float FrameInterval;
 	float PlayTime;
 };
+
+
 
 void lua_push_frame_animation(lua_State*L, FrameAnimation* frame_anim);
 void luaopen_frame_animation(lua_State* L);

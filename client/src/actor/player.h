@@ -7,9 +7,7 @@
 #include "actor/actor.h"
 #include "scene/game_map.h"
 #include "state.h"
-#ifndef SIMPLE_SERVER
 #include "ui.h"
-#endif // SIMPLE_SERVER
 #include "animation/frame_animation.h"
 #include "text_renderer.h"
 
@@ -52,7 +50,6 @@ public:
 	void ChangeWeapon(int WeaponID);
 	void ChangeAction(int actionID);
 
-
 	StateMachine<Player>* GetFSM() { return m_pFSM; };
 
 	bool HandleMessage(const Telegram& msg) override;
@@ -75,7 +72,6 @@ public:
 	void SetBox();
 	void SetDir(int dir) override;
 	void SetAction(int state);
-#ifndef SIMPLE_SERVER
 	FrameAnimation* GetPlayerFrame(int actionID);
 	FrameAnimation* GetCurrentPlayerFrame();
 	FrameAnimation* GetCurrentWeaponFrame();
@@ -85,8 +81,6 @@ public:
 	Bound GetViewBounds() override;
 	bool CheckDrag(int x, int y) override;
 	void OnDragMove(int x, int y)override;
-
-#endif
 
 protected:
 	void LoadRoleFrame();
@@ -98,16 +92,13 @@ protected:
 	std::list<Pos> m_MoveList;
 	std::list<Pos> m_BackupMoveList;
 	std::vector<Player*> m_Targets;
-#ifndef SIMPLE_SERVER
 	std::map<int, FrameAnimation*> m_PlayerFrames;
 	std::map<int, FrameAnimation*> m_WeaponFrames;
 	FrameAnimation* m_SkillFrame;
 	TextView* m_SayWidget;
-#endif
 };
 
 
-#ifndef SIMPLE_SERVER
 struct NpcTemplate
 {
 	uint32_t Pack;
@@ -143,4 +134,5 @@ public:
 
 	virtual ~Pet();
 };
-#endif
+
+

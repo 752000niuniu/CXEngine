@@ -7,6 +7,9 @@
 #include "window.h"
 #include "cxmath.h"
 #include "actor_manager.h"
+#ifndef SIMPLE_SERVER
+#include "action.h"
+#endif
 
 #define ACTOR_METATABLE_NAME "mt_actor"
 
@@ -28,12 +31,30 @@ Actor::Actor(uint64_t pid)
 	m_IsAutoRun(false),
 	m_FrameSpeed(0.080f)
 {
+#ifndef SIMPLE_SERVER
+	m_ASM = new ActionStateMachine(this);  
+#endif
 	
 }
 Actor::~Actor()
 {
+#ifndef SIMPLE_SERVER
+	delete m_ASM;
+#endif
+}
 
+void Actor::OnUpdate()
+{
+#ifndef SIMPLE_SERVER
+	m_ASM->Update();
+#endif
+}
 
+void Actor::OnDraw()
+{
+#ifndef SIMPLE_SERVER
+	m_ASM->Draw();
+#endif
 }
 
 void Actor::SetPos(float x, float y)
@@ -124,14 +145,14 @@ int actor_destroy(lua_State * L)
 }
 int actor_update(lua_State * L) {
 	Actor* actor = lua_check_actor(L, 1);
-	actor->OnUpdate( );
+	actor->OnUpdate();
 	return 0;
 }
 
 int actor_draw(lua_State * L) {
 	Actor* actor = lua_check_actor(L, 1);
-	Pos pos = actor->GetPos();
-	actor->OnDraw((int)pos.x ,(int) pos.y );
+	//Pos pos = actor->GetPos();
+	actor->OnDraw();
 	return 0;
 }
 int actor_set_pos(lua_State* L)
@@ -196,14 +217,21 @@ int actor_get_id(lua_State* L) {
 int actor_set_action_id(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	int actionID = (int)lua_tointeger(L, 2);
-	actor->SetActionID(actionID);
+	Action* action = new Action(actor);
+	action->SetID(actionID);
+	actor->GetASM()->ChangeAction(action);
 	return 0;
 }
 
 int actor_get_action_id(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
-	lua_pushinteger(L, actor->GetActionID());
-	return 1;
+	Action* action = actor->GetASM()->GetAction();
+	if(action){
+		lua_pushinteger(L, action->GetID());
+		return 1;
+	}else{
+		return 0;
+	}
 }
 
 int actor_translate_x(lua_State* L) {
