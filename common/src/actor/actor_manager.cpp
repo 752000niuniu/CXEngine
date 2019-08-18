@@ -3,6 +3,8 @@
 #include "actor/player.h"
 #include "window.h"
 #include "scene/scene_manager.h"
+#include "scene/base_scene.h"
+#include "scene/game_map.h"
 
 std::map<uint64_t, Actor*> g_Players;
 uint64_t g_LocalPid = 0;

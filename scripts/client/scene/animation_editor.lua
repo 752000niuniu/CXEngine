@@ -8,6 +8,10 @@ local sprites_pair = {}
 local sel_sps ={}
 local player 
 local enemy
+local added_frame = 0
+
+--剑侠客 攻击
+---待战-> Runto-> Attack-> Runback -> 待战
 function OnSceneInit()
     player = actor_manager_create_actor(os.time())
 
@@ -16,7 +20,7 @@ function OnSceneInit()
     player:SetActionID(ACTION_IDLE)
     
 
-    player:SetX( 415.0)
+    player:SetX( 615.0)
     player:SetY(275.0)
 
     enemy  = actor_manager_create_actor(os.time() + 100)
@@ -25,7 +29,7 @@ function OnSceneInit()
     enemy:SetWeaponID(60)
     enemy:SetActionID(ACTION_IDLE)
     
-    enemy:SetX(175.0)
+    enemy:SetX(375.0)
     enemy:SetY(170.0)
     
 end
@@ -35,7 +39,7 @@ function OnSceneUpdate()
     enemy:Update()
     for i=1,#sprites_pair do
         local sprite = sprites_pair[i]
-        sprite:Update()        
+        sprite:SetCurrentFrame(added_frame)        
     end    
 end
 
@@ -113,6 +117,8 @@ function imgui_draw_actor(actor)
 
 end
 function OnSceneImGuiUpdate()
+    imgui.SetCursorPos(200,0)
+    imgui.BeginGroup()
     imgui.InputText("RoleID", RoleIDSB)
     imgui.InputText("WeaponID", WeaponIDSB)
 
@@ -127,6 +133,7 @@ function OnSceneImGuiUpdate()
     end
     if imgui.Button('+ActionID') then
         LoadActionID = LoadActionID + 1
+        added_frame = 0
         if LoadActionID > 15 then
             LoadActionID = 0
         end
@@ -136,6 +143,7 @@ function OnSceneImGuiUpdate()
 
     if imgui.Button('-ActionID') then
         LoadActionID = LoadActionID- 1
+        added_frame = 0
         if LoadActionID <  0 then
             LoadActionID = 15
         end
@@ -155,6 +163,18 @@ function OnSceneImGuiUpdate()
         player:SetTimeInterval(TimeInterval)
         enemy:SetTimeInterval(TimeInterval)
         -- OnChangeTimeInterval()
+    end
+    if imgui.Button('+AddFrame') then
+        added_frame  = added_frame + 1
+        if added_frame >= sprites_pair[1]:GetGroupFrameCount() then
+            added_frame = added_frame-1
+        end
+    end
+    if imgui.Button('-AddFrame') then
+        added_frame  = added_frame - 1
+        if added_frame <0 then
+            added_frame  = 0
+        end
     end
     
     imgui.Text('LoadActionID:' .. LoadActionID)
@@ -196,6 +216,8 @@ function OnSceneImGuiUpdate()
     if imgui.Button('施法') then
         
     end
+
+    imgui.EndGroup()
     imgui_draw_actor(player)
     imgui_draw_actor(enemy)
  

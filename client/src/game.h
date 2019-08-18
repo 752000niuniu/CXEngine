@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include "engine.h"
 #include "singleton.h"
 #include "pos.h"
 /*

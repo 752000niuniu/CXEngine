@@ -2,6 +2,7 @@
 #include "scene/scene.h"
 #include "game.h"
 #include "utils.h"
+#include "game_map.h"
 
 BaseScene::BaseScene(int id, String name)
 :m_Name(name),

@@ -27,7 +27,7 @@ bool BasePlayerCombatState::OnMessage(Player*, const Telegram&)
 
 void PlayerCombatIdleState::Enter(Player* player) 
 {
-	player->SetActionID(Action::Batidle);
+	player->SetActionID(ACTION_BATIDLE);
 }
 
 void PlayerCombatIdleState::Execute(Player* player) 
@@ -40,7 +40,7 @@ void PlayerIdleState::Enter(Player* player)
 	if (!player->IsAutoRun())
 	{
 		player->SetDir(player->GetDir());
-		player->SetActionID(Action::Idle);
+		player->SetActionID(ACTION_IDLE);
 	}
 	else
 	{
@@ -62,8 +62,8 @@ bool PlayerIdleState::OnMessage(Player* player, const Telegram& msg)
 void PlayerMoveState::Enter(Player* player) 
 {
 	player->GetMoveList() = player->GetBackupMoveList();
-	if (player->GetActionID() != Action::Walk)
-		player->SetActionID(Action::Walk);
+	if (player->GetActionID() != ACTION_WALK)
+		player->SetActionID(ACTION_WALK);
 }
 
 void PlayerMoveState::Execute(Player* player) 
@@ -126,7 +126,7 @@ bool PlayerMoveState::OnMessage(Player* player, const Telegram& msg)
 void PlayerCombatMoveState::Enter(Player* player) 
 {
 	m_bSent = false;
-	player->SetActionID(Action::Runto);
+	player->SetActionID(ACTION_RUNTO);
 	
 	auto* playerFrame = player->GetCurrentPlayerFrame();
 	if (!playerFrame)return;
@@ -171,7 +171,7 @@ bool PlayerCombatMoveState::OnMessage(Player* player, const Telegram& msg)
 
 void PlayerCombatAttackState::Enter(Player* player) 
 {
-	player->SetActionID(Action::Attack);
+	player->SetActionID(ACTION_ATTACK);
 	auto* playerFrame = player->GetCurrentPlayerFrame();
 	if (!playerFrame)return;
 	auto* weaponFrame = player->GetCurrentWeaponFrame();
@@ -200,7 +200,7 @@ void PlayerCombatBackState::Enter(Player* player)
 	player->SetCombatTargetPos(player->GetPos());
 	player->ReverseDir();
 
-	player->SetActionID(Action::Runback);
+	player->SetActionID(ACTION_RUNBACK);
 	auto* playerFrame = player->GetCurrentPlayerFrame();
 	if (!playerFrame)return;
 	auto* weaponFrame = player->GetCurrentWeaponFrame();
@@ -242,7 +242,7 @@ void PlayerCombatBackState::Exit(Player* player)
 void PlayerCombatBeAttackedState::Enter(Player* player) 
 {
 	player->AddHP(-10);
-	player->SetActionID(Action::Behit);
+	player->SetActionID(ACTION_BEHIT);
     auto* playerFrame = player->GetCurrentPlayerFrame();
 	if (!playerFrame)return;
     auto* weaponFrame = player->GetCurrentWeaponFrame();
@@ -306,7 +306,7 @@ void PlayerCombatGlobalState::Execute(Player* player)
 }
 void PlayerCombatCastAttackState::Enter(Player* player) 
 {
-	player->SetActionID(Action::Cast);
+	player->SetActionID(ACTION_CAST);
 	auto* playerFrame = player->GetCurrentPlayerFrame();
 	if (!playerFrame)return;
 	auto* weaponFrame = player->GetCurrentWeaponFrame();
@@ -357,7 +357,7 @@ void PlayerCombatClpsState::Execute(Player* player)
 
 void PlayerCombatClpsState::Enter(Player* player)
 {
-	player->SetActionID(Action::Clps);
+	player->SetActionID(ACTION_CLPS);
 }
 
 void PlayerCombatClpsState::Exit(Player*)

@@ -2,9 +2,9 @@
 
 #include "define_types.h"
 #include "entity.h"
-#include "game_map.h"
 #include "actor/player.h"
 
+class GameMap;
 /*
 场景对象的基类
 可以拆分出SplashScene , UIScene , Scene（游戏场景）
@@ -48,8 +48,6 @@ public:
 
 	
 	GameMap* GetGameMap() { return m_Map; };
-	
-
 
 	void Load();
 

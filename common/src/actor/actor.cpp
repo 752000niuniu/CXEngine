@@ -1,4 +1,5 @@
 #include "actor.h"
+#include "scene/game_map.h"
 #include "action.h"
 #include "actor/player.h"
 #include "scene/scene_manager.h"
@@ -19,7 +20,7 @@ Actor::Actor(uint64_t pid)
 	m_RoleID(0),
 	m_NickName(""),
 	m_WeaponID(-1),
-	m_ActionID(Action::Idle),
+	m_ActionID(ACTION_IDLE),
 	m_Pos(0, 0),
 	m_MoveToPos(0, 0),
 	m_Dir(Direction::S),
@@ -398,7 +399,7 @@ int actor_set_role_id(lua_State* L) {
 int actor_get_role_id(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	lua_pushinteger(L, actor->GetRoleID());
-#ifndef SIMPLE_SERVER
+#ifndef SIMPLE_SERVER 
 	actor->GetASM()->Reset();
 #endif // !SIMPLE_SERVER
 	return 1;
@@ -430,7 +431,7 @@ int actor_clear_frames(lua_State* L) {
 }
 
 int actor_play_attack(lua_State*L){
-#ifndef SIMPLE_SERVER
+#ifndef SIMPLE_SERVER 
 	Actor* actor = lua_check_actor(L, 1);
 	Actor* target = lua_check_actor(L, 2);
 	AttackAction* action = new AttackAction(actor);
@@ -546,7 +547,7 @@ void luaopen_actor(lua_State* L)
 	script_system_register_function(L, action_system_get_action_name);
 
 	std::map<std::string, int> action_enums;
-	for (int i = Action::Idle; i <= Action::Defend; i++) {
+	for (int i = ACTION_IDLE; i <= ACTION_DEFEND; i++) {
 		action_enums.insert({ action_get_name(i), i });
 	}
 
@@ -558,21 +559,21 @@ void luaopen_actor(lua_State* L)
 #undef REG_ENUM
 
 #define REG_ENUM(name,val) (lua_pushinteger(L, val), lua_setglobal(L, name)) 
-	REG_ENUM("ACTION_IDLE", Action::Idle);
-	REG_ENUM("ACTION_WALK", Action::Walk);
-	REG_ENUM("ACTION_SIT", Action::Sit);
-	REG_ENUM("ACTION_ANGRY", Action::Angry);
-	REG_ENUM("ACTION_SAYHI", Action::Sayhi);
-	REG_ENUM("ACTION_DANCE", Action::Dance);
-	REG_ENUM("ACTION_SALUTE", Action::Salute);
-	REG_ENUM("ACTION_CLPS", Action::Clps);
-	REG_ENUM("ACTION_CRY", Action::Cry);
-	REG_ENUM("ACTION_BATIDLE", Action::Batidle);
-	REG_ENUM("ACTION_ATTACK", Action::Attack);
-	REG_ENUM("ACTION_CAST", Action::Cast);
-	REG_ENUM("ACTION_BEHIT", Action::Behit);
-	REG_ENUM("ACTION_RUNTO", Action::Runto);
-	REG_ENUM("ACTION_RUNBACK", Action::Runback);
-	REG_ENUM("ACTION_DEFEND", Action::Defend);
+	REG_ENUM("ACTION_IDLE", ACTION_IDLE);
+	REG_ENUM("ACTION_WALK", ACTION_WALK);
+	REG_ENUM("ACTION_SIT", ACTION_SIT);
+	REG_ENUM("ACTION_ANGRY", ACTION_ANGRY);
+	REG_ENUM("ACTION_SAYHI", ACTION_SAYHI);
+	REG_ENUM("ACTION_DANCE", ACTION_DANCE);
+	REG_ENUM("ACTION_SALUTE", ACTION_SALUTE);
+	REG_ENUM("ACTION_CLPS", ACTION_CLPS);
+	REG_ENUM("ACTION_CRY", ACTION_CRY);
+	REG_ENUM("ACTION_BATIDLE", ACTION_BATIDLE);
+	REG_ENUM("ACTION_ATTACK", ACTION_ATTACK);
+	REG_ENUM("ACTION_CAST", ACTION_CAST);
+	REG_ENUM("ACTION_BEHIT", ACTION_BEHIT);
+	REG_ENUM("ACTION_RUNTO", ACTION_RUNTO);
+	REG_ENUM("ACTION_RUNBACK", ACTION_RUNBACK);
+	REG_ENUM("ACTION_DEFEND", ACTION_DEFEND);
 #undef REG_ENUM
 }

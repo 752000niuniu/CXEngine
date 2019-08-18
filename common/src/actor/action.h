@@ -1,9 +1,12 @@
 #pragma once
 
 #include <string>
-#include "actor.h"
-#include "animation/sprite.h"
+#include "pos.h"
 
+
+class Actor;
+class ActionStateMachine;
+class BaseSprite;
 std::string action_get_name(int i);
 size_t action_get_size();
 std::string action_system_get_action(int i);
@@ -11,27 +14,6 @@ bool action_is_show_weapon(int action);
 class Action
 {
 public:
-	enum State
-	{
-		Idle = 0,
-		Walk,
-		Sit,
-		Angry,
-		Sayhi,
-		Dance,
-		Salute,
-		Clps,
-		Cry,
-		Batidle,
-		Attack,
-		Cast,
-		Behit,
-		Runto,
-		Runback,
-		Defend,
-		COUNT
-	};
-
 	Action(Actor* actor);
 	virtual ~Action() {};
 	virtual BaseSprite*  OnUpdate(BaseSprite* avatar);
@@ -43,6 +25,7 @@ public:
 	int GetID() { return m_ID; }
 	void SetID(int id);
 protected:
+	float m_Velocity;
 	int m_ID;
 	ActionStateMachine* m_ASM;
 	Actor* m_Actor;
@@ -52,9 +35,11 @@ class AttackAction : public Action
 {
 public:
 	AttackAction(Actor* actor);
-	virtual ~AttackAction() {};
+	virtual ~AttackAction();
 	virtual BaseSprite* OnUpdate(BaseSprite* avatar);
 	void AddTarget(Actor* target);
+	virtual void Exit();
+	virtual void Enter();
 private:
 	Actor * m_Target;
 	Pos m_BackupPos;
@@ -69,24 +54,6 @@ public:
 };
 
 
-
-
-class Direction
-{
-public:
-	enum Dir
-	{
-		N = 6,
-		S = 4,
-		W = 5,
-		E = 7,
-		N_E = 3,
-		N_W = 2,
-		S_E = 0,
-		S_W = 1,
-	};
-};
-
 class ActionStateMachine
 {
 public:
@@ -94,7 +61,7 @@ public:
 	~ActionStateMachine() {};
 	void Update();
 	void Draw();
-	
+
 	void SetWeapon(int id);
 	void SetAvatar(int id);
 
@@ -110,15 +77,13 @@ public:
 	void Reset();
 	int GetDirCount(int action);
 private:
-	Actor* m_Actor;
+	Actor * m_Actor;
 	float m_TimeInterval;
 	int m_WeaponID;
 	int m_AvatarID;
 	bool m_HasWeapon;
 	Action* m_pPreviousAction;
 	Action* m_pCurrentAction;
-
 	std::map<int, BaseSprite*> m_WeaponActions;
 	std::map<int, BaseSprite*> m_AvatarActions;
-
 };

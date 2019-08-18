@@ -81,10 +81,10 @@ uint32_t Game::GetActionWasID(int type, int roleID, int actionID)
 		break;
 	}
 	std::string wasIDstr("");
-	if (actionID == Action::Batidle)
+	if (actionID == ACTION_BATIDLE)
 	{
-		auto wasIdle = rowTable->Rows[roleID][action_get_name(Action::Idle)];
-		auto wasBatidle = rowTable->Rows[roleID][action_get_name(Action::Batidle)];
+		auto wasIdle = rowTable->Rows[roleID][action_get_name(ACTION_IDLE)];
+		auto wasBatidle = rowTable->Rows[roleID][action_get_name(ACTION_BATIDLE)];
 		if (wasBatidle != "")wasIDstr = wasBatidle;
 		else wasBatidle = wasIdle;
 	}
@@ -107,10 +107,10 @@ uint32_t Game::GetWeaponWasID(int weaponID, int actionID)
 
 
 	std::string wasIDstr("");
-	if (actionID == Action::Batidle)
+	if (actionID == ACTION_BATIDLE)
 	{
-		auto wasIdle = s_AvatarWeapon90Table->Rows[weaponID][action_get_name(Action::Idle)];
-		auto wasBatidle = s_AvatarWeapon90Table->Rows[weaponID][action_get_name(Action::Batidle)];
+		auto wasIdle = s_AvatarWeapon90Table->Rows[weaponID][action_get_name(ACTION_IDLE)];
+		auto wasBatidle = s_AvatarWeapon90Table->Rows[weaponID][action_get_name(ACTION_BATIDLE)];
 		if (wasIdle != "")wasIDstr = wasBatidle;
 		else wasBatidle = wasIdle;
 	}

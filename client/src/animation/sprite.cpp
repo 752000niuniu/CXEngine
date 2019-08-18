@@ -1,4 +1,5 @@
 #include "animation/sprite.h"
+#include <NESupport.h>
 #include "texture_manager.h"
 #include "resource_manager.h"
 #include "input_manager.h"
@@ -89,7 +90,7 @@ void BaseSprite::Update()
 		{
 			PlayTime = (PlayTime - std::floor(PlayTime / FrameInterval)*FrameInterval);
 			CurrentFrame = CurrentFrame + 1;
-			if (CurrentFrame == GroupFrameCount) {
+			if (CurrentFrame >= GroupFrameCount) {
 				bGroupEndUpdate = true;
 				if (bLoop) {
 					CurrentFrame = 0;
@@ -127,6 +128,7 @@ void BaseSprite::Reset()
 {
 	PlayTime = 0;
 	CurrentFrame = 0;
+	FrameInterval = 0.016f * 4;
 }
 
 void BaseSprite::Stop()
@@ -226,13 +228,13 @@ int base_sprite_get_key_y(lua_State* L) {
 int base_sprite_get_frame_key_x(lua_State* L) {
 	auto* base_sprite = lua_check_base_sprite(L, 1);
 	int index = (int)lua_tointeger(L, 2);
-	lua_pushinteger(L, base_sprite->m_pSprite->mFrames[index].key_x);
+	lua_pushinteger(L, base_sprite->m_pSprite->mFrames[base_sprite->Dir* base_sprite->GroupFrameCount+ index].key_x);
 	return 1;
 }
 int base_sprite_get_frame_key_y(lua_State* L) {
 	auto* base_sprite = lua_check_base_sprite(L, 1);
 	int index = (int)lua_tointeger(L, 2);
-	lua_pushinteger(L, base_sprite->m_pSprite->mFrames[index].key_y);
+	lua_pushinteger(L, base_sprite->m_pSprite->mFrames[base_sprite->Dir* base_sprite->GroupFrameCount+index].key_y);
 	return 1;
 }
 
@@ -258,6 +260,13 @@ int base_sprite_get_current_frame(lua_State* L) {
 	lua_pushinteger(L, base_sprite->CurrentFrame);
 	return 1;
 }
+int base_sprite_set_current_frame(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	int frame = (int)lua_tointeger(L, 2);
+	base_sprite->CurrentFrame = frame;
+	return 0;
+}
+
 int base_sprite_get_group_frame_count(lua_State* L) {
 	auto* base_sprite = lua_check_base_sprite(L, 1);
 	lua_pushinteger(L, base_sprite->GroupFrameCount);
@@ -309,6 +318,7 @@ luaL_Reg MT_BASE_SPRITE[] = {
 { "GetDirCnt", base_sprite_get_dir_cnt },
 { "GetTotalFrames", base_sprite_get_total_frames },
 { "GetCurrentFrame", base_sprite_get_current_frame },
+{ "SetCurrentFrame", base_sprite_set_current_frame },
 { "GetGroupFrameCount", base_sprite_get_group_frame_count },
 { "GetGroupCount", base_sprite_get_group_count },
 { "Export", base_sprite_export },

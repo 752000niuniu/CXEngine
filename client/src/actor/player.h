@@ -4,12 +4,11 @@
 #include "pos.h"
 #include "entity.h"
 #include "actor/actor.h"
-#include "scene/game_map.h"
 #include "state.h"
 #include "ui.h"
 
-#include "text_renderer.h"
-
+class TextView;
+class GameMap;
 class FrameAnimation;
 
 class Player : public Actor , public View

@@ -12,6 +12,7 @@
 #include "cxmath.h"
 #include "graphics/object_2d.h"
 #include "animation/frame_animation.h"
+#include "text_renderer.h"
 
 
 float tv_start = -1.f;

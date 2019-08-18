@@ -4,7 +4,6 @@
 
 #include "event/event.h"
 #include "graphics/texture.h"
-#include "scene/game_map.h"
 #include "actor/player.h"
 #include "scene/base_scene.h"
 

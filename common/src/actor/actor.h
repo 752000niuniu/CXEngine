@@ -2,23 +2,15 @@
 
 #include "define_types.h"
 #include "pos.h"
-#include "scene/game_map.h"
 #include "entity.h"
 
 class MoveHandle;
 #ifndef SIMPLE_SERVER
 class ActionStateMachine;
 #endif
-
+class GameMap;
 
 class BaseScene;
-enum EActorType
-{
-	ACTOR_TYPE_DEFAULT = 0,
-	ACTOR_TYPE_PLAYER,
-	ACTOR_TYPE_PET,
-	ACTOR_TYPE_NPC
-};
 
 class ActorCombatProps
 {

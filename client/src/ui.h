@@ -1,8 +1,7 @@
 #pragma once
-#include "script_system.h"
-#include "graphics/texture.h"
 #include "pos.h"
 
+class Texture;
 class InputManager;
 
 class View

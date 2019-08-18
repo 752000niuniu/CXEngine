@@ -1,8 +1,8 @@
 
 #pragma once
 #include "ui.h"
-#include <NESupport.h>
 
+struct NE::Sprite;
 class BaseSprite : public View
 {
 public:
@@ -36,7 +36,7 @@ public:
 	int bPlay;
 	int bGroupEndUpdate;
 	Pos Pos;
-	Sprite* m_pSprite;
+	NE::Sprite* m_pSprite;
 	float FrameInterval;
 	float PlayTime;
 };

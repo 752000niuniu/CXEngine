@@ -18,32 +18,6 @@
 // handles. All functions and resources are static and no
 // public constructor is defined.
 
-#define AddonWDF      0x10
-#define AtomWDF       0x20
-#define ChatWDF       0x30
-#define FireworkWDF   0x40
-#define GoodsWDF      0x50
-#define ItemWDF       0x60
-#define MagicWDF      0x70
-#define MapaniWDF     0x80
-#define MhimageWDF    0x90
-#define MiscWDF       0xa0
-#define MusicWDF      0xb0
-#define SceneWDF      0xc0
-#define ShapeWDF      0xd0
-#define ShapeWD1      0xd1
-#define ShapeWD2      0xd2
-#define ShapeWD3      0xd3
-#define ShapeWD4      0xd4
-#define ShapeWD5      0xd5
-#define ShapeWD6      0xd6
-#define ShapeWD7      0xd7
-#define SmapWDF       0xe0
-#define SoundWDF      0xf0
-#define StockWDF      0x100
-#define WaddonWDF     0x110
-#define WzifeWDF      0x120
-#define WzifeWD1      0x121
 
 namespace utils
 {

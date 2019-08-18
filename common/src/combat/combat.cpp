@@ -139,7 +139,7 @@ void CombatSystem::StartBattle()
 		Pos  pos = it->GetPos();
 		it->SetIsCombat(true);
 		it->SetPos(pos);
-		it->SetActionID(Action::Batidle);
+		it->SetActionID(ACTION_BATIDLE);
 	}
 	m_BattleState = BTTALE_TURN_NEXT;
 }

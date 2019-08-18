@@ -1,16 +1,13 @@
 #include "ui.h"
-#include "file_system.h"
 #include "input_manager.h"
-#include "graphics/bitmap.h"
-#include "graphics/texture.h"
 #include "resource_manager.h"
-#include "text_renderer.h"
-#include "Time/Time.h"
-#include "sprite_renderer.h"
-#include "window.h"
-#include "scene/scene_manager.h"
-#include "scene/scene.h"
 #include "utils.h"
+#include "window.h"
+#include "sprite_renderer.h"
+#include "scene/scene.h"
+#include "scene/scene_manager.h"
+#include "file_system.h"
+
 
 ImageView::ImageView(uint32_t pkg, uint32_t wasID)
 {

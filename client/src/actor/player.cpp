@@ -1,24 +1,16 @@
 #include "player.h"
-#include "logger.h"
-#include "message.h"
-#include "combat/Combat.h"
-#include "combat/Skill.h"
-#include "cxrandom.h"
-#include "engine.h"
 #include "player_state.h"
-#include "window.h"
-#include "profile.h"
-#include "file_loading.h"
-#include "scene/scene_manager.h"
-#include "scene/scene.h"
-#include "cxmath.h"
-#include "input_manager.h"
-#include "game.h"
-#include "utils.h"
 #include "text_renderer.h"
-#include "actor/action.h"
 #include "resource_manager.h"
+#include "input_manager.h"
+#include "utils.h"
+#include "cxmath.h"
+#include "window.h"
 #include "animation/frame_animation.h"
+#include "scene/game_map.h"
+#include "scene/base_scene.h"
+#include "scene/scene_manager.h"
+
 
 
 Player::Player(uint64_t pid):
@@ -157,7 +149,7 @@ void Player::OnUpdate()
 			m_PlayerFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(ShapeWDF, playerFrameWasID)));
 			m_PlayerFrames[m_ActionID]->ResetAnim(m_Dir);
 			m_PlayerFrames[m_ActionID]->SetFrameTimeBase(m_FrameSpeed);
-			if (m_ActionID == Action::Clps)
+			if (m_ActionID == ACTION_CLPS)
 			{
 				m_PlayerFrames[m_ActionID]->SetPlayLoop(false);
 			}
@@ -184,7 +176,7 @@ void Player::OnUpdate()
 			m_WeaponFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(ShapeWDF, weaponFrameWasID)));
 			m_WeaponFrames[m_ActionID]->ResetAnim(m_Dir);
 			m_WeaponFrames[m_ActionID]->SetFrameTimeBase(m_FrameSpeed);
-			if (m_ActionID == Action::Clps)
+			if (m_ActionID == ACTION_CLPS)
 			{
 				m_WeaponFrames[m_ActionID]->SetPlayLoop(false);
 			}
@@ -480,7 +472,7 @@ void Player::SetAction(int state)
 			if (playerFrameWasID != -1) {
 				m_PlayerFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(ShapeWDF, playerFrameWasID)));
 				m_PlayerFrames[m_ActionID]->ResetAnim(m_Dir);
-				if (m_ActionID == Action::Clps)
+				if (m_ActionID == ACTION_CLPS)
 				{
 					m_PlayerFrames[m_ActionID]->SetPlayLoop(false);
 				}
@@ -504,7 +496,7 @@ void Player::SetAction(int state)
 			if (weaponFrameWasID != -1) {
 				m_WeaponFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(ShapeWDF, weaponFrameWasID)));
 				m_WeaponFrames[m_ActionID]->ResetAnim(m_Dir);
-				if (m_ActionID == Action::Clps)
+				if (m_ActionID == ACTION_CLPS)
 				{
 					m_WeaponFrames[m_ActionID]->SetPlayLoop(false);
 				}

@@ -20,6 +20,8 @@
 #include "utils.h"
 #include "actor/actor_manager.h"
 #include "lua_bind.h"
+#include "text_renderer.h"
+#include "scene/game_map.h"
 
 bool s_IsCombat = true;
 TextView* s_Announcement;
