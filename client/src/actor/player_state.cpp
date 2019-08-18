@@ -5,6 +5,7 @@
 #include "cxmath.h"
 #include "resource_manager.h"
 #include "cxrandom.h"
+#include "actor/action.h"
 
 void BasePlayerCombatState::Enter(Player* )
 {

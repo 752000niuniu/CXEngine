@@ -16,6 +16,7 @@
 #include "game.h"
 #include "utils.h"
 #include "text_renderer.h"
+#include "actor/action.h"
 
 
 Player::Player(uint64_t pid):

@@ -6,6 +6,7 @@
 #include "animation/frame_animation.h"
 #include "actor/player_state.h"
 #endif
+#include "actor/action.h"
 
 TurnCommand::TurnCommand()
 {

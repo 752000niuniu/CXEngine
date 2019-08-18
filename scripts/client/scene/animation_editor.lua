@@ -14,8 +14,8 @@ function OnSceneInit()
     player:SetWeaponID(56)
     player:SetActionID(ACTION_IDLE)
     
-    player:SetX(200)
-    player:SetY(200)
+    player:SetX(330)
+    player:SetY(330)
     
 end
 
@@ -80,6 +80,15 @@ function OnSceneImGuiUpdate()
     imgui.InputText("RoleID", RoleIDSB)
     imgui.InputText("WeaponID", WeaponIDSB)
 
+    if imgui.Button('Attack') then
+        player:PlayAttack()
+    end
+    if imgui.Button('LoadPlayer') then
+        local roleID = math.tointeger(RoleIDSB:str())
+        local weaponID = math.tointeger(WeaponIDSB:str())
+        player:SetRoleID(roleID)
+        player:SetWeaponID(weaponID)
+    end
     if imgui.Button('+ActionID') then
         LoadActionID = LoadActionID + 1
         if LoadActionID > 15 then
@@ -100,12 +109,14 @@ function OnSceneImGuiUpdate()
 
     if imgui.Button('+TimeInterval') then
         TimeInterval = TimeInterval + 0.016
-        OnChangeTimeInterval()
+        player:SetTimeInterval(TimeInterval)
+        -- OnChangeTimeInterval()
     end
 
     if imgui.Button('-TimeInterval') then
         TimeInterval = TimeInterval -0.016
-        OnChangeTimeInterval()
+        player:SetTimeInterval(TimeInterval)
+        -- OnChangeTimeInterval()
     end
     
     imgui.Text('LoadActionID:' .. LoadActionID)

@@ -3,7 +3,6 @@
 
 #include "pos.h"
 #include "entity.h"
-#include "actor/action.h"
 #include "actor/actor.h"
 #include "scene/game_map.h"
 #include "state.h"

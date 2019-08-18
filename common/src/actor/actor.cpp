@@ -57,6 +57,22 @@ void Actor::OnDraw()
 #endif
 }
 
+void Actor::ReverseDir()
+{
+	switch (m_Dir)
+	{
+	case 6: m_Dir = 4; break;
+	case 4: m_Dir = 6; break;
+	case 5: m_Dir = 7; break;
+	case 7: m_Dir = 5; break;
+	case 3: m_Dir = 1; break;
+	case 1: m_Dir = 3; break;
+	case 2: m_Dir = 0; break;
+	case 0: m_Dir = 2; break;
+	}
+	SetDir(m_Dir);
+}
+
 void Actor::SetPos(float x, float y)
 {
 	if (IsCombat()) {
@@ -380,12 +396,18 @@ int actor_set_role_id(lua_State* L) {
 int actor_get_role_id(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	lua_pushinteger(L, actor->GetRoleID());
+#ifndef SIMPLE_SERVER
+	actor->GetASM()->Reset();
+#endif // !SIMPLE_SERVER
 	return 1;
 }
 int actor_set_weapon_id(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	int weaponID = (int)lua_tointeger(L, 2);
 	actor->SetWeaponID(weaponID);
+#ifndef SIMPLE_SERVER
+	actor->GetASM()->Reset();
+#endif // !SIMPLE_SERVER
 	return 0;
 }
 
@@ -404,6 +426,25 @@ int actor_clear_frames(lua_State* L) {
 #endif
 	return 0;
 }
+
+int actor_play_attack(lua_State*L){
+#ifndef SIMPLE_SERVER
+	Actor* actor = lua_check_actor(L, 1);
+	actor->GetASM()->ChangeAction(new AttackAction(actor));
+#endif
+	return 0;
+}
+
+int actor_set_time_interval(lua_State*L) {
+#ifndef SIMPLE_SERVER
+	Actor* actor = lua_check_actor(L, 1);
+	float ti = (float)lua_tonumber(L, 2);
+	actor->GetASM()->SetTimeInterval(ti);
+#endif
+	return 0;
+}
+
+
 
 
 luaL_Reg mt_actor[] = {
@@ -445,6 +486,8 @@ luaL_Reg mt_actor[] = {
 {"MoveTo", actor_move_to},
 {"Say", actor_say},
 {"ClearFrames", actor_clear_frames},
+{ "PlayAttack", actor_play_attack},
+{ "SetTimeInterval", actor_set_time_interval },
 { NULL, NULL }
 };
 

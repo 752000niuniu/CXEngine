@@ -7,7 +7,7 @@
 std::string action_get_name(int i);
 size_t action_get_size();
 std::string action_system_get_action(int i);
-
+bool action_is_show_weapon(int action);
 class Action
 {
 public:
@@ -34,7 +34,7 @@ public:
 
 	Action(Actor* actor);
 	virtual ~Action() {};
-	virtual void OnUpdate(BaseSprite* avatar);
+	virtual BaseSprite*  OnUpdate(BaseSprite* avatar);
 	virtual void Enter() {};
 	virtual void Exit() {};
 
@@ -46,6 +46,14 @@ protected:
 	int m_ID;
 	ActionStateMachine* m_ASM;
 	Actor* m_Actor;
+};
+
+class AttackAction : public Action
+{
+public:
+	AttackAction(Actor* actor);
+	virtual ~AttackAction() {};
+	virtual BaseSprite* OnUpdate(BaseSprite* avatar);
 };
 
 
@@ -76,7 +84,7 @@ public:
 	void SetWeapon(int id);
 	void SetAvatar(int id);
 
-	
+	void RestoreAction();
 	void ChangeAction(Action* action);
 
 	void EnsureLoadAction(int action);
@@ -84,9 +92,11 @@ public:
 	BaseSprite* GetWeapon(int action);
 	bool HasWeapon() { return m_HasWeapon; }
 	Action* GetAction() { return m_pCurrentAction; }
+	void SetTimeInterval(float ti) { m_TimeInterval = ti; }
+	void Reset();
 private:
 	Actor* m_Actor;
-
+	float m_TimeInterval;
 	int m_WeaponID;
 	int m_AvatarID;
 	bool m_HasWeapon;
@@ -95,4 +105,5 @@ private:
 
 	std::map<int, BaseSprite*> m_WeaponActions;
 	std::map<int, BaseSprite*> m_AvatarActions;
+
 };

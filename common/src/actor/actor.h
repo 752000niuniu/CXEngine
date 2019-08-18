@@ -45,6 +45,7 @@ public:
 
 	virtual void SetDir(int dir) { m_Dir = dir; };
 	int GetDir() { return m_Dir; };
+	void ReverseDir();
 
 	void SetActionID(int state) { m_ActionID = state; };
 	int GetActionID() { return m_ActionID; }
