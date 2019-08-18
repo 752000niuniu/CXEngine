@@ -19,12 +19,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../common/src PREFIX "Source Files
 
 add_executable(SimpleEngine
     ${SOURCES_HEADER_PRI}
-    ${GAME_SOURCES_HEADER}
-    ${GAME_COMMON_SRCS}
-    src/actor/player.cpp
-    src/actor/player_state.cpp
-    src/scene/scene.cpp
-	src/scene/scene_manager.cpp
+   
     src/algorithm.cpp
     src/animation/frame_animation.cpp
     src/animation/sprite.cpp
@@ -59,6 +54,13 @@ add_executable(SimpleEngine
     src/ui.cpp
     src/vertex.cpp
     src/window.cpp
+
+    ${GAME_SOURCES_HEADER}
+    ${GAME_COMMON_SRCS}
+    src/actor/player.cpp
+    src/actor/player_state.cpp
+    src/scene/scene.cpp
+	src/scene/scene_manager.cpp
 )
 
 if(MSVC)

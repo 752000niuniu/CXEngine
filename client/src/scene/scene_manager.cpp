@@ -252,6 +252,8 @@ void SceneManager::Draw()
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		ImVec2 cursorPos = ImGui::GetCursorPos();
+		auto cspos = ImGui::GetCursorScreenPos();
+		m_ImGuiCursorPos = Pos(cspos.x, cspos.y);
 		ImGui::GetWindowDrawList()->AddCallback(function_to_select_shader_or_blend_state, nullptr);
 		ImGui::Image((void*)(uint64_t)m_TextureColor, ImVec2((float)gameWidth, (float)gameHeight), ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::GetWindowDrawList()->AddCallback(function_to_restore_shader_or_blend_state , nullptr);

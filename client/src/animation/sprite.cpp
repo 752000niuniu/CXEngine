@@ -2,7 +2,6 @@
 #include <NESupport.h>
 #include "texture_manager.h"
 #include "resource_manager.h"
-#include "input_manager.h"
 #include "window.h"
 #include "sprite_renderer.h"
 
@@ -31,7 +30,6 @@ BaseSprite::BaseSprite(uint64_t resoureID)
 	Height = m_pSprite->mHeight;
 	KeyX = m_pSprite->mKeyX;
 	KeyY = m_pSprite->mKeyY;
-	DirCnt = m_pSprite->mGroupSize;
 	TotalFrames = m_pSprite->mGroupSize*m_pSprite->mFrameSize;
 	GroupFrameCount = m_pSprite->mFrameSize;
 	GroupCount = m_pSprite->mGroupSize;
@@ -48,36 +46,13 @@ BaseSprite::BaseSprite(uint64_t resoureID)
 	bPlay = true;
 	bLoop = true;
 	bGroupEndUpdate = false;
-	INPUT_MANAGER_INSTANCE->RegisterView(this);
 }
 
 BaseSprite::BaseSprite(uint32_t pkg, uint32_t wasID) :BaseSprite(RESOURCE_MANAGER_INSTANCE->EncodeWAS(pkg, wasID)) {}
 
 BaseSprite::~BaseSprite()
 {
-	INPUT_MANAGER_INSTANCE->UnRegisterView(this);
 	m_pSprite = nullptr;
-}
-
-Bound BaseSprite::GetViewBounds()
-{
-	return { Pos.x,Pos.x + (float)Width,Pos.y,Pos.y + (float)Height };
-}
-
-int BaseSprite::GetViewLayer() const
-{
-	return 1;
-}
-
-bool BaseSprite::CheckDrag(int dx, int dy)
-{
-	return pow(dx, 2) + pow(dy, 2) >= 16;
-}
-
-void BaseSprite::OnDragMove(int dx, int dy)
-{
-	Pos.x += dx;
-	Pos.y += dy;
 }
 
 void BaseSprite::Update()
@@ -228,13 +203,24 @@ int base_sprite_get_key_y(lua_State* L) {
 int base_sprite_get_frame_key_x(lua_State* L) {
 	auto* base_sprite = lua_check_base_sprite(L, 1);
 	int index = (int)lua_tointeger(L, 2);
-	lua_pushinteger(L, base_sprite->m_pSprite->mFrames[base_sprite->Dir* base_sprite->GroupFrameCount+ index].key_x);
+	int frame = base_sprite->Dir* base_sprite->GroupFrameCount + index;
+	if (frame >= base_sprite->TotalFrames){
+		lua_pushinteger(L,-1);
+	}else{
+		lua_pushinteger(L, base_sprite->m_pSprite->mFrames[frame].key_x);
+	}
 	return 1;
 }
 int base_sprite_get_frame_key_y(lua_State* L) {
 	auto* base_sprite = lua_check_base_sprite(L, 1);
 	int index = (int)lua_tointeger(L, 2);
-	lua_pushinteger(L, base_sprite->m_pSprite->mFrames[base_sprite->Dir* base_sprite->GroupFrameCount+index].key_y);
+	
+	int frame = base_sprite->Dir* base_sprite->GroupFrameCount + index;
+	if (frame >= base_sprite->TotalFrames) {
+		lua_pushinteger(L, -1);
+	}else{
+		lua_pushinteger(L, base_sprite->m_pSprite->mFrames[frame].key_y);
+	}
 	return 1;
 }
 
@@ -247,7 +233,7 @@ int base_sprite_get_play_time(lua_State* L) {
 
 int base_sprite_get_dir_cnt(lua_State* L) {
 	auto* base_sprite = lua_check_base_sprite(L, 1);
-	lua_pushinteger(L, base_sprite->DirCnt);
+	lua_pushinteger(L, base_sprite->GroupCount);
 	return 1;
 }
 int base_sprite_get_total_frames(lua_State* L) {
@@ -325,6 +311,7 @@ luaL_Reg MT_BASE_SPRITE[] = {
 { "Destroy", base_sprite_destroy },
 { NULL, NULL }
 };
+
 void lua_push_base_sprite(lua_State*L, BaseSprite* sprite)
 {
 	BaseSprite** ptr = (BaseSprite**)lua_newuserdata(L, sizeof(BaseSprite*));

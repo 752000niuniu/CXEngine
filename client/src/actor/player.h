@@ -11,7 +11,7 @@ class TextView;
 class GameMap;
 class FrameAnimation;
 
-class Player : public Actor , public View
+class Player : public Actor 
 {
 public:
 	Player(uint64_t pid);
@@ -74,9 +74,7 @@ public:
 	void SetSkillFrame(FrameAnimation* anim);
 	FrameAnimation* GetSkillFrame() { return m_SkillFrame; }
 
-	Bound GetViewBounds() override;
-	bool CheckDrag(int x, int y) override;
-	void OnDragMove(int x, int y)override;
+	
 
 protected:
 	void LoadRoleFrame();

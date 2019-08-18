@@ -14,7 +14,6 @@ local added_frame = 0
 ---待战-> Runto-> Attack-> Runback -> 待战
 function OnSceneInit()
     player = actor_manager_create_actor(os.time())
-
     player:SetRoleID(1)
     player:SetWeaponID(40)
     player:SetActionID(ACTION_IDLE)
@@ -24,9 +23,9 @@ function OnSceneInit()
     player:SetY(275.0)
 
     enemy  = actor_manager_create_actor(os.time() + 100)
-
-    enemy:SetRoleID(2)
-    enemy:SetWeaponID(60)
+    enemy:SetType(ACTOR_TYPE_PET)
+    enemy:SetRoleID(7)
+    enemy:SetWeaponID(0)
     enemy:SetActionID(ACTION_IDLE)
     
     enemy:SetX(375.0)
@@ -92,32 +91,59 @@ function OnChangeTimeInterval()
     end
 end
 
+function draw_sprite_info(sprite)
+    local x,y = sprite:GetPos()
+    imgui.Text(string.format('X '.. x))
+    imgui.Text(string.format('Y '.. y))
+    imgui.Text(string.format('w '.. sprite:GetWidth()))
+    imgui.Text(string.format('h '.. sprite:GetHeight()))
+    imgui.Text(string.format('KeyX '.. sprite:GetKeyX()))
+    imgui.Text(string.format('KeyY '.. sprite:GetKeyY()))
+
+    local curframe = sprite:GetCurrentFrame()
+    imgui.Text(string.format('CurKeyX '.. sprite:GetFrameKeyX(curframe)))
+    imgui.Text(string.format('CurKeyY '.. sprite:GetFrameKeyY(curframe)))
+
+    imgui.Text('PlayTime'.. ' '.. string.format('%.2f',sprite:GetPlayTime()) )
+    imgui.Text('DirCnt'.. ' '.. sprite:GetDirCnt())
+    imgui.Text('TotalFrames'.. ' '.. sprite:GetTotalFrames())
+    imgui.Text('CurrentFrame'.. ' '.. sprite:GetCurrentFrame())
+    imgui.Text('GroupFrameCount'.. ' '.. sprite:GetGroupFrameCount())
+    imgui.Text('GroupCount'.. ' '.. sprite:GetGroupCount())
+    imgui.Text(string.format('dir '.. sprite:GetDir()))
+    imgui.Text(string.format('dt '.. string.format('%.2f',sprite:GetFrameInterval()) ))
+end
+
+local actor_dir = 0
+local actor_action = 0
 function imgui_draw_actor(actor)
     if actor then
         local x ,y = actor:GetX() , actor:GetY()
         local h = actor:GetHeight()
         local w = actor:GetWidth()
+        local avatar = actor:GetAvatar()
         imgui.SetCursorPos(x-w//2,y+20)
         imgui.BeginGroup()
         if imgui.Button('ChangeDir##'..actor:GetID()) then
-            local dir  = actor:GetDir()+1
-            if dir > 7 then dir = 0 end
-            actor:SetDir(math.tointeger(dir))
+            actor_dir  = actor_dir +1
+            if actor_dir > 7 then actor_dir = 0 end
+            actor:SetDir(math.tointeger(actor_dir))
         end
 
         if imgui.Button('ChangeAction##'..actor:GetID()) then
-            local action = actor:GetActionID()+1
-            if action  > 15 then action  = 0 end
-            actor:SetActionID(math.tointeger(action))
+            actor_action = actor_action+1
+            if actor_action> 15 then actor_action  = 0 end
+            actor:SetActionID(math.tointeger(actor_action))
         end
-     
+        
+        draw_sprite_info(avatar)
         imgui.EndGroup()
     end
 
 
 end
 function OnSceneImGuiUpdate()
-    imgui.SetCursorPos(200,0)
+    imgui.SetCursorPos(0,0)
     imgui.BeginGroup()
     imgui.InputText("RoleID", RoleIDSB)
     imgui.InputText("WeaponID", WeaponIDSB)
@@ -228,25 +254,7 @@ function OnSceneImGuiUpdate()
         local h = sprite:GetHeight()        
         imgui.SetCursorPos(x,y+h)
         imgui.BeginGroup()
-        imgui.Text(string.format('X '.. x))
-        imgui.Text(string.format('Y '.. y))
-        imgui.Text(string.format('w '.. sprite:GetWidth()))
-        imgui.Text(string.format('h '.. sprite:GetHeight()))
-        imgui.Text(string.format('KeyX '.. sprite:GetKeyX()))
-        imgui.Text(string.format('KeyY '.. sprite:GetKeyY()))
-
-        local curframe = sprite:GetCurrentFrame()
-        imgui.Text(string.format('CurKeyX '.. sprite:GetFrameKeyX(curframe)))
-        imgui.Text(string.format('CurKeyY '.. sprite:GetFrameKeyY(curframe)))
-
-        imgui.Text('PlayTime'.. ' '.. string.format('%.2f',sprite:GetPlayTime()) )
-        imgui.Text('DirCnt'.. ' '.. sprite:GetDirCnt())
-        imgui.Text('TotalFrames'.. ' '.. sprite:GetTotalFrames())
-        imgui.Text('CurrentFrame'.. ' '.. sprite:GetCurrentFrame())
-        imgui.Text('GroupFrameCount'.. ' '.. sprite:GetGroupFrameCount())
-        imgui.Text('GroupCount'.. ' '.. sprite:GetGroupCount())
-        imgui.Text(string.format('dir '.. sprite:GetDir()))
-        imgui.Text(string.format('dt '.. string.format('%.2f',sprite:GetFrameInterval()) ))
+        draw_sprite_info(sprite)
         imgui.EndGroup()
     end    
 

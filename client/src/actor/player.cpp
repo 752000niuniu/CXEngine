@@ -34,13 +34,13 @@ m_SkillFrame(nullptr)
 
 	m_PlayerFrames.clear();
 	m_WeaponFrames.clear();
-	INPUT_MANAGER_INSTANCE->RegisterView(this);
+	//INPUT_MANAGER_INSTANCE->RegisterView(this);
 }
 
 
 Player::~Player()
 {
-	INPUT_MANAGER_INSTANCE->UnRegisterView(this);
+	//INPUT_MANAGER_INSTANCE->UnRegisterView(this);
 	if (m_pFSM)
 	{
 		delete m_pFSM;
@@ -122,13 +122,10 @@ void Player::ChangeAction(int actionID)
 }
 
 
-
-
 void Player::SaveFrame(int index)
 {
 	//TODO 
 }
-
 
 void Player::OnUpdate()
 {
@@ -160,7 +157,6 @@ void Player::OnUpdate()
 				m_WeaponFrames[m_ActionID]->SetFrameTimeBase(m_FrameSpeed);
 				int groupCount = m_WeaponFrames[m_ActionID]->GetGroupFrameCount();
 				m_PlayerFrames[m_ActionID]->ResetFrameTimeByGroupCount(groupCount);
-				
 			}
 		}
 	}
@@ -530,21 +526,6 @@ void Player::SetSkillFrame(FrameAnimation* anim)
 	m_SkillFrame->ResetAnim(0);
 }
 
-Bound Player::GetViewBounds()
-{
-	return	GetScreenBound();
-}
-
-bool Player::CheckDrag(int dx, int dy)
-{
-	return pow(dx, 2) + pow(dy, 2) >= 16;
-}
-
-void Player::OnDragMove(int dx, int dy)
-{
-	m_Pos.x += (float)dx;
-	m_Pos.y += (float)dy;
-}
 
 void Player::LogInfo()
 {

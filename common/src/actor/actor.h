@@ -3,6 +3,7 @@
 #include "define_types.h"
 #include "pos.h"
 #include "entity.h"
+#include "ui.h"
 
 class MoveHandle;
 #ifndef SIMPLE_SERVER
@@ -24,7 +25,11 @@ public:
 	bool HasReady;
 };
 
-class Actor : public BaseGameEntity 
+#ifndef SIMPLE_SERVER
+class Actor : public BaseGameEntity, public View
+#else
+class Actor : public BaseGameEntity
+#endif
 {
 public:
 	Actor(uint64_t id);
@@ -36,21 +41,21 @@ public:
 	virtual void OnDraw();
 	virtual bool HandleMessage(const Telegram& msg) { return false; };
 
-	virtual void SetDir(int dir) { m_Dir = dir; };
+	virtual void SetDir(int dir);
 	int GetDir() { return m_Dir; };
 	int GetDirByDegree(float degree);
 	void ReverseDir();
 
-	void SetActionID(int state) { m_ActionID = state; };
+	void SetActionID(int state);
 	int GetActionID() { return m_ActionID; }
 
 	void SetSceneID(int id) { m_SceneID = id; };
 	int GetSceneID() { return m_SceneID; };
 
-	void SetRoleID(int id) { m_RoleID = id; };
+	void SetRoleID(int id) ;
 	int GetRoleID() { return m_RoleID; };
 
-	void SetWeaponID(int weapon) { m_WeaponID = weapon; }
+	void SetWeaponID(int weapon);
 	int GetWeaponID() { return m_WeaponID; }
 
 
@@ -81,8 +86,8 @@ public:
 	void TranslateX(float x) { m_Pos.x += x; }
 	void TranslateY(float y) { m_Pos.y += y; }
 
-	virtual float GetWidth() { return 0; };
-	virtual float GetHeight() { return 0; };
+	virtual float GetWidth();
+	virtual float GetHeight();
 
 	void SetNickName(std::string name) { m_NickName = name; };
 	std::string GetNickName() { return m_NickName; };
@@ -131,6 +136,9 @@ public:
 	MoveHandle* GetMoveHandle() { return m_MoveHandle; }
 #ifndef SIMPLE_SERVER
 	ActionStateMachine* GetASM() { return m_ASM; };
+	Bound GetViewBounds() override;
+	bool CheckDrag(int x, int y) override;
+	void OnDragMove(int x, int y)override;
 #endif
 protected:
 	int m_RoleID;				//current role

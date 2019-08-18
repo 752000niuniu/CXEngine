@@ -55,7 +55,7 @@ public:
 	unsigned int GetFboID() { return m_Fbo; };
 	unsigned int GetRboID() { return m_Rbo; };
 	unsigned int GetTextureID() { return m_TextureColor; };
-
+	Pos GetImGuiCursorPos() { return m_ImGuiCursorPos; }
 	TransportStation* GetTransportStationInfo(String uuid);
 private:	
 	std::map<String,BaseScene*> m_Scenes;
@@ -78,6 +78,7 @@ private:
 	unsigned int m_Fbo;
 	unsigned int m_Rbo;
 	unsigned int m_TextureColor;
+	Pos m_ImGuiCursorPos;
 };
 
 #define SCENE_MANAGER_INSTANCE SceneManager::GetInstance()

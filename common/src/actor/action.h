@@ -7,28 +7,28 @@
 class Actor;
 class ActionStateMachine;
 class BaseSprite;
+
+
 std::string action_get_name(int i);
 size_t action_get_size();
 std::string action_system_get_action(int i);
 bool action_is_show_weapon(int action);
+
+bool action_is_emotion_action(int action);
+bool action_is_battle_action(int action);
+
+
 class Action
 {
 public:
 	Action(Actor* actor);
 	virtual ~Action() {};
-	virtual BaseSprite*  OnUpdate(BaseSprite* avatar);
-	virtual void Enter() {};
+	virtual void Enter();
 	virtual void Exit() {};
-
-	void Update();
-	void Draw();
-	int GetID() { return m_ID; }
-	void SetID(int id);
+	virtual  void Update();
 protected:
-	float m_Velocity;
-	int m_ID;
-	ActionStateMachine* m_ASM;
-	Actor* m_Actor;
+	ActionStateMachine *  pASM;
+	Actor* actor;
 };
 
 class AttackAction : public Action
@@ -36,21 +36,23 @@ class AttackAction : public Action
 public:
 	AttackAction(Actor* actor);
 	virtual ~AttackAction();
-	virtual BaseSprite* OnUpdate(BaseSprite* avatar);
+	virtual  void Update();
 	void AddTarget(Actor* target);
 	virtual void Exit();
 	virtual void Enter();
 private:
 	Actor * m_Target;
 	Pos m_BackupPos;
+	int m_BackupActionID;
+	float m_Velocity;
+	int m_ID;
 };
 
-class MoveAction : public Action
+class IdleAction : public Action
 {
 public:
-	MoveAction(Actor* actor);
-	virtual ~MoveAction() {};
-	virtual BaseSprite* OnUpdate(BaseSprite* avatar);
+	IdleAction(Actor* actor) :Action(actor) {};
+	virtual ~IdleAction() {};
 };
 
 
@@ -64,21 +66,25 @@ public:
 
 	void SetWeapon(int id);
 	void SetAvatar(int id);
+	void SetAction(int id);
 
 	void RestoreAction();
 	void ChangeAction(Action* action);
-
 	void EnsureLoadAction(int action);
-	BaseSprite* GetAvatar(int action);
-	BaseSprite* GetWeapon(int action);
+
+	BaseSprite* GetAvatar(int action = -1);
+	BaseSprite* GetWeapon(int action = -1);
 	bool HasWeapon() { return m_HasWeapon; }
 	Action* GetAction() { return m_pCurrentAction; }
 	void SetTimeInterval(float ti) { m_TimeInterval = ti; }
 	void Reset();
-	int GetDirCount(int action);
+	int GetDirCount(int action = -1);
+
+	int GetActionID() { return m_ActionID; };
 private:
 	Actor * m_Actor;
 	float m_TimeInterval;
+	int m_ActionID;
 	int m_WeaponID;
 	int m_AvatarID;
 	bool m_HasWeapon;
@@ -87,3 +93,4 @@ private:
 	std::map<int, BaseSprite*> m_WeaponActions;
 	std::map<int, BaseSprite*> m_AvatarActions;
 };
+

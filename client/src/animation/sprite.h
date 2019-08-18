@@ -3,17 +3,12 @@
 #include "ui.h"
 
 struct NE::Sprite;
-class BaseSprite : public View
+class BaseSprite
 {
 public:
 	BaseSprite(uint64_t resoureID = 0);
 	BaseSprite(uint32_t pkg, uint32_t wasID);
 	virtual ~BaseSprite();
-
-	Bound GetViewBounds()  override;
-	int GetViewLayer()const override;
-	bool CheckDrag(int dx, int dy) override;
-	void OnDragMove(int dx, int dy) override;
 
 	virtual void Update();
 	void Draw();
@@ -22,7 +17,7 @@ public:
 	void Stop();
 	void Play();
 
-	int DirCnt;
+
 	int TotalFrames;
 	int CurrentFrame;
 	int GroupFrameCount;
@@ -41,5 +36,5 @@ public:
 	float PlayTime;
 };
 
-
+void lua_push_base_sprite(lua_State*L, BaseSprite* sprite);
 void luaopen_sprite(lua_State* L);

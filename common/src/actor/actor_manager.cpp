@@ -152,6 +152,7 @@ int lua_actor_manager_fetch_all_players(lua_State*L) {
 }
 
 void luaopen_actor_manager(lua_State* L) {
+	
 	script_system_register_luac_function_with_name(L, "actor_manager_create_actor", lua_actor_manager_create_actor);
 
 	script_system_register_luac_function_with_name(L, "actor_manager_create_player", lua_actor_manager_create_player);
