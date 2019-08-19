@@ -147,10 +147,22 @@ function imgui_draw_actor(actor)
         local avx, avy = avatar:GetPos()
         local tlx = orix + avx 
         local tly = oriy + avy
-        
+        local center_x = tlx + avatar:GetKeyX()
+        local center_y = tly + avatar:GetKeyY()
+        imgui.AddCircleFilled(center_x,center_y,4,0xff0000ff)
+
         local brx = orix + avx + avatar:GetWidth()
         local bry = oriy + avy + avatar:GetHeight()
         imgui.AddRect(tlx,tly,brx,bry,0xff00ffff)
+
+
+        center_x = center_x - avatar:GetFrameKeyX()
+        center_y = center_y - avatar:GetFrameKeyY()
+        imgui.AddCircleFilled(center_x,center_y,4,0xff00ff00)
+
+        brx = center_x + avatar:GetFrameWidth()
+        bry = center_y + avatar:GetFrameHeight()
+        imgui.AddRect(center_x,center_y,brx,bry,0xff00ff00)
         imgui.EndGroup()
     end
 end

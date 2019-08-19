@@ -243,25 +243,22 @@ int base_sprite_get_key_y(lua_State* L) {
 }
 int base_sprite_get_frame_key_x(lua_State* L) {
 	auto* base_sprite = lua_check_base_sprite(L, 1);
-	int index = (int)lua_tointeger(L, 2);
-	int frame = base_sprite->Dir* base_sprite->GroupFrameCount + index;
-	if (frame >= base_sprite->TotalFrames){
-		lua_pushinteger(L,-1);
-	}else{
-		lua_pushinteger(L, base_sprite->m_pSprite->mFrames[frame].key_x);
-	}
+	lua_pushinteger(L, base_sprite->GetFrameKeyX());
 	return 1;
 }
 int base_sprite_get_frame_key_y(lua_State* L) {
 	auto* base_sprite = lua_check_base_sprite(L, 1);
-	int index = (int)lua_tointeger(L, 2);
-	
-	int frame = base_sprite->Dir* base_sprite->GroupFrameCount + index;
-	if (frame >= base_sprite->TotalFrames) {
-		lua_pushinteger(L, -1);
-	}else{
-		lua_pushinteger(L, base_sprite->m_pSprite->mFrames[frame].key_y);
-	}
+	lua_pushinteger(L, base_sprite->GetFrameKeyY());
+	return 1;
+}
+int base_sprite_get_frame_width(lua_State*L){
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, base_sprite->GetFrameWidth());
+	return 1;
+}
+int base_sprite_get_frame_height(lua_State*L){
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, base_sprite->GetFrameHeight());
 	return 1;
 }
 
@@ -343,6 +340,10 @@ luaL_Reg MT_BASE_SPRITE[] = {
 { "GetKeyY", base_sprite_get_key_y },
 { "GetFrameKeyX", base_sprite_get_frame_key_x },
 { "GetFrameKeyY", base_sprite_get_frame_key_y },
+{ "GetFrameHeight", base_sprite_get_frame_height },
+{ "GetFrameWidth", base_sprite_get_frame_width},
+
+
 { "GetPlayTime", base_sprite_get_play_time },
 { "GetDirCnt", base_sprite_get_dir_cnt },
 { "GetTotalFrames", base_sprite_get_total_frames },
