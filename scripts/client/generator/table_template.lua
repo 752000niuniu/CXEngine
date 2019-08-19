@@ -1,6 +1,3 @@
-local cjson = require("cjson")
-
-    
 resource_ini_files = 
 {
     ["addon.wdf"]       =   "addon.wdf.ini",
@@ -39,7 +36,7 @@ function init_table_templates()
             local path = vfs_makepath('res/tables/'..v)
             cxlog_info("file:"..path)
             local str = utils_parse_tsv_file(path)
-            cxlog_info(str)
+            -- cxlog_info(str)
             resource_ini_tables[k] = cjson.decode(str)
         end
     end
@@ -57,18 +54,18 @@ avatar_category_affix =
 
 role_affix =
 {
-    FYN    =   "飞燕女",
-    YNX    =   "英女侠",
-    XYS    =   "逍遥生",
-    JXK    =   "剑侠客",
-    HMR    =   "狐美人",
-    GJL    =   "骨精灵",
-    JMW    =   "巨魔王",
-    HTG    =   "虎头怪",
-    WTJ    =   "舞天姬",
-    XCE    =   "玄彩娥",
-    STB    =   "神天兵",
-    LTZ    =   "龙太子",
+    FYN    =   {"飞燕女","飞药女"},
+    YNX    =   {"英女侠"},
+    XYS    =   {"逍遥生"},
+    JXK    =   {"剑侠客"},
+    HMR    =   {"狐美人"},
+    GJL    =   {"骨精灵"},
+    JMW    =   {"巨魔王"},
+    HTG    =   {"虎头怪"},
+    WTJ    =   {"舞天姬"},
+    XCE    =   {"玄彩娥"},
+    STB    =   {"神天兵"},
+    LTZ    =   {"龙太子"},
 }
 
 action_affix = 
@@ -162,71 +159,75 @@ shape_BB = {"白熊","超级泡泡","大蝙蝠","大海龟","地狱战神","赌�
 shape_NPC = {"帮派守护兽","捕鱼人","超级巫医","翠花","大大王","大生","大唐","道士","道童","地藏王","赌霸天","二宝","二大王","服装店老板","观音姐姐","管家","国子监祭酒","和尚","红娘","机关人","蒋大全","结婚1","结婚2","九头精怪","酒楼老板","考官","兰虎","老花农","老马猴","老太婆","老太爷","雷黑子","李世民","栗栗娘","龙王","龙王","鲁成","罗百万","罗师爷","马货商","男","牛魔王","女","盘丝","判官","菩提祖师","钱庄老板","秦琼","穷汉","三大王","沙僧","商会总管","少女","生肖狗","生肖猴","生肖虎","生肖鸡","生肖龙","生肖马","生肖牛","生肖蛇","生肖鼠","生肖兔","生肖羊","生肖猪","书生","书童","苏梦梦","孙婆婆","孙悟空","唐僧","特产商人","天宫","铁匠","土地","万圣公主","文老伯","无常白1","无常白2","无常黑1","无常黑2","武器店老板","小白龙","小二","衙役","阎罗王","药店老板","驿站老板","佣人","御林军","月老","张老财","赵姨娘","珍品商人","镇塔之神","镇元大仙","郑镖头","至尊宝","钟馗","猪八戒","装备收购商",}
 shape_90_weapon={"暗夜","八卦","百花","碧波","碧波","彩虹","沧海","吹雪","毒牙","鬼牙","红莲","雷神","冷月","梨花","灵蛇","流云","龙筋","盘龙","霹雳","破魄","乾坤","秋风","如意","撕天","肃魂","太极","屠龙","无敌","血刃","胭脂","倚天","阴阳","鱼肠","玉龙","月光","湛卢",}
 
+action_names = {'idle','walk','sit','angry','sayhi','dance','salute','clps','cry','batidle','attack','cast','behit','runto','runback','defend'}
 
 function find_avatar_table_row(av_table, tag)
     if not av_table[tag] then 
         av_table[tag] = 
         {
-            idle	= "",
-            walk	= "",
-            sit	    = "",
-            angry	= "",
-            sayhi	= "",
-            dance	= "",
-            salute	= "",
-            clps	= "",
-            cry 	= "",
-            batidle	= "",
-            attack	= "",
-            cast	= "",
-            behit	= "",
-            runto	= "",
-            runback	= "",
-            defend	= "",
+            idle	= {},
+            walk	= {},
+            sit	    = {},
+            angry	= {},
+            sayhi	= {},
+            dance	= {},
+            salute	= {},
+            clps	= {},
+            cry 	= {},
+            batidle	= {},
+            attack	= {},
+            cast	= {},
+            behit	= {},
+            runto	= {},
+            runback	= {},
+            defend	= {},
         }
     end
     return av_table[tag]
 end
 
-function find_action_key(action_name)
-    for action_key,names in pairs(action_affix) do
+function find_key_by_name(affix_tbl, _name)
+    for key,names in pairs(affix_tbl) do
         for i,name in ipairs(names) do
-            if action_name == name then
-                return action_key
+            if _name == name then
+                return key
             end
         end
     end
+end
+
+function find_action_key(action_name)
+    return find_key_by_name(action_affix, action_name) 
 end
 
 function find_weapon_key(weapon_name)
-    for weaponkey,names in pairs(weapon_affix) do
-        for i,name in ipairs(names) do
-            if weapon_name == name then
-                return weaponkey
-            end
-        end
-    end
+    return find_key_by_name(weapon_affix, weapon_name) or weapon_name
 end
 
-local avatar_weapon = {}
+function find_role_key(role_name)
+    return find_key_by_name(role_affix, role_name) or role_name
+end
+
+local avatar_weapon_table = {}
 function _parse_90_weapon_row(strs,WASID)
     if #strs ~= 5 then return false end
+
     local _90weapon = strs[1]
-    local _type = strs[2]
-    local _name = strs[3]
-    local _role = strs[4]
-    local _action = strs[5]
-    local ID = "Weapon_".._name.."_".._role
-    local row = find_avatar_table_row(avatar_weapon,ID)
-    row.ID = ID
-    row.name = _name
-    row.type = find_weapon_key(_type)
+    local _weapon_type = find_weapon_key(strs[2]) 
+    local _alias = strs[3]
+    local _role = find_role_key(strs[4])
+    local _action = find_action_key(strs[5]) 
+
+    local nameID = string.format('%s-%s-%s',_role,_weapon_type,_alias)
+    local row = find_avatar_table_row(avatar_weapon_table,nameID)
+    row.alias  = _alias
+    row.name = nameID
+    row.type = _weapon_type
     row.role = _role
     row.level = '90'
 
-    local action_key = find_action_key(_action)
-    if action_key then
-        row[action_key] = WASID
+    if _action then
+        table.insert(row[_action],WASID)
         return true
     end
     return false
@@ -234,63 +235,28 @@ end
 
 
 -- 9B6684AA	武器\刀_剑侠客_被击中
-local avatar_weapon_table = {}
 function _parse_weapon_row(strs,WASID)
     if #strs ~= 4 then return false end
-    local _weapon = strs[2]
-    local weaponkey = find_weapon_key(_weapon)
-    if not weaponkey then return false end
+    local _weapon_type = find_weapon_key(strs[2]) 
+    if not _weapon_type then return false end
     
-    local _role = strs[3]
-    local _action = strs[4]
+    local _role = find_role_key(strs[3])
+    local _action = find_action_key(strs[4])
 
-    local weapon1 = weaponkey.."_0"
-    local weapon2 = weaponkey.."_30"
-    local weapon3 = weaponkey.."_60"
-    local ID1 = _role .. "_" .. weapon1
-    local ID2 = _role .. "_" .. weapon2
-    local ID3 = _role .. "_" .. weapon3
+    local nameID = string.format('%s-%s-X',_role,_weapon_type)
+
+    local row = find_avatar_table_row(avatar_weapon_table,nameID)        
+    row.name = nameID
+    row.alias = 'X'
+    row.type = _weapon_type
+    row.role = _role
+    row.level = '0~60'
     
-    local row1 = find_avatar_table_row(avatar_weapon_table,ID1)        
-    local row2 = find_avatar_table_row(avatar_weapon_table,ID2)        
-    local row3 = find_avatar_table_row(avatar_weapon_table,ID3)        
-
-    row1.ID = ID1
-    row1.name = ID1
-    row1.type = weaponkey
-    row1.role = _role
-    row1.level = '0'
-    
-    row2.ID = ID2
-    row2.name = ID2
-    row2.type = weaponkey
-    row2.role = _role
-    row2.level = '30'
-
-    row3.ID = ID3
-    row3.name = ID3
-    row3.type = weaponkey
-    row3.role = _role
-    row3.level = '60'
-
-    local action_key = find_action_key(_action)
-    if action_key then
-        if row1[action_key]  == "" then
-            row1[action_key] = WASID    
-            row2[action_key] = WASID
-            row3[action_key] = WASID
-        end
-
-        if WASID ~=  row1[action_key] then
-            row2[action_key] = WASID
-            row3[action_key] = WASID
-        end
-
-        if WASID ~=  row2[action_key] then
-            row3[action_key] = WASID
-        end
+    if _action then
+        table.insert(row[_action],WASID)
         return true
     end
+    return false
 end
 
 -- 922E6CCB	人物\骨精灵_攻击_魔棒
@@ -298,54 +264,33 @@ end
 local avatar_role_table = {}
 function _parse_role_row(strs,WASID)
     if #strs < 3 then return false end
-    local _name = strs[2]
-    local _action = strs[3]
+    local _role = find_role_key( strs[2])
+    local _action = find_action_key(strs[3]) 
     if #strs == 3 then
-        local weapon1 = role_weapon_config[_name][1]
-        local weapon2 = role_weapon_config[_name][2]
-        local ID1 = _name .. "_" .. weapon1
-        local ID2 = _name .. "_" .. weapon2
-        local row1 = find_avatar_table_row(avatar_role_table,ID1)        
-        local row2 = find_avatar_table_row(avatar_role_table,ID2)        
-
-        row1.ID = ID1
-        row1.name = _name
-        row1.weapon = weapon1
-
-        row2.ID = ID2
-        row2.name = _name
-        row2.weapon = weapon2
-
-        local action_key = find_action_key(_action)
-        if action_key then
-            if row1[action_key] == "" then
-                row1[action_key] = WASID    
-                row2[action_key] = WASID    
-            end
-
-            if WASID ~=  row1[action_key] then
-                row2[action_key] = WASID
-            end
+        local nameID = string.format('%s-X',_role)
+        local row = find_avatar_table_row(avatar_role_table,nameID)        
+        
+        row.name = nameID
+        row.weapon_type = 'X'
+        if _action then
+            table.insert(row[_action],WASID)
             return true
         end
-
+        return false
     elseif #strs == 4 then
-        local _weapon = strs[4]
-        local weapon = find_weapon_key(_weapon)
-        if weapon then
-            local ID = _name .. "_" .. weapon
-            local row = find_avatar_table_row(avatar_role_table,ID)        
-            row.ID = ID
-            row.name = _name
-            row.weapon = weapon
-            local action_key = find_action_key(_action)
-            if action_key then
-                row[action_key] = WASID
-                return true    
-            end
-        else 
-            return false
+        local _weapon_type = find_weapon_key(strs[4])
+        if not _weapon_type then return false end
+            
+        local nameID = string.format('%s-%s',_role,_weapon_types)
+        local row = find_avatar_table_row(avatar_role_table,nameID)        
+        
+        row.name = nameID
+        row.weapon_type = _weapon_type
+        if _action then
+            table.insert(row[_action],WASID)
+            return true
         end
+        return false
     else 
         return false
     end
@@ -355,14 +300,14 @@ end
 local avatar_bb_table = {}
 function _parse_bb_row(strs,WASID)
     if #strs ~= 3 then return false end
-    local _name = strs[2]
-    local _action = strs[3]
-    local row = find_avatar_table_row(avatar_bb_table,"BB_".._name)
+    local _name =  strs[2]
+    local _action = find_action_key(strs[3]) 
+    
+    local row = find_avatar_table_row(avatar_bb_table,_name)
     row.name = _name
-    row.ID = "BB_".._name
-    local action_key = find_action_key(_action)
-    if action_key then
-        row[action_key] = WASID
+    
+    if _action then
+        table.insert(row[_action] , WASID)
         return true    
     end
     return false
@@ -373,13 +318,12 @@ local avatar_npc_table = {}
 function _parse_npc_row(strs,WASID)
     if #strs ~= 3 then return false end
     local _name = strs[2]
-    local _action = strs[3]
-    local row = find_avatar_table_row(avatar_npc_table,"NPC_".._name)
+    local _action = find_action_key(strs[3]) 
+    local row = find_avatar_table_row(avatar_npc_table,_name)
     row.name = _name
-    row.ID = "NPC_".._name
-    local action_key = find_action_key(_action) 
-    if action_key then
-        row[action_key] = WASID
+    
+    if _action then
+        table.insert(row[_action] , WASID)
         return true    
     end
     return false
@@ -391,24 +335,79 @@ function write_avater_file(path, first_row, av_table)
     file:write(first_row..'\n')
     file:write('*\n')
     
-    
-    local av_cols = utils_string_split(first_row,'\t')
-    
     local av_rows = {}
     for k,v in pairs(av_table) do
-        table.insert(av_rows, v)
+        if not v.skip then
+            table.insert(av_rows, v)
+        end
     end
-    table.sort(av_rows,function(a,b)return a.ID<b.ID end)
+    table.sort(av_rows,function(a,b)return a.name<b.name end)
 
+
+    local av_cols = utils_string_split(first_row,'\t')
     for i,v in ipairs(av_rows) do
         for ci,key in ipairs(av_cols) do
             if v[key] then
-                file:write(v[key]..'\t')
+                if type(v[key]) =='table' then
+                    if #v[key] == 0 then
+                        file:write('' ..'\t')
+                    elseif #v[key] == 1 then
+                        file:write(v[key][1] ..'\t')
+                    else
+                        file:write(cjson.encode(v[key]) ..'\t')
+                    end
+                else
+                    file:write(v[key]..'\t')
+                end
+            elseif key =='ID' then
+                file:write(i..'\t')
             end
         end
         file:write('\n')
     end
     file:close()
+end
+
+
+function handle_weapon_multi_actions(tbl)
+    local add_tbl = {}
+    for k,v in pairs(tbl) do
+        if v.level == '0~60' then
+            local nameID0 = string.format('%s-%s-0',v.role,v.type)
+            local nameID30 = string.format('%s-%s-30',v.role,v.type)
+            local nameID60 = string.format('%s-%s-60',v.role,v.type)
+            local nameIDs= {nameID0, nameID30,nameID60}
+            for i=1,3 do
+                local row = find_avatar_table_row(add_tbl, nameIDs[i])
+                row.name = nameIDs[i]
+                row.alias = 'X'
+                row.type = v.type
+                row.level = tostring((i-1)*30)
+                
+                for _, action in ipairs(action_names) do
+                    if #v[action] > 3 then
+                        cxlog_info('what the fuck!!!')
+                    end
+                    row[action] ={v[action][i] or ''} 
+                end
+            end
+            v.delete = true
+        end
+    end
+
+    for k,v in pairs(tbl) do
+        if not v.delete then
+            add_tbl[k] = v
+        end
+    end
+    return add_tbl
+
+    -- for k,v in pairs(tbl) do
+    --     if v.delete then
+    --         tbl[k] = nil
+    --     end
+    -- end
+
 end
 
 function generate_avatar_role_tsv()
@@ -421,51 +420,48 @@ function generate_avatar_role_tsv()
                 row.ok = false
                 local strs = utils_str_split(row.name,'\\_')
                 if strs[1] == '90级武器' then
-                    row.ok = _parse_90_weapon_row(strs,row.ID)
+                    row.ok = _parse_90_weapon_row(strs, 'shape.wdf/'.. row.ID)
                 elseif strs[1] == 'BB' then
-                    row.ok = _parse_bb_row(strs,row.ID)
+                    row.ok = _parse_bb_row(strs,'shape.wdf/'..row.ID)
                 elseif strs[1] == 'NPC' then
-                    row.ok = _parse_npc_row(strs,row.ID)
+                    row.ok = _parse_npc_row(strs,'shape.wdf/'..row.ID)
                 elseif strs[1] == '人物' then 
-                    row.ok = _parse_role_row(strs,row.ID)
+                    row.ok = _parse_role_row(strs,'shape.wdf/'..row.ID)
                 elseif strs[1] == '武器' then 
-                    row.ok = _parse_weapon_row(strs,row.ID)
+                    row.ok = _parse_weapon_row(strs,'shape.wdf/'..row.ID)
                 end
             end
 
-            write_avater_file(vfs_makepath("res/tables/avatar_90_weapon.tsv") ,
-                                [[ID	name	type	role	level	idle	walk	sit	angry	sayhi	dance	salute	clps	cry	batidle	attack	cast	behit	runto	runback	defend]],
-                                avatar_weapon)
-
-            write_avater_file(vfs_makepath("res/tables/avatar_bb.tsv"),
-                                [[ID	name	idle	walk	sit	angry	sayhi	dance	salute	clps	cry	batidle	attack	cast	behit	runto	runback	defend]],
-                                avatar_bb_table)
-
-            write_avater_file(vfs_makepath('res/tables/avatar_npc.tsv') ,
-                                [[ID	name	idle	walk	sit	angry	sayhi	dance	salute	clps	cry	batidle	attack	cast	behit	runto	runback	defend]],
-                                avatar_npc_table)
-
-            write_avater_file(vfs_makepath('res/tables/avatar_role.tsv') ,
-                                [[ID	name	weapon	idle	walk	sit	angry	sayhi	dance	salute	clps	cry	batidle	attack	cast	behit	runto	runback	defend]],
-                                avatar_role_table)
-
-            write_avater_file(vfs_makepath('res/tables/avatar_weapon.tsv') ,
+            avatar_weapon_table =  handle_weapon_multi_actions(avatar_weapon_table)
+            write_avater_file(vfs_makepath("res/tables/avatar_weapon.tsv") ,
                                 [[ID	name	type	role	level	idle	walk	sit	angry	sayhi	dance	salute	clps	cry	batidle	attack	cast	behit	runto	runback	defend]],
                                 avatar_weapon_table)
 
+            -- write_avater_file(vfs_makepath("res/tables/avatar_bb.tsv"),
+            --                      [[ID	name	idle	walk	sit	angry	sayhi	dance	salute	clps	cry	batidle	attack	cast	behit	runto	runback	defend]],
+            --                      avatar_bb_table)
 
-            local file = io.open(vfs_makepath('res/tables/parse_err.tsv') ,'w')
-            file:write([[ID	name	ok]])
-            file:write("\n*\n")
+            -- write_avater_file(vfs_makepath('res/tables/avatar_npc.tsv') ,
+            --                     [[ID	name	idle	walk	sit	angry	sayhi	dance	salute	clps	cry	batidle	attack	cast	behit	runto	runback	defend]],
+            --                     avatar_npc_table)
+
+            -- write_avater_file(vfs_makepath('res/tables/avatar_role.tsv') ,
+            --                     [[ID	name	weapon	idle	walk	sit	angry	sayhi	dance	salute	clps	cry	batidle	attack	cast	behit	runto	runback	defend]],
+            --                     avatar_role_table)
+
+
+            -- local file = io.open(vfs_makepath('res/tables/parse_err.tsv') ,'w')
+            -- file:write([[ID	name	ok]])
+            -- file:write("\n*\n")
             
-            for i,row in ipairs(parsed_tsv) do
-                if row.ok == false then
-                    file:write(tostring(row.ID).."\t")
-                    file:write(row.name.."\t")
-                    file:write(tostring(row.ok).."\n")
-                end
-            end
-            file:close()
+            -- for i,row in ipairs(parsed_tsv) do
+            --     if row.ok == false then
+            --         file:write(tostring(row.ID).."\t")
+            --         file:write(row.name.."\t")
+            --         file:write(tostring(row.ok).."\n")
+            --     end
+            -- end
+            -- file:close()
         end
     end
 end
