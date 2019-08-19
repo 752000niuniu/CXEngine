@@ -1,0 +1,90 @@
+ID	name	idle	walk	sit	angry	sayhi	dance	salute	clps	cry	batidle	attack	cast	behit	runto	runback	defend
+*
+NPC_万圣公主	万圣公主	C82770E2	3101E857															
+NPC_三大王	三大王	228D340F	2059CBB0															
+NPC_九头精怪	九头精怪		0B8285F9						92F0C045		7CAF3ABB	C9EC64BB	BB56EF5A	CEF45818	6C396AD2	5B2FE6A5	540D1100	
+NPC_书生	书生	AE82050D	8DB0C74C															
+NPC_书童	书童	015B95C2	F771C268															
+NPC_二大王	二大王	50355C48	403A153E															
+NPC_二宝	二宝	9493C216	F269B9B7															
+NPC_佣人	佣人	D0A9859B	C5E98CA8															
+NPC_兰虎	兰虎	06F1DE7D	37ADE1CA															
+NPC_判官	判官	56738B45	6617CE07															
+NPC_唐僧	唐僧	F707EA37	FF76393B															
+NPC_商会总管	商会总管	0BB9C549	703420B3															
+NPC_国子监祭酒	国子监祭酒	AD7A1BD3	BB2ECF8E															
+NPC_土地	土地	81895D83	6E805BF9															
+NPC_地藏王	地藏王	3A11C300	32C68CC9															
+NPC_大大王	大大王	CE62A786	AD23D962															
+NPC_大生	大生	BC6BD1E8	8736E40D															
+NPC_女	女	6282B5AB	35F4E996															
+NPC_孙婆婆	孙婆婆	81F4F89D	600BA182															
+NPC_孙悟空	孙悟空		2C4D8EC8						6FF03AB0		14692807	6C1336EC	E42F3F94	5DE938BA	CCAC3F69	31B2CA29	B3A2B015	
+NPC_小二	小二	8F5E39E1	DD211906															
+NPC_小白龙	小白龙	CC61903E	29DCD4EF															
+NPC_少女	少女	1BB1AF36	A69EAB9D															
+NPC_帮派守护兽	帮派守护兽		F70F4844						D225AEF5		D252E998	C1816D39	048CC7DD	2E8C40EC	0EC64162	4D10286A	0CC07284	
+NPC_张老财	张老财	A9F796EA	F637E75A															
+NPC_御林军	御林军	6843A912	4EE87EE9															
+NPC_捕鱼人	捕鱼人	767095C2	3792B5F3															
+NPC_文老伯	文老伯	4ED41E93	3DD602B8															
+NPC_月老	月老	A33DB160	20A19816															
+NPC_服装店老板	服装店老板	2EB42770	4C62D25F															
+NPC_李世民	李世民	B28A3DB1	BE8A3EC9															
+NPC_栗栗娘	栗栗娘	2C2259AB	B0250DEE															
+NPC_武器店老板	武器店老板	732407B7	44801CB6															
+NPC_沙僧	沙僧		F58104E2						DAFF6024		9E8754B2	1D90BAA0	BB5DC671	FAADCE7F	13550448	1E40F132	63DF2FE0	
+NPC_牛魔王	牛魔王	5867F741	FBB7A2A2															
+NPC_特产商人	特产商人	64E5C547	BE35EE06															
+NPC_猪八戒	猪八戒		85C12349						FD013477		046ADE41	1D7E5D02	AFF97BB0	94C75679	DE64A152	522B9A47	00C8DD73	
+NPC_珍品商人	珍品商人	D7A74DE2																
+NPC_生肖兔	生肖兔	9D99A10D	524EA098															
+NPC_生肖牛	生肖牛	6644A046	350A49B8															
+NPC_生肖狗	生肖狗	F41F6038	DE58CA6F															
+NPC_生肖猪	生肖猪	60976277	1F9309D8															
+NPC_生肖猴	生肖猴	AA910FFF	51FC5B28															
+NPC_生肖羊	生肖羊	DEBBC85B	087C63E1															
+NPC_生肖虎	生肖虎	59D6FB3B	D7DC93DE															
+NPC_生肖蛇	生肖蛇	B0F79819	800A4859															
+NPC_生肖马	生肖马	7FD84FE9	4D8E1F0C															
+NPC_生肖鸡	生肖鸡	CC9CE563	9D353BF4															
+NPC_生肖鼠	生肖鼠	DAC84F94	39195BC3															
+NPC_生肖龙	生肖龙	7FD9D3BC	289C773D															
+NPC_男	男	75BB33D2	E0942BC2															
+NPC_秦琼	秦琼	4D41D5D2	8A05EDF0															
+NPC_穷汉	穷汉	BF882D3F	97CDC297															
+NPC_管家	管家	3112FBE1	0E34A5A3															
+NPC_红娘	红娘	FF25D8BA	879921C3															
+NPC_罗师爷	罗师爷	3F91DC55	521BFFA4															
+NPC_罗百万	罗百万	165AEB4C	464E819A															
+NPC_翠花	翠花	70357245	3790FE0A															
+NPC_老太婆	老太婆	AFA62A72	CB62E343															
+NPC_老太爷	老太爷	FD419E2C	F3B31502															
+NPC_老花农	老花农	5D14A411	4E0B8DAC															
+NPC_老马猴	老马猴	BDD0DC76	C230BE81															
+NPC_考官	考官	6ABF75AD	8DDC27F7															
+NPC_至尊宝	至尊宝	EA27AD31	FB629346															
+NPC_苏梦梦	苏梦梦	7555A8D0	4468668F															
+NPC_药店老板	药店老板	E0DC6D93	C3627242															
+NPC_菩提祖师	菩提祖师	2073F650	31B5E0BE															
+NPC_蒋大全	蒋大全	65D0C53D	D8300A1A															
+NPC_衙役	衙役	40B1BCC3	8AC693A9															
+NPC_装备收购商	装备收购商	1AA01951	5DFA3BB9															
+NPC_赌霸天	赌霸天	C888F0C3	6A957B1B															
+NPC_赵姨娘	赵姨娘	D97E30F0	6FBF6A9F															
+NPC_超级巫医	超级巫医	3A16E96D	DCEBC9E8															
+NPC_道士	道士	B7809CE0	159CCC9F															
+NPC_道童	道童	F4848781	7376DB37															
+NPC_郑镖头	郑镖头	D02A9BB5	4D0AAF3C															
+NPC_酒楼老板	酒楼老板	8783CF82	AF2386A2															
+NPC_钟馗	钟馗	F1E86993	39A1E40F															
+NPC_钱庄老板	钱庄老板	DA498AD2	BB95D714															
+NPC_铁匠	铁匠	0734C9CA	B4DB94F0															
+NPC_镇元大仙	镇元大仙	22406E66	5E8CC3F3															
+NPC_镇塔之神	镇塔之神	589A2894	7ECE7DB2															
+NPC_阎罗王	阎罗王		558B14D5						09152660		A5B436EE	15F50CFF	21B6E8AA	455697FE	E5AB6916	883B1581	9402033C	
+NPC_雷黑子	雷黑子	DCF6A150	7C3B4FB7															
+NPC_马货商	马货商	D6C941FC	2094134A															
+NPC_驿站老板	驿站老板	72EEB38D	6F6C1A7C															
+NPC_鲁成	鲁成	67C56BF0	5B5B600B															
+NPC_龙王	龙王	810E3469	77748072															

@@ -1,30 +1,22 @@
 local cjson = require("cjson")
 
-local OpenMode =
-{
-    ["in"] = 0x1,
-    out = 0x2,
-    ate = 0x4,
-    app = 0x8,
-    trunc = 0x10
-}
     
 resource_ini_files = 
 {
     ["addon.wdf"]       =   "addon.wdf.ini",
     ["atom.wdf"]        =   "atom.wdf.ini",
-    ["chat.wdf"]        =   "chat.wdf.ini",
+    -- ["chat.wdf"]        =   "chat.wdf.ini",
     ["firework.wdf"]    =   "firework.wdf.ini",
     ["goods.wdf"]       =   "goods.wdf.ini",
     ["item.wdf"]        =   "item.wdf.ini",
     ["magic.wdf"]       =   "magic.wdf.ini",
     ["mapani.wdf"]      =   "mapani.wdf.ini",
-    ["mhimage.wdf"]     =   "mhimage.wdf.ini",
+    -- ["mhimage.wdf"]     =   "mhimage.wdf.ini",
     ["misc.wdf"]        =   "misc.wdf.ini",
-    ["music.wdf"]       =   "music.wdf.ini",
-    ["scene.wdf"]       =   "scene.wdf.ini",
+    -- ["music.wdf"]       =   "music.wdf.ini",
+    -- ["scene.wdf"]       =   "scene.wdf.ini",
     ["shape.wdf"]       =   "shape.wdf.ini",
-    ["shape.wd1"]       =   "shape.wd1.ini",
+    -- ["shape.wd1"]       =   "shape.wd1.ini",
     ["shape.wd2"]       =   "shape.wd2.ini",
     ["shape.wd3"]       =   "shape.wd3.ini",
     ["shape.wd4"]       =   "shape.wd4.ini",
@@ -32,35 +24,27 @@ resource_ini_files =
     ["shape.wd6"]       =   "shape.wd6.ini",
     ["shape.wd7"]       =   "shape.wd7.ini",
     ["smap.wdf"]        =   "smap.wdf.ini",
-    ["sound.wdf"]       =   "sound.wdf.ini",
-    ["stock.wdf"]       =   "stock.wdf.ini",
+    -- ["sound.wdf"]       =   "sound.wdf.ini",
+    -- ["stock.wdf"]       =   "stock.wdf.ini",
     ["waddon.wdf"]      =   "waddon.wdf.ini",
     ["wzife.wdf"]       =   "wzife.wdf.ini",
-    ["wzife.wd1"]       =   "wzife.wd1.ini",
+    -- ["wzife.wd1"]       =   "wzife.wd1.ini",
 }
+
 
 resource_ini_tables = {}
 function init_table_templates()
     for k,v in pairs(resource_ini_files) do
         if v ~= "" then
-            log_print("file:"..v)
-            local str = utils_parse_tsv_file(v)
-            log_print(str)
+            local path = vfs_makepath('res/tables/'..v)
+            cxlog_info("file:"..path)
+            local str = utils_parse_tsv_file(path)
+            cxlog_info(str)
             resource_ini_tables[k] = cjson.decode(str)
         end
     end
 end
 
-
-function resave_tsv_file_by_name()
-    for k,v in pairs(resource_ini_files) do
-        if v == "" then
-            log_print("file:"..v)
-            utils_resave_tsv_file(v)
-            -- break
-        end
-    end
-end
 
 avatar_category_affix =
 {
@@ -402,28 +386,37 @@ function _parse_npc_row(strs,WASID)
 end
 
 function write_avater_file(path, first_row, av_table)
-    local fs = utils_file_open(path,OpenMode["in"]|OpenMode.out|OpenMode.trunc)
-    utils_file_write(fs,first_row..'\n') 
-    utils_file_write(fs,"*\n")
-
-    local av_cols = utils_str_split(first_row,'\t')
+    cxlog_info('write_avater_file', path)
+    local file = io.open(path, 'w')
+    file:write(first_row..'\n')
+    file:write('*\n')
+    
+    
+    local av_cols = utils_string_split(first_row,'\t')
+    
+    local av_rows = {}
     for k,v in pairs(av_table) do
-        for i,key in ipairs(av_cols) do
+        table.insert(av_rows, v)
+    end
+    table.sort(av_rows,function(a,b)return a.ID<b.ID end)
+
+    for i,v in ipairs(av_rows) do
+        for ci,key in ipairs(av_cols) do
             if v[key] then
-                utils_file_write(fs,v[key].."\t")
+                file:write(v[key]..'\t')
             end
         end
-        utils_file_write(fs,"\n")
+        file:write('\n')
     end
-    utils_file_close(fs)
+    file:close()
 end
 
 function generate_avatar_role_tsv()
     for k,v in pairs(resource_ini_files) do
         if k == "shape.wdf" then
-            log_print("file:"..v)
-            
-            local parsed_tsv = utils_parse_tsv_file_as_table(v,false)
+            cxlog_info("file:"..v)
+            local path = vfs_makepath('res/tables/'..v)
+            local parsed_tsv = utils_parse_tsv_file_as_table(path,false)
             for i,row in ipairs(parsed_tsv) do
                 row.ok = false
                 local strs = utils_str_split(row.name,'\\_')
@@ -440,43 +433,47 @@ function generate_avatar_role_tsv()
                 end
             end
 
-            write_avater_file("resource/tables/avatar_weapon.1.tsv",
+            write_avater_file(vfs_makepath("res/tables/avatar_90_weapon.tsv") ,
                                 [[ID	name	type	role	level	idle	walk	sit	angry	sayhi	dance	salute	clps	cry	batidle	attack	cast	behit	runto	runback	defend]],
                                 avatar_weapon)
 
-            write_avater_file("resource/tables/avatar_bb.1.tsv",
+            write_avater_file(vfs_makepath("res/tables/avatar_bb.tsv"),
                                 [[ID	name	idle	walk	sit	angry	sayhi	dance	salute	clps	cry	batidle	attack	cast	behit	runto	runback	defend]],
                                 avatar_bb_table)
 
-            write_avater_file("resource/tables/avatar_npc.1.tsv",
+            write_avater_file(vfs_makepath('res/tables/avatar_npc.tsv') ,
                                 [[ID	name	idle	walk	sit	angry	sayhi	dance	salute	clps	cry	batidle	attack	cast	behit	runto	runback	defend]],
                                 avatar_npc_table)
 
-            write_avater_file("resource/tables/avatar_role.1.tsv",
+            write_avater_file(vfs_makepath('res/tables/avatar_role.tsv') ,
                                 [[ID	name	weapon	idle	walk	sit	angry	sayhi	dance	salute	clps	cry	batidle	attack	cast	behit	runto	runback	defend]],
                                 avatar_role_table)
 
-            write_avater_file("resource/tables/avatar_weapon.2.tsv",
+            write_avater_file(vfs_makepath('res/tables/avatar_weapon.tsv') ,
                                 [[ID	name	type	role	level	idle	walk	sit	angry	sayhi	dance	salute	clps	cry	batidle	attack	cast	behit	runto	runback	defend]],
                                 avatar_weapon_table)
 
 
-
-            fs = utils_file_open("resource/tables/sss.1.tsv",OpenMode["in"]|OpenMode.out|OpenMode.trunc)
-            utils_file_write(fs,[[ID	name	ok]])
-
-            utils_file_write(fs,"\n*\n")
+            local file = io.open(vfs_makepath('res/tables/parse_err.tsv') ,'w')
+            file:write([[ID	name	ok]])
+            file:write("\n*\n")
+            
             for i,row in ipairs(parsed_tsv) do
                 if row.ok == false then
-                    utils_file_write(fs,tostring(row.ID).."\t")
-                    utils_file_write(fs,row.name.."\t")
-                    utils_file_write(fs,tostring(row.ok).."\n")
+                    file:write(tostring(row.ID).."\t")
+                    file:write(row.name.."\t")
+                    file:write(tostring(row.ok).."\n")
                 end
             end
-            utils_file_close(fs)
+            file:close()
         end
     end
 end
+
+
+init_table_templates()
+generate_avatar_role_tsv()
+
 
 function generate_avatar_weapon_tsv()
 end

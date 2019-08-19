@@ -10,11 +10,10 @@ script_system_dofile 'content_system.lua'
 script_system_dofile 'actor_metatable.lua'
 script_system_dofile 'scene_manager.lua'
 script_system_dofile 'actor_manager.lua'
-script_system_dofile 'table_template.lua'
+-- script_system_dofile('generator/imgui_binding_generator.lua')
+-- script_system_dofile('generator/table_template.lua')
 
--- script_system_dofile 'imgui_binding_generator.lua'
 IsCombat = false
-
 --聊天背景框 wzife 39D3BD99 
 function main()
     window_system_init(SCREEN_WIDTH,SCREEN_HEIGHT)
