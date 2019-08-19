@@ -19,9 +19,9 @@ local function read_tsv_index_by_main_key(filename, b_parse_value, main_key)
 end
 
 function content_system_init()
-    content_system_set_table('role', read_tsv_index_by_main_key('avatar_role.1',false,'ID'))
-    content_system_set_table('90_weapon', read_tsv_index_by_main_key('avatar_weapon.1',false,'ID'))
-    content_system_set_table('weapon', read_tsv_index_by_main_key('avatar_weapon.2',false,'ID'))
-    content_system_set_table('npc', read_tsv_index_by_main_key('avatar_npc.1',false,'ID'))
-    content_system_set_table('pet', read_tsv_index_by_main_key('avatar_bb.1',false,'ID'))
+    content_system_set_table('role', read_tsv_index_by_main_key('avatar_role',false,'ID'))
+    content_system_set_table('90_weapon', read_tsv_index_by_main_key('avatar_90_weapon',false,'ID'))
+    content_system_set_table('weapon', read_tsv_index_by_main_key('avatar_weapon',false,'ID'))
+    content_system_set_table('npc', read_tsv_index_by_main_key('avatar_npc',false,'ID'))
+    content_system_set_table('pet', read_tsv_index_by_main_key('avatar_bb',false,'ID'))
 end
