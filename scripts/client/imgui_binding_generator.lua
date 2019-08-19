@@ -10,7 +10,7 @@ function remove_empty_lines(content)
         end
     end
     local new_content = table.concat(t,'\n')
-    
+
     -- local path = vfs_makepath('scripts/client/remove_lines_file.txt') 
     -- local output_file = io.open(path,'w')
     -- output_file:write(new_content)
@@ -35,7 +35,8 @@ imgui_header_separate_flags = {
     { [[namespace ImGui]],                  'skip'},
     { [[#endif]],                           'skip'},
     { [[enum ImDrawCornerFlags_]],          'parse enum blocks'},
-    { [[struct ImDrawList]],                'skip'},
+    { [[struct ImDrawList]],                'parse ImDrawList'},
+    { [[struct ImDrawData]],                'skip'},
     { [[enum ImFontAtlasFlags_]],           'parse enum blocks'},
     { [[struct ImFontAtlas]],               'skip'},
     { [[enum ImGuiViewportFlags_]],         'parse enum blocks'},
@@ -165,6 +166,9 @@ end
 local FuncProtoMT = {}
 function FuncProtoMT:WrapName()
     local tbl = {}
+    if self.namespace then
+        table.insert(tbl, self.namespace..'_')    
+    end
     table.insert(tbl, self.name)
     
     if #self.args > 0 then
@@ -436,8 +440,7 @@ local imgui_api_unsupported_types = {
     'items_getter'
 }   
    
-function parse_imgui_api(content)
-    imgui_apis = {}
+function parse_imgui_api(content, namespace)
     for line in content:gmatch('.-\n') do
         if line:find('IMGUI_API') then
             local rconst, rtype, rdec, fname, args = line:gmatch('IMGUI_API%s+(const%s+)([%w_]*)%s*([*&]?)%s*([%w_]+)(%b())')()
@@ -449,6 +452,7 @@ function parse_imgui_api(content)
             local proto = func_proto_create(fname)
             proto.ret =  type_proto_create('',rtype, rdec, rconst) 
             proto.raw_args = args
+            proto.namespace = namespace
             if args ~= '()' then
                 local brace_repls = {}  
                 args = args:sub(2,#args-1)
@@ -625,9 +629,18 @@ function output_imguiapis()
                 local ret_cnt = 1
                 if ret.type =='void' then
                     ret_cnt  = 0
-                    fun_impl:write_line( '\tImGui::%s(%s);', proto.name, table.concat(call_api_args,','))    
+                    if proto.namespace == 'ImDrawList' then
+                        fun_impl:write_line( '\tImGui::GetOverlayDrawList()->%s(%s);', proto.name, table.concat(call_api_args,','))    
+                    else
+                        fun_impl:write_line( '\tImGui::%s(%s);', proto.name, table.concat(call_api_args,','))    
+                    end
                 else
-                    fun_impl:write_line( '\t%s __ret__ = ImGui::%s(%s);', ret:Type(), proto.name, table.concat(call_api_args,','))    
+                    if proto.namespace == 'ImDrawList' then
+                        fun_impl:write_line( '\t%s __ret__ = ImGui::GetOverlayDrawList()->%s(%s);', ret:Type(), proto.name, table.concat(call_api_args,','))    
+                    else
+                        fun_impl:write_line( '\t%s __ret__ = ImGui::%s(%s);', ret:Type(), proto.name, table.concat(call_api_args,','))    
+                    end
+                    
                     if ret.type == 'ImVec2' then
                         fun_impl:write_line( '\tlua_pushnumber(L, __ret__.x);')
                         fun_impl:write_line( '\tlua_pushnumber(L, __ret__.y);')
@@ -839,6 +852,24 @@ int cximgui_ListBox_5_spipsii(lua_State* L) {
 	return 2;
 }
 
+int cximgui_clipper_list(lua_State*L)
+{
+	int size = (int)lua_tointeger(L, 1);
+	ImGuiListClipper clipper(size);
+	while (clipper.Step())
+	{
+		int ps = clipper.DisplayStart; 
+		int pe = clipper.DisplayEnd;
+		
+		lua_pushvalue(L, 2);
+		lua_pushinteger(L, ps);
+		lua_pushinteger(L, pe);
+		lua_pcall(L, 2, 0, 0);
+	}
+	return 0;
+}
+
+
 luaL_Reg cximgui_extra_methods[] = {
 	{ "CreateStrbuf", cximgui_strbuf_create },
 { "DestroyStrbuf", cximgui_strbuf_destroy },
@@ -847,6 +878,7 @@ luaL_Reg cximgui_extra_methods[] = {
 { "DockSpace", cximgui_DockSpace_3_iv2i },
 { "GetMainViewport", cximgui_GetMainViewport },
 { "ListBox", cximgui_ListBox_5_spipsii },
+{ "ClipperList", cximgui_clipper_list },
 { NULL,NULL }
 };
 
@@ -889,6 +921,8 @@ function parse_imgui_header(path)
 
     imgui_typedefs['size_t'] = 'unsigned int'
     local parsed_skip_file = io.open(vfs_makepath('scripts/client/parsed_skip_file.txt') ,'w')
+    
+    imgui_apis = {}
     for i=1, #imgui_header_separate_flags-1 do
         local begin_str = imgui_header_separate_flags[i][1]
         local end_str = imgui_header_separate_flags[i+1][1]
@@ -909,6 +943,8 @@ function parse_imgui_header(path)
             parse_imvec4(sub)
         elseif parse_flag =='parse ImGuiAPI' then
             parse_imgui_api(sub)
+        elseif parse_flag == 'parse ImDrawList' then
+            parse_imgui_api(sub, 'ImDrawList')
         elseif parse_flag =='parse enum blocks' then
             parse_enum_blocks(sub)
         end

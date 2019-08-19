@@ -3,10 +3,11 @@
 #include "define_types.h"
 #include "pos.h"
 #include "entity.h"
-#include "ui.h"
+
 
 class MoveHandle;
 #ifndef SIMPLE_SERVER
+#include "ui.h"
 class ActionStateMachine;
 #endif
 class GameMap;

@@ -385,6 +385,13 @@ BaseScene* scene_manager_fetch_scene(int sceneID)
 	return nullptr;
 }
 
+int scene_manager_get_imgui_cursor_pos(lua_State* L) {
+	Pos pos = SCENE_MANAGER_INSTANCE->GetImGuiCursorPos();
+	lua_pushnumber(L, pos.x);
+	lua_pushnumber(L, pos.y);
+	return 2;
+};
+
 void luaopen_scene_manager(lua_State* L)
 {
 	script_system_register_function(L, scene_manager_init);
@@ -394,6 +401,7 @@ void luaopen_scene_manager(lua_State* L)
 	script_system_register_function(L, scene_manager_add_scene);
 	script_system_register_function(L, scene_manager_add_custom_scene);
 
+	script_system_register_luac_function(L, scene_manager_get_imgui_cursor_pos);
 
 	
 	script_system_register_function(L, scene_manager_switch_scene_by_id);

@@ -1,6 +1,5 @@
 #include "actor.h"
 #include "scene/game_map.h"
-#include "action.h"
 #include "actor/player.h"
 #include "scene/scene_manager.h"
 #include "utils.h"
@@ -10,10 +9,11 @@
 #include "actor_manager.h"
 #ifndef SIMPLE_SERVER
 #include "action.h"
+#include "input_manager.h"
+#include "animation/sprite.h"
 #endif
 #include "move.h"
-#include "animation/sprite.h"
-#include "input_manager.h"
+
 
 #define ACTOR_METATABLE_NAME "mt_actor"
 
@@ -64,28 +64,20 @@ void Actor::OnDraw()
 {
 #ifndef SIMPLE_SERVER
 	m_ASM->Draw();
-	auto* avatar = m_ASM->GetAvatar();
-	if (avatar)
-	{
-		auto origin = SCENE_MANAGER_INSTANCE->GetImGuiCursorPos();
-		ImVec2 tl = ImVec2(avatar->Pos.x, avatar->Pos.y);
-		tl.x += origin.x; tl.y += origin.y;
-		ImVec2 br = ImVec2(avatar->Pos.x + avatar->Width, avatar->Pos.y + avatar->Height);
-		br.x += origin.x; br.y += origin.y;
-		ImGui::GetOverlayDrawList()->AddRect(tl, br, 0xff00ff00, 0, 0, 2);
-	}
 #endif
 }
 
 void Actor::SetDir(int dir)
 {
 	m_Dir = dir;
+#ifndef SIMPLE_SERVER
 	auto* avatar = m_ASM->GetAvatar();
 	if(avatar){
 		if (avatar->GroupCount == 4) {
 			m_Dir = GMath::Dir8toDir4(m_Dir);
 		}
 	}
+#endif
 }
 
 void Actor::ReverseDir()
@@ -118,13 +110,17 @@ void Actor::SetActionID(int action)
 void Actor::SetRoleID(int id)
 {
 	m_RoleID = id;
+#ifndef SIMPLE_SERVER
 	m_ASM->SetAvatar(id);
+#endif
 }
 
 void Actor::SetWeaponID(int weapon)
 {
 	m_WeaponID = weapon;
+#ifndef SIMPLE_SERVER
 	m_ASM->SetWeapon(m_WeaponID);
+#endif
 }
 
 void Actor::SetPos(float x, float y)
@@ -156,20 +152,29 @@ void Actor::SetMoveToPos(Pos dest)
 
 float Actor::GetWidth()
 {
+#ifndef SIMPLE_SERVER
 	auto* avatar = m_ASM->GetAvatar();
 	if (!avatar)return 0;
 	return (float)avatar->Width;
+#else
+	return 0;
+#endif
 }
 
 float Actor::GetHeight()
 {
+#ifndef SIMPLE_SERVER
 	auto* avatar = m_ASM->GetAvatar();
 	if (!avatar)return 0;
 	return (float)avatar->Height;
+#else
+	return 0;
+#endif
 }
 
 int Actor::GetDirByDegree(float degree)
 {
+#ifndef SIMPLE_SERVER
 	int dircnt = m_ASM->GetDirCount();
 	if (dircnt == 8) {
 		return GMath::Astar_GetDir(degree);
@@ -177,6 +182,9 @@ int Actor::GetDirByDegree(float degree)
 	else {
 		return GMath::Astar_GetDir4(degree);
 	}
+#else
+	return GMath::Astar_GetDir(degree);
+#endif
 }
 
 float Actor::GetCombatDistSquare()
@@ -203,8 +211,7 @@ BaseScene* Actor::GetScene()
 	return scene_manager_fetch_scene(m_SceneID);
 }
 
-
-
+#ifndef SIMPLE_SERVER
 Bound Actor::GetViewBounds()
 {
 	auto* avatar = m_ASM->GetAvatar();
@@ -224,6 +231,7 @@ void Actor::OnDragMove(int dx, int dy)
 	m_Pos.x += (float)dx;
 	m_Pos.y += (float)dy;
 }
+#endif
 
 Actor* lua_check_actor(lua_State*L, int index)
 {
@@ -327,8 +335,10 @@ int actor_set_action_id(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	int actionID = (int)lua_tointeger(L, 2);
 	actor->SetActionID(actionID);
+#ifndef SIMPLE_SERVER
 	Action* action = new Action(actor);
 	actor->GetASM()->ChangeAction(action);
+#endif
 	return 0;
 }
 

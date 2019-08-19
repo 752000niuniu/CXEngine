@@ -4,10 +4,6 @@
 #include "pos.h"
 
 
-class Actor;
-class ActionStateMachine;
-class BaseSprite;
-
 
 std::string action_get_name(int i);
 size_t action_get_size();
@@ -18,6 +14,13 @@ bool action_is_emotion_action(int action);
 bool action_is_battle_action(int action);
 
 
+
+
+#ifndef SIMPLE_SERVER
+class Actor;
+class ActionStateMachine;
+class BaseSprite;
+class Animation;
 class Action
 {
 public:
@@ -31,6 +34,17 @@ protected:
 	Actor* actor;
 };
 
+/*
+attack animation sequence:
+Batidle -> Runto -> Attack() -> Runback -> Batidle
+Attack will trigger other actor to play behit action
+Attack will do some action delay 
+
+timeline------check hit------------delay done---------check death--------------------------------------------------------
+Attacker:   attack delay	     attack continue       runback               
+Defender:   behit effect           behitback          clps|behit fly
+
+*/
 class AttackAction : public Action
 {
 public:
@@ -46,6 +60,21 @@ private:
 	int m_BackupActionID;
 	float m_Velocity;
 	int m_ID;
+};
+
+class BeHitAction : public Action
+{
+public:
+	BeHitAction(Actor* actor, Actor* attacker);
+	virtual ~BeHitAction() {};
+	virtual  void Update();
+	virtual void Exit();
+	virtual void Enter();
+private:
+	Actor* m_Attacker;
+	int m_State;
+	Animation* m_BehitAnim;
+	Animation* m_DamageAnim;
 };
 
 class IdleAction : public Action
@@ -93,4 +122,6 @@ private:
 	std::map<int, BaseSprite*> m_WeaponActions;
 	std::map<int, BaseSprite*> m_AvatarActions;
 };
+#endif // !SIMPLE_SERVER
+
 

@@ -137,6 +137,14 @@ function imgui_draw_actor(actor)
         end
         
         draw_sprite_info(avatar)
+        local  orix , oriy = scene_manager_get_imgui_cursor_pos()
+        local avx, avy = avatar:GetPos()
+        local tlx = orix + avx 
+        local tly = oriy + avy
+        
+        local brx = orix + avx + avatar:GetWidth()
+        local bry = oriy + avy + avatar:GetHeight()
+        imgui.AddRect(tlx,tly,brx,bry,0xff00ffff)
         imgui.EndGroup()
     end
 
@@ -258,7 +266,7 @@ function OnSceneImGuiUpdate()
         imgui.EndGroup()
     end    
 
-   
+    
 end
 
 function OnSceneDraw()

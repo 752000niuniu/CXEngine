@@ -1,33 +1,14 @@
 #include "action.h"
-#include "resource_manager.h"
+#ifndef SIMPLE_SERVER
 #include "utils.h"
 #include "game.h"
 #include "actor/move.h"
-#include "actor.h"
+#include "actor/actor.h"
+#include "resource_manager.h"
 #include "animation/sprite.h"
-
-Action::Action(Actor* _actor) :
-	actor(_actor)
-{
-	pASM = actor->GetASM();
-}
- 
-void Action::Update()
-{
-	int action = actor->GetActionID();
-	if (action != pASM->GetActionID()) {
-		pASM->SetAction(action);
-	}
-}
-
-void Action::Enter()
-{
-
-}
+#endif
 
 static std::vector<std::string> s_ActionSet = { u8"idle",u8"walk",u8"sit",u8"angry",u8"sayhi",u8"dance",u8"salute",u8"clps",u8"cry",u8"batidle",u8"attack",u8"cast",u8"behit",u8"runto",u8"runback",u8"defend" };;
-
-
 std::string action_get_name(int i)
 {
 	return s_ActionSet[i];
@@ -88,6 +69,31 @@ bool action_is_battle_action(int action)
 }
 
 
+
+#ifndef SIMPLE_SERVER
+Action::Action(Actor* _actor) :
+	actor(_actor)
+{
+	pASM = actor->GetASM();
+}
+ 
+void Action::Update()
+{
+	auto* avatar = pASM->GetAvatar();
+	if (!avatar)return;
+	avatar->Update();
+
+	int action = actor->GetActionID();
+	if (action != pASM->GetActionID()) {
+		pASM->SetAction(action);
+	}
+}
+
+void Action::Enter()
+{
+
+}
+
 ActionStateMachine::ActionStateMachine(Actor* _actor)
 	:m_Actor(_actor)
 {
@@ -117,18 +123,12 @@ void ActionStateMachine::Update()
 		}
 	}
 	
-	auto* avatar = GetAvatar(m_ActionID);
-	if (!avatar)return;
-	avatar->Update();
-
-	int actionID = m_ActionID;
 	if (m_pCurrentAction) {
 		m_pCurrentAction->Update();
 	}
-	if (actionID != m_ActionID) {
-		avatar = GetAvatar(m_ActionID);
-		if (!avatar)return;
-	}
+
+	auto* avatar = GetAvatar(m_ActionID);
+	if (!avatar)return;
 	
 	if (!HasWeapon() || !action_is_show_weapon(m_ActionID))return;
 	auto* weapon = GetWeapon(m_ActionID);
@@ -162,7 +162,7 @@ void ActionStateMachine::SetWeapon(int id)
 	}
 	m_WeaponActions.clear();
 	m_WeaponID = id;
-	m_HasWeapon = m_WeaponID != 0;
+	m_HasWeapon = m_WeaponID >= 0;
 }
 
 void ActionStateMachine::SetAvatar(int id)
@@ -274,7 +274,10 @@ AttackAction::~AttackAction()
 
 void AttackAction::Update()
 {
-	BaseSprite* avatar = pASM->GetAvatar();
+	auto* avatar = pASM->GetAvatar();
+	if (!avatar)return;
+	avatar->Update();
+
 	int action = pASM->GetActionID();
 	if (action == ACTION_BATIDLE) {
 		if (avatar->bGroupEndUpdate) {
@@ -357,4 +360,25 @@ void AttackAction::Enter()
 	}
 }
 
+BeHitAction::BeHitAction(Actor* actor, Actor* attacker)
+	:Action(actor),
+	m_Attacker(attacker)
+{
 
+}
+
+void BeHitAction::Update()
+{
+	auto* avatar = pASM->GetAvatar();
+	if (!avatar)return;
+	avatar->Update();
+}
+void BeHitAction::Exit()
+{
+
+}
+void BeHitAction::Enter()
+{
+
+}
+#endif

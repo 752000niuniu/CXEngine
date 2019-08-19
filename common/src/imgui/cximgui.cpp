@@ -3184,8 +3184,490 @@ int cximgui_DestroyPlatformWindows(lua_State* L) {
 
 //ImGuiViewport*  FindViewportByPlatformHandle(void* platform_handle);
 //UnSupported FindViewportByPlatformHandle
+//void  PushClipRect(ImVec2 clip_rect_min,ImVec2 clip_rect_max,bool intersect_with_current_clip_rect);
+int cximgui_ImDrawList_PushClipRect_3_v2v2b(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 clip_rect_min;
+	clip_rect_min.x = (float)lua_tonumber(L, __argi__++);
+	clip_rect_min.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 clip_rect_max;
+	clip_rect_max.x = (float)lua_tonumber(L, __argi__++);
+	clip_rect_max.y = (float)lua_tonumber(L, __argi__++);
+	bool intersect_with_current_clip_rect = lua_toboolean(L, __argi__++);
+	ImGui::GetOverlayDrawList()->PushClipRect(clip_rect_min, clip_rect_max, intersect_with_current_clip_rect);
+	return 0;
+};
 
-//total func	358	unSupported	63
+//void  PushClipRectFullScreen();
+int cximgui_ImDrawList_PushClipRectFullScreen(lua_State* L) {
+	ImGui::GetOverlayDrawList()->PushClipRectFullScreen();
+	return 0;
+};
+
+//void  PopClipRect();
+int cximgui_ImDrawList_PopClipRect(lua_State* L) {
+	ImGui::GetOverlayDrawList()->PopClipRect();
+	return 0;
+};
+
+//void  PushTextureID(ImTextureID texture_id);
+//UnSupported PushTextureID
+//void  PopTextureID();
+int cximgui_ImDrawList_PopTextureID(lua_State* L) {
+	ImGui::GetOverlayDrawList()->PopTextureID();
+	return 0;
+};
+
+//void  AddLine(const ImVec2& a,const ImVec2& b,ImU32 col,float thickness);
+int cximgui_ImDrawList_AddLine_4_v2v2in(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 a;
+	a.x = (float)lua_tonumber(L, __argi__++);
+	a.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 b;
+	b.x = (float)lua_tonumber(L, __argi__++);
+	b.y = (float)lua_tonumber(L, __argi__++);
+	ImU32 col = (ImU32)lua_tointeger(L, __argi__++);
+	float thickness = (float)luaL_optnumber(L, __argi__, 1.0f);
+	if (thickness != 1.0f) __argi__++;
+	ImGui::GetOverlayDrawList()->AddLine(a, b, col, thickness);
+	return 0;
+};
+
+//void  AddRect(const ImVec2& a,const ImVec2& b,ImU32 col,float rounding,int rounding_corners_flags,float thickness);
+int cximgui_ImDrawList_AddRect_6_v2v2inin(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 a;
+	a.x = (float)lua_tonumber(L, __argi__++);
+	a.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 b;
+	b.x = (float)lua_tonumber(L, __argi__++);
+	b.y = (float)lua_tonumber(L, __argi__++);
+	ImU32 col = (ImU32)lua_tointeger(L, __argi__++);
+	float rounding = (float)luaL_optnumber(L, __argi__, 0.0f);
+	if (rounding != 0.0f) __argi__++;
+	int rounding_corners_flags = (int)luaL_optinteger(L, __argi__, ImDrawCornerFlags_All);
+	if (rounding_corners_flags != ImDrawCornerFlags_All) __argi__++;
+	float thickness = (float)luaL_optnumber(L, __argi__, 1.0f);
+	if (thickness != 1.0f) __argi__++;
+	ImGui::GetOverlayDrawList()->AddRect(a, b, col, rounding, rounding_corners_flags, thickness);
+	return 0;
+};
+
+//void  AddRectFilled(const ImVec2& a,const ImVec2& b,ImU32 col,float rounding,int rounding_corners_flags);
+int cximgui_ImDrawList_AddRectFilled_5_v2v2ini(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 a;
+	a.x = (float)lua_tonumber(L, __argi__++);
+	a.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 b;
+	b.x = (float)lua_tonumber(L, __argi__++);
+	b.y = (float)lua_tonumber(L, __argi__++);
+	ImU32 col = (ImU32)lua_tointeger(L, __argi__++);
+	float rounding = (float)luaL_optnumber(L, __argi__, 0.0f);
+	if (rounding != 0.0f) __argi__++;
+	int rounding_corners_flags = (int)luaL_optinteger(L, __argi__, ImDrawCornerFlags_All);
+	if (rounding_corners_flags != ImDrawCornerFlags_All) __argi__++;
+	ImGui::GetOverlayDrawList()->AddRectFilled(a, b, col, rounding, rounding_corners_flags);
+	return 0;
+};
+
+//void  AddRectFilledMultiColor(const ImVec2& a,const ImVec2& b,ImU32 col_upr_left,ImU32 col_upr_right,ImU32 col_bot_right,ImU32 col_bot_left);
+int cximgui_ImDrawList_AddRectFilledMultiColor_6_v2v2iiii(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 a;
+	a.x = (float)lua_tonumber(L, __argi__++);
+	a.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 b;
+	b.x = (float)lua_tonumber(L, __argi__++);
+	b.y = (float)lua_tonumber(L, __argi__++);
+	ImU32 col_upr_left = (ImU32)lua_tointeger(L, __argi__++);
+	ImU32 col_upr_right = (ImU32)lua_tointeger(L, __argi__++);
+	ImU32 col_bot_right = (ImU32)lua_tointeger(L, __argi__++);
+	ImU32 col_bot_left = (ImU32)lua_tointeger(L, __argi__++);
+	ImGui::GetOverlayDrawList()->AddRectFilledMultiColor(a, b, col_upr_left, col_upr_right, col_bot_right, col_bot_left);
+	return 0;
+};
+
+//void  AddQuad(const ImVec2& a,const ImVec2& b,const ImVec2& c,const ImVec2& d,ImU32 col,float thickness);
+int cximgui_ImDrawList_AddQuad_6_v2v2v2v2in(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 a;
+	a.x = (float)lua_tonumber(L, __argi__++);
+	a.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 b;
+	b.x = (float)lua_tonumber(L, __argi__++);
+	b.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 c;
+	c.x = (float)lua_tonumber(L, __argi__++);
+	c.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 d;
+	d.x = (float)lua_tonumber(L, __argi__++);
+	d.y = (float)lua_tonumber(L, __argi__++);
+	ImU32 col = (ImU32)lua_tointeger(L, __argi__++);
+	float thickness = (float)luaL_optnumber(L, __argi__, 1.0f);
+	if (thickness != 1.0f) __argi__++;
+	ImGui::GetOverlayDrawList()->AddQuad(a, b, c, d, col, thickness);
+	return 0;
+};
+
+//void  AddQuadFilled(const ImVec2& a,const ImVec2& b,const ImVec2& c,const ImVec2& d,ImU32 col);
+int cximgui_ImDrawList_AddQuadFilled_5_v2v2v2v2i(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 a;
+	a.x = (float)lua_tonumber(L, __argi__++);
+	a.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 b;
+	b.x = (float)lua_tonumber(L, __argi__++);
+	b.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 c;
+	c.x = (float)lua_tonumber(L, __argi__++);
+	c.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 d;
+	d.x = (float)lua_tonumber(L, __argi__++);
+	d.y = (float)lua_tonumber(L, __argi__++);
+	ImU32 col = (ImU32)lua_tointeger(L, __argi__++);
+	ImGui::GetOverlayDrawList()->AddQuadFilled(a, b, c, d, col);
+	return 0;
+};
+
+//void  AddTriangle(const ImVec2& a,const ImVec2& b,const ImVec2& c,ImU32 col,float thickness);
+int cximgui_ImDrawList_AddTriangle_5_v2v2v2in(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 a;
+	a.x = (float)lua_tonumber(L, __argi__++);
+	a.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 b;
+	b.x = (float)lua_tonumber(L, __argi__++);
+	b.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 c;
+	c.x = (float)lua_tonumber(L, __argi__++);
+	c.y = (float)lua_tonumber(L, __argi__++);
+	ImU32 col = (ImU32)lua_tointeger(L, __argi__++);
+	float thickness = (float)luaL_optnumber(L, __argi__, 1.0f);
+	if (thickness != 1.0f) __argi__++;
+	ImGui::GetOverlayDrawList()->AddTriangle(a, b, c, col, thickness);
+	return 0;
+};
+
+//void  AddTriangleFilled(const ImVec2& a,const ImVec2& b,const ImVec2& c,ImU32 col);
+int cximgui_ImDrawList_AddTriangleFilled_4_v2v2v2i(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 a;
+	a.x = (float)lua_tonumber(L, __argi__++);
+	a.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 b;
+	b.x = (float)lua_tonumber(L, __argi__++);
+	b.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 c;
+	c.x = (float)lua_tonumber(L, __argi__++);
+	c.y = (float)lua_tonumber(L, __argi__++);
+	ImU32 col = (ImU32)lua_tointeger(L, __argi__++);
+	ImGui::GetOverlayDrawList()->AddTriangleFilled(a, b, c, col);
+	return 0;
+};
+
+//void  AddCircle(const ImVec2& centre,float radius,ImU32 col,int num_segments,float thickness);
+int cximgui_ImDrawList_AddCircle_5_v2niin(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 centre;
+	centre.x = (float)lua_tonumber(L, __argi__++);
+	centre.y = (float)lua_tonumber(L, __argi__++);
+	float radius = (float)lua_tonumber(L, __argi__++);
+	ImU32 col = (ImU32)lua_tointeger(L, __argi__++);
+	int num_segments = (int)luaL_optinteger(L, __argi__, 12);
+	if (num_segments != 12) __argi__++;
+	float thickness = (float)luaL_optnumber(L, __argi__, 1.0f);
+	if (thickness != 1.0f) __argi__++;
+	ImGui::GetOverlayDrawList()->AddCircle(centre, radius, col, num_segments, thickness);
+	return 0;
+};
+
+//void  AddCircleFilled(const ImVec2& centre,float radius,ImU32 col,int num_segments);
+int cximgui_ImDrawList_AddCircleFilled_4_v2nii(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 centre;
+	centre.x = (float)lua_tonumber(L, __argi__++);
+	centre.y = (float)lua_tonumber(L, __argi__++);
+	float radius = (float)lua_tonumber(L, __argi__++);
+	ImU32 col = (ImU32)lua_tointeger(L, __argi__++);
+	int num_segments = (int)luaL_optinteger(L, __argi__, 12);
+	if (num_segments != 12) __argi__++;
+	ImGui::GetOverlayDrawList()->AddCircleFilled(centre, radius, col, num_segments);
+	return 0;
+};
+
+//void  AddText(const ImVec2& pos,ImU32 col,const char* text_begin,const char* text_end);
+int cximgui_ImDrawList_AddText_4_v2iss(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 pos;
+	pos.x = (float)lua_tonumber(L, __argi__++);
+	pos.y = (float)lua_tonumber(L, __argi__++);
+	ImU32 col = (ImU32)lua_tointeger(L, __argi__++);
+	const char* text_begin = lua_tostring(L, __argi__++);
+	const char* text_end = luaL_optstring(L, __argi__, NULL);
+	if (text_end != NULL) __argi__++;
+	ImGui::GetOverlayDrawList()->AddText(pos, col, text_begin, text_end);
+	return 0;
+};
+
+//void  AddText(const ImFont* font,float font_size,const ImVec2& pos,ImU32 col,const char* text_begin,const char* text_end,float wrap_width,const ImVec4* cpu_fine_clip_rect);
+//UnSupported AddText
+//void  AddImage(ImTextureID user_texture_id,const ImVec2& a,const ImVec2& b,const ImVec2& uv_a,const ImVec2& uv_b,ImU32 col);
+//UnSupported AddImage
+//void  AddImageQuad(ImTextureID user_texture_id,const ImVec2& a,const ImVec2& b,const ImVec2& c,const ImVec2& d,const ImVec2& uv_a,const ImVec2& uv_b,const ImVec2& uv_c,const ImVec2& uv_d,ImU32 col);
+//UnSupported AddImageQuad
+//void  AddImageRounded(ImTextureID user_texture_id,const ImVec2& a,const ImVec2& b,const ImVec2& uv_a,const ImVec2& uv_b,ImU32 col,float rounding,int rounding_corners);
+//UnSupported AddImageRounded
+//void  AddPolyline(const ImVec2* points,const int num_points,ImU32 col,bool closed,float thickness);
+int cximgui_ImDrawList_AddPolyline_5_v2piibn(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 points;
+	points.x = (float)lua_tonumber(L, __argi__++);
+	points.y = (float)lua_tonumber(L, __argi__++);
+	int num_points = (int)lua_tointeger(L, __argi__++);
+	ImU32 col = (ImU32)lua_tointeger(L, __argi__++);
+	bool closed = lua_toboolean(L, __argi__++);
+	float thickness = (float)lua_tonumber(L, __argi__++);
+	ImGui::GetOverlayDrawList()->AddPolyline(&points, num_points, col, closed, thickness);
+	return 0;
+};
+
+//void  AddConvexPolyFilled(const ImVec2* points,const int num_points,ImU32 col);
+int cximgui_ImDrawList_AddConvexPolyFilled_3_v2pii(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 points;
+	points.x = (float)lua_tonumber(L, __argi__++);
+	points.y = (float)lua_tonumber(L, __argi__++);
+	int num_points = (int)lua_tointeger(L, __argi__++);
+	ImU32 col = (ImU32)lua_tointeger(L, __argi__++);
+	ImGui::GetOverlayDrawList()->AddConvexPolyFilled(&points, num_points, col);
+	return 0;
+};
+
+//void  AddBezierCurve(const ImVec2& pos0,const ImVec2& cp0,const ImVec2& cp1,const ImVec2& pos1,ImU32 col,float thickness,int num_segments);
+int cximgui_ImDrawList_AddBezierCurve_7_v2v2v2v2ini(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 pos0;
+	pos0.x = (float)lua_tonumber(L, __argi__++);
+	pos0.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 cp0;
+	cp0.x = (float)lua_tonumber(L, __argi__++);
+	cp0.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 cp1;
+	cp1.x = (float)lua_tonumber(L, __argi__++);
+	cp1.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 pos1;
+	pos1.x = (float)lua_tonumber(L, __argi__++);
+	pos1.y = (float)lua_tonumber(L, __argi__++);
+	ImU32 col = (ImU32)lua_tointeger(L, __argi__++);
+	float thickness = (float)lua_tonumber(L, __argi__++);
+	int num_segments = (int)luaL_optinteger(L, __argi__, 0);
+	if (num_segments != 0) __argi__++;
+	ImGui::GetOverlayDrawList()->AddBezierCurve(pos0, cp0, cp1, pos1, col, thickness, num_segments);
+	return 0;
+};
+
+//void  PathArcTo(const ImVec2& centre,float radius,float a_min,float a_max,int num_segments);
+int cximgui_ImDrawList_PathArcTo_5_v2nnni(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 centre;
+	centre.x = (float)lua_tonumber(L, __argi__++);
+	centre.y = (float)lua_tonumber(L, __argi__++);
+	float radius = (float)lua_tonumber(L, __argi__++);
+	float a_min = (float)lua_tonumber(L, __argi__++);
+	float a_max = (float)lua_tonumber(L, __argi__++);
+	int num_segments = (int)luaL_optinteger(L, __argi__, 10);
+	if (num_segments != 10) __argi__++;
+	ImGui::GetOverlayDrawList()->PathArcTo(centre, radius, a_min, a_max, num_segments);
+	return 0;
+};
+
+//void  PathArcToFast(const ImVec2& centre,float radius,int a_min_of_12,int a_max_of_12);
+int cximgui_ImDrawList_PathArcToFast_4_v2nii(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 centre;
+	centre.x = (float)lua_tonumber(L, __argi__++);
+	centre.y = (float)lua_tonumber(L, __argi__++);
+	float radius = (float)lua_tonumber(L, __argi__++);
+	int a_min_of_12 = (int)lua_tointeger(L, __argi__++);
+	int a_max_of_12 = (int)lua_tointeger(L, __argi__++);
+	ImGui::GetOverlayDrawList()->PathArcToFast(centre, radius, a_min_of_12, a_max_of_12);
+	return 0;
+};
+
+//void  PathBezierCurveTo(const ImVec2& p1,const ImVec2& p2,const ImVec2& p3,int num_segments);
+int cximgui_ImDrawList_PathBezierCurveTo_4_v2v2v2i(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 p1;
+	p1.x = (float)lua_tonumber(L, __argi__++);
+	p1.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 p2;
+	p2.x = (float)lua_tonumber(L, __argi__++);
+	p2.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 p3;
+	p3.x = (float)lua_tonumber(L, __argi__++);
+	p3.y = (float)lua_tonumber(L, __argi__++);
+	int num_segments = (int)luaL_optinteger(L, __argi__, 0);
+	if (num_segments != 0) __argi__++;
+	ImGui::GetOverlayDrawList()->PathBezierCurveTo(p1, p2, p3, num_segments);
+	return 0;
+};
+
+//void  PathRect(const ImVec2& rect_min,const ImVec2& rect_max,float rounding,int rounding_corners_flags);
+int cximgui_ImDrawList_PathRect_4_v2v2ni(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 rect_min;
+	rect_min.x = (float)lua_tonumber(L, __argi__++);
+	rect_min.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 rect_max;
+	rect_max.x = (float)lua_tonumber(L, __argi__++);
+	rect_max.y = (float)lua_tonumber(L, __argi__++);
+	float rounding = (float)luaL_optnumber(L, __argi__, 0.0f);
+	if (rounding != 0.0f) __argi__++;
+	int rounding_corners_flags = (int)luaL_optinteger(L, __argi__, ImDrawCornerFlags_All);
+	if (rounding_corners_flags != ImDrawCornerFlags_All) __argi__++;
+	ImGui::GetOverlayDrawList()->PathRect(rect_min, rect_max, rounding, rounding_corners_flags);
+	return 0;
+};
+
+//void  ChannelsSplit(int channels_count);
+int cximgui_ImDrawList_ChannelsSplit_1_i(lua_State* L) {
+	int __argi__ = 1;
+	int channels_count = (int)lua_tointeger(L, __argi__++);
+	ImGui::GetOverlayDrawList()->ChannelsSplit(channels_count);
+	return 0;
+};
+
+//void  ChannelsMerge();
+int cximgui_ImDrawList_ChannelsMerge(lua_State* L) {
+	ImGui::GetOverlayDrawList()->ChannelsMerge();
+	return 0;
+};
+
+//void  ChannelsSetCurrent(int channel_index);
+int cximgui_ImDrawList_ChannelsSetCurrent_1_i(lua_State* L) {
+	int __argi__ = 1;
+	int channel_index = (int)lua_tointeger(L, __argi__++);
+	ImGui::GetOverlayDrawList()->ChannelsSetCurrent(channel_index);
+	return 0;
+};
+
+//void  AddCallback(ImDrawCallback callback,void* callback_data);
+//UnSupported AddCallback
+//void  AddDrawCmd();
+int cximgui_ImDrawList_AddDrawCmd(lua_State* L) {
+	ImGui::GetOverlayDrawList()->AddDrawCmd();
+	return 0;
+};
+
+//ImDrawList*  CloneOutput();
+int cximgui_ImDrawList_CloneOutput(lua_State* L) {
+	ImDrawList* __ret__ = ImGui::GetOverlayDrawList()->CloneOutput();
+	return 0;
+};
+
+//void  Clear();
+int cximgui_ImDrawList_Clear(lua_State* L) {
+	ImGui::GetOverlayDrawList()->Clear();
+	return 0;
+};
+
+//void  ClearFreeMemory();
+int cximgui_ImDrawList_ClearFreeMemory(lua_State* L) {
+	ImGui::GetOverlayDrawList()->ClearFreeMemory();
+	return 0;
+};
+
+//void  PrimReserve(int idx_count,int vtx_count);
+int cximgui_ImDrawList_PrimReserve_2_ii(lua_State* L) {
+	int __argi__ = 1;
+	int idx_count = (int)lua_tointeger(L, __argi__++);
+	int vtx_count = (int)lua_tointeger(L, __argi__++);
+	ImGui::GetOverlayDrawList()->PrimReserve(idx_count, vtx_count);
+	return 0;
+};
+
+//void  PrimRect(const ImVec2& a,const ImVec2& b,ImU32 col);
+int cximgui_ImDrawList_PrimRect_3_v2v2i(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 a;
+	a.x = (float)lua_tonumber(L, __argi__++);
+	a.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 b;
+	b.x = (float)lua_tonumber(L, __argi__++);
+	b.y = (float)lua_tonumber(L, __argi__++);
+	ImU32 col = (ImU32)lua_tointeger(L, __argi__++);
+	ImGui::GetOverlayDrawList()->PrimRect(a, b, col);
+	return 0;
+};
+
+//void  PrimRectUV(const ImVec2& a,const ImVec2& b,const ImVec2& uv_a,const ImVec2& uv_b,ImU32 col);
+int cximgui_ImDrawList_PrimRectUV_5_v2v2v2v2i(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 a;
+	a.x = (float)lua_tonumber(L, __argi__++);
+	a.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 b;
+	b.x = (float)lua_tonumber(L, __argi__++);
+	b.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 uv_a;
+	uv_a.x = (float)lua_tonumber(L, __argi__++);
+	uv_a.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 uv_b;
+	uv_b.x = (float)lua_tonumber(L, __argi__++);
+	uv_b.y = (float)lua_tonumber(L, __argi__++);
+	ImU32 col = (ImU32)lua_tointeger(L, __argi__++);
+	ImGui::GetOverlayDrawList()->PrimRectUV(a, b, uv_a, uv_b, col);
+	return 0;
+};
+
+//void  PrimQuadUV(const ImVec2& a,const ImVec2& b,const ImVec2& c,const ImVec2& d,const ImVec2& uv_a,const ImVec2& uv_b,const ImVec2& uv_c,const ImVec2& uv_d,ImU32 col);
+int cximgui_ImDrawList_PrimQuadUV_9_v2v2v2v2v2v2v2v2i(lua_State* L) {
+	int __argi__ = 1;
+	ImVec2 a;
+	a.x = (float)lua_tonumber(L, __argi__++);
+	a.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 b;
+	b.x = (float)lua_tonumber(L, __argi__++);
+	b.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 c;
+	c.x = (float)lua_tonumber(L, __argi__++);
+	c.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 d;
+	d.x = (float)lua_tonumber(L, __argi__++);
+	d.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 uv_a;
+	uv_a.x = (float)lua_tonumber(L, __argi__++);
+	uv_a.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 uv_b;
+	uv_b.x = (float)lua_tonumber(L, __argi__++);
+	uv_b.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 uv_c;
+	uv_c.x = (float)lua_tonumber(L, __argi__++);
+	uv_c.y = (float)lua_tonumber(L, __argi__++);
+	ImVec2 uv_d;
+	uv_d.x = (float)lua_tonumber(L, __argi__++);
+	uv_d.y = (float)lua_tonumber(L, __argi__++);
+	ImU32 col = (ImU32)lua_tointeger(L, __argi__++);
+	ImGui::GetOverlayDrawList()->PrimQuadUV(a, b, c, d, uv_a, uv_b, uv_c, uv_d, col);
+	return 0;
+};
+
+//void  UpdateClipRect();
+int cximgui_ImDrawList_UpdateClipRect(lua_State* L) {
+	ImGui::GetOverlayDrawList()->UpdateClipRect();
+	return 0;
+};
+
+//void  UpdateTextureID();
+int cximgui_ImDrawList_UpdateTextureID(lua_State* L) {
+	ImGui::GetOverlayDrawList()->UpdateTextureID();
+	return 0;
+};
+
+
+//total func	399	unSupported	69
 luaL_Reg cximgui_methods[] = {
 	{"GetCurrentContext",cximgui_GetCurrentContext},
 	{"DebugCheckVersionAndDataLayout",cximgui_DebugCheckVersionAndDataLayout_6_siiiii},
@@ -3482,6 +3964,41 @@ luaL_Reg cximgui_methods[] = {
 	{"GetPlatformIO",cximgui_GetPlatformIO},
 	{"UpdatePlatformWindows",cximgui_UpdatePlatformWindows},
 	{"DestroyPlatformWindows",cximgui_DestroyPlatformWindows},
+	{"PushClipRect",cximgui_ImDrawList_PushClipRect_3_v2v2b},
+	{"PushClipRectFullScreen",cximgui_ImDrawList_PushClipRectFullScreen},
+	{"PopClipRect",cximgui_ImDrawList_PopClipRect},
+	{"PopTextureID",cximgui_ImDrawList_PopTextureID},
+	{"AddLine",cximgui_ImDrawList_AddLine_4_v2v2in},
+	{"AddRect",cximgui_ImDrawList_AddRect_6_v2v2inin},
+	{"AddRectFilled",cximgui_ImDrawList_AddRectFilled_5_v2v2ini},
+	{"AddRectFilledMultiColor",cximgui_ImDrawList_AddRectFilledMultiColor_6_v2v2iiii},
+	{"AddQuad",cximgui_ImDrawList_AddQuad_6_v2v2v2v2in},
+	{"AddQuadFilled",cximgui_ImDrawList_AddQuadFilled_5_v2v2v2v2i},
+	{"AddTriangle",cximgui_ImDrawList_AddTriangle_5_v2v2v2in},
+	{"AddTriangleFilled",cximgui_ImDrawList_AddTriangleFilled_4_v2v2v2i},
+	{"AddCircle",cximgui_ImDrawList_AddCircle_5_v2niin},
+	{"AddCircleFilled",cximgui_ImDrawList_AddCircleFilled_4_v2nii},
+	{"AddText",cximgui_ImDrawList_AddText_4_v2iss},
+	{"AddPolyline",cximgui_ImDrawList_AddPolyline_5_v2piibn},
+	{"AddConvexPolyFilled",cximgui_ImDrawList_AddConvexPolyFilled_3_v2pii},
+	{"AddBezierCurve",cximgui_ImDrawList_AddBezierCurve_7_v2v2v2v2ini},
+	{"PathArcTo",cximgui_ImDrawList_PathArcTo_5_v2nnni},
+	{"PathArcToFast",cximgui_ImDrawList_PathArcToFast_4_v2nii},
+	{"PathBezierCurveTo",cximgui_ImDrawList_PathBezierCurveTo_4_v2v2v2i},
+	{"PathRect",cximgui_ImDrawList_PathRect_4_v2v2ni},
+	{"ChannelsSplit",cximgui_ImDrawList_ChannelsSplit_1_i},
+	{"ChannelsMerge",cximgui_ImDrawList_ChannelsMerge},
+	{"ChannelsSetCurrent",cximgui_ImDrawList_ChannelsSetCurrent_1_i},
+	{"AddDrawCmd",cximgui_ImDrawList_AddDrawCmd},
+	{"CloneOutput",cximgui_ImDrawList_CloneOutput},
+	{"Clear",cximgui_ImDrawList_Clear},
+	{"ClearFreeMemory",cximgui_ImDrawList_ClearFreeMemory},
+	{"PrimReserve",cximgui_ImDrawList_PrimReserve_2_ii},
+	{"PrimRect",cximgui_ImDrawList_PrimRect_3_v2v2i},
+	{"PrimRectUV",cximgui_ImDrawList_PrimRectUV_5_v2v2v2v2i},
+	{"PrimQuadUV",cximgui_ImDrawList_PrimQuadUV_9_v2v2v2v2v2v2v2v2i},
+	{"UpdateClipRect",cximgui_ImDrawList_UpdateClipRect},
+	{"UpdateTextureID",cximgui_ImDrawList_UpdateTextureID},
 	{ NULL, NULL }
 };
 
@@ -3513,9 +4030,9 @@ int cximgui_strbuf_size(lua_State* L) {
 
 luaL_Reg cximgui_strbuf_methods[] = {
 	{ "str", cximgui_strbuf_str },
-{ "size", cximgui_strbuf_size },
-{ "reset", cximgui_strbuf_reset },
-{ NULL,NULL }
+	{ "size", cximgui_strbuf_size },
+	{ "reset", cximgui_strbuf_reset },
+	{ NULL,NULL }
 };
 
 int cximgui_strbuf_destroy(lua_State* L) {
@@ -3605,6 +4122,24 @@ int cximgui_ListBox_5_spipsii(lua_State* L) {
 	return 2;
 }
 
+int cximgui_clipper_list(lua_State*L)
+{
+	int size = (int)lua_tointeger(L, 1);
+	ImGuiListClipper clipper(size);
+	while (clipper.Step())
+	{
+		int ps = clipper.DisplayStart;
+		int pe = clipper.DisplayEnd;
+
+		lua_pushvalue(L, 2);
+		lua_pushinteger(L, ps);
+		lua_pushinteger(L, pe);
+		lua_pcall(L, 2, 0, 0);
+	}
+	return 0;
+}
+
+
 luaL_Reg cximgui_extra_methods[] = {
 	{ "CreateStrbuf", cximgui_strbuf_create },
 { "DestroyStrbuf", cximgui_strbuf_destroy },
@@ -3613,6 +4148,7 @@ luaL_Reg cximgui_extra_methods[] = {
 { "DockSpace", cximgui_DockSpace_3_iv2i },
 { "GetMainViewport", cximgui_GetMainViewport },
 { "ListBox", cximgui_ListBox_5_spipsii },
+{ "ClipperList", cximgui_clipper_list },
 { NULL,NULL }
 };
 

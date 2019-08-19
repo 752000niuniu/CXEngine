@@ -11,7 +11,7 @@ public:
 	virtual ~BaseSprite();
 
 	virtual void Update();
-	void Draw();
+	virtual void Draw();
 	void SetLoop(bool loop);
 	void Reset();
 	void Stop();
@@ -34,6 +34,19 @@ public:
 	NE::Sprite* m_pSprite;
 	float FrameInterval;
 	float PlayTime;
+	bool Visible;
+};
+
+
+class Animation : public BaseSprite
+{
+public:
+	Animation(uint64_t resoureID = 0);
+	Animation(uint32_t pkg, uint32_t wasID) :BaseSprite(pkg, wasID) {  };
+	virtual ~Animation() {};
+	void Update() override;
+	void Draw() override;
+	
 };
 
 void lua_push_base_sprite(lua_State*L, BaseSprite* sprite);

@@ -344,3 +344,32 @@ void luaopen_sprite(lua_State* L)
 	script_system_register_luac_function(L, base_sprite_create);
 }
 
+
+Animation::Animation(uint64_t resoureID /*= 0*/) :BaseSprite(resoureID)
+{
+	Visible = true;
+}
+
+void Animation::Update()
+{
+	if (Visible) {
+		float dt = WINDOW_INSTANCE->GetDeltaTime();
+		PlayTime = PlayTime + dt;
+		if (PlayTime >= FrameInterval)
+		{
+			PlayTime = (PlayTime - std::floor(PlayTime / FrameInterval)*FrameInterval);
+			CurrentFrame = CurrentFrame + 1;
+			if (CurrentFrame >= GroupFrameCount) {
+				Visible = false;
+			}
+		}
+	}
+}
+
+void Animation::Draw()
+{
+	if (Visible)
+	{
+		BaseSprite::Draw();
+	}
+}

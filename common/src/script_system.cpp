@@ -22,16 +22,17 @@
 #include "text_renderer.h"
 #include "input_manager.h"
 #include "net.h"
+#include "animation/sprite.h"
+#include "resource_manager.h"
+#include "sprite_renderer.h"
+#include "animation/frame_animation.h"
 #else
 #include "server.h"
 #endif // !SIMPLE_SERVER
 #include "protocol.h"
 #include "combat/combat.h"
 #include "cxlua.h"
-#include "animation/sprite.h"
-#include "resource_manager.h"
-#include "sprite_renderer.h"
-#include "animation/frame_animation.h"
+
 
 
 
