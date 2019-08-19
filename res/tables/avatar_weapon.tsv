@@ -1,74 +1,147 @@
 ID	name	type	role	level	idle	walk	sit	angry	sayhi	dance	salute	clps	cry	batidle	attack	cast	behit	runto	runback	defend
 *
-剑侠客_knife_0	剑侠客_knife_0	knife	剑侠客	0	0CBF0DDB	49CFC3C3						6D8CD78C		A20CEC4C	89AB1AA2	DEECDD99	9B6684AA	4EE523B0	59E7B49F	62542FAE	
-剑侠客_knife_30	剑侠客_knife_30	knife	剑侠客	30	494C6456	BB949BDE						2F208C10		E901E5AF	A0B18DB3	6C8532E9	BA8BC02F	94B928E6	9111125D	F0701C55	
-剑侠客_knife_60	剑侠客_knife_60	knife	剑侠客	60	494C6456	BB949BDE						2F208C10		E901E5AF	A0B18DB3	6C8532E9	BA8BC02F	94B928E6	9111125D	F0701C55	
-剑侠客_sword_0	剑侠客_sword_0	sword	剑侠客	0	9298825C	29DF2153						51140EE1		1F503F23	FDB2C365	38875CCF	EA117128	20AFEA5A	B175A6F1	DEC859C9	
-剑侠客_sword_30	剑侠客_sword_30	sword	剑侠客	30	CC5E9C79	59207938						6B3A934F		BC16BE43	07AC6964	341AA6EC	BBBAC247	219210C2	07B27AB7	4B13C413	
-剑侠客_sword_60	剑侠客_sword_60	sword	剑侠客	60	CC5E9C79	59207938						6B3A934F		BC16BE43	07AC6964	341AA6EC	BBBAC247	219210C2	07B27AB7	4B13C413	
-巨魔王_axe_0	巨魔王_axe_0	axe	巨魔王	0	F5164FF2	9FBAAD0D						0901BAE0		75CA98B2	0C6A0AAF	B02E8A71	EF91014D	D96B7C58	ED74F8D8	CA6B78BA	
-巨魔王_axe_30	巨魔王_axe_30	axe	巨魔王	30	446B12BA	3C85094B						E959DF5B		97FFD83A	0AE0FBC9	69E3A0BA	A6BA072D	405A73C1	B9DD7791	E8628FDE	
-巨魔王_axe_60	巨魔王_axe_60	axe	巨魔王	60	446B12BA	3C85094B						E959DF5B		97FFD83A	0AE0FBC9	69E3A0BA	A6BA072D	405A73C1	B9DD7791	E8628FDE	
-巨魔王_knife_0	巨魔王_knife_0	knife	巨魔王	0	8EC686F9	A82465FE						572E86F3		E2FF6E31	50597842	B9817F22	C5C39E50	45515530	6CBED6D0	5F15B662	
-巨魔王_knife_30	巨魔王_knife_30	knife	巨魔王	30	F54F61CC	C67C1E31						150187C0		4C8C0C7F	7BC815E6	FF56A136	8509A043	52F290D5	711C8005	E1CB63E5	
-巨魔王_knife_60	巨魔王_knife_60	knife	巨魔王	60	F54F61CC	C67C1E31						150187C0		4C8C0C7F	7BC815E6	FF56A136	8509A043	52F290D5	711C8005	E1CB63E5	
-狐美人_claw_0	狐美人_claw_0	claw	狐美人	0	DF87CD4F	5D1B5590						6AF7F563		24F4B783	4FEF1EA7	4192C3DA	AE93B28A	8E6F339A	0614BCAD	19A12B06	
-狐美人_claw_30	狐美人_claw_30	claw	狐美人	30	384265DC	7BB497CB						BB0D11E0		6C9A4954	C65E396A	F601D6B3	81F122C9	3915D6A9	6D81DEE8	923F9BBF	
-狐美人_claw_60	狐美人_claw_60	claw	狐美人	60	384265DC	7BB497CB						BB0D11E0		6C9A4954	C65E396A	F601D6B3	81F122C9	3915D6A9	6D81DEE8	923F9BBF	
-狐美人_whip_0	狐美人_whip_0	whip	狐美人	0	1C6D7AF6	3C8CD8EB						2815B13B		0EB4F3A5	8E0A7548	C7879D69	1169732B	3430C16A	F83CFA1C	AB4A695F	
-狐美人_whip_30	狐美人_whip_30	whip	狐美人	30	50FD2242	1718D825						C3971BB5		948ABA4D	2FE5C5EF	23B56CEF	BF590140	CBCA5A30	89D57483	1D194BE4	
-狐美人_whip_60	狐美人_whip_60	whip	狐美人	60	50FD2242	1718D825						C3971BB5		948ABA4D	2FE5C5EF	23B56CEF	BF590140	CBCA5A30	89D57483	1D194BE4	
-玄彩娥_ribbon_0	玄彩娥_ribbon_0	ribbon	玄彩娥	0	E5A57845	4C9588E1						A9B31057		93B63580	7D01D370	DCBB254D	3E95F794	D31748B4	13843BD1	6C278BB9	
-玄彩娥_ribbon_30	玄彩娥_ribbon_30	ribbon	玄彩娥	30	B25AFBB3	9D8CE9F4						0A99823C		84B40A67	3ACF708B	EFCA8E31	E33B99FB	9E74505B	08D6D117	9447B391	
-玄彩娥_ribbon_60	玄彩娥_ribbon_60	ribbon	玄彩娥	60	B25AFBB3	9D8CE9F4						0A99823C		84B40A67	3ACF708B	EFCA8E31	E33B99FB	9E74505B	08D6D117	9447B391	
-玄彩娥_wand_0	玄彩娥_wand_0	wand	玄彩娥	0	42D14FA3	4954C80C						33CC1679		1A04CE99	1330BDCB	CAB57EAC	1DC0095A	B55DBDE6	87928D9F	AA1F19F1	
-玄彩娥_wand_30	玄彩娥_wand_30	wand	玄彩娥	30	5E40D203	115A8E45						B8F742F9		4E141AA1	B8C770B1	0762FE7B	2340CBBA	170E491C	87F111B3	C06E368F	
-玄彩娥_wand_60	玄彩娥_wand_60	wand	玄彩娥	60	5E40D203	115A8E45						B8F742F9		4E141AA1	B8C770B1	0762FE7B	2340CBBA	170E491C	87F111B3	C06E368F	
-神天兵_hammer_0	神天兵_hammer_0	hammer	神天兵	0	16F53166	34ECF58B						55AF9960		C1BDDCE2	EF428937	F526FC31	C22788DB	C2DBD0A7	1AAA20B1	68901E3E	
-神天兵_hammer_30	神天兵_hammer_30	hammer	神天兵	30	38C32912	FE1566C1						19D4917C		12D8DE6D	B4EDD4F2	F84AF7A2	27885331	F71C7492	8A8324A1	BA82A21C	
-神天兵_hammer_60	神天兵_hammer_60	hammer	神天兵	60	38C32912	FE1566C1						19D4917C		12D8DE6D	B4EDD4F2	F84AF7A2	27885331	F71C7492	8A8324A1	BA82A21C	
-神天兵_spear_0	神天兵_spear_0	spear	神天兵	0	2BB55863	77B8F44E						FAA82565		044EC256	1B3DA579	70141536	58199DFF	06FA3D33	8D50B13E	1F2A6CEB	
-神天兵_spear_30	神天兵_spear_30	spear	神天兵	30	1D4CF669	0E0B110D						224AF5B0		B97A9664	B722A1E4	B0CEB342	93030C65	34ADB171	AF20C0EF	8CCF88F5	
-神天兵_spear_60	神天兵_spear_60	spear	神天兵	60	1D4CF669	0E0B110D						224AF5B0		B97A9664	B722A1E4	B0CEB342	93030C65	34ADB171	AF20C0EF	8CCF88F5	
-舞天姬_ribbon_0	舞天姬_ribbon_0	ribbon	舞天姬	0	FB8435BA	9CF5D9F8						7FDC01EF		81AFF12D	249CA457	A0D26048	7869F2F1	B123AD72	5CC3EF52	F42E7944	
-舞天姬_ribbon_30	舞天姬_ribbon_30	ribbon	舞天姬	30	35DEB132	92015297						B3E404B5		6ED204E3	56666D0D	C5132AA5	AE3DC66F	FDBD116F	701A7AB7	F7C94338	
-舞天姬_ribbon_60	舞天姬_ribbon_60	ribbon	舞天姬	60	35DEB132	92015297						B3E404B5		6ED204E3	56666D0D	C5132AA5	AE3DC66F	FDBD116F	701A7AB7	F7C94338	
-舞天姬_ring_0	舞天姬_ring_0	ring	舞天姬	0	6209096A	68D86D0F						69C1D177		7FB32E9F	4A49A3C8	098A9B5E	BC699632	F79D0F75	ECE17D56	B2530EEA	
-舞天姬_ring_30	舞天姬_ring_30	ring	舞天姬	30	0B98FD5E	904EFD65						650CFADE		86761D6A	DAA7FA2D	F2F2BBA6	2A71A746	1E1747C9	F9ED9F7B	00953C84	
-舞天姬_ring_60	舞天姬_ring_60	ring	舞天姬	60	0B98FD5E	904EFD65						650CFADE		86761D6A	DAA7FA2D	F2F2BBA6	2A71A746	1E1747C9	F9ED9F7B	00953C84	
-英女侠_dbswords_0	英女侠_dbswords_0	dbswords	英女侠	0	57FABA5B	9E945A44						07AB7352		9E6FFA22	F8788170	A4CD5AEB	FD6D5E61	DD1FC526	6DADF138	83DEC128	
-英女侠_dbswords_30	英女侠_dbswords_30	dbswords	英女侠	30	5516FE05	6F03B3F1						4B3774CB		8F937D83	A3E6D345	3B2C0252	FC7B31A0	A36F83EF	64852879	2A79217A	
-英女侠_dbswords_60	英女侠_dbswords_60	dbswords	英女侠	60	5516FE05	6F03B3F1						4B3774CB		8F937D83	A3E6D345	3B2C0252	FC7B31A0	A36F83EF	64852879	2A79217A	
-英女侠_whip_0	英女侠_whip_0	whip	英女侠	0	A22FC2E5	A8AEF3B8						6EF465BF		DA5EFB33	102B282D	903D4077	597AB27F	9026809E	D1ECB00D	5C2D10F2	
-英女侠_whip_30	英女侠_whip_30	whip	英女侠	30	3BCAC42B	F3F1826F						03952879		8E8E849F	A72A927C	05B2A77B	B45537E5	964DBFF9	F4F0474A	BD8C7B95	
-英女侠_whip_60	英女侠_whip_60	whip	英女侠	60	3BCAC42B	F3F1826F						03952879		8E8E849F	A72A927C	05B2A77B	B45537E5	964DBFF9	F4F0474A	BD8C7B95	
-虎头怪_axe_0	虎头怪_axe_0	axe	虎头怪	0	EADD5CDD	7467F32A						33AF0AC4		33453188	CEA1CBF1	AB222D43	5B58D8FC	4B2FBF37	AA6C0D05	4EA1D3FB	
-虎头怪_axe_30	虎头怪_axe_30	axe	虎头怪	30	5923D5C3	578771AB						F4DAF57E		2CD2C6D6	B92A33F2	022BBA4E	120F78F4	E3C6BC8F	5A5A13FD	307D1D47	
-虎头怪_axe_60	虎头怪_axe_60	axe	虎头怪	60	5923D5C3	578771AB						F4DAF57E		2CD2C6D6	B92A33F2	022BBA4E	120F78F4	E3C6BC8F	5A5A13FD	307D1D47	
-虎头怪_hammer_0	虎头怪_hammer_0	hammer	虎头怪	0	35A60822	6C4C0BD8						573FE90B		04AFB943	EBB8F006	6AC733AE	82D84EBA	21E7923D	D30D97DD	FBC7D402	
-虎头怪_hammer_30	虎头怪_hammer_30	hammer	虎头怪	30	28534F72	9E4325F4						179BFBBA		F4BE8E14	7B955EC3	3DAEC472	3F3C6BEF	83FE80E6	779165FA	031372EA	
-虎头怪_hammer_60	虎头怪_hammer_60	hammer	虎头怪	60	28534F72	9E4325F4						179BFBBA		F4BE8E14	7B955EC3	3DAEC472	3F3C6BEF	83FE80E6	779165FA	031372EA	
-逍遥生_fan_0	逍遥生_fan_0	fan	逍遥生	0	402BBC17	8C91B390						57DAABA1		740210C1	B0B46CE5	4F212CA9	7F9B6665	DDC7B6BF	E844C6E6	11851CDD	
-逍遥生_fan_30	逍遥生_fan_30	fan	逍遥生	30	297D684D	F186E26E						E876D7E0		CA8EEF83	0FD9C550	A54EA4C3	175941DE	B4CCC8B9	3C3D431E	32C77CDE	
-逍遥生_fan_60	逍遥生_fan_60	fan	逍遥生	60	297D684D	F186E26E						E876D7E0		CA8EEF83	0FD9C550	A54EA4C3	175941DE	B4CCC8B9	3C3D431E	32C77CDE	
-逍遥生_sword_0	逍遥生_sword_0	sword	逍遥生	0	4E4F426E	1F5F1A06						3707D42E		057560BA	890132FA	BBB4A863	20DD305B	6D8A4155	E902350C	7C7BE729	
-逍遥生_sword_30	逍遥生_sword_30	sword	逍遥生	30	2039C08A	8402C5C6						51233AB5		AFA10ED6	78E26E67	1EEAD699	EA37CEFE	74474E9C	EDD5D518	876AD6AF	
-逍遥生_sword_60	逍遥生_sword_60	sword	逍遥生	60	2039C08A	8402C5C6						51233AB5		AFA10ED6	78E26E67	1EEAD699	EA37CEFE	74474E9C	EDD5D518	876AD6AF	
-飞燕女_dbswords_0	飞燕女_dbswords_0	dbswords	飞燕女	0	93C238CA	CF591DCE						96490C40		8031F26F	41FFF0E3	AFBB95B1	AB92A2DC	39AA48DA	34BAA491	DF195D06	
-飞燕女_dbswords_30	飞燕女_dbswords_30	dbswords	飞燕女	30	F212CBBB	83343540						91D8CED8		B1488E22	01205749	12A82C16	16327936	CB929F8C	649E9348	CC900644	
-飞燕女_dbswords_60	飞燕女_dbswords_60	dbswords	飞燕女	60	F212CBBB	83343540						91D8CED8		B1488E22	01205749	12A82C16	16327936	CB929F8C	649E9348	CC900644	
-飞燕女_ring_0	飞燕女_ring_0	ring	飞燕女	0	33473840	2BAFE98B						4279F8D9		7D6F309A	DDBEB2FE	CBC0AAAC	99CDE46B	0A672488	605B5511	5735E6ED	
-飞燕女_ring_30	飞燕女_ring_30	ring	飞燕女	30	2BF6E786	637D1CB6						64DAD51C		31594AC8	5E6C0FBC	DD76CF02	06C1DA32	93010C03	8539C817	AEF4A0C3	
-飞燕女_ring_60	飞燕女_ring_60	ring	飞燕女	60	2BF6E786	637D1CB6						64DAD51C		31594AC8	5E6C0FBC	DD76CF02	06C1DA32	93010C03	8539C817	AEF4A0C3	
-骨精灵_claw_0	骨精灵_claw_0	claw	骨精灵	0	F989095F	25966D3F						F1EE2F11		F5BA943C	BC3E962F	867A597A	8A4F6751	40199DCC	3748F6A9	2526B3EA	
-骨精灵_claw_30	骨精灵_claw_30	claw	骨精灵	30	3A6BD287	7CDCDA3D						FDB2431F		F8522536	E27E1988	2837F291	D9305287	742745A7	441041CA	24F1606F	
-骨精灵_claw_60	骨精灵_claw_60	claw	骨精灵	60	3A6BD287	7CDCDA3D						FDB2431F		F8522536	E27E1988	2837F291	D9305287	742745A7	441041CA	24F1606F	
-骨精灵_wand_0	骨精灵_wand_0	wand	骨精灵	0	47B139FF	CC6586BF						FA7FD280		8FE3BEA0	222676F0	E2D1B70F	4731949D	0941A00D	6D4E8113	6630F39E	
-骨精灵_wand_30	骨精灵_wand_30	wand	骨精灵	30	9BE0BDFC	F9078A13						285CEE65		163D9056	CCDDBC6C	052FA8C3	5B46EE9F	D28EFB00	74D82F93	C4C9DF40	
-骨精灵_wand_60	骨精灵_wand_60	wand	骨精灵	60	9BE0BDFC	F9078A13						285CEE65		163D9056	CCDDBC6C	052FA8C3	5B46EE9F	D28EFB00	74D82F93	C4C9DF40	
-龙太子_fan_0	龙太子_fan_0	fan	龙太子	0	EE5BB0A8	322CF1FD						D4ACCBE9		5133F557	E1C39FA4	07B8B943	45D3D9FF	3373DDFA	FEA0A451	F1B65EEF	
-龙太子_fan_30	龙太子_fan_30	fan	龙太子	30	1E2EAD70	F6E24EFF						C22FF943		425BD517	6C61F14D	84D9458A	CDD1B9F5	D8973E56	CC1C2A21	47D2C78D	
-龙太子_fan_60	龙太子_fan_60	fan	龙太子	60	1E2EAD70	F6E24EFF						C22FF943		425BD517	6C61F14D	84D9458A	CDD1B9F5	D8973E56	CC1C2A21	47D2C78D	
-龙太子_spear_0	龙太子_spear_0	spear	龙太子	0	8EEAFA06	891E895D						6A0CC9B9		D3485670	9ED583E4	1C7570AF	2791D986	AA48FD68	9C9009E2	F7B357E4	
-龙太子_spear_30	龙太子_spear_30	spear	龙太子	30	65E21040	02FBCDFD						C8B75AF3		184DFED9	26C7D8DE	7D09B1E1	4898BCCA	602041FC	9390C290	484A9285	
-龙太子_spear_60	龙太子_spear_60	spear	龙太子	60	65E21040	02FBCDFD						C8B75AF3		184DFED9	26C7D8DE	7D09B1E1	4898BCCA	602041FC	9390C290	484A9285	
+1	FYN-dbswords-0	dbswords	0	shape.wdf/93C238CA	shape.wdf/CF591DCE						shape.wdf/96490C40		shape.wdf/8031F26F	shape.wdf/41FFF0E3	shape.wdf/AFBB95B1	shape.wdf/AB92A2DC	shape.wdf/39AA48DA	shape.wdf/34BAA491	shape.wdf/DF195D06	
+2	FYN-dbswords-30	dbswords	30	shape.wdf/3792592B	shape.wdf/9189A670						shape.wdf/952D9106		shape.wdf/9632CA57	shape.wdf/5C53D004	shape.wdf/CBF55AFB	shape.wdf/A252525F	shape.wdf/C174C17B	shape.wdf/A2738C7B	shape.wdf/EB77379E	
+3	FYN-dbswords-60	dbswords	60	shape.wdf/F212CBBB	shape.wdf/83343540						shape.wdf/91D8CED8		shape.wdf/B1488E22	shape.wdf/01205749	shape.wdf/12A82C16	shape.wdf/16327936	shape.wdf/CB929F8C	shape.wdf/649E9348	shape.wdf/CC900644	
+4	FYN-dbswords-月光	dbswords	FYN	90	shape.wdf/75577E3F	shape.wdf/4B68D6FE						shape.wdf/61DAAF0D		shape.wdf/22F2099F	shape.wdf/95D853ED	shape.wdf/32C33CA1	shape.wdf/B8A600B3	shape.wdf/6F983820	shape.wdf/64780576	shape.wdf/B0927E94	
+5	FYN-dbswords-灵蛇	dbswords	FYN	90	shape.wdf/22DF25FD	shape.wdf/C4ED7657						shape.wdf/6AED3D88		shape.wdf/E29AD9CF	shape.wdf/89815F3D	shape.wdf/9F9BDD57	shape.wdf/A6C8BDF9	shape.wdf/3FEFD96D	shape.wdf/B9A375F9	shape.wdf/9E4F9B46	
+6	FYN-dbswords-阴阳	dbswords	FYN	90	shape.wdf/00642F2B	shape.wdf/A776D93A						shape.wdf/71D66263		shape.wdf/9EAC7924	shape.wdf/12600AC0	shape.wdf/14283A2C	shape.wdf/09AFED31	shape.wdf/83C995CC	shape.wdf/3723544D	shape.wdf/253A5A38	
+7	FYN-ring-0	ring	0	shape.wdf/33473840	shape.wdf/2BAFE98B						shape.wdf/4279F8D9		shape.wdf/7D6F309A	shape.wdf/DDBEB2FE	shape.wdf/CBC0AAAC	shape.wdf/99CDE46B	shape.wdf/0A672488	shape.wdf/605B5511	shape.wdf/5735E6ED	
+8	FYN-ring-30	ring	30	shape.wdf/D5C0A9EA	shape.wdf/F7A43FBA						shape.wdf/C66A83FF		shape.wdf/FB3FA3CA	shape.wdf/F720ACFB	shape.wdf/53A09814	shape.wdf/366C5969	shape.wdf/33B6C6B2	shape.wdf/DE3679FA	shape.wdf/9681A54A	
+9	FYN-ring-60	ring	60	shape.wdf/2BF6E786	shape.wdf/637D1CB6						shape.wdf/64DAD51C		shape.wdf/31594AC8	shape.wdf/5E6C0FBC	shape.wdf/DD76CF02	shape.wdf/06C1DA32	shape.wdf/93010C03	shape.wdf/8539C817	shape.wdf/AEF4A0C3	
+10	FYN-ring-乾坤	ring	FYN	90	shape.wdf/516AC342	shape.wdf/6011B8EA						shape.wdf/A251D7E5		shape.wdf/E68983D9	shape.wdf/B4DB9129	shape.wdf/6A1F7FD1	shape.wdf/7E678776	shape.wdf/39A7FBB3	shape.wdf/FB9357BC	shape.wdf/74D95FEF	
+11	FYN-ring-如意	ring	FYN	90	shape.wdf/108FFF69	shape.wdf/EEB4814C						shape.wdf/6A161629		shape.wdf/3CB38FC9	shape.wdf/1589DF2E	shape.wdf/C80FE8F4	shape.wdf/F366D638	shape.wdf/92EFBE84	shape.wdf/51A646A2	shape.wdf/763D71DF	
+12	FYN-ring-月光	ring	FYN	90	shape.wdf/D2011BDE	shape.wdf/118B2316						shape.wdf/A75BE2AF		shape.wdf/3E187ABA	shape.wdf/FA000751	shape.wdf/62772F3C	shape.wdf/B6F37898	shape.wdf/A9C247D9	shape.wdf/86406845	shape.wdf/0465B016	
+13	GJL-claw-0	claw	0	shape.wdf/F989095F	shape.wdf/25966D3F						shape.wdf/F1EE2F11		shape.wdf/F5BA943C	shape.wdf/BC3E962F	shape.wdf/867A597A	shape.wdf/8A4F6751	shape.wdf/40199DCC	shape.wdf/3748F6A9	shape.wdf/2526B3EA	
+14	GJL-claw-30	claw	30	shape.wdf/30D51B62	shape.wdf/F6F1F738						shape.wdf/6E3BB4B8		shape.wdf/544B94AD	shape.wdf/B749448F	shape.wdf/933455C5	shape.wdf/A606B3DB	shape.wdf/7A693C4E	shape.wdf/64D4321F	shape.wdf/CD5C1687	
+15	GJL-claw-60	claw	60	shape.wdf/3A6BD287	shape.wdf/7CDCDA3D						shape.wdf/FDB2431F		shape.wdf/F8522536	shape.wdf/E27E1988	shape.wdf/2837F291	shape.wdf/D9305287	shape.wdf/742745A7	shape.wdf/441041CA	shape.wdf/24F1606F	
+16	GJL-claw-撕天	claw	GJL	90	shape.wdf/3DF34F1E	shape.wdf/E5D43556						shape.wdf/37A78886		shape.wdf/12923396	shape.wdf/692044CD	shape.wdf/1CBE28C3	shape.wdf/DC68A49B	shape.wdf/4E7EA1BA	shape.wdf/5F724E86	shape.wdf/3A173B74	
+17	GJL-claw-毒牙	claw	GJL	90	shape.wdf/D6EF0627	shape.wdf/831F74AE						shape.wdf/60DFDCB3		shape.wdf/447EE874	shape.wdf/3B164528	shape.wdf/42626BB0	shape.wdf/26AB5823	shape.wdf/23304BAF	shape.wdf/32728941	shape.wdf/9672360C	
+18	GJL-claw-胭脂	claw	GJL	90	shape.wdf/7D916F78	shape.wdf/F65B1CC4						shape.wdf/8C30F8B0		shape.wdf/39D76D1F	shape.wdf/F5502ECA	shape.wdf/77BE2BD9	shape.wdf/38EB1AE4	shape.wdf/10717167	shape.wdf/DA8F8F3E	shape.wdf/4BF87D02	
+19	GJL-wand-0	wand	0	shape.wdf/47B139FF	shape.wdf/CC6586BF						shape.wdf/FA7FD280		shape.wdf/8FE3BEA0	shape.wdf/222676F0	shape.wdf/E2D1B70F	shape.wdf/4731949D	shape.wdf/0941A00D	shape.wdf/6D4E8113	shape.wdf/6630F39E	
+20	GJL-wand-30	wand	30	shape.wdf/1890D9AC	shape.wdf/0390362A						shape.wdf/6CCC7A4A		shape.wdf/42E263E4	shape.wdf/C557050C	shape.wdf/B9375497	shape.wdf/5E37508B	shape.wdf/5FBB7870	shape.wdf/4DAB7375	shape.wdf/19A4C6DD	
+21	GJL-wand-60	wand	60	shape.wdf/9BE0BDFC	shape.wdf/F9078A13						shape.wdf/285CEE65		shape.wdf/163D9056	shape.wdf/CCDDBC6C	shape.wdf/052FA8C3	shape.wdf/5B46EE9F	shape.wdf/D28EFB00	shape.wdf/74D82F93	shape.wdf/C4C9DF40	
+22	GJL-wand-沧海	wand	GJL	90	shape.wdf/E09D1956	shape.wdf/C903D321						shape.wdf/85DE5B39		shape.wdf/CB83EEB0	shape.wdf/B6976B0B	shape.wdf/FB9FF137	shape.wdf/E14D59A1	shape.wdf/D2E56C89	shape.wdf/BD3C28A2	shape.wdf/E73B28A3	
+23	GJL-wand-盘龙	wand	GJL	90	shape.wdf/CADD869E	shape.wdf/3668B8CF						shape.wdf/C6E0069E		shape.wdf/F6F92105	shape.wdf/17CB215E	shape.wdf/F266AA0B	shape.wdf/FD95AA56	shape.wdf/7A6B9F19	shape.wdf/2E523587	shape.wdf/A8482DCF	
+24	GJL-wand-红莲	wand	GJL	90	shape.wdf/850CE856	shape.wdf/5562BE14						shape.wdf/37B5F46A		shape.wdf/D50E2004	shape.wdf/CC22B70E	shape.wdf/87EA62AB	shape.wdf/89E8D79E	shape.wdf/1E29CE90	shape.wdf/26AB780E	shape.wdf/4028EA83	
+25	HMR-claw-0	claw	0	shape.wdf/DF87CD4F	shape.wdf/5D1B5590						shape.wdf/6AF7F563		shape.wdf/24F4B783	shape.wdf/4FEF1EA7	shape.wdf/4192C3DA	shape.wdf/AE93B28A	shape.wdf/8E6F339A	shape.wdf/0614BCAD	shape.wdf/19A12B06	
+26	HMR-claw-30	claw	30	shape.wdf/ED0D88AC	shape.wdf/14AE65AD						shape.wdf/8B13CB85		shape.wdf/68E91B65	shape.wdf/0AD72AE7	shape.wdf/15DA873C	shape.wdf/29E43F90	shape.wdf/93A10D16	shape.wdf/9ABD0C53	shape.wdf/47F38F34	
+27	HMR-claw-60	claw	60	shape.wdf/384265DC	shape.wdf/7BB497CB						shape.wdf/BB0D11E0		shape.wdf/6C9A4954	shape.wdf/C65E396A	shape.wdf/F601D6B3	shape.wdf/81F122C9	shape.wdf/3915D6A9	shape.wdf/6D81DEE8	shape.wdf/923F9BBF	
+28	HMR-claw-撕天	claw	HMR	90	shape.wdf/B067E312	shape.wdf/EC076B9A						shape.wdf/1AB5F9EA		shape.wdf/8514D31B	shape.wdf/BB4A6D59	shape.wdf/A71B383C	shape.wdf/D5778C18	shape.wdf/47D2AE81	shape.wdf/CC8EB2F2	shape.wdf/BEFE2858	
+29	HMR-claw-毒牙	claw	HMR	90	shape.wdf/D0269AC5	shape.wdf/036E1F96						shape.wdf/08C5867D		shape.wdf/B45B390B	shape.wdf/9F9FBE67	shape.wdf/FA20D655	shape.wdf/11342CCF	shape.wdf/A6C1E815	shape.wdf/912316F6	shape.wdf/3E5B09D1	
+30	HMR-claw-胭脂	claw	HMR	90	shape.wdf/B80C2BB9	shape.wdf/0C92D6DC						shape.wdf/89F28310		shape.wdf/1E1C1A3D	shape.wdf/19F17A9C	shape.wdf/68268400	shape.wdf/A32B271E	shape.wdf/47800C96	shape.wdf/D158B73D	shape.wdf/E65BA446	
+31	HMR-whip-0	whip	0	shape.wdf/1C6D7AF6	shape.wdf/3C8CD8EB						shape.wdf/2815B13B		shape.wdf/0EB4F3A5	shape.wdf/8E0A7548	shape.wdf/C7879D69	shape.wdf/1169732B	shape.wdf/3430C16A	shape.wdf/F83CFA1C	shape.wdf/AB4A695F	
+32	HMR-whip-30	whip	30	shape.wdf/783B99E0	shape.wdf/0D0DE5CE						shape.wdf/AE8EC978		shape.wdf/BECD5222	shape.wdf/568489BF	shape.wdf/B52F9728	shape.wdf/9D6F22CD	shape.wdf/19EF1EEA	shape.wdf/D16DAE42	shape.wdf/D1A122A0	
+33	HMR-whip-60	whip	60	shape.wdf/50FD2242	shape.wdf/1718D825						shape.wdf/C3971BB5		shape.wdf/948ABA4D	shape.wdf/2FE5C5EF	shape.wdf/23B56CEF	shape.wdf/BF590140	shape.wdf/CBCA5A30	shape.wdf/89D57483	shape.wdf/1D194BE4	
+34	HMR-whip-吹雪	whip	HMR	90	shape.wdf/BC2F95EF	shape.wdf/16AC35C8						shape.wdf/AAA64B39		shape.wdf/6AE395B1	shape.wdf/A5D78787	shape.wdf/D02D93A9	shape.wdf/B7923B94	shape.wdf/FD9FD7D6	shape.wdf/131008BD	shape.wdf/7BB7D9DB	
+35	HMR-whip-百花	whip	HMR	90	shape.wdf/888C7C46	shape.wdf/E7CBB64B						shape.wdf/8626964B		shape.wdf/76A51EFA	shape.wdf/59921DBD	shape.wdf/6A8604D1	shape.wdf/2096E1A8	shape.wdf/BC69B296	shape.wdf/DA330192	shape.wdf/A43715B9	
+36	HMR-whip-龙筋	whip	HMR	90	shape.wdf/D76152B7	shape.wdf/B241D7A6						shape.wdf/032A52E5		shape.wdf/42F7FD85	shape.wdf/E02143AB	shape.wdf/1C889A99	shape.wdf/03AF0FBE	shape.wdf/BBADD70A	shape.wdf/71208843	shape.wdf/C4F3C696	
+37	HTG-axe-0	axe	0	shape.wdf/EADD5CDD	shape.wdf/7467F32A						shape.wdf/33AF0AC4		shape.wdf/33453188	shape.wdf/CEA1CBF1	shape.wdf/AB222D43	shape.wdf/5B58D8FC	shape.wdf/4B2FBF37	shape.wdf/AA6C0D05	shape.wdf/4EA1D3FB	
+38	HTG-axe-30	axe	30	shape.wdf/574D7DF4	shape.wdf/E70BA89B						shape.wdf/78FB6739		shape.wdf/FDB3FA02	shape.wdf/9C82D8D9	shape.wdf/3FF7420A	shape.wdf/79FFDC33	shape.wdf/DDE71F8A	shape.wdf/95F2CC53	shape.wdf/CCAB1263	
+39	HTG-axe-60	axe	60	shape.wdf/5923D5C3	shape.wdf/578771AB						shape.wdf/F4DAF57E		shape.wdf/2CD2C6D6	shape.wdf/B92A33F2	shape.wdf/022BBA4E	shape.wdf/120F78F4	shape.wdf/E3C6BC8F	shape.wdf/5A5A13FD	shape.wdf/307D1D47	
+40	HTG-axe-无敌	axe	HTG	90	shape.wdf/D88565BC	shape.wdf/375756CE						shape.wdf/F794AED0		shape.wdf/B09776EA	shape.wdf/D4CE280E	shape.wdf/A29CEE6F	shape.wdf/D31F21ED	shape.wdf/3CB8529D	shape.wdf/E493F44D	shape.wdf/F2665DBF	
+41	HTG-axe-破魄	axe	HTG	90	shape.wdf/53F914DE	shape.wdf/8102D783						shape.wdf/924CF59A		shape.wdf/36986D43	shape.wdf/03F6C432	shape.wdf/AF9DB1C5	shape.wdf/4EB57F0D	shape.wdf/70CEB588	shape.wdf/45E0E264	shape.wdf/08D155E9	
+42	HTG-axe-肃魂	axe	HTG	90	shape.wdf/E8866C8F	shape.wdf/16B86A5E						shape.wdf/E61D413C		shape.wdf/9158BD4A	shape.wdf/C786D6C9	shape.wdf/2704053E	shape.wdf/B5729FEE	shape.wdf/91AA64AF	shape.wdf/1BD8A43D	shape.wdf/07133A02	
+43	HTG-hammer-0	hammer	0	shape.wdf/35A60822	shape.wdf/6C4C0BD8						shape.wdf/573FE90B		shape.wdf/04AFB943	shape.wdf/EBB8F006	shape.wdf/6AC733AE	shape.wdf/82D84EBA	shape.wdf/21E7923D	shape.wdf/D30D97DD	shape.wdf/FBC7D402	
+44	HTG-hammer-30	hammer	30	shape.wdf/670E31BF	shape.wdf/212E741F						shape.wdf/140E6041		shape.wdf/269C8E0F	shape.wdf/3645C935	shape.wdf/9E1EF82B	shape.wdf/63F4B3EA	shape.wdf/02091623	shape.wdf/2EB307EE	shape.wdf/16C16088	
+45	HTG-hammer-60	hammer	60	shape.wdf/28534F72	shape.wdf/9E4325F4						shape.wdf/179BFBBA		shape.wdf/F4BE8E14	shape.wdf/7B955EC3	shape.wdf/3DAEC472	shape.wdf/3F3C6BEF	shape.wdf/83FE80E6	shape.wdf/779165FA	shape.wdf/031372EA	
+46	HTG-hammer-八卦	hammer	HTG	90	shape.wdf/A438A403	shape.wdf/AC1BAB97						shape.wdf/DAA88DDF		shape.wdf/9EB4376A	shape.wdf/F4E93C19	shape.wdf/257EEB28	shape.wdf/BF887095	shape.wdf/6AD54C39	shape.wdf/4AD24B6C	shape.wdf/DCA25DA6	
+47	HTG-hammer-雷神	hammer	HTG	90	shape.wdf/8CF27534	shape.wdf/DA17EC9A						shape.wdf/1BBB77CD		shape.wdf/4ACBDCEC	shape.wdf/DA88EFD1	shape.wdf/955E8867	shape.wdf/7D667999	shape.wdf/DE2BC9A6	shape.wdf/1B5E2637	shape.wdf/819218AF	
+48	HTG-hammer-鬼牙	hammer	HTG	90	shape.wdf/56DA382F	shape.wdf/959DF477						shape.wdf/39793BD1		shape.wdf/98779F86	shape.wdf/BE38AE31	shape.wdf/359A5C9F	shape.wdf/4E17B675	shape.wdf/6BE1D5E3	shape.wdf/89559B34	shape.wdf/1A309122	
+49	JMW-axe-0	axe	0	shape.wdf/F5164FF2	shape.wdf/9FBAAD0D						shape.wdf/0901BAE0		shape.wdf/75CA98B2	shape.wdf/0C6A0AAF	shape.wdf/B02E8A71	shape.wdf/EF91014D	shape.wdf/D96B7C58	shape.wdf/ED74F8D8	shape.wdf/CA6B78BA	
+50	JMW-axe-30	axe	30	shape.wdf/20D1A0D3	shape.wdf/B5BEE359						shape.wdf/750DA691		shape.wdf/B943B892	shape.wdf/6AE10650	shape.wdf/091FFF0A	shape.wdf/9F2DB6EA	shape.wdf/D7AE7052	shape.wdf/2071C9B9	shape.wdf/57BA0DF3	
+51	JMW-axe-60	axe	60	shape.wdf/446B12BA	shape.wdf/3C85094B						shape.wdf/E959DF5B		shape.wdf/97FFD83A	shape.wdf/0AE0FBC9	shape.wdf/69E3A0BA	shape.wdf/A6BA072D	shape.wdf/405A73C1	shape.wdf/B9DD7791	shape.wdf/E8628FDE	
+52	JMW-axe-无敌	axe	JMW	90	shape.wdf/6AE68E94	shape.wdf/29FE3B3E						shape.wdf/1F45061E		shape.wdf/804B8502	shape.wdf/6A089299	shape.wdf/B1025B4C	shape.wdf/2F03D1CD	shape.wdf/4943EF5D	shape.wdf/0F56BDD3	shape.wdf/6DBCB6F1	
+53	JMW-axe-破魄	axe	JMW	90	shape.wdf/02CECBCB	shape.wdf/B8554947						shape.wdf/1076799E		shape.wdf/B5651224	shape.wdf/130B01A7	shape.wdf/804BA4F5	shape.wdf/6C03C38C	shape.wdf/F4B18107	shape.wdf/4D201E92	shape.wdf/ED81F90C	
+54	JMW-axe-肃魂	axe	JMW	90	shape.wdf/726F7762	shape.wdf/199CF19E						shape.wdf/C17EC778		shape.wdf/5372641E	shape.wdf/DE2E4C7C	shape.wdf/E7CBE13D	shape.wdf/298B1905	shape.wdf/AE0DF75C	shape.wdf/31893323	shape.wdf/F60133A9	
+55	JMW-knife-0	knife	0	shape.wdf/8EC686F9	shape.wdf/A82465FE						shape.wdf/572E86F3		shape.wdf/E2FF6E31	shape.wdf/50597842	shape.wdf/B9817F22	shape.wdf/C5C39E50	shape.wdf/45515530	shape.wdf/6CBED6D0	shape.wdf/5F15B662	
+56	JMW-knife-30	knife	30	shape.wdf/46AEDFD4	shape.wdf/D6932CA0						shape.wdf/962C24BC		shape.wdf/13E6AC09	shape.wdf/D1FC130C	shape.wdf/CC49242D	shape.wdf/FE49E3B6	shape.wdf/6CBBE06C	shape.wdf/EE66C929	shape.wdf/6B4B8E1C	
+57	JMW-knife-60	knife	60	shape.wdf/F54F61CC	shape.wdf/C67C1E31						shape.wdf/150187C0		shape.wdf/4C8C0C7F	shape.wdf/7BC815E6	shape.wdf/FF56A136	shape.wdf/8509A043	shape.wdf/52F290D5	shape.wdf/711C8005	shape.wdf/E1CB63E5	
+58	JMW-knife-冷月	knife	JMW	90	shape.wdf/63C760FF	shape.wdf/55BBAF5F						shape.wdf/5376CB41		shape.wdf/624E2193	shape.wdf/19CD05C8	shape.wdf/C90E43D9	shape.wdf/367DAE76	shape.wdf/D504763E	shape.wdf/9F4BF693	shape.wdf/7D6AE6EB	
+59	JMW-knife-屠龙	knife	JMW	90	shape.wdf/8766C9AD	shape.wdf/355A127C						shape.wdf/69D5D73F		shape.wdf/BC03C74A	shape.wdf/587A6710	shape.wdf/3B3E09BE	shape.wdf/A3CA6668	shape.wdf/84557D2D	shape.wdf/80BD15FA	shape.wdf/5C60828E	
+60	JMW-knife-血刃	knife	JMW	90	shape.wdf/D94CA07F	shape.wdf/708AE46C						shape.wdf/344FAC76		shape.wdf/33B559B9	shape.wdf/7397E94A	shape.wdf/D46EFBF8	shape.wdf/5A575B62	shape.wdf/2E4CE6AC	shape.wdf/C3426C09	shape.wdf/369B99F0	
+61	JXK-knife-0	knife	0	shape.wdf/0CBF0DDB	shape.wdf/49CFC3C3						shape.wdf/6D8CD78C		shape.wdf/A20CEC4C	shape.wdf/89AB1AA2	shape.wdf/DEECDD99	shape.wdf/9B6684AA	shape.wdf/4EE523B0	shape.wdf/59E7B49F	shape.wdf/62542FAE	
+62	JXK-knife-30	knife	30	shape.wdf/B8E78B22	shape.wdf/0B959D2E						shape.wdf/F369A222		shape.wdf/EBCBECD9	shape.wdf/367CFC3D	shape.wdf/127C941A	shape.wdf/C09DA0E7	shape.wdf/D70D4B6C	shape.wdf/23D50B12	shape.wdf/76F84A6F	
+63	JXK-knife-60	knife	60	shape.wdf/494C6456	shape.wdf/BB949BDE						shape.wdf/2F208C10		shape.wdf/E901E5AF	shape.wdf/A0B18DB3	shape.wdf/6C8532E9	shape.wdf/BA8BC02F	shape.wdf/94B928E6	shape.wdf/9111125D	shape.wdf/F0701C55	
+64	JXK-knife-冷月	knife	JXK	90	shape.wdf/DA08D26D	shape.wdf/6C6F4579						shape.wdf/966B7CF6		shape.wdf/2F8461AF	shape.wdf/3EA14AA9	shape.wdf/67AEB824	shape.wdf/48B667F0	shape.wdf/D31BBC2E	shape.wdf/C59530C4	shape.wdf/13D8A670	
+65	JXK-knife-屠龙	knife	JXK	90	shape.wdf/CF5D83D8	shape.wdf/9D1236B7						shape.wdf/96D460DD		shape.wdf/1857D96E	shape.wdf/35377639	shape.wdf/AD169C41	shape.wdf/13049665	shape.wdf/3DFF9132	shape.wdf/C40B2DF4	shape.wdf/DEE9015C	
+66	JXK-knife-血刃	knife	JXK	90	shape.wdf/85D0D994	shape.wdf/50DA4A82						shape.wdf/A397A012		shape.wdf/97277986	shape.wdf/EAFBC7A1	shape.wdf/580DD414	shape.wdf/C1F95358	shape.wdf/274498A8	shape.wdf/0BE3220F	shape.wdf/D42183F5	
+67	JXK-sword-0	sword	0	shape.wdf/9298825C	shape.wdf/29DF2153						shape.wdf/51140EE1		shape.wdf/1F503F23	shape.wdf/FDB2C365	shape.wdf/38875CCF	shape.wdf/EA117128	shape.wdf/20AFEA5A	shape.wdf/B175A6F1	shape.wdf/DEC859C9	
+68	JXK-sword-30	sword	30	shape.wdf/FCB4A08E	shape.wdf/2980D884						shape.wdf/A2B30DEC		shape.wdf/8B8466A5	shape.wdf/E9C8CEB8	shape.wdf/D5BACFDF	shape.wdf/7DD07B41	shape.wdf/3BAC006D	shape.wdf/A818B5C4	shape.wdf/B495D633	
+69	JXK-sword-60	sword	60	shape.wdf/CC5E9C79	shape.wdf/59207938						shape.wdf/6B3A934F		shape.wdf/BC16BE43	shape.wdf/07AC6964	shape.wdf/341AA6EC	shape.wdf/BBBAC247	shape.wdf/219210C2	shape.wdf/07B27AB7	shape.wdf/4B13C413	
+70	JXK-sword-倚天	sword	JXK	90	shape.wdf/8AD7AD90	shape.wdf/0193E0A5						shape.wdf/3FB65FEA		shape.wdf/15761F33	shape.wdf/51920636	shape.wdf/1EDD2B87	shape.wdf/0BA5689F	shape.wdf/C97A015E	shape.wdf/B8F5BE10	shape.wdf/9DE26E92	
+71	JXK-sword-湛卢	sword	JXK	90	shape.wdf/6DAEF05B	shape.wdf/23F632FC						shape.wdf/92CD56C7		shape.wdf/15496789	shape.wdf/0A67C9FE	shape.wdf/41111799	shape.wdf/59892B0F	shape.wdf/07E9EF20	shape.wdf/E1B680D4	shape.wdf/E195D52B	
+72	JXK-sword-鱼肠	sword	JXK	90	shape.wdf/E7D37130	shape.wdf/2F360F92						shape.wdf/A0D7AA75		shape.wdf/D29C9040	shape.wdf/FBFF765E	shape.wdf/C4E6E357	shape.wdf/3C5E4D93	shape.wdf/6EF6C6D6	shape.wdf/6FC1F329	shape.wdf/E26BD5F3	
+73	LTZ-fan-0	fan	0	shape.wdf/EE5BB0A8	shape.wdf/322CF1FD						shape.wdf/D4ACCBE9		shape.wdf/5133F557	shape.wdf/E1C39FA4	shape.wdf/07B8B943	shape.wdf/45D3D9FF	shape.wdf/3373DDFA	shape.wdf/FEA0A451	shape.wdf/F1B65EEF	
+74	LTZ-fan-30	fan	30	shape.wdf/9F33CB04	shape.wdf/0C5A7BD5						shape.wdf/A9268815		shape.wdf/CB336D0F	shape.wdf/70D03563	shape.wdf/27B5F7A5	shape.wdf/04CC6E0E	shape.wdf/ED3E696A	shape.wdf/70D1FD95	shape.wdf/5E6D440C	
+75	LTZ-fan-60	fan	60	shape.wdf/1E2EAD70	shape.wdf/F6E24EFF						shape.wdf/C22FF943		shape.wdf/425BD517	shape.wdf/6C61F14D	shape.wdf/84D9458A	shape.wdf/CDD1B9F5	shape.wdf/D8973E56	shape.wdf/CC1C2A21	shape.wdf/47D2C78D	
+76	LTZ-fan-太极	fan	LTZ	90	shape.wdf/58D20E79	shape.wdf/A963CEE9						shape.wdf/8542FE91		shape.wdf/073788A5	shape.wdf/E8CF21B4	shape.wdf/277578F9	shape.wdf/100D6352	shape.wdf/6E68C79D	shape.wdf/585DA167	shape.wdf/1EEDE502	
+77	LTZ-fan-玉龙	fan	LTZ	90	shape.wdf/44BEAA26	shape.wdf/E819C83D						shape.wdf/4469314E		shape.wdf/258C58E7	shape.wdf/8B1A91C7	shape.wdf/0FB2D7FC	shape.wdf/33681D03	shape.wdf/5D9A4F8F	shape.wdf/598632E9	shape.wdf/1A80F678	
+78	LTZ-fan-秋风	fan	LTZ	90	shape.wdf/387B481F	shape.wdf/FB69C03A						shape.wdf/2CB34A9C		shape.wdf/F3251804	shape.wdf/2E3F062C	shape.wdf/69CB9FE8	shape.wdf/1469C288	shape.wdf/186FB234	shape.wdf/471937D0	shape.wdf/F48F85DD	
+79	LTZ-spear-0	spear	0	shape.wdf/8EEAFA06	shape.wdf/891E895D						shape.wdf/6A0CC9B9		shape.wdf/D3485670	shape.wdf/9ED583E4	shape.wdf/1C7570AF	shape.wdf/2791D986	shape.wdf/AA48FD68	shape.wdf/9C9009E2	shape.wdf/F7B357E4	
+80	LTZ-spear-30	spear	30	shape.wdf/8793DDDA	shape.wdf/6CD3B588						shape.wdf/4F68D4C8		shape.wdf/0A2ED5D5	shape.wdf/FADAC7CA	shape.wdf/A096A348	shape.wdf/99641EA4	shape.wdf/FF355A51	shape.wdf/0A959632	shape.wdf/48B9E33E	
+81	LTZ-spear-60	spear	60	shape.wdf/65E21040	shape.wdf/02FBCDFD						shape.wdf/C8B75AF3		shape.wdf/184DFED9	shape.wdf/26C7D8DE	shape.wdf/7D09B1E1	shape.wdf/4898BCCA	shape.wdf/602041FC	shape.wdf/9390C290	shape.wdf/484A9285	
+82	LTZ-spear-暗夜	spear	LTZ	90	shape.wdf/360C3189	shape.wdf/1804E147						shape.wdf/758C38C1		shape.wdf/F26835F7	shape.wdf/2C2F2BF5	shape.wdf/58F2AAE4	shape.wdf/685F4E20	shape.wdf/DB3D1385	shape.wdf/3BA5FB01	shape.wdf/820FEE7B	
+83	LTZ-spear-梨花	spear	LTZ	90	shape.wdf/D44FE954	shape.wdf/219B45D1						shape.wdf/BE16A514		shape.wdf/5F43421E	shape.wdf/DF5A134D	shape.wdf/8E6BD0FA	shape.wdf/62402B92	shape.wdf/E9912C61	shape.wdf/087A9AAE	shape.wdf/B687FE24	
+84	LTZ-spear-霹雳	spear	LTZ	90	shape.wdf/27884353	shape.wdf/349B0F38						shape.wdf/5A213D27		shape.wdf/4E43DFA7	shape.wdf/10A116DF	shape.wdf/ECB93613	shape.wdf/F20562CF	shape.wdf/8189EB51	shape.wdf/F3B54905	shape.wdf/D91EE2B6	
+85	STB-hammer-0	hammer	0	shape.wdf/16F53166	shape.wdf/34ECF58B						shape.wdf/55AF9960		shape.wdf/C1BDDCE2	shape.wdf/EF428937	shape.wdf/F526FC31	shape.wdf/C22788DB	shape.wdf/C2DBD0A7	shape.wdf/1AAA20B1	shape.wdf/68901E3E	
+86	STB-hammer-30	hammer	30	shape.wdf/B929FBE6	shape.wdf/5E08DA6D						shape.wdf/C6E815F9		shape.wdf/5F4203BF	shape.wdf/0631B4FD	shape.wdf/2E48CCD8	shape.wdf/28DDD798	shape.wdf/17E6941F	shape.wdf/FB1ED518	shape.wdf/A0229FC1	
+87	STB-hammer-60	hammer	60	shape.wdf/38C32912	shape.wdf/FE1566C1						shape.wdf/19D4917C		shape.wdf/12D8DE6D	shape.wdf/B4EDD4F2	shape.wdf/F84AF7A2	shape.wdf/27885331	shape.wdf/F71C7492	shape.wdf/8A8324A1	shape.wdf/BA82A21C	
+88	STB-hammer-八卦	hammer	STB	90	shape.wdf/34C418DA	shape.wdf/507D4252						shape.wdf/35A8F0B2		shape.wdf/82407177	shape.wdf/94265799	shape.wdf/14046CB9	shape.wdf/66D1B6C4	shape.wdf/793550FC	shape.wdf/CAEC2F8A	shape.wdf/F721C3A5	
+89	STB-hammer-雷神	hammer	STB	90	shape.wdf/737EC63F	shape.wdf/D975473A						shape.wdf/8EF49891		shape.wdf/E9ABFCA8	shape.wdf/08D989AB	shape.wdf/B7FDF970	shape.wdf/95EC45BF	shape.wdf/B26753BA	shape.wdf/395EF48B	shape.wdf/AF8C0C4D	
+90	STB-hammer-鬼牙	hammer	STB	90	shape.wdf/03009A64	shape.wdf/714AB64B						shape.wdf/C83BA782		shape.wdf/422C2503	shape.wdf/90E27B30	shape.wdf/943B58DD	shape.wdf/9FD1AFF1	shape.wdf/A36AA059	shape.wdf/B64178C2	shape.wdf/9C39B362	
+91	STB-spear-0	spear	0	shape.wdf/2BB55863	shape.wdf/77B8F44E						shape.wdf/FAA82565		shape.wdf/044EC256	shape.wdf/1B3DA579	shape.wdf/70141536	shape.wdf/58199DFF	shape.wdf/06FA3D33	shape.wdf/8D50B13E	shape.wdf/1F2A6CEB	
+92	STB-spear-30	spear	30	shape.wdf/D47ABE5E	shape.wdf/854EFD4C						shape.wdf/736EF1CC		shape.wdf/AF839CE8	shape.wdf/185417D0	shape.wdf/2479A84F	shape.wdf/D8CE2C9C	shape.wdf/361B1B5A	shape.wdf/260B3284	shape.wdf/39DEF78F	
+93	STB-spear-60	spear	60	shape.wdf/1D4CF669	shape.wdf/0E0B110D						shape.wdf/224AF5B0		shape.wdf/B97A9664	shape.wdf/B722A1E4	shape.wdf/B0CEB342	shape.wdf/93030C65	shape.wdf/34ADB171	shape.wdf/AF20C0EF	shape.wdf/8CCF88F5	
+94	STB-spear-暗夜	spear	STB	90	shape.wdf/FBF07390	shape.wdf/981089C2						shape.wdf/3A214293		shape.wdf/608C7ED2	shape.wdf/408C1744	shape.wdf/C9B1FF34	shape.wdf/379B49F6	shape.wdf/14118D48	shape.wdf/F57E053B	shape.wdf/E82C0871	
+95	STB-spear-梨花	spear	STB	90	shape.wdf/D5D1ED58	shape.wdf/D2D808EA						shape.wdf/CC9E2DF9		shape.wdf/C4E5BEA8	shape.wdf/3E5E0C20	shape.wdf/49ED5D45	shape.wdf/6FA1D30D	shape.wdf/DD03EB08	shape.wdf/E6F2DE10	shape.wdf/9D09357C	
+96	STB-spear-霹雳	spear	STB	90	shape.wdf/BC15930A	shape.wdf/F7528A04						shape.wdf/FCAC26D9		shape.wdf/C7A21BAF	shape.wdf/3EA5CDB1	shape.wdf/D11888A6	shape.wdf/AC3EFA4B	shape.wdf/08863F3C	shape.wdf/FFE877A3	shape.wdf/7C5496BE	
+97	WTJ-ribbon-0	ribbon	0	shape.wdf/FB8435BA	shape.wdf/9CF5D9F8						shape.wdf/7FDC01EF		shape.wdf/81AFF12D	shape.wdf/249CA457	shape.wdf/A0D26048	shape.wdf/7869F2F1	shape.wdf/B123AD72	shape.wdf/5CC3EF52	shape.wdf/F42E7944	
+98	WTJ-ribbon-30	ribbon	30	shape.wdf/FA700B5C	shape.wdf/CEEFD88F						shape.wdf/740A2D9B		shape.wdf/9590CE9D	shape.wdf/00CE8E90	shape.wdf/1AB92BE1	shape.wdf/0CBFA482	shape.wdf/87F6C085	shape.wdf/800D0904	shape.wdf/296AAA3F	
+99	WTJ-ribbon-60	ribbon	60	shape.wdf/35DEB132	shape.wdf/92015297						shape.wdf/B3E404B5		shape.wdf/6ED204E3	shape.wdf/56666D0D	shape.wdf/C5132AA5	shape.wdf/AE3DC66F	shape.wdf/FDBD116F	shape.wdf/701A7AB7	shape.wdf/F7C94338	
+100	WTJ-ribbon-彩虹	ribbon	WTJ	90	shape.wdf/4EA5BCD9	shape.wdf/D0D7B4C6						shape.wdf/DD381373		shape.wdf/E41A67D2	shape.wdf/E9C06D77	shape.wdf/57242E36	shape.wdf/959CB7D3	shape.wdf/27457CFE	shape.wdf/933CB634	shape.wdf/0F9795CC	
+101	WTJ-ribbon-流云	ribbon	WTJ	90	shape.wdf/C0499E98	shape.wdf/4F0D82C7						shape.wdf/95E671BC		shape.wdf/0BD59823	shape.wdf/FA17B299	shape.wdf/A70795DA	shape.wdf/6D8CBADD	shape.wdf/E798F6EE	shape.wdf/C4EE3158	shape.wdf/39F5F74C	
+102	WTJ-ribbon-碧波	ribbon	WTJ	90	shape.wdf/809C371A	shape.wdf/C0A2F354						shape.wdf/F52DB273		shape.wdf/9E4E7A27	shape.wdf/3DADA117	shape.wdf/AA2F9916	shape.wdf/440F1447	shape.wdf/0E65D700	shape.wdf/6B357EAF	shape.wdf/8C6CA17E	
+103	WTJ-ring-0	ring	0	shape.wdf/6209096A	shape.wdf/68D86D0F						shape.wdf/69C1D177		shape.wdf/7FB32E9F	shape.wdf/4A49A3C8	shape.wdf/098A9B5E	shape.wdf/BC699632	shape.wdf/F79D0F75	shape.wdf/ECE17D56	shape.wdf/B2530EEA	
+104	WTJ-ring-30	ring	30	shape.wdf/A7564E46	shape.wdf/083E8239						shape.wdf/54D22C16		shape.wdf/5AD69DFC	shape.wdf/EA0EAFAD	shape.wdf/0A5EFB14	shape.wdf/51E5EECF	shape.wdf/F75AE57E	shape.wdf/5B683D9C	shape.wdf/9514AC71	
+105	WTJ-ring-60	ring	60	shape.wdf/0B98FD5E	shape.wdf/904EFD65						shape.wdf/650CFADE		shape.wdf/86761D6A	shape.wdf/DAA7FA2D	shape.wdf/F2F2BBA6	shape.wdf/2A71A746	shape.wdf/1E1747C9	shape.wdf/F9ED9F7B	shape.wdf/00953C84	
+106	WTJ-ring-乾坤	ring	WTJ	90	shape.wdf/F5703AD8	shape.wdf/34EE6DFD						shape.wdf/A9F50EA6		shape.wdf/5A4F043D	shape.wdf/0FE54BEF	shape.wdf/0F466AC5	shape.wdf/24B582F2	shape.wdf/9097BCFC	shape.wdf/B9AC122B	shape.wdf/E7E9DDCD	
+107	WTJ-ring-如意	ring	WTJ	90	shape.wdf/A6CC01C9	shape.wdf/2A517CC1						shape.wdf/71E8052E		shape.wdf/32AE6FDD	shape.wdf/C2C167A0	shape.wdf/1DCFDF19	shape.wdf/0BCCC321	shape.wdf/45899556	shape.wdf/BF140A76	shape.wdf/8C25B012	
+108	WTJ-ring-月光	ring	WTJ	90	shape.wdf/B0F8CC3F	shape.wdf/D5C8A187						shape.wdf/00F872EC		shape.wdf/DC1F4DE8	shape.wdf/BCA9C8B0		shape.wdf/552ED440	shape.wdf/ED8427A2	shape.wdf/E6E8CBF9	shape.wdf/886A0113	
+109	XCE-ribbon-0	ribbon	0	shape.wdf/E5A57845	shape.wdf/4C9588E1						shape.wdf/A9B31057		shape.wdf/93B63580	shape.wdf/7D01D370	shape.wdf/DCBB254D	shape.wdf/3E95F794	shape.wdf/D31748B4	shape.wdf/13843BD1	shape.wdf/6C278BB9	
+110	XCE-ribbon-30	ribbon	30	shape.wdf/40C2360D	shape.wdf/BD0600B4						shape.wdf/1A966C18		shape.wdf/D1683E81	shape.wdf/2AF30885	shape.wdf/25862E1E	shape.wdf/19026DE7	shape.wdf/384B4916	shape.wdf/4C6206AB	shape.wdf/02118DDD	
+111	XCE-ribbon-60	ribbon	60	shape.wdf/B25AFBB3	shape.wdf/9D8CE9F4						shape.wdf/0A99823C		shape.wdf/84B40A67	shape.wdf/3ACF708B	shape.wdf/EFCA8E31	shape.wdf/E33B99FB	shape.wdf/9E74505B	shape.wdf/08D6D117	shape.wdf/9447B391	
+112	XCE-ribbon-彩虹	ribbon	XCE	90	shape.wdf/223180F8	shape.wdf/583E1B17						shape.wdf/DE10BF14		shape.wdf/5F7EC231	shape.wdf/EF0F5AED	shape.wdf/C63EF181	shape.wdf/84782657	shape.wdf/691F5A42	shape.wdf/6CFB7DDC	shape.wdf/1A7800FA	
+113	XCE-ribbon-流云	ribbon	XCE	90	shape.wdf/3FD9C049	shape.wdf/8EC49F3A						shape.wdf/1BFDACEE		shape.wdf/29107531	shape.wdf/8CDE2274	shape.wdf/EF3029EE	shape.wdf/1B65D56F	shape.wdf/FA56A15B	shape.wdf/B98D34B0	shape.wdf/5EAB18BD	
+114	XCE-ribbon-碧波	ribbon	XCE	90	shape.wdf/8C97B584	shape.wdf/B61DA735						shape.wdf/3D603C7E		shape.wdf/C07390FE	shape.wdf/39D7C243	shape.wdf/EBE26265	shape.wdf/5AB1F22B	shape.wdf/7239220B	shape.wdf/AD972E81	shape.wdf/559B5E01	
+115	XCE-wand-0	wand	0	shape.wdf/42D14FA3	shape.wdf/4954C80C						shape.wdf/33CC1679		shape.wdf/1A04CE99	shape.wdf/1330BDCB	shape.wdf/CAB57EAC	shape.wdf/1DC0095A	shape.wdf/B55DBDE6	shape.wdf/87928D9F	shape.wdf/AA1F19F1	
+116	XCE-wand-30	wand	30	shape.wdf/1FD87095	shape.wdf/F8DC4DF3						shape.wdf/897FA263		shape.wdf/8D7D6914	shape.wdf/A13DB294	shape.wdf/798C2FF9	shape.wdf/165F7BB0	shape.wdf/59C7FB2C	shape.wdf/34693AA4	shape.wdf/F9AC0314	
+117	XCE-wand-60	wand	60	shape.wdf/5E40D203	shape.wdf/115A8E45						shape.wdf/B8F742F9		shape.wdf/4E141AA1	shape.wdf/B8C770B1	shape.wdf/0762FE7B	shape.wdf/2340CBBA	shape.wdf/170E491C	shape.wdf/87F111B3	shape.wdf/C06E368F	
+118	XCE-wand-沧海	wand	XCE	90	shape.wdf/C1ACB479	shape.wdf/6A9147F7						shape.wdf/1E0E6A74		shape.wdf/BCFA0EFC	shape.wdf/B6BA90CE	shape.wdf/CD886AE6	shape.wdf/D71C42AB	shape.wdf/50EC63EB	shape.wdf/6DFAAB98	shape.wdf/0394AC40	
+119	XCE-wand-盘龙	wand	XCE	90	shape.wdf/69036521	shape.wdf/02E73DE2						shape.wdf/392A5B52		shape.wdf/7D90BA0A	shape.wdf/B6E7A7BC	shape.wdf/2118F416	shape.wdf/93E30CAD	shape.wdf/7A9A0056	shape.wdf/2F512F88	shape.wdf/D7940F19	
+120	XCE-wand-红莲	wand	XCE	90	shape.wdf/0ADFB109	shape.wdf/CA7E32B9						shape.wdf/1C6124F5		shape.wdf/567BBDFF	shape.wdf/D92986BB	shape.wdf/53BF74EC	shape.wdf/4D450D39	shape.wdf/1C76E6E0	shape.wdf/D98A553F	shape.wdf/C60F0F9D	
+121	XYS-fan-0	fan	0	shape.wdf/402BBC17	shape.wdf/8C91B390						shape.wdf/57DAABA1		shape.wdf/740210C1	shape.wdf/B0B46CE5	shape.wdf/4F212CA9	shape.wdf/7F9B6665	shape.wdf/DDC7B6BF	shape.wdf/E844C6E6	shape.wdf/11851CDD	
+122	XYS-fan-30	fan	30	shape.wdf/7E618E01	shape.wdf/92D5EB19						shape.wdf/4E6D3A45		shape.wdf/51F7402C	shape.wdf/303F7C68	shape.wdf/B8784799	shape.wdf/309AED6A	shape.wdf/5A1299B1	shape.wdf/050DD952	shape.wdf/587AEAE6	
+123	XYS-fan-60	fan	60	shape.wdf/297D684D	shape.wdf/F186E26E						shape.wdf/E876D7E0		shape.wdf/CA8EEF83	shape.wdf/0FD9C550	shape.wdf/A54EA4C3	shape.wdf/175941DE	shape.wdf/B4CCC8B9	shape.wdf/3C3D431E	shape.wdf/32C77CDE	
+124	XYS-fan-太极	fan	XYS	90	shape.wdf/21E1E8FD	shape.wdf/E21779AB						shape.wdf/52ABDF9F		shape.wdf/F3728B37	shape.wdf/26BCA13E	shape.wdf/2B865584	shape.wdf/11B99758	shape.wdf/7DC619BC	shape.wdf/5D99CF25	shape.wdf/838B3A7F	
+125	XYS-fan-玉龙	fan	XYS	90	shape.wdf/6180E38C	shape.wdf/FA33524C						shape.wdf/2AA73F6F		shape.wdf/BC589952	shape.wdf/11617540	shape.wdf/AE13646F	shape.wdf/BC8D4932	shape.wdf/7DE56C73	shape.wdf/1AD63584	shape.wdf/3D2C8E6F	
+126	XYS-fan-秋风	fan	XYS	90	shape.wdf/B47BEE66	shape.wdf/FE687485						shape.wdf/36C4D60C		shape.wdf/71A5B02B	shape.wdf/AF9BF95F	shape.wdf/B2DA3DEF	shape.wdf/69DEF3EA	shape.wdf/E8869110	shape.wdf/BAFE6088	shape.wdf/3674634F	
+127	XYS-sword-0	sword	0	shape.wdf/4E4F426E	shape.wdf/1F5F1A06						shape.wdf/3707D42E		shape.wdf/057560BA	shape.wdf/890132FA	shape.wdf/BBB4A863	shape.wdf/20DD305B	shape.wdf/6D8A4155	shape.wdf/E902350C	shape.wdf/7C7BE729	
+128	XYS-sword-30	sword	30	shape.wdf/24A1E7B2	shape.wdf/E80950FB						shape.wdf/E2043B6B		shape.wdf/FE646A4D	shape.wdf/4769AF38	shape.wdf/D90C7ED7	shape.wdf/9F40BEB5	shape.wdf/76FE7FA6	shape.wdf/1495F42C	shape.wdf/08AA3C1B	
+129	XYS-sword-60	sword	60	shape.wdf/2039C08A	shape.wdf/8402C5C6						shape.wdf/51233AB5		shape.wdf/AFA10ED6	shape.wdf/78E26E67	shape.wdf/1EEAD699	shape.wdf/EA37CEFE	shape.wdf/74474E9C	shape.wdf/EDD5D518	shape.wdf/876AD6AF	
+130	XYS-sword-倚天	sword	XYS	90	shape.wdf/2C6C2CD5	shape.wdf/511F63AD						shape.wdf/FFA04479			shape.wdf/384C63ED	shape.wdf/D56F4965	shape.wdf/74C6C61E	shape.wdf/A5E5AF8A	shape.wdf/5A31993C	shape.wdf/FBA36656	
+131	XYS-sword-湛卢	sword	XYS	90	shape.wdf/439811D3	shape.wdf/6DE2CCCB						shape.wdf/026178E6		["shape.wdf\/E736E8A7","shape.wdf\/3542493F"]	shape.wdf/F5BD4003	shape.wdf/6B458593	shape.wdf/1542622E	shape.wdf/61D49BEE	shape.wdf/9E59C6C0	shape.wdf/252FEB34	
+132	XYS-sword-鱼肠	sword	XYS	90	shape.wdf/39BAEA10	shape.wdf/E9D644EA						shape.wdf/A5B2E5F4		shape.wdf/4E6EC869	shape.wdf/06A93432	shape.wdf/F42E3CBA	shape.wdf/C783B5E6	shape.wdf/4CE1FF4C	shape.wdf/C97F7C81	shape.wdf/B8C152E4	
+133	YNX-dbswords-0	dbswords	0	shape.wdf/57FABA5B	shape.wdf/9E945A44						shape.wdf/07AB7352		shape.wdf/9E6FFA22	shape.wdf/F8788170	shape.wdf/A4CD5AEB	shape.wdf/FD6D5E61	shape.wdf/DD1FC526	shape.wdf/6DADF138	shape.wdf/83DEC128	
+134	YNX-dbswords-30	dbswords	30	shape.wdf/85EA8EE5	shape.wdf/28BDF0D3						shape.wdf/DB450C49		shape.wdf/2E9B4B1A	shape.wdf/2ECAB0DF	shape.wdf/FB8E779C	shape.wdf/A9394DC6	shape.wdf/7D28D9B9	shape.wdf/48FB6FA6	shape.wdf/B69684C8	
+135	YNX-dbswords-60	dbswords	60	shape.wdf/5516FE05	shape.wdf/6F03B3F1						shape.wdf/4B3774CB		shape.wdf/8F937D83	shape.wdf/A3E6D345	shape.wdf/3B2C0252	shape.wdf/FC7B31A0	shape.wdf/A36F83EF	shape.wdf/64852879	shape.wdf/2A79217A	
+136	YNX-dbswords-月光	dbswords	YNX	90	shape.wdf/0E469C32	shape.wdf/6BA81FDD						shape.wdf/955A5646		shape.wdf/68F1E22B	shape.wdf/A350A1E1	shape.wdf/19DE2125	shape.wdf/CD64CEEA	shape.wdf/A076BFFC	shape.wdf/CA131352	shape.wdf/3629EF7E	
+137	YNX-dbswords-灵蛇	dbswords	YNX	90	shape.wdf/36D0EAA0	shape.wdf/34A6C801						shape.wdf/9B866653		shape.wdf/88448F76	shape.wdf/B4FBC16D	shape.wdf/9888BCD5	shape.wdf/963D070F	shape.wdf/0D897436	shape.wdf/E75EF067	shape.wdf/A3CA0654	
+138	YNX-dbswords-阴阳	dbswords	YNX	90	shape.wdf/B8D3407A	shape.wdf/1F76102B						shape.wdf/713FC298		shape.wdf/9FA3A0CF	shape.wdf/CFF7C8BE	shape.wdf/D611368A	shape.wdf/82113017	shape.wdf/14F8122D	shape.wdf/76433688	shape.wdf/F6E27C19	
+139	YNX-ring-月光	ring	YNX	90												shape.wdf/A08AE83A					
+140	YNX-whip-0	whip	0	shape.wdf/A22FC2E5	shape.wdf/A8AEF3B8						shape.wdf/6EF465BF		shape.wdf/DA5EFB33	shape.wdf/102B282D	shape.wdf/903D4077	shape.wdf/597AB27F	shape.wdf/9026809E	shape.wdf/D1ECB00D	shape.wdf/5C2D10F2	
+141	YNX-whip-30	whip	30	shape.wdf/B3633C82	shape.wdf/5AE46892						shape.wdf/75E605F9		shape.wdf/93CDE018	shape.wdf/EA54623C	shape.wdf/5965A0A3	shape.wdf/B03774F8	shape.wdf/DC04F6A7	shape.wdf/C23549CB	shape.wdf/441C3F28	
+142	YNX-whip-60	whip	60	shape.wdf/3BCAC42B	shape.wdf/F3F1826F						shape.wdf/03952879		shape.wdf/8E8E849F	shape.wdf/A72A927C	shape.wdf/05B2A77B	shape.wdf/B45537E5	shape.wdf/964DBFF9	shape.wdf/F4F0474A	shape.wdf/BD8C7B95	
+143	YNX-whip-吹雪	whip	YNX	90	shape.wdf/4E0D52A5	shape.wdf/09890457						shape.wdf/9E89AC82		shape.wdf/86A74127	shape.wdf/76486C84	shape.wdf/605C2D09	shape.wdf/63A109AC	shape.wdf/ED4178D4	shape.wdf/1A1A871E	shape.wdf/F3DA28E3	
+144	YNX-whip-百花	whip	YNX	90	shape.wdf/B2DBC65A	shape.wdf/220D09FF						shape.wdf/AE1C15E6		shape.wdf/57502ADD	shape.wdf/465909C9	shape.wdf/8FBAAE53	shape.wdf/6488B199	shape.wdf/191C1D73	shape.wdf/4F96B7D3	shape.wdf/90FEA997	
+145	YNX-whip-龙筋	whip	YNX	90	shape.wdf/0728CC3D	shape.wdf/F978C55E						shape.wdf/FAEEA6B3		shape.wdf/90A26BC5	shape.wdf/3AA174C6	shape.wdf/DF81E6DB	shape.wdf/6E2489AB	shape.wdf/108C1DD0	shape.wdf/A4346F9E	shape.wdf/71DC7BF6	
