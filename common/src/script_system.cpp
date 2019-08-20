@@ -87,6 +87,7 @@ void script_system_prepare_init()
 	luaopen_netlib(L);
 	luaopen_protocol(L);
 #ifndef SIMPLE_SERVER
+	luaopen_game(L);
 	luaopen_resource_manager(L);
 	luaopen_input_manager(L);
 	luaopen_ui(L);
