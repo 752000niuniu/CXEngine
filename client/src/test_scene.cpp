@@ -392,30 +392,12 @@ struct TurtorialLight
 	}
 };
 
-int demo_count = 1* 5;
-float demo_speed = 20.f;
-float coffient = 20 * 0.064f;
-glm::vec2 demo_dir = glm::normalize(glm::vec2(1, 1));
-float demo_distance = 600.f;
 
 std::vector<BaseSprite*> spriteExamples;
 AnimationEditorScene::AnimationEditorScene(int id, String name)
 	:BaseScene(id, name)
 {
-	/*for (int i = 0; i < demo_count; i++)
-	{
-		int row = i / 5;
-		int col = i % 5;
 
-		auto playerFrameWasID = GAME_INSTANCE->GetActionWasID(ACTOR_TYPE_PLAYER, 9, Action::Walk);
-		auto* sprite = new BaseSprite(SHAPEWDF, playerFrameWasID);
-		sprite->Pos.x = (float)(col * sprite->Width + 20 * col);
-		sprite->Pos.y = (float)(row * sprite->Height + 20 * row);
-		sprite->Dir = row;
-		sprite->FrameInterval = 0.016f*(col+2);
-		spriteExamples.push_back(sprite);
-	}
-	demo_distance = 0.f;*/
 }
 
 AnimationEditorScene::~AnimationEditorScene() {
@@ -423,40 +405,11 @@ AnimationEditorScene::~AnimationEditorScene() {
 }
 
 void AnimationEditorScene::Update() {
-	/*float dt = WINDOW_INSTANCE->GetDeltaTime();
-
-	for (int i = 0; i < demo_count; i++)
-	{
-		glm::vec2 pos(spriteExamples[i]->Pos.x, spriteExamples[i]->Pos.y);
-		glm::vec2 dtpos = demo_dir * (coffient/ spriteExamples[i]->FrameInterval) *dt;
-		if (i == 0) {
-			demo_distance += glm::length(dtpos);
-		}
-		pos = pos + dtpos;
-		spriteExamples[i]->Pos.x = pos.x;
-		spriteExamples[i]->Pos.y = pos.y;
-		spriteExamples[i]->Update();
-	}
-
-	if (demo_distance >= 300.f) {
-		demo_distance = 0.f;
-		for (int i = 0; i < demo_count; i++)
-		{
-			int row = i / 5;
-			int col = i % 5;
-			auto* sprite = spriteExamples[i];
-			spriteExamples[i]->Pos.x = (float)(col * sprite->Width + 20 * col);
-			spriteExamples[i]->Pos.y = (float)(row * sprite->Height + 20 * row);
-		}
-
-	}*/
+	
 };
 
 void AnimationEditorScene::Draw() {
-	//for (int i = 0; i < demo_count; i++)
-	//{
-	//	spriteExamples[i]->Draw();
-	//}
+	
 };
 void AnimationEditorScene::Reset() {}
 

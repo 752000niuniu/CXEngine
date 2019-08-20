@@ -1,147 +1,220 @@
-ID	name	type	role	level	idle	walk	sit	angry	sayhi	dance	salute	clps	cry	batidle	attack	cast	behit	runto	runback	defend
+ID	name	type	role	level	idle	walk	sit	angry	sayhi	dance	salute	clps	cry	batidle	attack	cast	behit	runto	runback	defend	unknown	
 *
-1	FYN-dbswords-0	dbswords	0	shape.wdf/93C238CA	shape.wdf/CF591DCE						shape.wdf/96490C40		shape.wdf/8031F26F	shape.wdf/41FFF0E3	shape.wdf/AFBB95B1	shape.wdf/AB92A2DC	shape.wdf/39AA48DA	shape.wdf/34BAA491	shape.wdf/DF195D06	
-2	FYN-dbswords-30	dbswords	30	shape.wdf/3792592B	shape.wdf/9189A670						shape.wdf/952D9106		shape.wdf/9632CA57	shape.wdf/5C53D004	shape.wdf/CBF55AFB	shape.wdf/A252525F	shape.wdf/C174C17B	shape.wdf/A2738C7B	shape.wdf/EB77379E	
-3	FYN-dbswords-60	dbswords	60	shape.wdf/F212CBBB	shape.wdf/83343540						shape.wdf/91D8CED8		shape.wdf/B1488E22	shape.wdf/01205749	shape.wdf/12A82C16	shape.wdf/16327936	shape.wdf/CB929F8C	shape.wdf/649E9348	shape.wdf/CC900644	
-4	FYN-dbswords-月光	dbswords	FYN	90	shape.wdf/75577E3F	shape.wdf/4B68D6FE						shape.wdf/61DAAF0D		shape.wdf/22F2099F	shape.wdf/95D853ED	shape.wdf/32C33CA1	shape.wdf/B8A600B3	shape.wdf/6F983820	shape.wdf/64780576	shape.wdf/B0927E94	
-5	FYN-dbswords-灵蛇	dbswords	FYN	90	shape.wdf/22DF25FD	shape.wdf/C4ED7657						shape.wdf/6AED3D88		shape.wdf/E29AD9CF	shape.wdf/89815F3D	shape.wdf/9F9BDD57	shape.wdf/A6C8BDF9	shape.wdf/3FEFD96D	shape.wdf/B9A375F9	shape.wdf/9E4F9B46	
-6	FYN-dbswords-阴阳	dbswords	FYN	90	shape.wdf/00642F2B	shape.wdf/A776D93A						shape.wdf/71D66263		shape.wdf/9EAC7924	shape.wdf/12600AC0	shape.wdf/14283A2C	shape.wdf/09AFED31	shape.wdf/83C995CC	shape.wdf/3723544D	shape.wdf/253A5A38	
-7	FYN-ring-0	ring	0	shape.wdf/33473840	shape.wdf/2BAFE98B						shape.wdf/4279F8D9		shape.wdf/7D6F309A	shape.wdf/DDBEB2FE	shape.wdf/CBC0AAAC	shape.wdf/99CDE46B	shape.wdf/0A672488	shape.wdf/605B5511	shape.wdf/5735E6ED	
-8	FYN-ring-30	ring	30	shape.wdf/D5C0A9EA	shape.wdf/F7A43FBA						shape.wdf/C66A83FF		shape.wdf/FB3FA3CA	shape.wdf/F720ACFB	shape.wdf/53A09814	shape.wdf/366C5969	shape.wdf/33B6C6B2	shape.wdf/DE3679FA	shape.wdf/9681A54A	
-9	FYN-ring-60	ring	60	shape.wdf/2BF6E786	shape.wdf/637D1CB6						shape.wdf/64DAD51C		shape.wdf/31594AC8	shape.wdf/5E6C0FBC	shape.wdf/DD76CF02	shape.wdf/06C1DA32	shape.wdf/93010C03	shape.wdf/8539C817	shape.wdf/AEF4A0C3	
-10	FYN-ring-乾坤	ring	FYN	90	shape.wdf/516AC342	shape.wdf/6011B8EA						shape.wdf/A251D7E5		shape.wdf/E68983D9	shape.wdf/B4DB9129	shape.wdf/6A1F7FD1	shape.wdf/7E678776	shape.wdf/39A7FBB3	shape.wdf/FB9357BC	shape.wdf/74D95FEF	
-11	FYN-ring-如意	ring	FYN	90	shape.wdf/108FFF69	shape.wdf/EEB4814C						shape.wdf/6A161629		shape.wdf/3CB38FC9	shape.wdf/1589DF2E	shape.wdf/C80FE8F4	shape.wdf/F366D638	shape.wdf/92EFBE84	shape.wdf/51A646A2	shape.wdf/763D71DF	
-12	FYN-ring-月光	ring	FYN	90	shape.wdf/D2011BDE	shape.wdf/118B2316						shape.wdf/A75BE2AF		shape.wdf/3E187ABA	shape.wdf/FA000751	shape.wdf/62772F3C	shape.wdf/B6F37898	shape.wdf/A9C247D9	shape.wdf/86406845	shape.wdf/0465B016	
-13	GJL-claw-0	claw	0	shape.wdf/F989095F	shape.wdf/25966D3F						shape.wdf/F1EE2F11		shape.wdf/F5BA943C	shape.wdf/BC3E962F	shape.wdf/867A597A	shape.wdf/8A4F6751	shape.wdf/40199DCC	shape.wdf/3748F6A9	shape.wdf/2526B3EA	
-14	GJL-claw-30	claw	30	shape.wdf/30D51B62	shape.wdf/F6F1F738						shape.wdf/6E3BB4B8		shape.wdf/544B94AD	shape.wdf/B749448F	shape.wdf/933455C5	shape.wdf/A606B3DB	shape.wdf/7A693C4E	shape.wdf/64D4321F	shape.wdf/CD5C1687	
-15	GJL-claw-60	claw	60	shape.wdf/3A6BD287	shape.wdf/7CDCDA3D						shape.wdf/FDB2431F		shape.wdf/F8522536	shape.wdf/E27E1988	shape.wdf/2837F291	shape.wdf/D9305287	shape.wdf/742745A7	shape.wdf/441041CA	shape.wdf/24F1606F	
-16	GJL-claw-撕天	claw	GJL	90	shape.wdf/3DF34F1E	shape.wdf/E5D43556						shape.wdf/37A78886		shape.wdf/12923396	shape.wdf/692044CD	shape.wdf/1CBE28C3	shape.wdf/DC68A49B	shape.wdf/4E7EA1BA	shape.wdf/5F724E86	shape.wdf/3A173B74	
-17	GJL-claw-毒牙	claw	GJL	90	shape.wdf/D6EF0627	shape.wdf/831F74AE						shape.wdf/60DFDCB3		shape.wdf/447EE874	shape.wdf/3B164528	shape.wdf/42626BB0	shape.wdf/26AB5823	shape.wdf/23304BAF	shape.wdf/32728941	shape.wdf/9672360C	
-18	GJL-claw-胭脂	claw	GJL	90	shape.wdf/7D916F78	shape.wdf/F65B1CC4						shape.wdf/8C30F8B0		shape.wdf/39D76D1F	shape.wdf/F5502ECA	shape.wdf/77BE2BD9	shape.wdf/38EB1AE4	shape.wdf/10717167	shape.wdf/DA8F8F3E	shape.wdf/4BF87D02	
-19	GJL-wand-0	wand	0	shape.wdf/47B139FF	shape.wdf/CC6586BF						shape.wdf/FA7FD280		shape.wdf/8FE3BEA0	shape.wdf/222676F0	shape.wdf/E2D1B70F	shape.wdf/4731949D	shape.wdf/0941A00D	shape.wdf/6D4E8113	shape.wdf/6630F39E	
-20	GJL-wand-30	wand	30	shape.wdf/1890D9AC	shape.wdf/0390362A						shape.wdf/6CCC7A4A		shape.wdf/42E263E4	shape.wdf/C557050C	shape.wdf/B9375497	shape.wdf/5E37508B	shape.wdf/5FBB7870	shape.wdf/4DAB7375	shape.wdf/19A4C6DD	
-21	GJL-wand-60	wand	60	shape.wdf/9BE0BDFC	shape.wdf/F9078A13						shape.wdf/285CEE65		shape.wdf/163D9056	shape.wdf/CCDDBC6C	shape.wdf/052FA8C3	shape.wdf/5B46EE9F	shape.wdf/D28EFB00	shape.wdf/74D82F93	shape.wdf/C4C9DF40	
-22	GJL-wand-沧海	wand	GJL	90	shape.wdf/E09D1956	shape.wdf/C903D321						shape.wdf/85DE5B39		shape.wdf/CB83EEB0	shape.wdf/B6976B0B	shape.wdf/FB9FF137	shape.wdf/E14D59A1	shape.wdf/D2E56C89	shape.wdf/BD3C28A2	shape.wdf/E73B28A3	
-23	GJL-wand-盘龙	wand	GJL	90	shape.wdf/CADD869E	shape.wdf/3668B8CF						shape.wdf/C6E0069E		shape.wdf/F6F92105	shape.wdf/17CB215E	shape.wdf/F266AA0B	shape.wdf/FD95AA56	shape.wdf/7A6B9F19	shape.wdf/2E523587	shape.wdf/A8482DCF	
-24	GJL-wand-红莲	wand	GJL	90	shape.wdf/850CE856	shape.wdf/5562BE14						shape.wdf/37B5F46A		shape.wdf/D50E2004	shape.wdf/CC22B70E	shape.wdf/87EA62AB	shape.wdf/89E8D79E	shape.wdf/1E29CE90	shape.wdf/26AB780E	shape.wdf/4028EA83	
-25	HMR-claw-0	claw	0	shape.wdf/DF87CD4F	shape.wdf/5D1B5590						shape.wdf/6AF7F563		shape.wdf/24F4B783	shape.wdf/4FEF1EA7	shape.wdf/4192C3DA	shape.wdf/AE93B28A	shape.wdf/8E6F339A	shape.wdf/0614BCAD	shape.wdf/19A12B06	
-26	HMR-claw-30	claw	30	shape.wdf/ED0D88AC	shape.wdf/14AE65AD						shape.wdf/8B13CB85		shape.wdf/68E91B65	shape.wdf/0AD72AE7	shape.wdf/15DA873C	shape.wdf/29E43F90	shape.wdf/93A10D16	shape.wdf/9ABD0C53	shape.wdf/47F38F34	
-27	HMR-claw-60	claw	60	shape.wdf/384265DC	shape.wdf/7BB497CB						shape.wdf/BB0D11E0		shape.wdf/6C9A4954	shape.wdf/C65E396A	shape.wdf/F601D6B3	shape.wdf/81F122C9	shape.wdf/3915D6A9	shape.wdf/6D81DEE8	shape.wdf/923F9BBF	
-28	HMR-claw-撕天	claw	HMR	90	shape.wdf/B067E312	shape.wdf/EC076B9A						shape.wdf/1AB5F9EA		shape.wdf/8514D31B	shape.wdf/BB4A6D59	shape.wdf/A71B383C	shape.wdf/D5778C18	shape.wdf/47D2AE81	shape.wdf/CC8EB2F2	shape.wdf/BEFE2858	
-29	HMR-claw-毒牙	claw	HMR	90	shape.wdf/D0269AC5	shape.wdf/036E1F96						shape.wdf/08C5867D		shape.wdf/B45B390B	shape.wdf/9F9FBE67	shape.wdf/FA20D655	shape.wdf/11342CCF	shape.wdf/A6C1E815	shape.wdf/912316F6	shape.wdf/3E5B09D1	
-30	HMR-claw-胭脂	claw	HMR	90	shape.wdf/B80C2BB9	shape.wdf/0C92D6DC						shape.wdf/89F28310		shape.wdf/1E1C1A3D	shape.wdf/19F17A9C	shape.wdf/68268400	shape.wdf/A32B271E	shape.wdf/47800C96	shape.wdf/D158B73D	shape.wdf/E65BA446	
-31	HMR-whip-0	whip	0	shape.wdf/1C6D7AF6	shape.wdf/3C8CD8EB						shape.wdf/2815B13B		shape.wdf/0EB4F3A5	shape.wdf/8E0A7548	shape.wdf/C7879D69	shape.wdf/1169732B	shape.wdf/3430C16A	shape.wdf/F83CFA1C	shape.wdf/AB4A695F	
-32	HMR-whip-30	whip	30	shape.wdf/783B99E0	shape.wdf/0D0DE5CE						shape.wdf/AE8EC978		shape.wdf/BECD5222	shape.wdf/568489BF	shape.wdf/B52F9728	shape.wdf/9D6F22CD	shape.wdf/19EF1EEA	shape.wdf/D16DAE42	shape.wdf/D1A122A0	
-33	HMR-whip-60	whip	60	shape.wdf/50FD2242	shape.wdf/1718D825						shape.wdf/C3971BB5		shape.wdf/948ABA4D	shape.wdf/2FE5C5EF	shape.wdf/23B56CEF	shape.wdf/BF590140	shape.wdf/CBCA5A30	shape.wdf/89D57483	shape.wdf/1D194BE4	
-34	HMR-whip-吹雪	whip	HMR	90	shape.wdf/BC2F95EF	shape.wdf/16AC35C8						shape.wdf/AAA64B39		shape.wdf/6AE395B1	shape.wdf/A5D78787	shape.wdf/D02D93A9	shape.wdf/B7923B94	shape.wdf/FD9FD7D6	shape.wdf/131008BD	shape.wdf/7BB7D9DB	
-35	HMR-whip-百花	whip	HMR	90	shape.wdf/888C7C46	shape.wdf/E7CBB64B						shape.wdf/8626964B		shape.wdf/76A51EFA	shape.wdf/59921DBD	shape.wdf/6A8604D1	shape.wdf/2096E1A8	shape.wdf/BC69B296	shape.wdf/DA330192	shape.wdf/A43715B9	
-36	HMR-whip-龙筋	whip	HMR	90	shape.wdf/D76152B7	shape.wdf/B241D7A6						shape.wdf/032A52E5		shape.wdf/42F7FD85	shape.wdf/E02143AB	shape.wdf/1C889A99	shape.wdf/03AF0FBE	shape.wdf/BBADD70A	shape.wdf/71208843	shape.wdf/C4F3C696	
-37	HTG-axe-0	axe	0	shape.wdf/EADD5CDD	shape.wdf/7467F32A						shape.wdf/33AF0AC4		shape.wdf/33453188	shape.wdf/CEA1CBF1	shape.wdf/AB222D43	shape.wdf/5B58D8FC	shape.wdf/4B2FBF37	shape.wdf/AA6C0D05	shape.wdf/4EA1D3FB	
-38	HTG-axe-30	axe	30	shape.wdf/574D7DF4	shape.wdf/E70BA89B						shape.wdf/78FB6739		shape.wdf/FDB3FA02	shape.wdf/9C82D8D9	shape.wdf/3FF7420A	shape.wdf/79FFDC33	shape.wdf/DDE71F8A	shape.wdf/95F2CC53	shape.wdf/CCAB1263	
-39	HTG-axe-60	axe	60	shape.wdf/5923D5C3	shape.wdf/578771AB						shape.wdf/F4DAF57E		shape.wdf/2CD2C6D6	shape.wdf/B92A33F2	shape.wdf/022BBA4E	shape.wdf/120F78F4	shape.wdf/E3C6BC8F	shape.wdf/5A5A13FD	shape.wdf/307D1D47	
-40	HTG-axe-无敌	axe	HTG	90	shape.wdf/D88565BC	shape.wdf/375756CE						shape.wdf/F794AED0		shape.wdf/B09776EA	shape.wdf/D4CE280E	shape.wdf/A29CEE6F	shape.wdf/D31F21ED	shape.wdf/3CB8529D	shape.wdf/E493F44D	shape.wdf/F2665DBF	
-41	HTG-axe-破魄	axe	HTG	90	shape.wdf/53F914DE	shape.wdf/8102D783						shape.wdf/924CF59A		shape.wdf/36986D43	shape.wdf/03F6C432	shape.wdf/AF9DB1C5	shape.wdf/4EB57F0D	shape.wdf/70CEB588	shape.wdf/45E0E264	shape.wdf/08D155E9	
-42	HTG-axe-肃魂	axe	HTG	90	shape.wdf/E8866C8F	shape.wdf/16B86A5E						shape.wdf/E61D413C		shape.wdf/9158BD4A	shape.wdf/C786D6C9	shape.wdf/2704053E	shape.wdf/B5729FEE	shape.wdf/91AA64AF	shape.wdf/1BD8A43D	shape.wdf/07133A02	
-43	HTG-hammer-0	hammer	0	shape.wdf/35A60822	shape.wdf/6C4C0BD8						shape.wdf/573FE90B		shape.wdf/04AFB943	shape.wdf/EBB8F006	shape.wdf/6AC733AE	shape.wdf/82D84EBA	shape.wdf/21E7923D	shape.wdf/D30D97DD	shape.wdf/FBC7D402	
-44	HTG-hammer-30	hammer	30	shape.wdf/670E31BF	shape.wdf/212E741F						shape.wdf/140E6041		shape.wdf/269C8E0F	shape.wdf/3645C935	shape.wdf/9E1EF82B	shape.wdf/63F4B3EA	shape.wdf/02091623	shape.wdf/2EB307EE	shape.wdf/16C16088	
-45	HTG-hammer-60	hammer	60	shape.wdf/28534F72	shape.wdf/9E4325F4						shape.wdf/179BFBBA		shape.wdf/F4BE8E14	shape.wdf/7B955EC3	shape.wdf/3DAEC472	shape.wdf/3F3C6BEF	shape.wdf/83FE80E6	shape.wdf/779165FA	shape.wdf/031372EA	
-46	HTG-hammer-八卦	hammer	HTG	90	shape.wdf/A438A403	shape.wdf/AC1BAB97						shape.wdf/DAA88DDF		shape.wdf/9EB4376A	shape.wdf/F4E93C19	shape.wdf/257EEB28	shape.wdf/BF887095	shape.wdf/6AD54C39	shape.wdf/4AD24B6C	shape.wdf/DCA25DA6	
-47	HTG-hammer-雷神	hammer	HTG	90	shape.wdf/8CF27534	shape.wdf/DA17EC9A						shape.wdf/1BBB77CD		shape.wdf/4ACBDCEC	shape.wdf/DA88EFD1	shape.wdf/955E8867	shape.wdf/7D667999	shape.wdf/DE2BC9A6	shape.wdf/1B5E2637	shape.wdf/819218AF	
-48	HTG-hammer-鬼牙	hammer	HTG	90	shape.wdf/56DA382F	shape.wdf/959DF477						shape.wdf/39793BD1		shape.wdf/98779F86	shape.wdf/BE38AE31	shape.wdf/359A5C9F	shape.wdf/4E17B675	shape.wdf/6BE1D5E3	shape.wdf/89559B34	shape.wdf/1A309122	
-49	JMW-axe-0	axe	0	shape.wdf/F5164FF2	shape.wdf/9FBAAD0D						shape.wdf/0901BAE0		shape.wdf/75CA98B2	shape.wdf/0C6A0AAF	shape.wdf/B02E8A71	shape.wdf/EF91014D	shape.wdf/D96B7C58	shape.wdf/ED74F8D8	shape.wdf/CA6B78BA	
-50	JMW-axe-30	axe	30	shape.wdf/20D1A0D3	shape.wdf/B5BEE359						shape.wdf/750DA691		shape.wdf/B943B892	shape.wdf/6AE10650	shape.wdf/091FFF0A	shape.wdf/9F2DB6EA	shape.wdf/D7AE7052	shape.wdf/2071C9B9	shape.wdf/57BA0DF3	
-51	JMW-axe-60	axe	60	shape.wdf/446B12BA	shape.wdf/3C85094B						shape.wdf/E959DF5B		shape.wdf/97FFD83A	shape.wdf/0AE0FBC9	shape.wdf/69E3A0BA	shape.wdf/A6BA072D	shape.wdf/405A73C1	shape.wdf/B9DD7791	shape.wdf/E8628FDE	
-52	JMW-axe-无敌	axe	JMW	90	shape.wdf/6AE68E94	shape.wdf/29FE3B3E						shape.wdf/1F45061E		shape.wdf/804B8502	shape.wdf/6A089299	shape.wdf/B1025B4C	shape.wdf/2F03D1CD	shape.wdf/4943EF5D	shape.wdf/0F56BDD3	shape.wdf/6DBCB6F1	
-53	JMW-axe-破魄	axe	JMW	90	shape.wdf/02CECBCB	shape.wdf/B8554947						shape.wdf/1076799E		shape.wdf/B5651224	shape.wdf/130B01A7	shape.wdf/804BA4F5	shape.wdf/6C03C38C	shape.wdf/F4B18107	shape.wdf/4D201E92	shape.wdf/ED81F90C	
-54	JMW-axe-肃魂	axe	JMW	90	shape.wdf/726F7762	shape.wdf/199CF19E						shape.wdf/C17EC778		shape.wdf/5372641E	shape.wdf/DE2E4C7C	shape.wdf/E7CBE13D	shape.wdf/298B1905	shape.wdf/AE0DF75C	shape.wdf/31893323	shape.wdf/F60133A9	
-55	JMW-knife-0	knife	0	shape.wdf/8EC686F9	shape.wdf/A82465FE						shape.wdf/572E86F3		shape.wdf/E2FF6E31	shape.wdf/50597842	shape.wdf/B9817F22	shape.wdf/C5C39E50	shape.wdf/45515530	shape.wdf/6CBED6D0	shape.wdf/5F15B662	
-56	JMW-knife-30	knife	30	shape.wdf/46AEDFD4	shape.wdf/D6932CA0						shape.wdf/962C24BC		shape.wdf/13E6AC09	shape.wdf/D1FC130C	shape.wdf/CC49242D	shape.wdf/FE49E3B6	shape.wdf/6CBBE06C	shape.wdf/EE66C929	shape.wdf/6B4B8E1C	
-57	JMW-knife-60	knife	60	shape.wdf/F54F61CC	shape.wdf/C67C1E31						shape.wdf/150187C0		shape.wdf/4C8C0C7F	shape.wdf/7BC815E6	shape.wdf/FF56A136	shape.wdf/8509A043	shape.wdf/52F290D5	shape.wdf/711C8005	shape.wdf/E1CB63E5	
-58	JMW-knife-冷月	knife	JMW	90	shape.wdf/63C760FF	shape.wdf/55BBAF5F						shape.wdf/5376CB41		shape.wdf/624E2193	shape.wdf/19CD05C8	shape.wdf/C90E43D9	shape.wdf/367DAE76	shape.wdf/D504763E	shape.wdf/9F4BF693	shape.wdf/7D6AE6EB	
-59	JMW-knife-屠龙	knife	JMW	90	shape.wdf/8766C9AD	shape.wdf/355A127C						shape.wdf/69D5D73F		shape.wdf/BC03C74A	shape.wdf/587A6710	shape.wdf/3B3E09BE	shape.wdf/A3CA6668	shape.wdf/84557D2D	shape.wdf/80BD15FA	shape.wdf/5C60828E	
-60	JMW-knife-血刃	knife	JMW	90	shape.wdf/D94CA07F	shape.wdf/708AE46C						shape.wdf/344FAC76		shape.wdf/33B559B9	shape.wdf/7397E94A	shape.wdf/D46EFBF8	shape.wdf/5A575B62	shape.wdf/2E4CE6AC	shape.wdf/C3426C09	shape.wdf/369B99F0	
-61	JXK-knife-0	knife	0	shape.wdf/0CBF0DDB	shape.wdf/49CFC3C3						shape.wdf/6D8CD78C		shape.wdf/A20CEC4C	shape.wdf/89AB1AA2	shape.wdf/DEECDD99	shape.wdf/9B6684AA	shape.wdf/4EE523B0	shape.wdf/59E7B49F	shape.wdf/62542FAE	
-62	JXK-knife-30	knife	30	shape.wdf/B8E78B22	shape.wdf/0B959D2E						shape.wdf/F369A222		shape.wdf/EBCBECD9	shape.wdf/367CFC3D	shape.wdf/127C941A	shape.wdf/C09DA0E7	shape.wdf/D70D4B6C	shape.wdf/23D50B12	shape.wdf/76F84A6F	
-63	JXK-knife-60	knife	60	shape.wdf/494C6456	shape.wdf/BB949BDE						shape.wdf/2F208C10		shape.wdf/E901E5AF	shape.wdf/A0B18DB3	shape.wdf/6C8532E9	shape.wdf/BA8BC02F	shape.wdf/94B928E6	shape.wdf/9111125D	shape.wdf/F0701C55	
-64	JXK-knife-冷月	knife	JXK	90	shape.wdf/DA08D26D	shape.wdf/6C6F4579						shape.wdf/966B7CF6		shape.wdf/2F8461AF	shape.wdf/3EA14AA9	shape.wdf/67AEB824	shape.wdf/48B667F0	shape.wdf/D31BBC2E	shape.wdf/C59530C4	shape.wdf/13D8A670	
-65	JXK-knife-屠龙	knife	JXK	90	shape.wdf/CF5D83D8	shape.wdf/9D1236B7						shape.wdf/96D460DD		shape.wdf/1857D96E	shape.wdf/35377639	shape.wdf/AD169C41	shape.wdf/13049665	shape.wdf/3DFF9132	shape.wdf/C40B2DF4	shape.wdf/DEE9015C	
-66	JXK-knife-血刃	knife	JXK	90	shape.wdf/85D0D994	shape.wdf/50DA4A82						shape.wdf/A397A012		shape.wdf/97277986	shape.wdf/EAFBC7A1	shape.wdf/580DD414	shape.wdf/C1F95358	shape.wdf/274498A8	shape.wdf/0BE3220F	shape.wdf/D42183F5	
-67	JXK-sword-0	sword	0	shape.wdf/9298825C	shape.wdf/29DF2153						shape.wdf/51140EE1		shape.wdf/1F503F23	shape.wdf/FDB2C365	shape.wdf/38875CCF	shape.wdf/EA117128	shape.wdf/20AFEA5A	shape.wdf/B175A6F1	shape.wdf/DEC859C9	
-68	JXK-sword-30	sword	30	shape.wdf/FCB4A08E	shape.wdf/2980D884						shape.wdf/A2B30DEC		shape.wdf/8B8466A5	shape.wdf/E9C8CEB8	shape.wdf/D5BACFDF	shape.wdf/7DD07B41	shape.wdf/3BAC006D	shape.wdf/A818B5C4	shape.wdf/B495D633	
-69	JXK-sword-60	sword	60	shape.wdf/CC5E9C79	shape.wdf/59207938						shape.wdf/6B3A934F		shape.wdf/BC16BE43	shape.wdf/07AC6964	shape.wdf/341AA6EC	shape.wdf/BBBAC247	shape.wdf/219210C2	shape.wdf/07B27AB7	shape.wdf/4B13C413	
-70	JXK-sword-倚天	sword	JXK	90	shape.wdf/8AD7AD90	shape.wdf/0193E0A5						shape.wdf/3FB65FEA		shape.wdf/15761F33	shape.wdf/51920636	shape.wdf/1EDD2B87	shape.wdf/0BA5689F	shape.wdf/C97A015E	shape.wdf/B8F5BE10	shape.wdf/9DE26E92	
-71	JXK-sword-湛卢	sword	JXK	90	shape.wdf/6DAEF05B	shape.wdf/23F632FC						shape.wdf/92CD56C7		shape.wdf/15496789	shape.wdf/0A67C9FE	shape.wdf/41111799	shape.wdf/59892B0F	shape.wdf/07E9EF20	shape.wdf/E1B680D4	shape.wdf/E195D52B	
-72	JXK-sword-鱼肠	sword	JXK	90	shape.wdf/E7D37130	shape.wdf/2F360F92						shape.wdf/A0D7AA75		shape.wdf/D29C9040	shape.wdf/FBFF765E	shape.wdf/C4E6E357	shape.wdf/3C5E4D93	shape.wdf/6EF6C6D6	shape.wdf/6FC1F329	shape.wdf/E26BD5F3	
-73	LTZ-fan-0	fan	0	shape.wdf/EE5BB0A8	shape.wdf/322CF1FD						shape.wdf/D4ACCBE9		shape.wdf/5133F557	shape.wdf/E1C39FA4	shape.wdf/07B8B943	shape.wdf/45D3D9FF	shape.wdf/3373DDFA	shape.wdf/FEA0A451	shape.wdf/F1B65EEF	
-74	LTZ-fan-30	fan	30	shape.wdf/9F33CB04	shape.wdf/0C5A7BD5						shape.wdf/A9268815		shape.wdf/CB336D0F	shape.wdf/70D03563	shape.wdf/27B5F7A5	shape.wdf/04CC6E0E	shape.wdf/ED3E696A	shape.wdf/70D1FD95	shape.wdf/5E6D440C	
-75	LTZ-fan-60	fan	60	shape.wdf/1E2EAD70	shape.wdf/F6E24EFF						shape.wdf/C22FF943		shape.wdf/425BD517	shape.wdf/6C61F14D	shape.wdf/84D9458A	shape.wdf/CDD1B9F5	shape.wdf/D8973E56	shape.wdf/CC1C2A21	shape.wdf/47D2C78D	
-76	LTZ-fan-太极	fan	LTZ	90	shape.wdf/58D20E79	shape.wdf/A963CEE9						shape.wdf/8542FE91		shape.wdf/073788A5	shape.wdf/E8CF21B4	shape.wdf/277578F9	shape.wdf/100D6352	shape.wdf/6E68C79D	shape.wdf/585DA167	shape.wdf/1EEDE502	
-77	LTZ-fan-玉龙	fan	LTZ	90	shape.wdf/44BEAA26	shape.wdf/E819C83D						shape.wdf/4469314E		shape.wdf/258C58E7	shape.wdf/8B1A91C7	shape.wdf/0FB2D7FC	shape.wdf/33681D03	shape.wdf/5D9A4F8F	shape.wdf/598632E9	shape.wdf/1A80F678	
-78	LTZ-fan-秋风	fan	LTZ	90	shape.wdf/387B481F	shape.wdf/FB69C03A						shape.wdf/2CB34A9C		shape.wdf/F3251804	shape.wdf/2E3F062C	shape.wdf/69CB9FE8	shape.wdf/1469C288	shape.wdf/186FB234	shape.wdf/471937D0	shape.wdf/F48F85DD	
-79	LTZ-spear-0	spear	0	shape.wdf/8EEAFA06	shape.wdf/891E895D						shape.wdf/6A0CC9B9		shape.wdf/D3485670	shape.wdf/9ED583E4	shape.wdf/1C7570AF	shape.wdf/2791D986	shape.wdf/AA48FD68	shape.wdf/9C9009E2	shape.wdf/F7B357E4	
-80	LTZ-spear-30	spear	30	shape.wdf/8793DDDA	shape.wdf/6CD3B588						shape.wdf/4F68D4C8		shape.wdf/0A2ED5D5	shape.wdf/FADAC7CA	shape.wdf/A096A348	shape.wdf/99641EA4	shape.wdf/FF355A51	shape.wdf/0A959632	shape.wdf/48B9E33E	
-81	LTZ-spear-60	spear	60	shape.wdf/65E21040	shape.wdf/02FBCDFD						shape.wdf/C8B75AF3		shape.wdf/184DFED9	shape.wdf/26C7D8DE	shape.wdf/7D09B1E1	shape.wdf/4898BCCA	shape.wdf/602041FC	shape.wdf/9390C290	shape.wdf/484A9285	
-82	LTZ-spear-暗夜	spear	LTZ	90	shape.wdf/360C3189	shape.wdf/1804E147						shape.wdf/758C38C1		shape.wdf/F26835F7	shape.wdf/2C2F2BF5	shape.wdf/58F2AAE4	shape.wdf/685F4E20	shape.wdf/DB3D1385	shape.wdf/3BA5FB01	shape.wdf/820FEE7B	
-83	LTZ-spear-梨花	spear	LTZ	90	shape.wdf/D44FE954	shape.wdf/219B45D1						shape.wdf/BE16A514		shape.wdf/5F43421E	shape.wdf/DF5A134D	shape.wdf/8E6BD0FA	shape.wdf/62402B92	shape.wdf/E9912C61	shape.wdf/087A9AAE	shape.wdf/B687FE24	
-84	LTZ-spear-霹雳	spear	LTZ	90	shape.wdf/27884353	shape.wdf/349B0F38						shape.wdf/5A213D27		shape.wdf/4E43DFA7	shape.wdf/10A116DF	shape.wdf/ECB93613	shape.wdf/F20562CF	shape.wdf/8189EB51	shape.wdf/F3B54905	shape.wdf/D91EE2B6	
-85	STB-hammer-0	hammer	0	shape.wdf/16F53166	shape.wdf/34ECF58B						shape.wdf/55AF9960		shape.wdf/C1BDDCE2	shape.wdf/EF428937	shape.wdf/F526FC31	shape.wdf/C22788DB	shape.wdf/C2DBD0A7	shape.wdf/1AAA20B1	shape.wdf/68901E3E	
-86	STB-hammer-30	hammer	30	shape.wdf/B929FBE6	shape.wdf/5E08DA6D						shape.wdf/C6E815F9		shape.wdf/5F4203BF	shape.wdf/0631B4FD	shape.wdf/2E48CCD8	shape.wdf/28DDD798	shape.wdf/17E6941F	shape.wdf/FB1ED518	shape.wdf/A0229FC1	
-87	STB-hammer-60	hammer	60	shape.wdf/38C32912	shape.wdf/FE1566C1						shape.wdf/19D4917C		shape.wdf/12D8DE6D	shape.wdf/B4EDD4F2	shape.wdf/F84AF7A2	shape.wdf/27885331	shape.wdf/F71C7492	shape.wdf/8A8324A1	shape.wdf/BA82A21C	
-88	STB-hammer-八卦	hammer	STB	90	shape.wdf/34C418DA	shape.wdf/507D4252						shape.wdf/35A8F0B2		shape.wdf/82407177	shape.wdf/94265799	shape.wdf/14046CB9	shape.wdf/66D1B6C4	shape.wdf/793550FC	shape.wdf/CAEC2F8A	shape.wdf/F721C3A5	
-89	STB-hammer-雷神	hammer	STB	90	shape.wdf/737EC63F	shape.wdf/D975473A						shape.wdf/8EF49891		shape.wdf/E9ABFCA8	shape.wdf/08D989AB	shape.wdf/B7FDF970	shape.wdf/95EC45BF	shape.wdf/B26753BA	shape.wdf/395EF48B	shape.wdf/AF8C0C4D	
-90	STB-hammer-鬼牙	hammer	STB	90	shape.wdf/03009A64	shape.wdf/714AB64B						shape.wdf/C83BA782		shape.wdf/422C2503	shape.wdf/90E27B30	shape.wdf/943B58DD	shape.wdf/9FD1AFF1	shape.wdf/A36AA059	shape.wdf/B64178C2	shape.wdf/9C39B362	
-91	STB-spear-0	spear	0	shape.wdf/2BB55863	shape.wdf/77B8F44E						shape.wdf/FAA82565		shape.wdf/044EC256	shape.wdf/1B3DA579	shape.wdf/70141536	shape.wdf/58199DFF	shape.wdf/06FA3D33	shape.wdf/8D50B13E	shape.wdf/1F2A6CEB	
-92	STB-spear-30	spear	30	shape.wdf/D47ABE5E	shape.wdf/854EFD4C						shape.wdf/736EF1CC		shape.wdf/AF839CE8	shape.wdf/185417D0	shape.wdf/2479A84F	shape.wdf/D8CE2C9C	shape.wdf/361B1B5A	shape.wdf/260B3284	shape.wdf/39DEF78F	
-93	STB-spear-60	spear	60	shape.wdf/1D4CF669	shape.wdf/0E0B110D						shape.wdf/224AF5B0		shape.wdf/B97A9664	shape.wdf/B722A1E4	shape.wdf/B0CEB342	shape.wdf/93030C65	shape.wdf/34ADB171	shape.wdf/AF20C0EF	shape.wdf/8CCF88F5	
-94	STB-spear-暗夜	spear	STB	90	shape.wdf/FBF07390	shape.wdf/981089C2						shape.wdf/3A214293		shape.wdf/608C7ED2	shape.wdf/408C1744	shape.wdf/C9B1FF34	shape.wdf/379B49F6	shape.wdf/14118D48	shape.wdf/F57E053B	shape.wdf/E82C0871	
-95	STB-spear-梨花	spear	STB	90	shape.wdf/D5D1ED58	shape.wdf/D2D808EA						shape.wdf/CC9E2DF9		shape.wdf/C4E5BEA8	shape.wdf/3E5E0C20	shape.wdf/49ED5D45	shape.wdf/6FA1D30D	shape.wdf/DD03EB08	shape.wdf/E6F2DE10	shape.wdf/9D09357C	
-96	STB-spear-霹雳	spear	STB	90	shape.wdf/BC15930A	shape.wdf/F7528A04						shape.wdf/FCAC26D9		shape.wdf/C7A21BAF	shape.wdf/3EA5CDB1	shape.wdf/D11888A6	shape.wdf/AC3EFA4B	shape.wdf/08863F3C	shape.wdf/FFE877A3	shape.wdf/7C5496BE	
-97	WTJ-ribbon-0	ribbon	0	shape.wdf/FB8435BA	shape.wdf/9CF5D9F8						shape.wdf/7FDC01EF		shape.wdf/81AFF12D	shape.wdf/249CA457	shape.wdf/A0D26048	shape.wdf/7869F2F1	shape.wdf/B123AD72	shape.wdf/5CC3EF52	shape.wdf/F42E7944	
-98	WTJ-ribbon-30	ribbon	30	shape.wdf/FA700B5C	shape.wdf/CEEFD88F						shape.wdf/740A2D9B		shape.wdf/9590CE9D	shape.wdf/00CE8E90	shape.wdf/1AB92BE1	shape.wdf/0CBFA482	shape.wdf/87F6C085	shape.wdf/800D0904	shape.wdf/296AAA3F	
-99	WTJ-ribbon-60	ribbon	60	shape.wdf/35DEB132	shape.wdf/92015297						shape.wdf/B3E404B5		shape.wdf/6ED204E3	shape.wdf/56666D0D	shape.wdf/C5132AA5	shape.wdf/AE3DC66F	shape.wdf/FDBD116F	shape.wdf/701A7AB7	shape.wdf/F7C94338	
-100	WTJ-ribbon-彩虹	ribbon	WTJ	90	shape.wdf/4EA5BCD9	shape.wdf/D0D7B4C6						shape.wdf/DD381373		shape.wdf/E41A67D2	shape.wdf/E9C06D77	shape.wdf/57242E36	shape.wdf/959CB7D3	shape.wdf/27457CFE	shape.wdf/933CB634	shape.wdf/0F9795CC	
-101	WTJ-ribbon-流云	ribbon	WTJ	90	shape.wdf/C0499E98	shape.wdf/4F0D82C7						shape.wdf/95E671BC		shape.wdf/0BD59823	shape.wdf/FA17B299	shape.wdf/A70795DA	shape.wdf/6D8CBADD	shape.wdf/E798F6EE	shape.wdf/C4EE3158	shape.wdf/39F5F74C	
-102	WTJ-ribbon-碧波	ribbon	WTJ	90	shape.wdf/809C371A	shape.wdf/C0A2F354						shape.wdf/F52DB273		shape.wdf/9E4E7A27	shape.wdf/3DADA117	shape.wdf/AA2F9916	shape.wdf/440F1447	shape.wdf/0E65D700	shape.wdf/6B357EAF	shape.wdf/8C6CA17E	
-103	WTJ-ring-0	ring	0	shape.wdf/6209096A	shape.wdf/68D86D0F						shape.wdf/69C1D177		shape.wdf/7FB32E9F	shape.wdf/4A49A3C8	shape.wdf/098A9B5E	shape.wdf/BC699632	shape.wdf/F79D0F75	shape.wdf/ECE17D56	shape.wdf/B2530EEA	
-104	WTJ-ring-30	ring	30	shape.wdf/A7564E46	shape.wdf/083E8239						shape.wdf/54D22C16		shape.wdf/5AD69DFC	shape.wdf/EA0EAFAD	shape.wdf/0A5EFB14	shape.wdf/51E5EECF	shape.wdf/F75AE57E	shape.wdf/5B683D9C	shape.wdf/9514AC71	
-105	WTJ-ring-60	ring	60	shape.wdf/0B98FD5E	shape.wdf/904EFD65						shape.wdf/650CFADE		shape.wdf/86761D6A	shape.wdf/DAA7FA2D	shape.wdf/F2F2BBA6	shape.wdf/2A71A746	shape.wdf/1E1747C9	shape.wdf/F9ED9F7B	shape.wdf/00953C84	
-106	WTJ-ring-乾坤	ring	WTJ	90	shape.wdf/F5703AD8	shape.wdf/34EE6DFD						shape.wdf/A9F50EA6		shape.wdf/5A4F043D	shape.wdf/0FE54BEF	shape.wdf/0F466AC5	shape.wdf/24B582F2	shape.wdf/9097BCFC	shape.wdf/B9AC122B	shape.wdf/E7E9DDCD	
-107	WTJ-ring-如意	ring	WTJ	90	shape.wdf/A6CC01C9	shape.wdf/2A517CC1						shape.wdf/71E8052E		shape.wdf/32AE6FDD	shape.wdf/C2C167A0	shape.wdf/1DCFDF19	shape.wdf/0BCCC321	shape.wdf/45899556	shape.wdf/BF140A76	shape.wdf/8C25B012	
-108	WTJ-ring-月光	ring	WTJ	90	shape.wdf/B0F8CC3F	shape.wdf/D5C8A187						shape.wdf/00F872EC		shape.wdf/DC1F4DE8	shape.wdf/BCA9C8B0		shape.wdf/552ED440	shape.wdf/ED8427A2	shape.wdf/E6E8CBF9	shape.wdf/886A0113	
-109	XCE-ribbon-0	ribbon	0	shape.wdf/E5A57845	shape.wdf/4C9588E1						shape.wdf/A9B31057		shape.wdf/93B63580	shape.wdf/7D01D370	shape.wdf/DCBB254D	shape.wdf/3E95F794	shape.wdf/D31748B4	shape.wdf/13843BD1	shape.wdf/6C278BB9	
-110	XCE-ribbon-30	ribbon	30	shape.wdf/40C2360D	shape.wdf/BD0600B4						shape.wdf/1A966C18		shape.wdf/D1683E81	shape.wdf/2AF30885	shape.wdf/25862E1E	shape.wdf/19026DE7	shape.wdf/384B4916	shape.wdf/4C6206AB	shape.wdf/02118DDD	
-111	XCE-ribbon-60	ribbon	60	shape.wdf/B25AFBB3	shape.wdf/9D8CE9F4						shape.wdf/0A99823C		shape.wdf/84B40A67	shape.wdf/3ACF708B	shape.wdf/EFCA8E31	shape.wdf/E33B99FB	shape.wdf/9E74505B	shape.wdf/08D6D117	shape.wdf/9447B391	
-112	XCE-ribbon-彩虹	ribbon	XCE	90	shape.wdf/223180F8	shape.wdf/583E1B17						shape.wdf/DE10BF14		shape.wdf/5F7EC231	shape.wdf/EF0F5AED	shape.wdf/C63EF181	shape.wdf/84782657	shape.wdf/691F5A42	shape.wdf/6CFB7DDC	shape.wdf/1A7800FA	
-113	XCE-ribbon-流云	ribbon	XCE	90	shape.wdf/3FD9C049	shape.wdf/8EC49F3A						shape.wdf/1BFDACEE		shape.wdf/29107531	shape.wdf/8CDE2274	shape.wdf/EF3029EE	shape.wdf/1B65D56F	shape.wdf/FA56A15B	shape.wdf/B98D34B0	shape.wdf/5EAB18BD	
-114	XCE-ribbon-碧波	ribbon	XCE	90	shape.wdf/8C97B584	shape.wdf/B61DA735						shape.wdf/3D603C7E		shape.wdf/C07390FE	shape.wdf/39D7C243	shape.wdf/EBE26265	shape.wdf/5AB1F22B	shape.wdf/7239220B	shape.wdf/AD972E81	shape.wdf/559B5E01	
-115	XCE-wand-0	wand	0	shape.wdf/42D14FA3	shape.wdf/4954C80C						shape.wdf/33CC1679		shape.wdf/1A04CE99	shape.wdf/1330BDCB	shape.wdf/CAB57EAC	shape.wdf/1DC0095A	shape.wdf/B55DBDE6	shape.wdf/87928D9F	shape.wdf/AA1F19F1	
-116	XCE-wand-30	wand	30	shape.wdf/1FD87095	shape.wdf/F8DC4DF3						shape.wdf/897FA263		shape.wdf/8D7D6914	shape.wdf/A13DB294	shape.wdf/798C2FF9	shape.wdf/165F7BB0	shape.wdf/59C7FB2C	shape.wdf/34693AA4	shape.wdf/F9AC0314	
-117	XCE-wand-60	wand	60	shape.wdf/5E40D203	shape.wdf/115A8E45						shape.wdf/B8F742F9		shape.wdf/4E141AA1	shape.wdf/B8C770B1	shape.wdf/0762FE7B	shape.wdf/2340CBBA	shape.wdf/170E491C	shape.wdf/87F111B3	shape.wdf/C06E368F	
-118	XCE-wand-沧海	wand	XCE	90	shape.wdf/C1ACB479	shape.wdf/6A9147F7						shape.wdf/1E0E6A74		shape.wdf/BCFA0EFC	shape.wdf/B6BA90CE	shape.wdf/CD886AE6	shape.wdf/D71C42AB	shape.wdf/50EC63EB	shape.wdf/6DFAAB98	shape.wdf/0394AC40	
-119	XCE-wand-盘龙	wand	XCE	90	shape.wdf/69036521	shape.wdf/02E73DE2						shape.wdf/392A5B52		shape.wdf/7D90BA0A	shape.wdf/B6E7A7BC	shape.wdf/2118F416	shape.wdf/93E30CAD	shape.wdf/7A9A0056	shape.wdf/2F512F88	shape.wdf/D7940F19	
-120	XCE-wand-红莲	wand	XCE	90	shape.wdf/0ADFB109	shape.wdf/CA7E32B9						shape.wdf/1C6124F5		shape.wdf/567BBDFF	shape.wdf/D92986BB	shape.wdf/53BF74EC	shape.wdf/4D450D39	shape.wdf/1C76E6E0	shape.wdf/D98A553F	shape.wdf/C60F0F9D	
-121	XYS-fan-0	fan	0	shape.wdf/402BBC17	shape.wdf/8C91B390						shape.wdf/57DAABA1		shape.wdf/740210C1	shape.wdf/B0B46CE5	shape.wdf/4F212CA9	shape.wdf/7F9B6665	shape.wdf/DDC7B6BF	shape.wdf/E844C6E6	shape.wdf/11851CDD	
-122	XYS-fan-30	fan	30	shape.wdf/7E618E01	shape.wdf/92D5EB19						shape.wdf/4E6D3A45		shape.wdf/51F7402C	shape.wdf/303F7C68	shape.wdf/B8784799	shape.wdf/309AED6A	shape.wdf/5A1299B1	shape.wdf/050DD952	shape.wdf/587AEAE6	
-123	XYS-fan-60	fan	60	shape.wdf/297D684D	shape.wdf/F186E26E						shape.wdf/E876D7E0		shape.wdf/CA8EEF83	shape.wdf/0FD9C550	shape.wdf/A54EA4C3	shape.wdf/175941DE	shape.wdf/B4CCC8B9	shape.wdf/3C3D431E	shape.wdf/32C77CDE	
-124	XYS-fan-太极	fan	XYS	90	shape.wdf/21E1E8FD	shape.wdf/E21779AB						shape.wdf/52ABDF9F		shape.wdf/F3728B37	shape.wdf/26BCA13E	shape.wdf/2B865584	shape.wdf/11B99758	shape.wdf/7DC619BC	shape.wdf/5D99CF25	shape.wdf/838B3A7F	
-125	XYS-fan-玉龙	fan	XYS	90	shape.wdf/6180E38C	shape.wdf/FA33524C						shape.wdf/2AA73F6F		shape.wdf/BC589952	shape.wdf/11617540	shape.wdf/AE13646F	shape.wdf/BC8D4932	shape.wdf/7DE56C73	shape.wdf/1AD63584	shape.wdf/3D2C8E6F	
-126	XYS-fan-秋风	fan	XYS	90	shape.wdf/B47BEE66	shape.wdf/FE687485						shape.wdf/36C4D60C		shape.wdf/71A5B02B	shape.wdf/AF9BF95F	shape.wdf/B2DA3DEF	shape.wdf/69DEF3EA	shape.wdf/E8869110	shape.wdf/BAFE6088	shape.wdf/3674634F	
-127	XYS-sword-0	sword	0	shape.wdf/4E4F426E	shape.wdf/1F5F1A06						shape.wdf/3707D42E		shape.wdf/057560BA	shape.wdf/890132FA	shape.wdf/BBB4A863	shape.wdf/20DD305B	shape.wdf/6D8A4155	shape.wdf/E902350C	shape.wdf/7C7BE729	
-128	XYS-sword-30	sword	30	shape.wdf/24A1E7B2	shape.wdf/E80950FB						shape.wdf/E2043B6B		shape.wdf/FE646A4D	shape.wdf/4769AF38	shape.wdf/D90C7ED7	shape.wdf/9F40BEB5	shape.wdf/76FE7FA6	shape.wdf/1495F42C	shape.wdf/08AA3C1B	
-129	XYS-sword-60	sword	60	shape.wdf/2039C08A	shape.wdf/8402C5C6						shape.wdf/51233AB5		shape.wdf/AFA10ED6	shape.wdf/78E26E67	shape.wdf/1EEAD699	shape.wdf/EA37CEFE	shape.wdf/74474E9C	shape.wdf/EDD5D518	shape.wdf/876AD6AF	
-130	XYS-sword-倚天	sword	XYS	90	shape.wdf/2C6C2CD5	shape.wdf/511F63AD						shape.wdf/FFA04479			shape.wdf/384C63ED	shape.wdf/D56F4965	shape.wdf/74C6C61E	shape.wdf/A5E5AF8A	shape.wdf/5A31993C	shape.wdf/FBA36656	
-131	XYS-sword-湛卢	sword	XYS	90	shape.wdf/439811D3	shape.wdf/6DE2CCCB						shape.wdf/026178E6		["shape.wdf\/E736E8A7","shape.wdf\/3542493F"]	shape.wdf/F5BD4003	shape.wdf/6B458593	shape.wdf/1542622E	shape.wdf/61D49BEE	shape.wdf/9E59C6C0	shape.wdf/252FEB34	
-132	XYS-sword-鱼肠	sword	XYS	90	shape.wdf/39BAEA10	shape.wdf/E9D644EA						shape.wdf/A5B2E5F4		shape.wdf/4E6EC869	shape.wdf/06A93432	shape.wdf/F42E3CBA	shape.wdf/C783B5E6	shape.wdf/4CE1FF4C	shape.wdf/C97F7C81	shape.wdf/B8C152E4	
-133	YNX-dbswords-0	dbswords	0	shape.wdf/57FABA5B	shape.wdf/9E945A44						shape.wdf/07AB7352		shape.wdf/9E6FFA22	shape.wdf/F8788170	shape.wdf/A4CD5AEB	shape.wdf/FD6D5E61	shape.wdf/DD1FC526	shape.wdf/6DADF138	shape.wdf/83DEC128	
-134	YNX-dbswords-30	dbswords	30	shape.wdf/85EA8EE5	shape.wdf/28BDF0D3						shape.wdf/DB450C49		shape.wdf/2E9B4B1A	shape.wdf/2ECAB0DF	shape.wdf/FB8E779C	shape.wdf/A9394DC6	shape.wdf/7D28D9B9	shape.wdf/48FB6FA6	shape.wdf/B69684C8	
-135	YNX-dbswords-60	dbswords	60	shape.wdf/5516FE05	shape.wdf/6F03B3F1						shape.wdf/4B3774CB		shape.wdf/8F937D83	shape.wdf/A3E6D345	shape.wdf/3B2C0252	shape.wdf/FC7B31A0	shape.wdf/A36F83EF	shape.wdf/64852879	shape.wdf/2A79217A	
-136	YNX-dbswords-月光	dbswords	YNX	90	shape.wdf/0E469C32	shape.wdf/6BA81FDD						shape.wdf/955A5646		shape.wdf/68F1E22B	shape.wdf/A350A1E1	shape.wdf/19DE2125	shape.wdf/CD64CEEA	shape.wdf/A076BFFC	shape.wdf/CA131352	shape.wdf/3629EF7E	
-137	YNX-dbswords-灵蛇	dbswords	YNX	90	shape.wdf/36D0EAA0	shape.wdf/34A6C801						shape.wdf/9B866653		shape.wdf/88448F76	shape.wdf/B4FBC16D	shape.wdf/9888BCD5	shape.wdf/963D070F	shape.wdf/0D897436	shape.wdf/E75EF067	shape.wdf/A3CA0654	
-138	YNX-dbswords-阴阳	dbswords	YNX	90	shape.wdf/B8D3407A	shape.wdf/1F76102B						shape.wdf/713FC298		shape.wdf/9FA3A0CF	shape.wdf/CFF7C8BE	shape.wdf/D611368A	shape.wdf/82113017	shape.wdf/14F8122D	shape.wdf/76433688	shape.wdf/F6E27C19	
-139	YNX-ring-月光	ring	YNX	90												shape.wdf/A08AE83A					
-140	YNX-whip-0	whip	0	shape.wdf/A22FC2E5	shape.wdf/A8AEF3B8						shape.wdf/6EF465BF		shape.wdf/DA5EFB33	shape.wdf/102B282D	shape.wdf/903D4077	shape.wdf/597AB27F	shape.wdf/9026809E	shape.wdf/D1ECB00D	shape.wdf/5C2D10F2	
-141	YNX-whip-30	whip	30	shape.wdf/B3633C82	shape.wdf/5AE46892						shape.wdf/75E605F9		shape.wdf/93CDE018	shape.wdf/EA54623C	shape.wdf/5965A0A3	shape.wdf/B03774F8	shape.wdf/DC04F6A7	shape.wdf/C23549CB	shape.wdf/441C3F28	
-142	YNX-whip-60	whip	60	shape.wdf/3BCAC42B	shape.wdf/F3F1826F						shape.wdf/03952879		shape.wdf/8E8E849F	shape.wdf/A72A927C	shape.wdf/05B2A77B	shape.wdf/B45537E5	shape.wdf/964DBFF9	shape.wdf/F4F0474A	shape.wdf/BD8C7B95	
-143	YNX-whip-吹雪	whip	YNX	90	shape.wdf/4E0D52A5	shape.wdf/09890457						shape.wdf/9E89AC82		shape.wdf/86A74127	shape.wdf/76486C84	shape.wdf/605C2D09	shape.wdf/63A109AC	shape.wdf/ED4178D4	shape.wdf/1A1A871E	shape.wdf/F3DA28E3	
-144	YNX-whip-百花	whip	YNX	90	shape.wdf/B2DBC65A	shape.wdf/220D09FF						shape.wdf/AE1C15E6		shape.wdf/57502ADD	shape.wdf/465909C9	shape.wdf/8FBAAE53	shape.wdf/6488B199	shape.wdf/191C1D73	shape.wdf/4F96B7D3	shape.wdf/90FEA997	
-145	YNX-whip-龙筋	whip	YNX	90	shape.wdf/0728CC3D	shape.wdf/F978C55E						shape.wdf/FAEEA6B3		shape.wdf/90A26BC5	shape.wdf/3AA174C6	shape.wdf/DF81E6DB	shape.wdf/6E2489AB	shape.wdf/108C1DD0	shape.wdf/A4346F9E	shape.wdf/71DC7BF6	
+FYN-DBSWORDS-000-X	DBSWORDS-0	DBSWORDS	FYN	0	12-93C238CA	12-CF591DCE						12-96490C40		12-8031F26F	12-41FFF0E3	12-AFBB95B1	12-AB92A2DC	12-39AA48DA	12-34BAA491	12-DF195D06		
+FYN-DBSWORDS-030-X	DBSWORDS-30	DBSWORDS	FYN	30	12-3792592B	12-9189A670						12-952D9106		12-9632CA57	12-5C53D004	12-CBF55AFB	12-A252525F	12-C174C17B	12-A2738C7B	12-EB77379E		
+FYN-DBSWORDS-060-X	DBSWORDS-60	DBSWORDS	FYN	60	12-F212CBBB	12-83343540						12-91D8CED8		12-B1488E22	12-01205749	12-12A82C16	12-16327936	12-CB929F8C	12-649E9348	12-CC900644		
+FYN-DBSWORDS-090-月光	月光	DBSWORDS	FYN	90	12-75577E3F	12-4B68D6FE						12-61DAAF0D		12-22F2099F	12-95D853ED	12-32C33CA1	12-B8A600B3	12-6F983820	12-64780576	12-B0927E94		
+FYN-DBSWORDS-090-灵蛇	灵蛇	DBSWORDS	FYN	90	12-22DF25FD	12-C4ED7657						12-6AED3D88		12-E29AD9CF	12-89815F3D	12-9F9BDD57	12-A6C8BDF9	12-3FEFD96D	12-B9A375F9	12-9E4F9B46		
+FYN-DBSWORDS-090-阴阳	阴阳	DBSWORDS	FYN	90	12-00642F2B	12-A776D93A						12-71D66263		12-9EAC7924	12-12600AC0	12-14283A2C	12-09AFED31	12-83C995CC	12-3723544D	12-253A5A38		
+FYN-DBSWORDS-120-祖龙对剑	祖龙对剑	DBSWORDS	FYN	120	15-088A1188	15-0D3ED468						15-D75FDA3E		15-D3C77EA7	15-3AC11A4A	15-FCA9B37C	15-7A6708E7	15-8296110B	15-4B2E98D5	15-5C0D3563		
+FYN-DBSWORDS-120-连理双树	连理双树	DBSWORDS	FYN	120	15-BFBE4DC9	15-4894EB42						15-A5AD359A		15-E39990F6	15-A6CCFF75	15-1573B46E	15-60C387C9	15-3A850568	15-21B03B34	15-06AAAF55		
+FYN-DBSWORDS-120-金龙双剪	金龙双剪	DBSWORDS	FYN	120	15-88E2548C	15-C70FF23A						15-F135BBF7		15-E83C74DD	15-541D2B10	15-4BF7E184	15-FFE37421	15-E66CD9E7	15-D98A649C	15-8022DC4A		
+FYN-RING-000-X	RING-0	RING	FYN	0	12-33473840	12-2BAFE98B						12-4279F8D9		12-7D6F309A	12-DDBEB2FE	12-CBC0AAAC	12-99CDE46B	12-0A672488	12-605B5511	12-5735E6ED		
+FYN-RING-030-X	RING-30	RING	FYN	30	12-D5C0A9EA	12-F7A43FBA						12-C66A83FF		12-FB3FA3CA	12-F720ACFB	12-53A09814	12-366C5969	12-33B6C6B2	12-DE3679FA	12-9681A54A		
+FYN-RING-060-X	RING-60	RING	FYN	60	12-2BF6E786	12-637D1CB6						12-64DAD51C		12-31594AC8	12-5E6C0FBC	12-DD76CF02	12-06C1DA32	12-93010C03	12-8539C817	12-AEF4A0C3		
+FYN-RING-090-乾坤	乾坤	RING	FYN	90	12-516AC342	12-6011B8EA						12-A251D7E5		12-E68983D9	12-B4DB9129	12-6A1F7FD1	12-7E678776	12-39A7FBB3	12-FB9357BC	12-74D95FEF		
+FYN-RING-090-如意	如意	RING	FYN	90	12-108FFF69	12-EEB4814C						12-6A161629		12-3CB38FC9	12-1589DF2E	12-C80FE8F4	12-F366D638	12-92EFBE84	12-51A646A2	12-763D71DF		
+FYN-RING-090-月光	月光	RING	FYN	90	12-D2011BDE	12-118B2316						12-A75BE2AF		12-3E187ABA	12-FA000751	12-62772F3C	12-B6F37898	12-A9C247D9	12-86406845	12-0465B016		
+FYN-RING-120-九天金线	九天金线	RING	FYN	120	15-454E8758	15-2D8326FB						15-2FFDA54A		15-47E05358	15-0F447971	15-F1C34AB6	15-3441D13C	15-445AC171	15-BD3AC1E3	15-247DFE6B		
+FYN-RING-120-离情别恨	离情别恨	RING	FYN	120	15-72013AF5	15-F2FB1AFA						15-542A9F86		15-867F7DD8	15-88C509EE	15-0639BD67	15-3DF21089	15-1C1E342F	15-8C401129	15-6220A048		
+FYN-RING-120-金玉双环	金玉双环	RING	FYN	120	15-A1661BC0	15-B6C5947A						15-59AD345F		15-8CAAC640	15-1563B8C3	15-612BC857	15-7612708F	15-4C9C9395	15-634EC2F4	15-6D8AE0A3		
+GJL-CLAW-000-X	CLAW-0	CLAW	GJL	0	12-F989095F	12-25966D3F						12-F1EE2F11		12-F5BA943C	12-BC3E962F	12-867A597A	12-8A4F6751	12-40199DCC	12-3748F6A9	12-2526B3EA		
+GJL-CLAW-030-X	CLAW-30	CLAW	GJL	30	12-30D51B62	12-F6F1F738						12-6E3BB4B8		12-544B94AD	12-B749448F	12-933455C5	12-A606B3DB	12-7A693C4E	12-64D4321F	12-CD5C1687		
+GJL-CLAW-060-X	CLAW-60	CLAW	GJL	60	12-3A6BD287	12-7CDCDA3D						12-FDB2431F		12-F8522536	12-E27E1988	12-2837F291	12-D9305287	12-742745A7	12-441041CA	12-24F1606F		
+GJL-CLAW-090-撕天	撕天	CLAW	GJL	90	12-3DF34F1E	12-E5D43556						12-37A78886		12-12923396	12-692044CD	12-1CBE28C3	12-DC68A49B	12-4E7EA1BA	12-5F724E86	12-3A173B74		
+GJL-CLAW-090-毒牙	毒牙	CLAW	GJL	90	12-D6EF0627	12-831F74AE						12-60DFDCB3		12-447EE874	12-3B164528	12-42626BB0	12-26AB5823	12-23304BAF	12-32728941	12-9672360C		
+GJL-CLAW-090-胭脂	胭脂	CLAW	GJL	90	12-7D916F78	12-F65B1CC4						12-8C30F8B0		12-39D76D1F	12-F5502ECA	12-77BE2BD9	12-38EB1AE4	12-10717167	12-DA8F8F3E	12-4BF87D02		
+GJL-CLAW-120-九阴勾魂	九阴勾魂	CLAW	GJL	120	15-63413CA4	15-9C82F08B						15-4213C361		15-1D25E53B	15-658E0BEF	15-C2C8E6D0	15-81AF76CC	15-E08090FE	15-C18100F8	15-A535478C		
+GJL-CLAW-120-贵霜之牙	贵霜之牙	CLAW	GJL	120	15-AE948CBB	15-7E47B81B						15-B9E93E0B			15-00C8AE59	15-23F05D8E	15-4571F7FB	15-9C1F4A87	15-A3569B03	15-AE5AA632		
+GJL-CLAW-120-雪蚕之刺	雪蚕之刺	CLAW	GJL	120	15-F1E4D97A	15-5D773943						15-0953A87B		15-3C91EA3F	15-1B9B11D4	15-647DFE7E	15-B8C711C1	15-349A0AB8	15-6BCFD3B2	15-9844539D		
+GJL-WAND-000-X	WAND-0	WAND	GJL	0	12-47B139FF	12-CC6586BF						12-FA7FD280		12-8FE3BEA0	12-222676F0	12-E2D1B70F	12-4731949D	12-0941A00D	12-6D4E8113	12-6630F39E		
+GJL-WAND-030-X	WAND-30	WAND	GJL	30	12-1890D9AC	12-0390362A						12-6CCC7A4A		12-42E263E4	12-C557050C	12-B9375497	12-5E37508B	12-5FBB7870	12-4DAB7375	12-19A4C6DD		
+GJL-WAND-060-X	WAND-60	WAND	GJL	60	12-9BE0BDFC	12-F9078A13						12-285CEE65		12-163D9056	12-CCDDBC6C	12-052FA8C3	12-5B46EE9F	12-D28EFB00	12-74D82F93	12-C4C9DF40		
+GJL-WAND-090-沧海	沧海	WAND	GJL	90	12-E09D1956	12-C903D321						12-85DE5B39		12-CB83EEB0	12-B6976B0B	12-FB9FF137	12-E14D59A1	12-D2E56C89	12-BD3C28A2	12-E73B28A3		
+GJL-WAND-090-盘龙	盘龙	WAND	GJL	90	12-CADD869E	12-3668B8CF						12-C6E0069E		12-F6F92105	12-17CB215E	12-F266AA0B	12-FD95AA56	12-7A6B9F19	12-2E523587	12-A8482DCF		
+GJL-WAND-090-红莲	红莲	WAND	GJL	90	12-850CE856	12-5562BE14						12-37B5F46A		12-D50E2004	12-CC22B70E	12-87EA62AB	12-89E8D79E	12-1E29CE90	12-26AB780E	12-4028EA83		
+GJL-WAND-120-墨玉骷髅	墨玉骷髅	WAND	GJL	120	15-41184BFA	15-1C9639D1						15-C2B7BE67		15-F2A668E4	15-2270FE80	15-3A49A69D	15-05FC0373	15-95825EFB	15-AE8BE65D	15-3FA9E6F0		
+GJL-WAND-120-降魔玉杵	降魔玉杵	WAND	GJL	120	15-51F29AF8	15-77E6448E						15-E5B821FF		15-84C9B4A1	15-C6C70F84	15-94FB2100	15-56DD4FF2	15-0FCDBD42	15-C4633DA9	15-63B4D733		
+GJL-WAND-120-青藤玉树	青藤玉树	WAND	GJL	120	15-162DD3BA	15-C603E808						15-0F84E93C		15-A6B13AC2	15-DCF64D63	15-42BD5211	15-8D0E3112	15-0DACA015	15-B6ED6D12	15-4B21107A		
+HMR-CLAW-000-X	CLAW-0	CLAW	HMR	0	12-DF87CD4F	12-5D1B5590						12-6AF7F563		12-24F4B783	12-4FEF1EA7	12-4192C3DA	12-AE93B28A	12-8E6F339A	12-0614BCAD	12-19A12B06		
+HMR-CLAW-030-X	CLAW-30	CLAW	HMR	30	12-ED0D88AC	12-14AE65AD						12-8B13CB85		12-68E91B65	12-0AD72AE7	12-15DA873C	12-29E43F90	12-93A10D16	12-9ABD0C53	12-47F38F34		
+HMR-CLAW-060-X	CLAW-60	CLAW	HMR	60	12-384265DC	12-7BB497CB						12-BB0D11E0		12-6C9A4954	12-C65E396A	12-F601D6B3	12-81F122C9	12-3915D6A9	12-6D81DEE8	12-923F9BBF		
+HMR-CLAW-090-撕天	撕天	CLAW	HMR	90	12-B067E312	12-EC076B9A						12-1AB5F9EA		12-8514D31B	12-BB4A6D59	12-A71B383C	12-D5778C18	12-47D2AE81	12-CC8EB2F2	12-BEFE2858		
+HMR-CLAW-090-毒牙	毒牙	CLAW	HMR	90	12-D0269AC5	12-036E1F96						12-08C5867D		12-B45B390B	12-9F9FBE67	12-FA20D655	12-11342CCF	12-A6C1E815	12-912316F6	12-3E5B09D1		
+HMR-CLAW-090-胭脂	胭脂	CLAW	HMR	90	12-B80C2BB9	12-0C92D6DC						12-89F28310		12-1E1C1A3D	12-19F17A9C	12-68268400	12-A32B271E	12-47800C96	12-D158B73D	12-E65BA446		
+HMR-CLAW-120-九阴勾魂	九阴勾魂	CLAW	HMR	120	15-C2DC1244	15-B0ED001E						15-7DA05B73		15-5FC665C6	15-0207A521	15-FC1EBE82	15-BDF7393B	15-00D6A42C	15-455532C4	15-9AA0BEAB		
+HMR-CLAW-120-贵霜之牙	贵霜之牙	CLAW	HMR	120	15-762F7556	15-CDD20A7E						15-2C2F7B32		15-5D459229	15-78C92741	15-1C4B096A	15-373B3630	15-F1E864DE	15-0198B2A3	15-BEF8C875		
+HMR-CLAW-120-雪蚕之刺	雪蚕之刺	CLAW	HMR	120	15-C4B56A00	15-0381802B						15-02F037E5		15-F8773A17	15-C92DEC35	15-E1416666	15-BB6019AB	15-5CC560E6	15-2F66EA72	15-F9841340		
+HMR-WHIP-000-X	WHIP-0	WHIP	HMR	0	12-1C6D7AF6	12-3C8CD8EB						12-2815B13B		12-0EB4F3A5	12-8E0A7548	12-C7879D69	12-1169732B	12-3430C16A	12-F83CFA1C	12-AB4A695F		
+HMR-WHIP-030-X	WHIP-30	WHIP	HMR	30	12-783B99E0	12-0D0DE5CE						12-AE8EC978		12-BECD5222	12-568489BF	12-B52F9728	12-9D6F22CD	12-19EF1EEA	12-D16DAE42	12-D1A122A0		
+HMR-WHIP-060-X	WHIP-60	WHIP	HMR	60	12-50FD2242	12-1718D825						12-C3971BB5		12-948ABA4D	12-2FE5C5EF	12-23B56CEF	12-BF590140	12-CBCA5A30	12-89D57483	12-1D194BE4		
+HMR-WHIP-090-吹雪	吹雪	WHIP	HMR	90	12-BC2F95EF	12-16AC35C8						12-AAA64B39		12-6AE395B1	12-A5D78787	12-D02D93A9	12-B7923B94	12-FD9FD7D6	12-131008BD	12-7BB7D9DB		
+HMR-WHIP-090-百花	百花	WHIP	HMR	90	12-888C7C46	12-E7CBB64B						12-8626964B		12-76A51EFA	12-59921DBD	12-6A8604D1	12-2096E1A8	12-BC69B296	12-DA330192	12-A43715B9		
+HMR-WHIP-090-龙筋	龙筋	WHIP	HMR	90	12-D76152B7	12-B241D7A6						12-032A52E5		12-42F7FD85	12-E02143AB	12-1C889A99	12-03AF0FBE	12-BBADD70A	12-71208843	12-C4F3C696		
+HMR-WHIP-120-仙人指路	仙人指路	WHIP	HMR	120	15-87BE19F7	15-10C7E94F						15-32C02EDF		15-3DAE3A0F	15-45BA5D1C	15-F0B89FF3	15-272CC7B2	15-50FB95AE	15-1C379E57	15-6ADBC2C1		
+HMR-WHIP-120-游龙惊鸿	游龙惊鸿	WHIP	HMR	120	15-B11264BE	15-7C2A8EF7						15-549A9224		15-E9231608	15-63FC9033	15-FE75A9B2	15-614AB250	15-42AE8167	15-4ECF3861	15-551708DF		
+HMR-WHIP-120-血之刺藤	血之刺藤	WHIP	HMR	120	15-430429EE	15-AB7969FB						15-CC69FC85		15-9B4D81DB	15-F1680794	15-34F89934	15-D345B00D	15-73C56C0D	15-126B49C8	15-94631133		
+HTG-AXE-000-X	AXE-0	AXE	HTG	0	12-EADD5CDD	12-7467F32A						12-33AF0AC4		12-33453188	12-CEA1CBF1	12-AB222D43	12-5B58D8FC	12-4B2FBF37	12-AA6C0D05	12-4EA1D3FB		
+HTG-AXE-030-X	AXE-30	AXE	HTG	30	12-574D7DF4	12-E70BA89B						12-78FB6739		12-FDB3FA02	12-9C82D8D9	12-3FF7420A	12-79FFDC33	12-DDE71F8A	12-95F2CC53	12-CCAB1263		
+HTG-AXE-060-X	AXE-60	AXE	HTG	60	12-5923D5C3	12-578771AB						12-F4DAF57E		12-2CD2C6D6	12-B92A33F2	12-022BBA4E	12-120F78F4	12-E3C6BC8F	12-5A5A13FD	12-307D1D47		
+HTG-AXE-090-无敌	无敌	AXE	HTG	90	12-D88565BC	12-375756CE						12-F794AED0		12-B09776EA	12-D4CE280E	12-A29CEE6F	12-D31F21ED	12-3CB8529D	12-E493F44D	12-F2665DBF		
+HTG-AXE-090-破魄	破魄	AXE	HTG	90	12-53F914DE	12-8102D783						12-924CF59A		12-36986D43	12-03F6C432	12-AF9DB1C5	12-4EB57F0D	12-70CEB588	12-45E0E264	12-08D155E9		
+HTG-AXE-090-肃魂	肃魂	AXE	HTG	90	12-E8866C8F	12-16B86A5E						12-E61D413C		12-9158BD4A	12-C786D6C9	12-2704053E	12-B5729FEE	12-91AA64AF	12-1BD8A43D	12-07133A02		
+HTG-AXE-120-五丁开山	五丁开山	AXE	HTG	120	15-2261BF73	15-B02E0452						15-8CE4AF4F		15-7098777D	15-7AE7D965	15-5BDEB025	15-2B159745	15-679BB0C2	15-6B2C27BA	15-DA440FF6		
+HTG-AXE-120-元神禁锢	元神禁锢	AXE	HTG	120	15-FC8BAA37	15-C133DEC4						15-7695E8B7		15-E144359C	15-149DC6CE	15-45636EB9	15-58876FA0	15-AB1DB281	15-3DFF4602	15-DB9BB680		
+HTG-AXE-120-护法灭魔	护法灭魔	AXE	HTG	120	15-0F200DE2	15-EE971A2F						15-2446E50C		15-EEC9A174	15-8B1A4EE8	15-115D4503	15-A2833E0A	15-5E9442BF	15-B475223E	15-49F6E907		
+HTG-HAMMER-000-X	HAMMER-0	HAMMER	HTG	0	12-35A60822	12-6C4C0BD8						12-573FE90B		12-04AFB943	12-EBB8F006	12-6AC733AE	12-82D84EBA	12-21E7923D	12-D30D97DD	12-FBC7D402		
+HTG-HAMMER-030-X	HAMMER-30	HAMMER	HTG	30	12-670E31BF	12-212E741F						12-140E6041		12-269C8E0F	12-3645C935	12-9E1EF82B	12-63F4B3EA	12-02091623	12-2EB307EE	12-16C16088		
+HTG-HAMMER-060-X	HAMMER-60	HAMMER	HTG	60	12-28534F72	12-9E4325F4						12-179BFBBA		12-F4BE8E14	12-7B955EC3	12-3DAEC472	12-3F3C6BEF	12-83FE80E6	12-779165FA	12-031372EA		
+HTG-HAMMER-090-八卦	八卦	HAMMER	HTG	90	12-A438A403	12-AC1BAB97						12-DAA88DDF		12-9EB4376A	12-F4E93C19	12-257EEB28	12-BF887095	12-6AD54C39	12-4AD24B6C	12-DCA25DA6		
+HTG-HAMMER-090-雷神	雷神	HAMMER	HTG	90	12-8CF27534	12-DA17EC9A						12-1BBB77CD		12-4ACBDCEC	12-DA88EFD1	12-955E8867	12-7D667999	12-DE2BC9A6	12-1B5E2637	12-819218AF		
+HTG-HAMMER-090-鬼牙	鬼牙	HAMMER	HTG	90	12-56DA382F	12-959DF477						12-39793BD1		12-98779F86	12-BE38AE31	12-359A5C9F	12-4E17B675	12-6BE1D5E3	12-89559B34	12-1A309122		
+HTG-HAMMER-120-九瓣莲花	九瓣莲花	HAMMER	HTG	120	15-A7B9EF31	15-F5C7E01A						15-DC911C1C		15-ED06D60C	15-FB0BEA06	15-A4DDBB0C	15-F40AADD9	15-CAC37BCA	15-5FC674FD	15-99C21B07		
+HTG-HAMMER-120-混元金锤	混元金锤	HAMMER	HTG	120	15-8E7866EB	15-9101F598						15-E9746565		15-3E69C4EF	15-C54D0244	15-26AF1021	15-C307E3B9	15-C3F5449A	15-1B53DAA0	15-8679C097		
+HTG-HAMMER-120-鬼王蚀日	鬼王蚀日	HAMMER	HTG	120	15-A14E222D	15-757CC5CE						15-0F5CB50C		15-807E4AD1	15-873BDAAD	15-DBF111B6	15-20FCEC9C	15-C0242BDC	15-46413AE9	15-2BBA9DD9		
+JMW-AXE-000-X	AXE-0	AXE	JMW	0	12-F5164FF2	12-9FBAAD0D						12-0901BAE0		12-75CA98B2	12-0C6A0AAF	12-B02E8A71	12-EF91014D	12-D96B7C58	12-ED74F8D8	12-CA6B78BA		
+JMW-AXE-030-X	AXE-30	AXE	JMW	30	12-20D1A0D3	12-B5BEE359						12-750DA691		12-B943B892	12-6AE10650	12-091FFF0A	12-9F2DB6EA	12-D7AE7052	12-2071C9B9	12-57BA0DF3		
+JMW-AXE-060-X	AXE-60	AXE	JMW	60	12-446B12BA	12-3C85094B						12-E959DF5B		12-97FFD83A	12-0AE0FBC9	12-69E3A0BA	12-A6BA072D	12-405A73C1	12-B9DD7791	12-E8628FDE		
+JMW-AXE-090-无敌	无敌	AXE	JMW	90	12-6AE68E94	12-29FE3B3E						12-1F45061E		12-804B8502	12-6A089299	12-B1025B4C	12-2F03D1CD	12-4943EF5D	12-0F56BDD3	12-6DBCB6F1		
+JMW-AXE-090-破魄	破魄	AXE	JMW	90	12-02CECBCB	12-B8554947						12-1076799E		12-B5651224	12-130B01A7	12-804BA4F5	12-6C03C38C	12-F4B18107	12-4D201E92	12-ED81F90C		
+JMW-AXE-090-肃魂	肃魂	AXE	JMW	90	12-726F7762	12-199CF19E						12-C17EC778		12-5372641E	12-DE2E4C7C	12-E7CBE13D	12-298B1905	12-AE0DF75C	12-31893323	12-F60133A9		
+JMW-AXE-120-五丁开山	五丁开山	AXE	JMW	120	15-DDE32A30	15-7D02D5DB						15-273FDCD7		15-D55FEABD	15-A4CE5ECE	15-742B0BC4	15-458086BD	15-6CC2590E	15-4E3F0D64	15-622DC686		
+JMW-AXE-120-元神禁锢	元神禁锢	AXE	JMW	120	15-6693BB73	15-4E32D0BC						15-8A3C6542		15-B1A5C157	15-6014A839	15-857B8CD4	15-A3DCC0F9	15-54BCDD70	15-AF37F499	15-E406024A		
+JMW-AXE-120-护法灭魔	护法灭魔	AXE	JMW	120	15-75E45C94	15-DA6126C5						15-30716265		15-F3568F46	15-4094CD05	15-A9BA51E0	15-FE1824DC	15-7486F5A3	15-621356D2	15-98119E67		
+JMW-KNIFE-000-X	KNIFE-0	KNIFE	JMW	0	12-8EC686F9	12-A82465FE						12-572E86F3		12-E2FF6E31	12-50597842	12-B9817F22	12-C5C39E50	12-45515530	12-6CBED6D0	12-5F15B662		
+JMW-KNIFE-030-X	KNIFE-30	KNIFE	JMW	30	12-46AEDFD4	12-D6932CA0						12-962C24BC		12-13E6AC09	12-D1FC130C	12-CC49242D	12-FE49E3B6	12-6CBBE06C	12-EE66C929	12-6B4B8E1C		
+JMW-KNIFE-060-X	KNIFE-60	KNIFE	JMW	60	12-F54F61CC	12-C67C1E31						12-150187C0		12-4C8C0C7F	12-7BC815E6	12-FF56A136	12-8509A043	12-52F290D5	12-711C8005	12-E1CB63E5		
+JMW-KNIFE-090-冷月	冷月	KNIFE	JMW	90	12-63C760FF	12-55BBAF5F						12-5376CB41		12-624E2193	12-19CD05C8	12-C90E43D9	12-367DAE76	12-D504763E	12-9F4BF693	12-7D6AE6EB		
+JMW-KNIFE-090-屠龙	屠龙	KNIFE	JMW	90	12-8766C9AD	12-355A127C						12-69D5D73F		12-BC03C74A	12-587A6710	12-3B3E09BE	12-A3CA6668	12-84557D2D	12-80BD15FA	12-5C60828E		
+JMW-KNIFE-090-血刃	血刃	KNIFE	JMW	90	12-D94CA07F	12-708AE46C						12-344FAC76		12-33B559B9	12-7397E94A	12-D46EFBF8	12-5A575B62	12-2E4CE6AC	12-C3426C09	12-369B99F0		
+JMW-KNIFE-120-偃月青龙	偃月青龙	KNIFE	JMW	120	15-F6A68E4C	15-B20BA1E9						15-708D3738		15-6DB84727	15-EF05B000	15-50656FB0	15-1EAAA033	15-33C9CE18	15-AC3046F1	15-480133C8		
+JMW-KNIFE-120-斩妖泣血	斩妖泣血	KNIFE	JMW	120	15-15B2D6D4	15-14997A50						15-17D23119		15-FD25747C	15-710386EC	15-D40CA201	15-CB301C86	15-07D49C6F	15-A96EB03A	15-1401B49F		
+JMW-KNIFE-120-晓风残月	晓风残月	KNIFE	JMW	120	15-4B2232FE	15-2D70D93E						15-225166AC		15-22787B7D	15-28CD4516	15-444D5943	15-96DD074C	15-74D08E4F	15-FF79946A	15-AE310B8A		
+JXK-KNIFE-000-X	KNIFE-0	KNIFE	JXK	0	12-0CBF0DDB	12-49CFC3C3						12-6D8CD78C		12-A20CEC4C	12-89AB1AA2	12-DEECDD99	12-9B6684AA	12-4EE523B0	12-59E7B49F	12-62542FAE		
+JXK-KNIFE-030-X	KNIFE-30	KNIFE	JXK	30	12-B8E78B22	12-0B959D2E						12-F369A222		12-EBCBECD9	12-367CFC3D	12-127C941A	12-C09DA0E7	12-D70D4B6C	12-23D50B12	12-76F84A6F		
+JXK-KNIFE-060-X	KNIFE-60	KNIFE	JXK	60	12-494C6456	12-BB949BDE						12-2F208C10		12-E901E5AF	12-A0B18DB3	12-6C8532E9	12-BA8BC02F	12-94B928E6	12-9111125D	12-F0701C55		
+JXK-KNIFE-090-冷月	冷月	KNIFE	JXK	90	12-DA08D26D	12-6C6F4579						12-966B7CF6		12-2F8461AF	12-3EA14AA9	12-67AEB824	12-48B667F0	12-D31BBC2E	12-C59530C4	12-13D8A670		
+JXK-KNIFE-090-屠龙	屠龙	KNIFE	JXK	90	12-CF5D83D8	12-9D1236B7						12-96D460DD		12-1857D96E	12-35377639	12-AD169C41	12-13049665	12-3DFF9132	12-C40B2DF4	12-DEE9015C		
+JXK-KNIFE-090-血刃	血刃	KNIFE	JXK	90	12-85D0D994	12-50DA4A82						12-A397A012		12-97277986	12-EAFBC7A1	12-580DD414	12-C1F95358	12-274498A8	12-0BE3220F	12-D42183F5		
+JXK-KNIFE-120-偃月青龙	偃月青龙	KNIFE	JXK	120	15-C68B564D	15-922E909A						15-74E6492F		15-A8A90594	15-0B59A408	15-D3338931	15-56769945	15-56AF015E	15-32668FD2	15-E4CF7845		
+JXK-KNIFE-120-斩妖泣血	斩妖泣血	KNIFE	JXK	120	15-0EFA39F2	15-16FE7AF5						15-96AA8584		15-B0BBAB94	15-C8AE77EB	15-DC37D837	15-35C64622	15-0D56DFC8	15-0B463632	15-193FB757		
+JXK-KNIFE-120-晓风残月	晓风残月	KNIFE	JXK	120	15-E6AD88AE	15-6ED6B121						15-0D3D8C54		15-B96FB2E6	15-D76B70C3	15-5413F763	15-632A945E	15-4C99E6E9	15-442EFFF7	15-09A97790		
+JXK-SWORD-000-X	SWORD-0	SWORD	JXK	0	12-9298825C	12-29DF2153						12-51140EE1		12-1F503F23	12-FDB2C365	12-38875CCF	12-EA117128	12-20AFEA5A	12-B175A6F1	12-DEC859C9		
+JXK-SWORD-030-X	SWORD-30	SWORD	JXK	30	12-FCB4A08E	12-2980D884						12-A2B30DEC		12-8B8466A5	12-E9C8CEB8	12-D5BACFDF	12-7DD07B41	12-3BAC006D	12-A818B5C4	12-B495D633		
+JXK-SWORD-060-X	SWORD-60	SWORD	JXK	60	12-CC5E9C79	12-59207938						12-6B3A934F		12-BC16BE43	12-07AC6964	12-341AA6EC	12-BBBAC247	12-219210C2	12-07B27AB7	12-4B13C413		
+JXK-SWORD-090-倚天	倚天	SWORD	JXK	90	12-8AD7AD90	12-0193E0A5						12-3FB65FEA		12-15761F33	12-51920636	12-1EDD2B87	12-0BA5689F	12-C97A015E	12-B8F5BE10	12-9DE26E92		
+JXK-SWORD-090-湛卢	湛卢	SWORD	JXK	90	12-6DAEF05B	12-23F632FC						12-92CD56C7		12-15496789	12-0A67C9FE	12-41111799	12-59892B0F	12-07E9EF20	12-E1B680D4	12-E195D52B		
+JXK-SWORD-090-鱼肠	鱼肠	SWORD	JXK	90	12-E7D37130	12-2F360F92						12-A0D7AA75		12-D29C9040	12-FBFF765E	12-C4E6E357	12-3C5E4D93	12-6EF6C6D6	12-6FC1F329	12-E26BD5F3		
+JXK-SWORD-120-四法青云	四法青云	SWORD	JXK	120	15-DF749306	15-1BEC0D8A						15-61E42EFE		15-2928EE5B	15-89352821	15-27080BB2	15-C2CF850F	15-C241C3B4	15-3AF71E8F	15-EF986A6C		
+JXK-SWORD-120-灵犀神剑	灵犀神剑	SWORD	JXK	120	15-31034D66	15-DFC62A73						15-2C109E44		15-858BAFEA	15-6337FB39	["15-853DF6F5","15-B94B5FFF"]	15-050001B1	15-87AA198D	15-67417EB8	15-0576AB01		
+JXK-SWORD-120-魏武青虹	魏武青虹	SWORD	JXK	120	15-241DF4E3	15-3DDB7FF0						15-09639ED0		15-58B55F16	15-D34E3B61	15-AFF3EFD9	15-23C13588	["15-3C57AB63","15-69DCFB54"]		15-C2E78C48		
+LTZ-FAN-000-X	FAN-0	FAN	LTZ	0	12-EE5BB0A8	12-322CF1FD						12-D4ACCBE9		12-5133F557	12-E1C39FA4	12-07B8B943	12-45D3D9FF	12-3373DDFA	12-FEA0A451	12-F1B65EEF		
+LTZ-FAN-030-X	FAN-30	FAN	LTZ	30	12-9F33CB04	12-0C5A7BD5						12-A9268815		12-CB336D0F	12-70D03563	12-27B5F7A5	12-04CC6E0E	12-ED3E696A	12-70D1FD95	12-5E6D440C		
+LTZ-FAN-060-X	FAN-60	FAN	LTZ	60	12-1E2EAD70	12-F6E24EFF						12-C22FF943		12-425BD517	12-6C61F14D	12-84D9458A	12-CDD1B9F5	12-D8973E56	12-CC1C2A21	12-47D2C78D		
+LTZ-FAN-090-太极	太极	FAN	LTZ	90	12-58D20E79	12-A963CEE9						12-8542FE91		12-073788A5	12-E8CF21B4	12-277578F9	12-100D6352	12-6E68C79D	12-585DA167	12-1EEDE502		
+LTZ-FAN-090-玉龙	玉龙	FAN	LTZ	90	12-44BEAA26	12-E819C83D						12-4469314E		12-258C58E7	12-8B1A91C7	12-0FB2D7FC	12-33681D03	12-5D9A4F8F	12-598632E9	12-1A80F678		
+LTZ-FAN-090-秋风	秋风	FAN	LTZ	90	12-387B481F	12-FB69C03A						12-2CB34A9C		12-F3251804	12-2E3F062C	12-69CB9FE8	12-1469C288	12-186FB234	12-471937D0	12-F48F85DD		
+LTZ-FAN-120-画龙点睛	画龙点睛	FAN	LTZ	120	15-741AAD01	15-7691CE27						15-A5ECCE13		15-84E8AD8D	15-1C96F0AE	15-0E08ECC7	15-3CB10E05	15-C6A64E4F	15-C9DB320C	15-A8944364		
+LTZ-FAN-120-秋水人家	秋水人家	FAN	LTZ	120	15-B68FBD09	15-9A1E802B						15-3F8074A7		15-9DC74778	15-CA27EADD	15-47960230	15-30BFB5D9	15-73B4E0F2	15-1C73DF1E	15-7E6A02E4		
+LTZ-FAN-120-逍遥江湖	逍遥江湖	FAN	LTZ	120	15-D1FABFBB	15-46AB4BEC						15-057A2EE1		15-F77B1B96	15-14ADD1AD	15-C30666F3	15-A028D058	15-ED3B9B38	15-4C37C606	15-FFEBAECB		
+LTZ-SPEAR-000-X	SPEAR-0	SPEAR	LTZ	0	12-8EEAFA06	12-891E895D						12-6A0CC9B9		12-D3485670	12-9ED583E4	12-1C7570AF	12-2791D986	12-AA48FD68	12-9C9009E2	12-F7B357E4		
+LTZ-SPEAR-030-X	SPEAR-30	SPEAR	LTZ	30	12-8793DDDA	12-6CD3B588						12-4F68D4C8		12-0A2ED5D5	12-FADAC7CA	12-A096A348	12-99641EA4	12-FF355A51	12-0A959632	12-48B9E33E		
+LTZ-SPEAR-060-X	SPEAR-60	SPEAR	LTZ	60	12-65E21040	12-02FBCDFD						12-C8B75AF3		12-184DFED9	12-26C7D8DE	12-7D09B1E1	12-4898BCCA	12-602041FC	12-9390C290	12-484A9285		
+LTZ-SPEAR-090-暗夜	暗夜	SPEAR	LTZ	90	12-360C3189	12-1804E147						12-758C38C1		12-F26835F7	12-2C2F2BF5	12-58F2AAE4	12-685F4E20	12-DB3D1385	12-3BA5FB01	12-820FEE7B		
+LTZ-SPEAR-090-梨花	梨花	SPEAR	LTZ	90	12-D44FE954	12-219B45D1						12-BE16A514		12-5F43421E	12-DF5A134D	12-8E6BD0FA	12-62402B92	12-E9912C61	12-087A9AAE	12-B687FE24		
+LTZ-SPEAR-090-霹雳	霹雳	SPEAR	LTZ	90	12-27884353	12-349B0F38						12-5A213D27		12-4E43DFA7	12-10A116DF	12-ECB93613	12-F20562CF	12-8189EB51	12-F3B54905	12-D91EE2B6		
+LTZ-SPEAR-120-五虎断魂	五虎断魂	SPEAR	LTZ	120	15-929158FC	15-C2E1216A						15-3F9A4477		15-7F17D125	15-4BDB12B5	15-F3C7DED0	15-9D18395C	15-63BFFD80	15-FFCD940C	15-5EE47D55		
+LTZ-SPEAR-120-刑天之逆	刑天之逆	SPEAR	LTZ	120	15-31CA69F0	15-898AF13F						15-7785B802		15-CD583801	15-478FD7EF	15-38B2A3FF	15-F220C274	15-0D2574A8	15-090E34B4	15-D1296417		
+LTZ-SPEAR-120-飞龙在天	飞龙在天	SPEAR	LTZ	120	15-15E284F9	15-0A73B2E0						15-A87E49E8		15-28FCF221	15-49187E40	15-367AC070	15-4E9D13AE	15-1255644D	15-C01CBCE4	15-41E835B5		
+STB-HAMMER-000-X	HAMMER-0	HAMMER	STB	0	12-16F53166	12-34ECF58B						12-55AF9960		12-C1BDDCE2	12-EF428937	12-F526FC31	12-C22788DB	12-C2DBD0A7	12-1AAA20B1	12-68901E3E		
+STB-HAMMER-030-X	HAMMER-30	HAMMER	STB	30	12-B929FBE6	12-5E08DA6D						12-C6E815F9		12-5F4203BF	12-0631B4FD	12-2E48CCD8	12-28DDD798	12-17E6941F	12-FB1ED518	12-A0229FC1		
+STB-HAMMER-060-X	HAMMER-60	HAMMER	STB	60	12-38C32912	12-FE1566C1						12-19D4917C		12-12D8DE6D	12-B4EDD4F2	12-F84AF7A2	12-27885331	12-F71C7492	12-8A8324A1	12-BA82A21C		
+STB-HAMMER-090-八卦	八卦	HAMMER	STB	90	12-34C418DA	12-507D4252						12-35A8F0B2		12-82407177	12-94265799	12-14046CB9	12-66D1B6C4	12-793550FC	12-CAEC2F8A	12-F721C3A5		
+STB-HAMMER-090-雷神	雷神	HAMMER	STB	90	12-737EC63F	12-D975473A						12-8EF49891		12-E9ABFCA8	12-08D989AB	12-B7FDF970	12-95EC45BF	12-B26753BA	12-395EF48B	12-AF8C0C4D		
+STB-HAMMER-090-鬼牙	鬼牙	HAMMER	STB	90	12-03009A64	12-714AB64B						12-C83BA782		12-422C2503	12-90E27B30	12-943B58DD	12-9FD1AFF1	12-A36AA059	12-B64178C2	12-9C39B362		
+STB-HAMMER-120-九瓣莲花	九瓣莲花	HAMMER	STB	120	15-74DB84D7	15-5C6B9F7E						15-408AA82E		15-DF6B5E75	15-2992BE48	15-24BCD4C4	15-3749C23C	15-8268BE51	15-264D2FC6	15-440FF8B1		
+STB-HAMMER-120-混元金锤	混元金锤	HAMMER	STB	120	15-F8C77ECC	15-35E001B0						15-EB8FB1AE		15-22660FAB	15-72A1D6A3	15-562708EE	15-6D63322F	15-BD0D8BDD	15-C4AFFE97	15-4D37D663		
+STB-HAMMER-120-鬼王蚀日	鬼王蚀日	HAMMER	STB	120	15-3F0043C7	15-1B7D4384						15-0910F0EA		15-687367B2	15-396BBD55	15-109D5CC1	15-B1EC4BAE	15-684E0347	15-B5AF2F57	15-E6890E14		
+STB-SPEAR-000-X	SPEAR-0	SPEAR	STB	0	12-2BB55863	12-77B8F44E						12-FAA82565		12-044EC256	12-1B3DA579	12-70141536	12-58199DFF	12-06FA3D33	12-8D50B13E	12-1F2A6CEB		
+STB-SPEAR-030-X	SPEAR-30	SPEAR	STB	30	12-D47ABE5E	12-854EFD4C						12-736EF1CC		12-AF839CE8	12-185417D0	12-2479A84F	12-D8CE2C9C	12-361B1B5A	12-260B3284	12-39DEF78F		
+STB-SPEAR-060-X	SPEAR-60	SPEAR	STB	60	12-1D4CF669	12-0E0B110D						12-224AF5B0		12-B97A9664	12-B722A1E4	12-B0CEB342	12-93030C65	12-34ADB171	12-AF20C0EF	12-8CCF88F5		
+STB-SPEAR-090-暗夜	暗夜	SPEAR	STB	90	12-FBF07390	12-981089C2						12-3A214293		12-608C7ED2	12-408C1744	12-C9B1FF34	12-379B49F6	12-14118D48	12-F57E053B	12-E82C0871		
+STB-SPEAR-090-梨花	梨花	SPEAR	STB	90	12-D5D1ED58	12-D2D808EA						12-CC9E2DF9		12-C4E5BEA8	12-3E5E0C20	12-49ED5D45	12-6FA1D30D	12-DD03EB08	12-E6F2DE10	12-9D09357C		
+STB-SPEAR-090-霹雳	霹雳	SPEAR	STB	90	12-BC15930A	12-F7528A04						12-FCAC26D9		12-C7A21BAF	12-3EA5CDB1	12-D11888A6	12-AC3EFA4B	12-08863F3C	12-FFE877A3	12-7C5496BE		
+STB-SPEAR-120-五虎断魂	五虎断魂	SPEAR	STB	120	15-EF75190E	15-7A0C3835						15-C0F4692C		15-2122817D	15-A7E6292F	15-28BACD6F	15-0D4F3788	15-82DF46F4	15-56071405	15-11D17ABB		
+STB-SPEAR-120-刑天之逆	刑天之逆	SPEAR	STB	120	15-DBFE3FDE	15-EB04F56A						15-5F3D29DB		15-90921819	15-F16CBD40	15-65EC9E79	15-09FED1F8	15-1E3E6431	15-34C2D0CD	15-64A4E570		
+STB-SPEAR-120-飞龙在天	飞龙在天	SPEAR	STB	120	15-37F26C44	15-D751042A						15-62C62014		15-6FB32EF3	15-792C024F	15-DEF0D6A2	15-23BF228C	15-82091C4A	15-6319D3A4	15-ED226AF0		
+WTJ-RIBBON-000-X	RIBBON-0	RIBBON	WTJ	0	12-FB8435BA	12-9CF5D9F8						12-7FDC01EF		12-81AFF12D	12-249CA457	12-A0D26048	12-7869F2F1	12-B123AD72	12-5CC3EF52	12-F42E7944		
+WTJ-RIBBON-030-X	RIBBON-30	RIBBON	WTJ	30	12-FA700B5C	12-CEEFD88F						12-740A2D9B		12-9590CE9D	12-00CE8E90	12-1AB92BE1	12-0CBFA482	12-87F6C085	12-800D0904	12-296AAA3F		
+WTJ-RIBBON-060-X	RIBBON-60	RIBBON	WTJ	60	12-35DEB132	12-92015297						12-B3E404B5		12-6ED204E3	12-56666D0D	12-C5132AA5	12-AE3DC66F	12-FDBD116F	12-701A7AB7	12-F7C94338		
+WTJ-RIBBON-090-彩虹	彩虹	RIBBON	WTJ	90	12-4EA5BCD9	12-D0D7B4C6						12-DD381373		12-E41A67D2	12-E9C06D77	12-57242E36	12-959CB7D3	12-27457CFE	12-933CB634	12-0F9795CC		
+WTJ-RIBBON-090-流云	流云	RIBBON	WTJ	90	12-C0499E98	12-4F0D82C7						12-95E671BC		12-0BD59823	12-FA17B299	12-A70795DA	12-6D8CBADD	12-E798F6EE	12-C4EE3158	12-39F5F74C		
+WTJ-RIBBON-090-碧波	碧波	RIBBON	WTJ	90	12-809C371A	12-C0A2F354						12-F52DB273		12-9E4E7A27	12-3DADA117	12-AA2F9916	12-440F1447	12-0E65D700	12-6B357EAF	12-8C6CA17E		
+WTJ-RIBBON-120-晃金仙绳	晃金仙绳	RIBBON	WTJ	120	15-14918F2D	15-7AEB22FC						15-1FFCD155		15-78F39055	15-1CAB7340	15-514ACB52	15-FBF2AA14	15-03F76D37	15-59E3192C	15-7639F388		
+WTJ-RIBBON-120-此最相思	此最相思	RIBBON	WTJ	120	15-B04EF3E7	15-E47097A9						15-B672E3C1		15-49DBF047	15-75D5FE64	15-6C5C286E	15-8D8C7E7B	15-D54E217E	15-00822B57	15-E89D58D6		
+WTJ-RIBBON-120-秋水落霞	秋水落霞	RIBBON	WTJ	120	15-BC559AEB	15-BC89D4EB						15-79742916		15-2929C238	15-47A6C5FE	15-500BF2DB	15-586FE047	15-E4D0B2C5	15-AE42DC6B	15-B5C9D011		
+WTJ-RING-000-X	RING-0	RING	WTJ	0	12-6209096A	12-68D86D0F						12-69C1D177		12-7FB32E9F	12-4A49A3C8	12-098A9B5E	12-BC699632	12-F79D0F75	12-ECE17D56	12-B2530EEA		
+WTJ-RING-030-X	RING-30	RING	WTJ	30	12-A7564E46	12-083E8239						12-54D22C16		12-5AD69DFC	12-EA0EAFAD	12-0A5EFB14	12-51E5EECF	12-F75AE57E	12-5B683D9C	12-9514AC71		
+WTJ-RING-060-X	RING-60	RING	WTJ	60	12-0B98FD5E	12-904EFD65						12-650CFADE		12-86761D6A	12-DAA7FA2D	12-F2F2BBA6	12-2A71A746	12-1E1747C9	12-F9ED9F7B	12-00953C84		
+WTJ-RING-090-乾坤	乾坤	RING	WTJ	90	12-F5703AD8	12-34EE6DFD						12-A9F50EA6		12-5A4F043D	12-0FE54BEF	12-0F466AC5	12-24B582F2	12-9097BCFC	12-B9AC122B	12-E7E9DDCD		
+WTJ-RING-090-如意	如意	RING	WTJ	90	12-A6CC01C9	12-2A517CC1						12-71E8052E		12-32AE6FDD	12-C2C167A0	12-1DCFDF19	12-0BCCC321	12-45899556	12-BF140A76	12-8C25B012		
+WTJ-RING-090-月光	月光	RING	WTJ	90	12-B0F8CC3F	12-D5C8A187						12-00F872EC		12-DC1F4DE8	12-BCA9C8B0		12-552ED440	12-ED8427A2	12-E6E8CBF9	12-886A0113		
+WTJ-RING-120-九天金线	九天金线	RING	WTJ	120	15-F5E7C6EF	15-0218E725						15-10BA04C5		15-65FCC3EF	15-63899785	15-8075C3C0	15-A2461031	15-AEE2184A	15-E849996B	15-A323C471		
+WTJ-RING-120-离情别恨	离情别恨	RING	WTJ	120	15-F420B6F9	15-0958E12B						15-3238582D		15-83BD5346	15-2FA77A14	15-6EC13C6C	15-C47AD02C	15-42A0432A	15-75741B6F	15-7624805E		
+WTJ-RING-120-金玉双环	金玉双环	RING	WTJ	120	15-93CDA250	15-A50B0DB0						15-46E6106D		15-D85D8BD5	15-C379231A	15-C27E734A	15-858B7D2F	15-C8ED62C7	15-72732E90	15-800C73F5		
+XCE-RIBBON-000-X	RIBBON-0	RIBBON	XCE	0	12-E5A57845	12-4C9588E1						12-A9B31057		12-93B63580	12-7D01D370	12-DCBB254D	12-3E95F794	12-D31748B4	12-13843BD1	12-6C278BB9		
+XCE-RIBBON-030-X	RIBBON-30	RIBBON	XCE	30	12-40C2360D	12-BD0600B4						12-1A966C18		12-D1683E81	12-2AF30885	12-25862E1E	12-19026DE7	12-384B4916	12-4C6206AB	12-02118DDD		
+XCE-RIBBON-060-X	RIBBON-60	RIBBON	XCE	60	12-B25AFBB3	12-9D8CE9F4						12-0A99823C		12-84B40A67	12-3ACF708B	12-EFCA8E31	12-E33B99FB	12-9E74505B	12-08D6D117	12-9447B391		
+XCE-RIBBON-090-彩虹	彩虹	RIBBON	XCE	90	12-223180F8	12-583E1B17						12-DE10BF14		12-5F7EC231	12-EF0F5AED	12-C63EF181	12-84782657	12-691F5A42	12-6CFB7DDC	12-1A7800FA		
+XCE-RIBBON-090-流云	流云	RIBBON	XCE	90	12-3FD9C049	12-8EC49F3A						12-1BFDACEE		12-29107531	12-8CDE2274	12-EF3029EE	12-1B65D56F	12-FA56A15B	12-B98D34B0	12-5EAB18BD		
+XCE-RIBBON-090-碧波	碧波	RIBBON	XCE	90	12-8C97B584	12-B61DA735						12-3D603C7E		12-C07390FE	12-39D7C243	12-EBE26265	12-5AB1F22B	12-7239220B	12-AD972E81	12-559B5E01		
+XCE-RIBBON-120-晃金仙绳	晃金仙绳	RIBBON	XCE	120	15-EBA114CC	15-8FDCA745						15-D5709D6C		15-3C0B891D	15-9DDE61F2	15-257FC38C	15-1567591B	15-05E967EF	15-5F5DD358	15-A174BAFA		
+XCE-RIBBON-120-此最相思	此最相思	RIBBON	XCE	120	15-BEF9E038	15-FCF69018						15-65790D9C		15-1D653CA1	15-0B868F34	15-45B80FC1	15-27D8F486	15-9F6C5F88	15-61E1F53F	15-8B85A540		
+XCE-RIBBON-120-秋水落霞	秋水落霞	RIBBON	XCE	120	15-8BF9992F	15-17D413B7						15-DB30A2F3		15-7CFB686B	15-A8F5A2C5	15-96B40370	15-9C1F176E	15-F0857126	15-119C033C	15-69BB8877		
+XCE-WAND-000-X	WAND-0	WAND	XCE	0	12-42D14FA3	12-4954C80C						12-33CC1679		12-1A04CE99	12-1330BDCB	12-CAB57EAC	12-1DC0095A	12-B55DBDE6	12-87928D9F	12-AA1F19F1		
+XCE-WAND-030-X	WAND-30	WAND	XCE	30	12-1FD87095	12-F8DC4DF3						12-897FA263		12-8D7D6914	12-A13DB294	12-798C2FF9	12-165F7BB0	12-59C7FB2C	12-34693AA4	12-F9AC0314		
+XCE-WAND-060-X	WAND-60	WAND	XCE	60	12-5E40D203	12-115A8E45						12-B8F742F9		12-4E141AA1	12-B8C770B1	12-0762FE7B	12-2340CBBA	12-170E491C	12-87F111B3	12-C06E368F		
+XCE-WAND-090-沧海	沧海	WAND	XCE	90	12-C1ACB479	12-6A9147F7						12-1E0E6A74		12-BCFA0EFC	12-B6BA90CE	12-CD886AE6	12-D71C42AB	12-50EC63EB	12-6DFAAB98	12-0394AC40		
+XCE-WAND-090-盘龙	盘龙	WAND	XCE	90	12-69036521	12-02E73DE2						12-392A5B52		12-7D90BA0A	12-B6E7A7BC	12-2118F416	12-93E30CAD	12-7A9A0056	12-2F512F88	12-D7940F19		
+XCE-WAND-090-红莲	红莲	WAND	XCE	90	12-0ADFB109	12-CA7E32B9						12-1C6124F5		12-567BBDFF	12-D92986BB	12-53BF74EC	12-4D450D39	12-1C76E6E0	12-D98A553F	12-C60F0F9D		
+XCE-WAND-120-墨玉骷髅	墨玉骷髅	WAND	XCE	120	15-89AFF2A0	15-791841F4						15-7754641C		15-984D34C6	15-6D09FD58	15-14019312	15-0512CFE6	15-9F3EC2E6	15-E7D0FD33	15-8A4D37CE		
+XCE-WAND-120-降魔玉杵	降魔玉杵	WAND	XCE	120	15-B3AB79E6	15-87E2D3A6						15-BF1D7E68		15-85A2A160	15-F45517EE	15-2E3F15E3	15-BDB7B517	15-CF702C32	15-19CAD6AC	15-84DFFCE5		
+XCE-WAND-120-青藤玉树	青藤玉树	WAND	XCE	120	15-98440F9D	15-A6807253						15-B9633144		15-E30E7693	15-953A52BA	15-97DB7503	15-1B8FBB79	15-FF494BC5	15-F4D8C662	15-76CA714D		
+XYS-FAN-000-X	FAN-0	FAN	XYS	0	12-402BBC17	12-8C91B390						12-57DAABA1		12-740210C1	12-B0B46CE5	12-4F212CA9	12-7F9B6665	12-DDC7B6BF	12-E844C6E6	12-11851CDD		
+XYS-FAN-030-X	FAN-30	FAN	XYS	30	12-7E618E01	12-92D5EB19						12-4E6D3A45		12-51F7402C	12-303F7C68	12-B8784799	12-309AED6A	12-5A1299B1	12-050DD952	12-587AEAE6		
+XYS-FAN-060-X	FAN-60	FAN	XYS	60	12-297D684D	12-F186E26E						12-E876D7E0		12-CA8EEF83	12-0FD9C550	12-A54EA4C3	12-175941DE	12-B4CCC8B9	12-3C3D431E	12-32C77CDE		
+XYS-FAN-090-太极	太极	FAN	XYS	90	12-21E1E8FD	12-E21779AB						12-52ABDF9F		12-F3728B37	12-26BCA13E	12-2B865584	12-11B99758	12-7DC619BC	12-5D99CF25	12-838B3A7F		
+XYS-FAN-090-玉龙	玉龙	FAN	XYS	90	12-6180E38C	12-FA33524C						12-2AA73F6F		12-BC589952	12-11617540	12-AE13646F	12-BC8D4932	12-7DE56C73	12-1AD63584	12-3D2C8E6F		
+XYS-FAN-090-秋风	秋风	FAN	XYS	90	12-B47BEE66	12-FE687485						12-36C4D60C		12-71A5B02B	12-AF9BF95F	12-B2DA3DEF	12-69DEF3EA	12-E8869110	12-BAFE6088	12-3674634F		
+XYS-FAN-120-画龙点睛	画龙点睛	FAN	XYS	120	15-F38680F5	15-BDC4259D						15-0A996A32		15-813E45A7	15-6C89B1B9	15-B2C677A6	15-CFC48A9D	15-A4764520	15-0BC72BED	15-32851F27		
+XYS-FAN-120-秋水人家	秋水人家	FAN	XYS	120	15-9B3FF437	15-EEFDA661						15-54F74EC3		15-7E5788DA	15-DDE1B3C6	15-04BDB246	15-BAA39370	15-71FDAE45	15-B18903A8	15-30B9DC1B		
+XYS-FAN-120-逍遥江湖	逍遥江湖	FAN	XYS	120	15-08D4818E	15-0FF23BFF						15-66B76105		15-6C645AC2	15-CE377CEB	15-E186DA20	15-9DFE1D03	15-D491FEAD	15-04A1D2AA	15-FBC95B74		
+XYS-SWORD-000-X	SWORD-0	SWORD	XYS	0	12-4E4F426E	12-1F5F1A06						12-3707D42E		12-057560BA	12-890132FA	12-BBB4A863	12-20DD305B	12-6D8A4155	12-E902350C	12-7C7BE729		
+XYS-SWORD-030-X	SWORD-30	SWORD	XYS	30	12-24A1E7B2	12-E80950FB						12-E2043B6B		12-FE646A4D	12-4769AF38	12-D90C7ED7	12-9F40BEB5	12-76FE7FA6	12-1495F42C	12-08AA3C1B		
+XYS-SWORD-060-X	SWORD-60	SWORD	XYS	60	12-2039C08A	12-8402C5C6						12-51233AB5		12-AFA10ED6	12-78E26E67	12-1EEAD699	12-EA37CEFE	12-74474E9C	12-EDD5D518	12-876AD6AF		
+XYS-SWORD-090-倚天	倚天	SWORD	XYS	90	12-2C6C2CD5	12-511F63AD						12-FFA04479			12-384C63ED	12-D56F4965	12-74C6C61E	12-A5E5AF8A	12-5A31993C	12-FBA36656		
+XYS-SWORD-090-湛卢	湛卢	SWORD	XYS	90	12-439811D3	12-6DE2CCCB						12-026178E6		["12-E736E8A7","12-3542493F"]	12-F5BD4003	12-6B458593	12-1542622E	12-61D49BEE	12-9E59C6C0	12-252FEB34		
+XYS-SWORD-090-鱼肠	鱼肠	SWORD	XYS	90	12-39BAEA10	12-E9D644EA						12-A5B2E5F4		12-4E6EC869	12-06A93432	12-F42E3CBA	12-C783B5E6	12-4CE1FF4C	12-C97F7C81	12-B8C152E4		
+XYS-SWORD-120-四法青云	四法青云	SWORD	XYS	120	15-345FD6AC	15-5763E3AE						15-03205934		15-7AB4B24B	15-B3C7F6D3	15-63940663	15-CF2C6ABA	15-163A70A0	15-021D5A9B	15-64CAE8D2		
+XYS-SWORD-120-灵犀神剑	灵犀神剑	SWORD	XYS	120	15-B532E559	15-55AA2A03						15-B03FD1B7		15-595C216B	15-F155E97E		15-764DBB9E	15-CE7DD44C	15-D988A943	15-B7AA2441		
+XYS-SWORD-120-魏武青虹	魏武青虹	SWORD	XYS	120	15-2562AA24	15-2C0190DC						15-4CC3C7EB		15-990C63AE	15-B01C58DA	15-AAA0B344	15-4B8B0567	15-EFD42F46	15-59EFF1D5	15-6A4DEB74		
+YNX-DBSWORDS-000-X	DBSWORDS-0	DBSWORDS	YNX	0	12-57FABA5B	12-9E945A44						12-07AB7352		12-9E6FFA22	12-F8788170	12-A4CD5AEB	12-FD6D5E61	12-DD1FC526	12-6DADF138	12-83DEC128		
+YNX-DBSWORDS-030-X	DBSWORDS-30	DBSWORDS	YNX	30	12-85EA8EE5	12-28BDF0D3						12-DB450C49		12-2E9B4B1A	12-2ECAB0DF	12-FB8E779C	12-A9394DC6	12-7D28D9B9	12-48FB6FA6	12-B69684C8		
+YNX-DBSWORDS-060-X	DBSWORDS-60	DBSWORDS	YNX	60	12-5516FE05	12-6F03B3F1						12-4B3774CB		12-8F937D83	12-A3E6D345	12-3B2C0252	12-FC7B31A0	12-A36F83EF	12-64852879	12-2A79217A		
+YNX-DBSWORDS-090-月光	月光	DBSWORDS	YNX	90	12-0E469C32	12-6BA81FDD						12-955A5646		12-68F1E22B	12-A350A1E1	12-19DE2125	12-CD64CEEA	12-A076BFFC	12-CA131352	12-3629EF7E		
+YNX-DBSWORDS-090-灵蛇	灵蛇	DBSWORDS	YNX	90	12-36D0EAA0	12-34A6C801						12-9B866653		12-88448F76	12-B4FBC16D	12-9888BCD5	12-963D070F	12-0D897436	12-E75EF067	12-A3CA0654		
+YNX-DBSWORDS-090-阴阳	阴阳	DBSWORDS	YNX	90	12-B8D3407A	12-1F76102B						12-713FC298		12-9FA3A0CF	12-CFF7C8BE	12-D611368A	12-82113017	12-14F8122D	12-76433688	12-F6E27C19		
+YNX-DBSWORDS-120-祖龙对剑	祖龙对剑	DBSWORDS	YNX	120	15-466B6959	15-EE3BCF6B						15-801A5CCC		15-CA08EB06	15-1624FB2B	15-1724D050	15-DFAD2194	15-2630EC18	15-5BEAB51E	15-B6EC050A		
+YNX-DBSWORDS-120-连理双树	连理双树	DBSWORDS	YNX	120	15-2F82163D	15-A051D73F						15-1B365B5E		15-DB80BC66	15-3EF29C99	15-D56FAD35	15-D3DDA3F6	15-28E7D7D3	15-547DBF44	15-84EDECE5		
+YNX-DBSWORDS-120-金龙双剪	金龙双剪	DBSWORDS	YNX	120	15-B2D36625	15-373FA8FC						15-5B665EFB		15-64985380	15-78B18215	15-223469BE	15-7DFE574C	15-53438DAA	15-2DE29302	15-8B7A0CC2		
+YNX-RING-090-月光	月光	RING	YNX	90												12-A08AE83A						
+YNX-WHIP-000-X	WHIP-0	WHIP	YNX	0	12-A22FC2E5	12-A8AEF3B8						12-6EF465BF		12-DA5EFB33	12-102B282D	12-903D4077	12-597AB27F	12-9026809E	12-D1ECB00D	12-5C2D10F2		
+YNX-WHIP-030-X	WHIP-30	WHIP	YNX	30	12-B3633C82	12-5AE46892						12-75E605F9		12-93CDE018	12-EA54623C	12-5965A0A3	12-B03774F8	12-DC04F6A7	12-C23549CB	12-441C3F28		
+YNX-WHIP-060-X	WHIP-60	WHIP	YNX	60	12-3BCAC42B	12-F3F1826F						12-03952879		12-8E8E849F	12-A72A927C	12-05B2A77B	12-B45537E5	12-964DBFF9	12-F4F0474A	12-BD8C7B95		
+YNX-WHIP-090-吹雪	吹雪	WHIP	YNX	90	12-4E0D52A5	12-09890457						12-9E89AC82		12-86A74127	12-76486C84	12-605C2D09	12-63A109AC	12-ED4178D4	12-1A1A871E	12-F3DA28E3		
+YNX-WHIP-090-百花	百花	WHIP	YNX	90	12-B2DBC65A	12-220D09FF						12-AE1C15E6		12-57502ADD	12-465909C9	12-8FBAAE53	12-6488B199	12-191C1D73	12-4F96B7D3	12-90FEA997		
+YNX-WHIP-090-龙筋	龙筋	WHIP	YNX	90	12-0728CC3D	12-F978C55E						12-FAEEA6B3		12-90A26BC5	12-3AA174C6	12-DF81E6DB	12-6E2489AB	12-108C1DD0	12-A4346F9E	12-71DC7BF6		
+YNX-WHIP-120-仙人指路	仙人指路	WHIP	YNX	120	15-36FA7E8F	15-33825F90						15-B73C8D36		15-970775A7	15-5B90FF9C	15-F28AC08F	15-6438CB41	15-75BB8972	15-B17BC48A	15-2E9692C9		
+YNX-WHIP-120-游龙惊沤	游龙惊沤	WHIP	YNX	120												15-FD14A4C5						
+YNX-WHIP-120-游龙惊鸿	游龙惊鸿	WHIP	YNX	120	15-3E7DDDB1	15-339E1DD5						15-050F6261		15-FF0CBD32	15-66C5DBE3		15-DBEC18CE	15-0C2E2939	15-10DF40E7	15-71E6E2F7		
+YNX-WHIP-120-血之刺藤	血之刺藤	WHIP	YNX	120	15-CEF9D441	15-CB134023						15-D2B5B938		15-284EA9A0	15-206B13F0	15-1535899B	15-16449B9C	15-BDC57C12	15-E307F2D8	15-4C4B32D1		
