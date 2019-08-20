@@ -408,7 +408,7 @@ AnimationEditorScene::AnimationEditorScene(int id, String name)
 		int col = i % 5;
 
 		auto playerFrameWasID = GAME_INSTANCE->GetActionWasID(ACTOR_TYPE_PLAYER, 9, Action::Walk);
-		auto* sprite = new BaseSprite(ShapeWDF, playerFrameWasID);
+		auto* sprite = new BaseSprite(SHAPEWDF, playerFrameWasID);
 		sprite->Pos.x = (float)(col * sprite->Width + 20 * col);
 		sprite->Pos.y = (float)(row * sprite->Height + 20 * row);
 		sprite->Dir = row;

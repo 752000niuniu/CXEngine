@@ -47,7 +47,7 @@ void Scene::ApplyTemplate(const std::map<String, String>& templ)
 	m_SmapWas = utils::tsv_parse_wasstr(templ.at("smap"));
 	if (m_SmapWas)
 	{
-		m_SmapTv = new ImageView(SmapWDF, m_SmapWas);
+		m_SmapTv = new ImageView(SMAPWDF, m_SmapWas);
 	}
 	m_TransportUUIDs = utils::split_by_cuts(templ.at("transport_stations"), ',');
 }
@@ -56,20 +56,20 @@ void Scene::OnLoad()
 {
 	//m_LocalPlayer = nullptr;
 	m_Switching = true;
-	m_NpcDialogBG = new FrameAnimation(WzifeWDF, 0x1732c1ef);
+	m_NpcDialogBG = new FrameAnimation(WZIFEWDF, 0x1732c1ef);
 	s_Announcement = new TextView();
 	s_Announcement->X = 479;
 	s_Announcement->Y = 461;
 	s_Announcement->PaddingHorizontal = 10;
 	s_Announcement->PaddingVertical = 22;
-	s_Announcement->BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WzifeWDF, 0x1732c1ef);
+	s_Announcement->BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WZIFEWDF, 0x1732c1ef);
 
 	s_Chat = new TextView();
 	s_Chat->X = 0;
 	s_Chat->Y = 577;
 	s_Chat->PaddingHorizontal = 3;
 	s_Chat->PaddingVertical = 3;
-	s_Chat->BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WzifeWDF, 0x39D3BD99);
+	s_Chat->BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WZIFEWDF, 0x39D3BD99);
 	s_Chat->OnEnterHit = [this]() {
 		script_system_call_function(script_system_get_luastate(), "on_player_send_chat_message", utils::WstringToString(s_Chat->Text).c_str());
 	};
@@ -79,7 +79,7 @@ void Scene::OnLoad()
 		auto* info = SCENE_MANAGER_INSTANCE->GetTransportStationInfo(id);
 		if (info != nullptr)
 		{
-			auto* frame = new FrameAnimation(MapaniWDF, 0x7F4CBC8C);
+			auto* frame = new FrameAnimation(MAPANIWDF, 0x7F4CBC8C);
 			frame->SetPos({ info->cx, info->cy });
 			s_TranportCircles.insert({ id,frame });
 		}
@@ -267,9 +267,9 @@ void Scene::SwitchBattle()
 BattleScene::BattleScene(int sceneID, String sceneName)
 	:Scene(sceneID,sceneName)
 {
-	Sprite* sp = RESOURCE_MANAGER_INSTANCE->LoadWASSprite(AddonWDF, 0x708C11A0, true);
+	Sprite* sp = RESOURCE_MANAGER_INSTANCE->LoadWASSprite(ADDONWDF, 0x708C11A0, true);
 	m_CombatBG = TextureManager::GetInstance()->LoadTexture(sp->mPath, sp->mWidth, sp->mHeight, true, (uint8_t*)sp->mFrames[0].src.data());
-	RESOURCE_MANAGER_INSTANCE->UnLoadWASSprite(AddonWDF, 0x708C11A0);
+	RESOURCE_MANAGER_INSTANCE->UnLoadWASSprite(ADDONWDF, 0x708C11A0);
 }
 
 BattleScene::~BattleScene()

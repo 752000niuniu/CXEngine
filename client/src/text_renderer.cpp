@@ -105,7 +105,7 @@ TextRenderer::TextRenderer()
 
 	/*for (auto id : s_EmotionIDs)
 	{
-		uint64_t longID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WzifeWDF, id);
+		uint64_t longID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WZIFEWDF, id);
 		RESOURCE_MANAGER_INSTANCE->LoadWASSprite(longID);
 	}*/
 }
@@ -253,7 +253,7 @@ bool TextRenderer::LoadGlyph(uint32_t charcode, bool emotion)
 
 	if (emotion)
 	{
-		auto longID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WzifeWDF, charcode);
+		auto longID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WZIFEWDF, charcode);
 		RESOURCE_MANAGER_INSTANCE->LoadWASSpriteByID(longID, true);
 		FrameAnimation* pEmotion = new FrameAnimation(longID);
 		fontglyph->Emotion = pEmotion;
@@ -626,7 +626,7 @@ TextView::TextView()
 		delete bpfile.imageData;
 		bpfile.imageData = nullptr;
 	}
-	BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WzifeWDF, 0x39D3BD99);
+	BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WZIFEWDF, 0x39D3BD99);
 	INPUT_MANAGER_INSTANCE->RegisterView(this);
 
 }

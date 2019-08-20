@@ -217,7 +217,7 @@ void ActionStateMachine::EnsureLoadAction(int action)
 
 	if (m_AvatarActions[action] == nullptr) {
 		auto wasid = GAME_INSTANCE->GetActionWasID(m_Actor->GetType(), m_AvatarID, action);
-		m_AvatarActions[action] = new BaseSprite(ShapeWDF, wasid);
+		m_AvatarActions[action] = new BaseSprite(SHAPEWDF, wasid);
 		m_AvatarActions[action]->FrameInterval = m_TimeInterval;
 		m_AvatarActions[action]->Dir = m_Actor->GetDir();
 	}
@@ -225,7 +225,7 @@ void ActionStateMachine::EnsureLoadAction(int action)
 	if (m_HasWeapon) {
 		if (m_WeaponActions[action] == nullptr) {
 			auto wasid = GAME_INSTANCE->GetWeaponWasID(m_WeaponID, action);
-			m_WeaponActions[action] = new BaseSprite(ShapeWDF, wasid);
+			m_WeaponActions[action] = new BaseSprite(SHAPEWDF, wasid);
 			m_WeaponActions[action]->FrameInterval = m_TimeInterval;
 			m_WeaponActions[action]->Dir = m_Actor->GetDir();
 		}
@@ -381,7 +381,6 @@ void BeHitAction::Enter()
 {
 
 }
-#endif
 
 void IdleAction::Enter()
 {
@@ -390,3 +389,6 @@ void IdleAction::Enter()
 		avatar->bPlay = false;
 	}
 }
+
+#endif
+

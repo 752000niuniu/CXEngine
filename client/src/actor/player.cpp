@@ -28,8 +28,8 @@ m_SkillFrame(nullptr)
 	m_SayWidget->PaddingHorizontal = 4;
 	m_SayWidget->PaddingVertical = 2;
 	m_SayWidget->ShowEmotion = true;
-	m_SayWidget->BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WzifeWDF, 0xEF073E43); //F3FAAAF2´ó¿ò
-	//m_SayWidget->BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WzifeWDF, 0xA4120EA9);
+	m_SayWidget->BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WZIFEWDF, 0xEF073E43); //F3FAAAF2´ó¿ò
+	//m_SayWidget->BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WZIFEWDF, 0xA4120EA9);
 	m_SayDuration = 0;
 
 	m_PlayerFrames.clear();
@@ -143,7 +143,7 @@ void Player::OnUpdate()
 	{
 		auto playerFrameWasID = GAME_INSTANCE->GetActionWasID(m_ActorType, m_RoleID, m_ActionID);
 		if (playerFrameWasID != -1) {
-			m_PlayerFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(ShapeWDF, playerFrameWasID)));
+			m_PlayerFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(SHAPEWDF, playerFrameWasID)));
 			m_PlayerFrames[m_ActionID]->ResetAnim(m_Dir);
 			m_PlayerFrames[m_ActionID]->SetFrameTimeBase(m_FrameSpeed);
 			if (m_ActionID == ACTION_CLPS)
@@ -169,7 +169,7 @@ void Player::OnUpdate()
 	{
 		auto weaponFrameWasID = GAME_INSTANCE->GetWeaponWasID(m_WeaponID,m_ActionID);
 		if (weaponFrameWasID != -1) {
-			m_WeaponFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(ShapeWDF, weaponFrameWasID)));
+			m_WeaponFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(SHAPEWDF, weaponFrameWasID)));
 			m_WeaponFrames[m_ActionID]->ResetAnim(m_Dir);
 			m_WeaponFrames[m_ActionID]->SetFrameTimeBase(m_FrameSpeed);
 			if (m_ActionID == ACTION_CLPS)
@@ -466,7 +466,7 @@ void Player::SetAction(int state)
 		{
 			auto playerFrameWasID = GAME_INSTANCE->GetActionWasID(m_ActorType, m_RoleID, m_ActionID);
 			if (playerFrameWasID != -1) {
-				m_PlayerFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(ShapeWDF, playerFrameWasID)));
+				m_PlayerFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(SHAPEWDF, playerFrameWasID)));
 				m_PlayerFrames[m_ActionID]->ResetAnim(m_Dir);
 				if (m_ActionID == ACTION_CLPS)
 				{
@@ -490,7 +490,7 @@ void Player::SetAction(int state)
 		{
 			auto weaponFrameWasID = GAME_INSTANCE->GetWeaponWasID(m_WeaponID, m_ActionID);
 			if (weaponFrameWasID != -1) {
-				m_WeaponFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(ShapeWDF, weaponFrameWasID)));
+				m_WeaponFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(SHAPEWDF, weaponFrameWasID)));
 				m_WeaponFrames[m_ActionID]->ResetAnim(m_Dir);
 				if (m_ActionID == ACTION_CLPS)
 				{
@@ -582,13 +582,13 @@ void Player::LoadRoleFrame()
 		auto playerFrameWasID = GAME_INSTANCE->GetActionWasID(m_ActorType, m_RoleID, m_ActionID);
 		if (playerFrameWasID != -1)
 		{
-			uint64_t resID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(ShapeWDF, playerFrameWasID);
+			uint64_t resID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(SHAPEWDF, playerFrameWasID);
 			
 			FrameAnimation* frame = nullptr;
 			auto it = m_PlayerFrames.find(m_ActionID);
 			if (it == m_PlayerFrames.end())
 			{
-				m_PlayerFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(ShapeWDF, playerFrameWasID)));
+				m_PlayerFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(SHAPEWDF, playerFrameWasID)));
 			}
 			else
 			{
@@ -604,7 +604,7 @@ void Player::LoadWeaponFrame()
 	{
 		auto weaponFrameWasID = GAME_INSTANCE->GetWeaponWasID(m_WeaponID, m_ActionID);
 		if (weaponFrameWasID != -1) {
-			m_WeaponFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(ShapeWDF, weaponFrameWasID)));
+			m_WeaponFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(SHAPEWDF, weaponFrameWasID)));
 		}
 	}
 }

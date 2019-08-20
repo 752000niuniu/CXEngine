@@ -103,32 +103,32 @@ void ResourceManager::OnUpdate()
 
 static std::map<uint32_t, std::string> s_PackPathMap =
 {
-	{ AddonWDF,    "addon.wdf" },
-{ AtomWDF,     "atom.wdf" },
-{ ChatWDF,     "chat.wdf" },
-{ FireworkWDF, "firework.wdf" },
-{ GoodsWDF,    "goods.wdf" },
-{ ItemWDF,     "item.wdf" },
-{ MagicWDF,    "magic.wdf" },
-{ MapaniWDF,   "mapani.wdf" },
-{ MhimageWDF,  "mhimage.wdf" },
-{ MiscWDF,     "misc.wdf" },
-{ MusicWDF,    "music.wdf" },
-{ SceneWDF,    "scene.wdf" },
-{ ShapeWDF,    "shape.wdf" },
-{ ShapeWD1,    "shape.wd1" },
-{ ShapeWD2,    "shape.wd2" },
-{ ShapeWD3,    "shape.wd3" },
-{ ShapeWD4,    "shape.wd4" },
-{ ShapeWD5,    "shape.wd5" },
-{ ShapeWD6,    "shape.wd6" },
-{ ShapeWD7,    "shape.wd7" },
-{ SmapWDF,     "smap.wdf" },
-{ SoundWDF,    "sound.wdf" },
-{ StockWDF,    "stock.wdf" },
-{ WaddonWDF,   "waddon.wdf" },
-{ WzifeWDF,    "wzife.wdf" },
-{ WzifeWD1,    "wzife.wd1" },
+	{ ADDONWDF,    "addon.wdf" },
+{ ATOMWDF,     "atom.wdf" },
+{ CHATWDF,     "chat.wdf" },
+{ FIREWORKWDF, "firework.wdf" },
+{ GOODSWDF,    "goods.wdf" },
+{ ITEMWDF,     "item.wdf" },
+{ MAGICWDF,    "magic.wdf" },
+{ MAPANIWDF,   "mapani.wdf" },
+{ MHIMAGEWDF,  "mhimage.wdf" },
+{ MISCWDF,     "misc.wdf" },
+{ MUSICWDF,    "music.wdf" },
+{ SCENEWDF,    "scene.wdf" },
+{ SHAPEWDF,    "shape.wdf" },
+{ SHAPEWD1,    "shape.wd1" },
+{ SHAPEWD2,    "shape.wd2" },
+{ SHAPEWD3,    "shape.wd3" },
+{ SHAPEWD4,    "shape.wd4" },
+{ SHAPEWD5,    "shape.wd5" },
+{ SHAPEWD6,    "shape.wd6" },
+{ SHAPEWD7,    "shape.wd7" },
+{ SMAPWDF,     "smap.wdf" },
+{ SOUNDWDF,    "sound.wdf" },
+{ STOCKWDF,    "stock.wdf" },
+{ WADDONWDF,   "waddon.wdf" },
+{ WZIFEWDF,    "wzife.wdf" },
+{ WZIFEWD1,    "wzife.wd1" }
 };
 
 namespace utils
@@ -168,33 +168,33 @@ void resource_manager_deinit()
 
 void luaopen_resource_manager(lua_State* L)
 {
-#define REG_ENUM(name, macro)  (lua_pushinteger(L, macro),lua_setglobal(L, name))
-	REG_ENUM("AddonWDF", AddonWDF);
-	REG_ENUM("AtomWDF", AtomWDF);
-	REG_ENUM("ChatWDF", ChatWDF);
-	REG_ENUM("FireworkWDF", FireworkWDF);
-	REG_ENUM("GoodsWDF", GoodsWDF);
-	REG_ENUM("ItemWDF", ItemWDF);
-	REG_ENUM("MagicWDF", MagicWDF);
-	REG_ENUM("MapaniWDF", MapaniWDF);
-	REG_ENUM("MhimageWDF", MhimageWDF);
-	REG_ENUM("MiscWDF", MiscWDF);
-	REG_ENUM("MusicWDF", MusicWDF);
-	REG_ENUM("SceneWDF", SceneWDF);
-	REG_ENUM("ShapeWDF", ShapeWDF);
-	REG_ENUM("ShapeWD1", ShapeWD1);
-	REG_ENUM("ShapeWD2", ShapeWD2);
-	REG_ENUM("ShapeWD3", ShapeWD3);
-	REG_ENUM("ShapeWD4", ShapeWD4);
-	REG_ENUM("ShapeWD5", ShapeWD5);
-	REG_ENUM("ShapeWD6", ShapeWD6);
-	REG_ENUM("ShapeWD7", ShapeWD7);
-	REG_ENUM("SmapWDF", SmapWDF);
-	REG_ENUM("SoundWDF", SoundWDF);
-	REG_ENUM("StockWDF", StockWDF);
-	REG_ENUM("WaddonWDF", WaddonWDF);
-	REG_ENUM("WzifeWDF", WzifeWDF);
-	REG_ENUM("WzifeWD1", WzifeWD1);
+#define REG_ENUM(e)  (lua_pushinteger(L, e),lua_setglobal(L, #e))
+	REG_ENUM(ADDONWDF);
+	REG_ENUM(ATOMWDF);
+	REG_ENUM(CHATWDF);
+	REG_ENUM(FIREWORKWDF);
+	REG_ENUM(GOODSWDF);
+	REG_ENUM(ITEMWDF);
+	REG_ENUM(MAGICWDF);
+	REG_ENUM(MAPANIWDF);
+	REG_ENUM(MHIMAGEWDF);
+	REG_ENUM(MISCWDF);
+	REG_ENUM(MUSICWDF);
+	REG_ENUM(SCENEWDF);
+	REG_ENUM(SHAPEWDF);
+	REG_ENUM(SHAPEWD1);
+	REG_ENUM(SHAPEWD2);
+	REG_ENUM(SHAPEWD3);
+	REG_ENUM(SHAPEWD4);
+	REG_ENUM(SHAPEWD5);
+	REG_ENUM(SHAPEWD6);
+	REG_ENUM(SHAPEWD7);
+	REG_ENUM(SMAPWDF);
+	REG_ENUM(SOUNDWDF);
+	REG_ENUM(STOCKWDF);
+	REG_ENUM(WADDONWDF);
+	REG_ENUM(WZIFEWDF);
+	REG_ENUM(WZIFEWD1);
 #undef REG_ENUM
 
 
