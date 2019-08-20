@@ -14,5 +14,6 @@
 		"map": "cpp",
 		"deque": "cpp",
 		"xstring": "cpp"
-	}
+	},
+	"C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools"
 }
