@@ -26,7 +26,6 @@ add_executable(SimpleServer
   src/actor/player.cpp
   src/scene/scene.cpp
   src/scene/scene_manager.cpp
-  src/game.cpp
   src/main.cpp
   src/server.cpp
   src/window.cpp
