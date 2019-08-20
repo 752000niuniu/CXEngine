@@ -3,7 +3,7 @@
 #include "ui.h"
 
 struct NE::Sprite;
-class BaseSprite
+class BaseSprite : public View
 {
 public:
 	BaseSprite(uint64_t resoureID = 0);
@@ -16,10 +16,10 @@ public:
 	void Reset();
 	void Stop();
 	void Play();
-	int GetFrameKeyX();
-	int GetFrameKeyY();
-	int GetFrameWidth();
-	int GetFrameHeight();
+	int GetFrameKeyX(int index = -1);
+	int GetFrameKeyY(int index = -1);
+	int GetFrameWidth(int index = -1);
+	int GetFrameHeight(int index = -1);
 
 	int TotalFrames;
 	int CurrentFrame;
@@ -33,11 +33,16 @@ public:
 	int bLoop;
 	int bPlay;
 	int bGroupEndUpdate;
+	int bFrameUpdated;
 	Pos Pos;
 	NE::Sprite* m_pSprite;
 	float FrameInterval;
 	float PlayTime;
 	bool Visible;
+
+	Bound GetViewBounds() override;
+	bool CheckDrag(int x, int y) override;
+	void OnDragMove(int x, int y)override;
 };
 
 

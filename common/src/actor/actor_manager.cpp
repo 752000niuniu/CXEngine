@@ -5,6 +5,7 @@
 #include "scene/scene_manager.h"
 #include "scene/base_scene.h"
 #include "scene/game_map.h"
+#include "utils.h"
 
 std::map<uint64_t, Actor*> g_Players;
 uint64_t g_LocalPid = 0;
@@ -151,8 +152,18 @@ int lua_actor_manager_fetch_all_players(lua_State*L) {
 	return 1;
 }
 
+int lua_actor_manager_clear_all(lua_State*L){
+	for (auto& it : g_Players) {
+		SafeDelete(it.second);
+	}
+	g_Players.clear();
+	return 0;
+}
+
 void luaopen_actor_manager(lua_State* L) {
 	
+	script_system_register_luac_function_with_name(L, "actor_manager_clear_all", lua_actor_manager_clear_all);
+
 	script_system_register_luac_function_with_name(L, "actor_manager_create_actor", lua_actor_manager_create_actor);
 
 	script_system_register_luac_function_with_name(L, "actor_manager_create_player", lua_actor_manager_create_player);
@@ -161,7 +172,6 @@ void luaopen_actor_manager(lua_State* L) {
 
 	script_system_register_luac_function_with_name(L, "actor_manager_fetch_player_by_id", lua_actor_manager_fetch_player_by_id);
 
-	
 	script_system_register_luac_function_with_name(L, "scene_manager_fetch_local_player", lua_actor_manager_fetch_local_player);
 
 	script_system_register_luac_function_with_name(L, "actor_manager_fetch_all_players", lua_actor_manager_fetch_all_players);

@@ -8,6 +8,34 @@
 #include "animation/sprite.h"
 #endif
 
+std::map<int, int> g_AttackKeyFrame ={
+	{ 0 ,5 },
+	{ 1 ,9 },
+	{ 2 ,7 },
+	{ 3 ,8 },
+	{ 4 ,9 },
+	{ 5 ,7 },
+	{ 6 ,7 },
+	{ 7 ,8 },
+	{ 8 ,7 },
+	{ 9 ,7 },
+	{ 10 ,4 },
+	{ 11 ,6 },
+	{ 12 ,8 },
+	{ 13 ,6 },
+	{ 14 ,6 },
+	{ 15 ,10 },
+	{ 16 ,8 },
+	{ 17 ,4 },
+	{ 18 ,7 },
+	{ 19 ,4 },
+	{ 20 ,4 },
+	{ 21 ,5 },
+	{ 22 ,5 },
+	{ 23 ,7 }
+};
+
+
 static std::vector<std::string> s_ActionSet = { u8"idle",u8"walk",u8"sit",u8"angry",u8"sayhi",u8"dance",u8"salute",u8"clps",u8"cry",u8"batidle",u8"attack",u8"cast",u8"behit",u8"runto",u8"runback",u8"defend",u8"unknown" };;
 std::string action_get_name(int i)
 {
@@ -75,6 +103,7 @@ Action::Action(Actor* _actor) :
 	actor(_actor)
 {
 	pASM = actor->GetASM();
+	
 }
  
 void Action::Update()
@@ -91,7 +120,10 @@ void Action::Update()
 
 void Action::Enter()
 {
-
+	/*int action = actor->GetActionID();
+	if (action != pASM->GetActionID()) {
+		pASM->SetAction(action);
+	}*/
 }
 
 ActionStateMachine::ActionStateMachine(Actor* _actor)
@@ -142,17 +174,29 @@ void ActionStateMachine::Draw()
 
 	Pos pos = m_Actor->GetPos();
 	int dir = m_Actor->GetDir();
-	avatar->Pos.x = pos.x - (float)avatar->Width / 2 + 10;
-	avatar->Pos.y = pos.y - (float)avatar->Height + 20;
+	avatar->Pos.x = pos.x - (float)avatar->KeyX;
+	avatar->Pos.y = pos.y - (float)avatar->KeyY;
+
 	avatar->Dir = dir;
 	avatar->Draw();
 
-	if (!HasWeapon() || !action_is_show_weapon(m_ActionID))return;
+
+	if (!HasWeapon() || !action_is_show_weapon(m_ActionID)) {
+		if(m_pCurrentAction){
+			m_pCurrentAction->Draw();
+		}
+		return;
+	}
 	auto* weapon = GetWeapon(m_ActionID);
 	weapon->Pos.x = avatar->Pos.x + (float)(avatar->KeyX - weapon->KeyX);
 	weapon->Pos.y = avatar->Pos.y + (float)(avatar->KeyY - weapon->KeyY);
 	weapon->Dir = dir;
 	weapon->Draw();
+
+	if (m_pCurrentAction) {
+		m_pCurrentAction->Draw();
+	}
+	
 }
 
 void ActionStateMachine::SetWeapon(int id)
@@ -261,15 +305,18 @@ int ActionStateMachine::GetDirCount(int action)
 	return 4;
 }
 
+
+
 AttackAction::AttackAction(Actor* actor)
 	:Action(actor)
 {
-	
+	pBeHitAnim = new Animation(ADDONWDF, 0x1D3FF13C);
+	pBeHitAnim->Visible = false;
 }
 
 AttackAction::~AttackAction()
 {
-
+	delete pBeHitAnim;
 }
 
 void AttackAction::Update()
@@ -278,6 +325,9 @@ void AttackAction::Update()
 	if (!avatar)return;
 	avatar->Update();
 
+	if(pBeHitAnim->Visible){
+		pBeHitAnim->Update();
+	}
 	int action = pASM->GetActionID();
 	if (action == ACTION_BATIDLE) {
 		if (avatar->bGroupEndUpdate) {
@@ -285,6 +335,19 @@ void AttackAction::Update()
 
 			if (m_Target) {
 				Pos runto = m_Target->GetPos();
+				
+				auto* attackAvatar = pASM->GetAvatar(ACTION_ATTACK);
+				auto* targetAvatar = m_Target->GetASM()->GetAvatar();
+				if(attackAvatar && targetAvatar){
+					int keyframe = g_AttackKeyFrame[actor->GetRoleID()];
+					float x = targetAvatar->Pos.x + targetAvatar->KeyX;
+					float y = targetAvatar->Pos.y + targetAvatar->KeyY - attackAvatar->GetFrameHeight(keyframe) / 2;
+					x = x + attackAvatar->GetFrameKeyX(keyframe);
+					y = y + attackAvatar->GetFrameKeyY(keyframe);
+					runto.x = x;
+					runto.y = y;
+				}
+
 				actor->GetMoveHandle()->MoveTo(runto.x, runto.y);
 				avatar = pASM->GetAvatar();
 
@@ -323,6 +386,17 @@ void AttackAction::Update()
 			avatar->FrameInterval = perframetime;
 			actor->SetVelocity(velocity);
 		}
+		else if (avatar->bFrameUpdated) {
+			int roleID = actor->GetRoleID();
+			if(avatar->CurrentFrame == g_AttackKeyFrame[roleID]){
+				auto* targetAvatar = m_Target->GetASM()->GetAvatar();
+				if(targetAvatar){
+					pBeHitAnim->Pos.x = targetAvatar->Pos.x + targetAvatar->KeyX - pBeHitAnim->KeyX ;
+					pBeHitAnim->Pos.y = targetAvatar->Pos.y + targetAvatar->KeyY - pBeHitAnim->KeyY;
+					pBeHitAnim->Visible = true;
+				}
+			}
+		}
 
 	}
 	else if (action == ACTION_RUNBACK) {
@@ -332,6 +406,13 @@ void AttackAction::Update()
 			auto* new_action = new Action(actor);
 			pASM->ChangeAction(new_action);
 		}
+	}
+}
+
+void AttackAction::Draw()
+{
+	if(pBeHitAnim->Visible){
+		pBeHitAnim->Draw();
 	}
 }
 

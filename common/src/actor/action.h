@@ -29,6 +29,7 @@ public:
 	virtual void Enter();
 	virtual void Exit() {};
 	virtual  void Update();
+	virtual  void Draw() {};
 protected:
 	ActionStateMachine *  pASM;
 	Actor* actor;
@@ -51,15 +52,18 @@ public:
 	AttackAction(Actor* actor);
 	virtual ~AttackAction();
 	virtual  void Update();
+	virtual  void Draw() ;
 	void AddTarget(Actor* target);
 	virtual void Exit();
 	virtual void Enter();
+	
 private:
 	Actor * m_Target;
 	Pos m_BackupPos;
 	int m_BackupActionID;
 	float m_Velocity;
 	int m_ID;
+	Animation* pBeHitAnim;
 };
 
 class BeHitAction : public Action

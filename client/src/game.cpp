@@ -83,9 +83,16 @@ uint64_t Game::GetActionResID(int type, int roleID, int actionID)
 		auto wasIdle = rowTable->Rows[roleID][action_get_name(ACTION_IDLE)];
 		auto wasBatidle = rowTable->Rows[roleID][action_get_name(ACTION_BATIDLE)];
 		if (wasBatidle != "")wasIDstr = wasBatidle;
-		else wasBatidle = wasIdle;
+		else wasIDstr = wasIdle;
 	}
-	else
+	else if (actionID == ACTION_IDLE) {
+
+		auto wasIdle = rowTable->Rows[roleID][action_get_name(ACTION_IDLE)];
+		auto wasBatidle = rowTable->Rows[roleID][action_get_name(ACTION_BATIDLE)];
+		if (wasIdle != "")wasIDstr = wasIdle;
+		else wasIDstr = wasBatidle;
+
+	}else
 	{
 		wasIDstr = rowTable->Rows[roleID][action_get_name(actionID)];
 	}

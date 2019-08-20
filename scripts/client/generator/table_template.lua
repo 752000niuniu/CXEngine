@@ -263,7 +263,7 @@ function _parse_role_row(strs,WASID)
         row.role = _role
         row.name = strs[2]
         row.weapon_type = _weapon_type
-        table.insert(row[_action],WASID)
+        row[_action] = {WASID}
         return true
     else 
         return false
@@ -341,40 +341,6 @@ function handle_weapon_multi_actions(tbl)
     for k,v in pairs(tbl) do
         if not v.delete then
             add_tbl[k] = v
-        end
-    end
-    return add_tbl
-end
-
-function handle_role_multi_actions(tbl)
-    local add_tbl = {}
-    for k,v in pairs(tbl) do
-        -- cxlog_info('handle_role_multi_actions'..' v.role:'.. cjson.encode(v))
-        if v.weapon_type == 'X' then
-            local weapon_types = role_weapon_config[v.role]
-            for i=1,2 do
-                local ID = v.role..'-'..weapon_types[i]
-                local row = find_avatar_table_row(add_tbl, ID)
-                row.ID = ID
-                row.role = v.role
-                row.weapon_type = weapon_types[i]
-                row.name = v.name
-
-                for _, action in ipairs(action_affix_keys) do
-                    if #v[action] > 2 then
-                        cxlog_info('#v[action] > 2 ')
-                    end
-                    row[action] =  v[action][i] or v[action][1] 
-                end
-            end
-            v.delete = true
-        end
-    end
-
-    for k,v in pairs(tbl) do
-        if not v.delete then
-            cxlog_info('k,v.ID',k,v.ID)
-            add_tbl[v.ID] = v
         end
     end
     return add_tbl

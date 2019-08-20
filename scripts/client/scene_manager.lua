@@ -105,7 +105,6 @@ function scene_manager_reload(name)
     end
 end
 
-
 local KEY_RELEASE_MOVE_AMOUT = 30
 local roleID = 0 
 local weaponID = 0 
@@ -119,8 +118,11 @@ end
 function on_game_imgui_update(name)
     fix_input_manager_mouse_pos()
 
-    if imgui.Button('reload') then
+    imgui.Dummy(700)
+    imgui.SameLine()
+    if imgui.Button('RELOAD') then
         scene_manager_reload(name)
+        collectgarbage()
         return
     end
 

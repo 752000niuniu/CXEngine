@@ -4,6 +4,7 @@
 #include "resource_manager.h"
 #include "window.h"
 #include "sprite_renderer.h"
+#include "input_manager.h"
 
 String UtilsGetFramePath(Sprite* m_pSprite, int index)
 {
@@ -25,7 +26,10 @@ Texture* UtilsGetFrameTexture(Sprite* m_pSprite, int index)
 
 BaseSprite::BaseSprite(uint64_t resoureID)
 {
-	//if (resoureID == 0) { m_pSprite = nullptr; return; }
+	if (resoureID == 0) {
+		m_pSprite = nullptr;
+		return;
+	}
 	m_pSprite = RESOURCE_MANAGER_INSTANCE->LoadWASSpriteByID(resoureID, true);
 	Width = m_pSprite->mWidth;
 	Height = m_pSprite->mHeight;
@@ -47,23 +51,29 @@ BaseSprite::BaseSprite(uint64_t resoureID)
 	bPlay = true;
 	bLoop = true;
 	bGroupEndUpdate = false;
+
+	INPUT_MANAGER_INSTANCE->RegisterView(this);
 }
 
 BaseSprite::BaseSprite(uint32_t pkg, uint32_t wasID) :BaseSprite(RESOURCE_MANAGER_INSTANCE->EncodeWAS(pkg, wasID)) {}
 
 BaseSprite::~BaseSprite()
 {
+	INPUT_MANAGER_INSTANCE->UnRegisterView(this);
 	m_pSprite = nullptr;
 }
 
 void BaseSprite::Update()
 {
+	if (!m_pSprite)return;
 	bGroupEndUpdate = false;
+	bFrameUpdated = false;
 	if (bPlay) {
 		float dt = WINDOW_INSTANCE->GetDeltaTime();
 		PlayTime = PlayTime + dt;
 		if (PlayTime >= FrameInterval)
 		{
+			bFrameUpdated = true;
 			PlayTime = (PlayTime - std::floor(PlayTime / FrameInterval)*FrameInterval);
 			CurrentFrame = CurrentFrame + 1;
 			if (CurrentFrame >= GroupFrameCount) {
@@ -82,6 +92,7 @@ void BaseSprite::Update()
 
 void BaseSprite::Draw()
 {
+	if (!m_pSprite)return;
 	auto* texture = UtilsGetFrameTexture(m_pSprite, Dir*GroupFrameCount + CurrentFrame);
 	if (texture)
 	{
@@ -109,7 +120,7 @@ void BaseSprite::Reset()
 
 void BaseSprite::Stop()
 {
-	bLoop = false;
+	bPlay = false;
 }
 
 void BaseSprite::Play()
@@ -117,36 +128,60 @@ void BaseSprite::Play()
 	bPlay = true;
 }
 
-int BaseSprite::GetFrameKeyX()
+
+int BaseSprite::GetFrameKeyX(int index /*= -1*/)
 {
 	if (!m_pSprite)return 0;
-	int index = Dir * GroupFrameCount + CurrentFrame;
-	if (index >= m_pSprite->mFrames.size())return 0;
-	return m_pSprite->mFrames[index].key_x;
+	if (index == -1)index = CurrentFrame;
+	int frame = Dir * GroupFrameCount + index;
+	if (frame >= m_pSprite->mFrames.size())return 0;
+	return m_pSprite->mFrames[frame].key_x;
 }
 
-int BaseSprite::GetFrameKeyY()
+int BaseSprite::GetFrameKeyY(int index /*= -1*/)
 {
 	if (!m_pSprite)return 0;
-	int index = Dir * GroupFrameCount + CurrentFrame;
-	if (index >= m_pSprite->mFrames.size())return 0;
-	return m_pSprite->mFrames[index].key_y;
+	if (index == -1)index = CurrentFrame;
+	int frame = Dir * GroupFrameCount + index;
+	if (frame >= m_pSprite->mFrames.size())return 0;
+	return m_pSprite->mFrames[frame].key_y;
 }
 
-int BaseSprite::GetFrameWidth()
+
+int BaseSprite::GetFrameWidth(int index /*= -1*/)
 {
 	if (!m_pSprite)return 0;
-	int index = Dir * GroupFrameCount + CurrentFrame;
-	if (index >= m_pSprite->mFrames.size())return 0;
-	return m_pSprite->mFrames[index].width;
+	if (index == -1)index = CurrentFrame;
+	int frame = Dir * GroupFrameCount + index;
+	if (frame >= m_pSprite->mFrames.size())return 0;
+	return m_pSprite->mFrames[frame].width;
 }
 
-int BaseSprite::GetFrameHeight()
+
+int BaseSprite::GetFrameHeight(int index /*= -1*/)
 {
 	if (!m_pSprite)return 0;
-	int index = Dir * GroupFrameCount + CurrentFrame;
-	if (index >= m_pSprite->mFrames.size())return 0;
-	return m_pSprite->mFrames[index].height;
+	if (index == -1)index = CurrentFrame;
+	int frame = Dir * GroupFrameCount + index;
+	if (frame >= m_pSprite->mFrames.size())return 0;
+	return m_pSprite->mFrames[frame].height;
+}
+
+Bound BaseSprite::GetViewBounds()
+{
+	return Bound{ Pos.x, (Pos.x + Width),
+		Pos.y,(Pos.y + Height) };
+}
+
+bool BaseSprite::CheckDrag(int dx, int dy)
+{
+	return pow(dx, 2) + pow(dy, 2) >= 16;
+}
+
+void BaseSprite::OnDragMove(int dx, int dy)
+{
+	Pos.x += (float)dx;
+	Pos.y += (float)dy;
 }
 
 BaseSprite* lua_check_base_sprite(lua_State*L, int index)
@@ -248,22 +283,26 @@ int base_sprite_get_key_y(lua_State* L) {
 }
 int base_sprite_get_frame_key_x(lua_State* L) {
 	auto* base_sprite = lua_check_base_sprite(L, 1);
-	lua_pushinteger(L, base_sprite->GetFrameKeyX());
+	int index = (int)luaL_optinteger(L, 2, -1);
+	lua_pushinteger(L, base_sprite->GetFrameKeyX(index));
 	return 1;
 }
 int base_sprite_get_frame_key_y(lua_State* L) {
 	auto* base_sprite = lua_check_base_sprite(L, 1);
-	lua_pushinteger(L, base_sprite->GetFrameKeyY());
+	int index = (int)luaL_optinteger(L, 2, -1);
+	lua_pushinteger(L, base_sprite->GetFrameKeyY(index));
 	return 1;
 }
 int base_sprite_get_frame_width(lua_State*L){
 	auto* base_sprite = lua_check_base_sprite(L, 1);
-	lua_pushinteger(L, base_sprite->GetFrameWidth());
+	int index = (int)luaL_optinteger(L, 2, -1);
+	lua_pushinteger(L, base_sprite->GetFrameWidth(index));
 	return 1;
 }
 int base_sprite_get_frame_height(lua_State*L){
 	auto* base_sprite = lua_check_base_sprite(L, 1);
-	lua_pushinteger(L, base_sprite->GetFrameHeight());
+	int index = (int)luaL_optinteger(L, 2, -1);
+	lua_pushinteger(L, base_sprite->GetFrameHeight(index));
 	return 1;
 }
 
@@ -347,8 +386,6 @@ luaL_Reg MT_BASE_SPRITE[] = {
 { "GetFrameKeyY", base_sprite_get_frame_key_y },
 { "GetFrameHeight", base_sprite_get_frame_height },
 { "GetFrameWidth", base_sprite_get_frame_width},
-
-
 { "GetPlayTime", base_sprite_get_play_time },
 { "GetDirCnt", base_sprite_get_dir_cnt },
 { "GetTotalFrames", base_sprite_get_total_frames },

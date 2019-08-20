@@ -285,6 +285,11 @@ int actor_get_dir(lua_State* L) {
 	return 1;
 }
 
+int actor_reverse_dir(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	actor->ReverseDir();
+	return 0;
+}
 
 int actor_set_type(lua_State* L)
 {
@@ -494,14 +499,14 @@ int actor_set_role_id(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	int roleID = (int)lua_tointeger(L, 2);
 	actor->SetRoleID(roleID);
+#ifndef SIMPLE_SERVER 
+	actor->GetASM()->Reset();
+#endif // !SIMPLE_SERVER
 	return 0;
 }
 int actor_get_role_id(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	lua_pushinteger(L, actor->GetRoleID());
-#ifndef SIMPLE_SERVER 
-	actor->GetASM()->Reset();
-#endif // !SIMPLE_SERVER
 	return 1;
 }
 int actor_set_weapon_id(lua_State* L) {
@@ -602,6 +607,7 @@ luaL_Reg mt_actor[] = {
 {"GetWeaponID", actor_get_weapon_id},
 {"SetDir", actor_set_dir},
 {"GetDir", actor_get_dir},
+{ "ReverseDir", actor_reverse_dir},
 {"SetLocal", actor_set_local},
 {"IsLocal", actor_is_local},
 {"SetActionID", actor_set_action_id},
