@@ -12,10 +12,10 @@ public:
 	~Game();
 	Pos MapPosToScreenPos(Pos mapPos);
 	Pos ScreenPosToMapPos(Pos screenPos);
-	uint32_t GetActionWasID(int type, int roleID, int actionID);
-	uint32_t GetWeaponWasID(int weaponID, int actionID);
+	uint64_t GetActionResID(int type, int roleID, int actionID);
+	uint64_t GetWeaponResID(int weaponID, int actionID);
 	int GetRoleIDByName(int actorType, const char* templ_name);
-private: 
+private:
 	bool IsRunning();
 };
 

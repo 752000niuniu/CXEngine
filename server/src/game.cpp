@@ -6,6 +6,7 @@
 #include "file_system.h"
 #include "actor/action.h"
 #include "scene/game_map.h"
+#include "resource_manager.h"
 
 static utils::tsv* s_AvatarRoleTable;
 static utils::tsv* s_AvatarWeaponTable;
@@ -55,10 +56,10 @@ bool Game::IsRunning()
 }
 
 
-uint32_t Game::GetActionWasID(int type, int roleID, int actionID)
+uint64_t Game::GetActionResID(int type, int roleID, int actionID)
 {
-	if (actionID < 0) return -1;
-	if (roleID < 0) return -1;
+	if (actionID < 0) return 0;
+	if (roleID < 0) return 0;
 
 	auto* rowTable = s_AvatarRoleTable;
 	switch (type)
@@ -90,22 +91,22 @@ uint32_t Game::GetActionWasID(int type, int roleID, int actionID)
 	}
 	if (wasIDstr == "")
 	{
-		return-1;
+		return 0;
 	}
 
 	auto ids = utils::split_by_cnt(wasIDstr, ',', 1);
-	if (ids.size() == 0)return -1;
-	auto resid = utils::split_by_cnt(ids[1], '-', 2);
+	if (ids.size() == 0)return 0;
+	auto resid = utils::split_by_cnt(ids[0], '-', 2);
 
-	uint32 wasID = std::stoul(resid[2], 0, 16);
-	return wasID;
+	uint32 pack_index = std::stoul(resid[0], 0);
+	uint32 wasID = std::stoul(resid[1], 0, 16);
+	return RESOURCE_MANAGER_INSTANCE->EncodeWAS(pack_index, wasID);
 }
 
-uint32_t Game::GetWeaponWasID(int weaponID, int actionID)
+uint64_t Game::GetWeaponResID(int weaponID, int actionID)
 {
-	if (actionID < 0) return -1;
-	if (weaponID < 0) return -1;
-
+	if (actionID < 0) return 0;
+	if (weaponID < 0) return 0;
 
 	std::string wasIDstr("");
 	if (actionID == ACTION_BATIDLE)
@@ -119,15 +120,15 @@ uint32_t Game::GetWeaponWasID(int weaponID, int actionID)
 	{
 		wasIDstr = s_AvatarWeaponTable->Rows[weaponID][action_get_name(actionID)];
 	}
-	if (wasIDstr == "")return-1;
+	if (wasIDstr == "")return 0;
 
 	auto ids = utils::split_by_cnt(wasIDstr, ',', 1);
-	if (ids.size() == 0)return -1;
-	auto resid = utils::split_by_cnt(ids[1], '-', 2);
+	if (ids.size() == 0)return 0;
+	auto resid = utils::split_by_cnt(ids[0], '-', 2);
 
-
-	uint32 wasID = std::stoul(resid[2], 0, 16);
-	return wasID;
+	uint32 pack_index = std::stoul(resid[0], 0);
+	uint32 wasID = std::stoul(resid[1], 0, 16);
+	return RESOURCE_MANAGER_INSTANCE->EncodeWAS(pack_index, wasID);
 }
 
 int Game::GetRoleIDByName(int actorType, const char* templ_name)
@@ -169,12 +170,12 @@ int util_screen_pos_to_map_pos(lua_State* L) {
 }
 
 
-int game_get_action_was_id(lua_State* L)
+int game_get_action_res_id(lua_State* L)
 {
 	auto type = (int)lua_tointeger(L, 1);
 	auto roleID = (int)lua_tointeger(L, 2);
 	auto actionID = (int)lua_tointeger(L, 3);
-	auto wasid = GAME_INSTANCE->GetActionWasID(type, roleID, actionID);
+	auto wasid = GAME_INSTANCE->GetActionResID(type, roleID, actionID);
 	lua_pushinteger(L, wasid);
 	return 1;
 }
@@ -183,7 +184,7 @@ int game_get_weapon_was_id(lua_State* L)
 {
 	auto weaponID = (int)lua_tointeger(L, 1);
 	auto actionID = (int)lua_tointeger(L, 2);
-	auto wasid = GAME_INSTANCE->GetWeaponWasID(weaponID, actionID);
+	auto wasid = GAME_INSTANCE->GetWeaponResID(weaponID, actionID);
 	lua_pushinteger(L, wasid);
 	return 1;
 }
@@ -191,7 +192,7 @@ int game_get_weapon_was_id(lua_State* L)
 
 void luaopen_game(lua_State* L) {
 	script_system_register_luac_function(L, util_screen_pos_to_map_pos);
-	script_system_register_luac_function(L, game_get_action_was_id);
+	script_system_register_luac_function(L, game_get_action_res_id);
 	script_system_register_luac_function(L, game_get_weapon_was_id);
 
 }

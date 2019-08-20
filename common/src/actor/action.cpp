@@ -216,16 +216,16 @@ void ActionStateMachine::EnsureLoadAction(int action)
 	if (action < ACTION_IDLE || action >= ACTION_COUNT)return;
 
 	if (m_AvatarActions[action] == nullptr) {
-		auto wasid = GAME_INSTANCE->GetActionWasID(m_Actor->GetType(), m_AvatarID, action);
-		m_AvatarActions[action] = new BaseSprite(SHAPEWDF, wasid);
+		auto resid = GAME_INSTANCE->GetActionResID(m_Actor->GetType(), m_AvatarID, action);
+		m_AvatarActions[action] = new BaseSprite(resid);
 		m_AvatarActions[action]->FrameInterval = m_TimeInterval;
 		m_AvatarActions[action]->Dir = m_Actor->GetDir();
 	}
 
 	if (m_HasWeapon) {
 		if (m_WeaponActions[action] == nullptr) {
-			auto wasid = GAME_INSTANCE->GetWeaponWasID(m_WeaponID, action);
-			m_WeaponActions[action] = new BaseSprite(SHAPEWDF, wasid);
+			auto resid = GAME_INSTANCE->GetWeaponResID(m_WeaponID, action);
+			m_WeaponActions[action] = new BaseSprite(resid);
 			m_WeaponActions[action]->FrameInterval = m_TimeInterval;
 			m_WeaponActions[action]->Dir = m_Actor->GetDir();
 		}

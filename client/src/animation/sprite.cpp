@@ -25,6 +25,7 @@ Texture* UtilsGetFrameTexture(Sprite* m_pSprite, int index)
 
 BaseSprite::BaseSprite(uint64_t resoureID)
 {
+	//if (resoureID == 0) { m_pSprite = nullptr; return; }
 	m_pSprite = RESOURCE_MANAGER_INSTANCE->LoadWASSpriteByID(resoureID, true);
 	Width = m_pSprite->mWidth;
 	Height = m_pSprite->mHeight;
@@ -118,6 +119,7 @@ void BaseSprite::Play()
 
 int BaseSprite::GetFrameKeyX()
 {
+	if (!m_pSprite)return 0;
 	int index = Dir * GroupFrameCount + CurrentFrame;
 	if (index >= m_pSprite->mFrames.size())return 0;
 	return m_pSprite->mFrames[index].key_x;
@@ -125,6 +127,7 @@ int BaseSprite::GetFrameKeyX()
 
 int BaseSprite::GetFrameKeyY()
 {
+	if (!m_pSprite)return 0;
 	int index = Dir * GroupFrameCount + CurrentFrame;
 	if (index >= m_pSprite->mFrames.size())return 0;
 	return m_pSprite->mFrames[index].key_y;
@@ -132,6 +135,7 @@ int BaseSprite::GetFrameKeyY()
 
 int BaseSprite::GetFrameWidth()
 {
+	if (!m_pSprite)return 0;
 	int index = Dir * GroupFrameCount + CurrentFrame;
 	if (index >= m_pSprite->mFrames.size())return 0;
 	return m_pSprite->mFrames[index].width;
@@ -139,6 +143,7 @@ int BaseSprite::GetFrameWidth()
 
 int BaseSprite::GetFrameHeight()
 {
+	if (!m_pSprite)return 0;
 	int index = Dir * GroupFrameCount + CurrentFrame;
 	if (index >= m_pSprite->mFrames.size())return 0;
 	return m_pSprite->mFrames[index].height;

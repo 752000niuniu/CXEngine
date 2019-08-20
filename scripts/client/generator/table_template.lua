@@ -91,7 +91,6 @@ action_affix =
 
 action_affix_keys = {'idle','walk','sit','angry','sayhi','dance','salute','clps','cry','batidle','attack','cast','behit','runto','runback','defend','unknown'}
 
-
 weapon_affix = 
 {
     SPEAR       =   {"枪矛","枪"},
@@ -114,8 +113,6 @@ weapon_affix =
 weapon_affix_keys = {}
 for k,_ in pairs(weapon_affix) do table.insert(weapon_affix_keys,k) end
 -- table.sort(weapon_affix_keys)
-
-
 
 local role_weapon_config = 
 {
@@ -141,7 +138,7 @@ shape_90_weapon={"暗夜","八卦","百花","碧波","碧波","彩虹","沧海",
 function find_avatar_table_row(av_table, tag)
     if not av_table[tag] then 
         av_table[tag] = {}
-        for k,_ in pairs(action_affix) do
+        for i,k in ipairs(action_affix_keys) do
             av_table[tag][k] = {}
         end
     end
@@ -163,11 +160,11 @@ function find_action_key(action_name)
 end
 
 function find_weapon_key(weapon_name)
-    return find_key_by_name(weapon_affix, weapon_name) or weapon_name
+    return find_key_by_name(weapon_affix, weapon_name)  
 end
 
 function find_role_key(role_name)
-    return find_key_by_name(role_affix, role_name) or role_name
+    return find_key_by_name(role_affix, role_name)  
 end
 
 local avatar_weapon_table = {}
@@ -226,41 +223,52 @@ end
 local avatar_role_table = {}
 function _parse_role_row(strs,WASID)
     if #strs < 3 then return false end
-    local _role = find_role_key( strs[2])
+    local _role = find_role_key(strs[2])
     local _action = find_action_key(strs[3]) 
+    if not _action then return false end
     if #strs == 3 then
-        local ID = string.format('%s-X',_role)
-        local row = find_avatar_table_row(avatar_role_table,ID)        
-        row.ID = ID
-        row.role = _role
-        row.name = strs[2]
-        row.weapon_type = 'X'
-        if _action then
-            table.insert(row[_action],WASID)
+        local weapon_types = role_weapon_config[_role]
+        local ID1 = string.format('%s-%s',_role, weapon_types[1])
+        local ID2 = string.format('%s-%s',_role, weapon_types[2])
+        local row1 = find_avatar_table_row(avatar_role_table,ID1)        
+        local row2 = find_avatar_table_row(avatar_role_table,ID2)        
+
+        if #row1[_action] < 1 then
+            row1.ID = ID1
+            row1.role = _role
+            row1.name = strs[2]
+            row1.weapon_type = weapon_types[1]
+            table.insert(row1[_action], WASID)
+
+            row2.ID = ID2
+            row2.role = _role
+            row2.name = strs[2]
+            row2.weapon_type = weapon_types[2]
+            row2[_action] ={WASID} 
             return true
         end
-        return false
+
+        row2.ID = ID2
+        row2.role = _role
+        row2.name =  strs[2]
+        row2.weapon_type = weapon_types[2]
+        row2[_action] ={WASID} 
+        return true
     elseif #strs == 4 then
         local _weapon_type = find_weapon_key(strs[4])
         if not _weapon_type then return false end
-            
-        local ID = string.format('%s-%s',_role,_weapon_type)
+        local ID = string.format('%s-%s',_role, _weapon_type)
         local row = find_avatar_table_row(avatar_role_table,ID)        
         row.ID = ID
         row.role = _role
         row.name = strs[2]
         row.weapon_type = _weapon_type
-        if _action then
-            table.insert(row[_action],WASID)
-            return true
-        end
-        return false
+        table.insert(row[_action],WASID)
+        return true
     else 
         return false
     end
 end
-
-
 
 -- 3101E857	NPC\万圣公主\行走
 local avatar_npc_table = {}
@@ -341,21 +349,22 @@ end
 function handle_role_multi_actions(tbl)
     local add_tbl = {}
     for k,v in pairs(tbl) do
+        -- cxlog_info('handle_role_multi_actions'..' v.role:'.. cjson.encode(v))
         if v.weapon_type == 'X' then
             local weapon_types = role_weapon_config[v.role]
             for i=1,2 do
-                -- cxlog_info(i..' v.role:'..v.role)
                 local ID = v.role..'-'..weapon_types[i]
                 local row = find_avatar_table_row(add_tbl, ID)
                 row.ID = ID
                 row.role = v.role
                 row.weapon_type = weapon_types[i]
-                
+                row.name = v.name
+
                 for _, action in ipairs(action_affix_keys) do
                     if #v[action] > 2 then
                         cxlog_info('#v[action] > 2 ')
                     end
-                    row[action] ={v[action][i] or ''} 
+                    row[action] =  v[action][i] or v[action][1] 
                 end
             end
             v.delete = true
@@ -364,14 +373,12 @@ function handle_role_multi_actions(tbl)
 
     for k,v in pairs(tbl) do
         if not v.delete then
-            add_tbl[k] = v
+            cxlog_info('k,v.ID',k,v.ID)
+            add_tbl[v.ID] = v
         end
     end
     return add_tbl
 end
-
-
-
 
 function sort_and_convert_tbl_by_ID(tbl)
     local sort_tbl = {}
@@ -399,13 +406,14 @@ function write_avater_file(path, header_keys, av_table)
         for ci,key in ipairs(col_names) do
             if v[key] then
                 if type(v[key]) =='table' then
-                    if #v[key] == 0 then
-                        file:write('' ..'\t')
-                    elseif #v[key] == 1 then
-                        file:write(v[key][1] ..'\t')
-                    else
-                        file:write(cjson.encode(v[key]) ..'\t')
+                    for _i, _v in ipairs(v[key]) do
+                        if _i == 1 then
+                            file:write( _v)
+                        else
+                            file:write( ','.._v)
+                        end
                     end
+                    file:write('\t')
                 else
                     file:write(v[key]..'\t')
                 end
@@ -598,7 +606,6 @@ function generate_avatar_role_tsv()
     write_avater_npc_table(vfs_makepath("res/tables/avatar_npc.tsv"),
             {'ID'},avatar_npc_table)
     
-    avatar_role_table =  handle_role_multi_actions(avatar_role_table)
     write_avater_file(vfs_makepath('res/tables/avatar_role.tsv'),
             {'ID','name','role','weapon_type'},avatar_role_table)
 

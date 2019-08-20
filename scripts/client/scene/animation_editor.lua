@@ -22,7 +22,7 @@ function OnSceneInit()
     player:SetY(275.0)
 
     enemy  = actor_manager_create_actor(os.time() + 100)
-    enemy:SetType(ACTOR_TYPE_PET)
+    -- enemy:SetType(ACTOR_TYPE_PET)
     enemy:SetRoleID(6)
     enemy:SetWeaponID(0)
     enemy:SetActionID(ACTION_BEHIT)
@@ -43,8 +43,8 @@ end
 
 local added_action = 0
 
-local RoleIDSB = imgui.CreateStrbuf('1',256)
-local WeaponIDSB = imgui.CreateStrbuf('60',256)
+local RoleIDSB = imgui.CreateStrbuf('10',256)
+local WeaponIDSB = imgui.CreateStrbuf('98',256)
 local LoadActionID = ACTION_IDLE
 local TimeInterval = 0.016 * 4
 function OnMergeSpriteClick()

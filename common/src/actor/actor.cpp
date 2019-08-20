@@ -34,7 +34,8 @@ Actor::Actor(uint64_t pid)
 	m_IsLocalPlayer(false),
 	m_IsAutoRun(false),
 	m_FrameSpeed(0.080f),
-	m_DirCount(8)
+	m_DirCount(8),
+	m_ActorType(ACTOR_TYPE_PLAYER)
 {
 	m_MoveHandle = new MoveHandle(this);
 #ifndef SIMPLE_SERVER
