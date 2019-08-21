@@ -5,6 +5,7 @@
 #include "window.h"
 #include "sprite_renderer.h"
 #include "input_manager.h"
+#include "logger.h"
 
 String UtilsGetFramePath(Sprite* m_pSprite, int index)
 {
@@ -51,8 +52,18 @@ BaseSprite::BaseSprite(uint64_t resoureID)
 	bPlay = true;
 	bLoop = true;
 	bGroupEndUpdate = false;
+	bEnableDrag = false;
 
-	INPUT_MANAGER_INSTANCE->RegisterView(this);
+	int max_dx = 0;
+	int max_frame = 0;
+	for (int i = 0; i < GroupFrameCount-1;i++) {
+		int dx = ( m_pSprite->mFrames[i ].key_x - m_pSprite->mFrames[i+1].key_x);
+		if (max_dx < dx) {
+			max_dx = dx;
+			max_frame = i + 1;
+		}
+	}
+	AttackKeyFrame = max_frame;
 }
 
 BaseSprite::BaseSprite(uint32_t pkg, uint32_t wasID) :BaseSprite(RESOURCE_MANAGER_INSTANCE->EncodeWAS(pkg, wasID)) {}
@@ -129,6 +140,13 @@ void BaseSprite::Play()
 }
 
 
+NE::Sprite::Sequence* BaseSprite::GetFrame(int index /*= -1*/)
+{
+	if (!m_pSprite)return nullptr;
+	if (index == -1)index = CurrentFrame;
+	if (index >= m_pSprite->mFrames.size())return 0;
+	return &m_pSprite->mFrames[index];
+}
 int BaseSprite::GetFrameKeyX(int index /*= -1*/)
 {
 	if (!m_pSprite)return 0;
@@ -167,6 +185,15 @@ int BaseSprite::GetFrameHeight(int index /*= -1*/)
 	return m_pSprite->mFrames[frame].height;
 }
 
+void BaseSprite::EnableDrag(bool enable)
+{
+	bEnableDrag = enable;
+	if(bEnableDrag){
+		INPUT_MANAGER_INSTANCE->RegisterView(this);
+	}else{
+		INPUT_MANAGER_INSTANCE->UnRegisterView(this);
+	}
+}
 Bound BaseSprite::GetViewBounds()
 {
 	return Bound{ Pos.x, (Pos.x + Width),
@@ -175,13 +202,44 @@ Bound BaseSprite::GetViewBounds()
 
 bool BaseSprite::CheckDrag(int dx, int dy)
 {
-	return pow(dx, 2) + pow(dy, 2) >= 16;
+	return bEnableDrag && pow(dx, 2) + pow(dy, 2) >= 16;
 }
 
 void BaseSprite::OnDragMove(int dx, int dy)
 {
 	Pos.x += (float)dx;
 	Pos.y += (float)dy;
+}
+
+
+
+Animation::Animation(uint64_t resoureID /*= 0*/) :BaseSprite(resoureID)
+{
+	Visible = true;
+}
+
+void Animation::Update()
+{
+	if (Visible) {
+		float dt = WINDOW_INSTANCE->GetDeltaTime();
+		PlayTime = PlayTime + dt;
+		if (PlayTime >= FrameInterval)
+		{
+			PlayTime = (PlayTime - std::floor(PlayTime / FrameInterval)*FrameInterval);
+			CurrentFrame = CurrentFrame + 1;
+			if (CurrentFrame >= GroupFrameCount) {
+				Visible = false;
+			}
+		}
+	}
+}
+
+void Animation::Draw()
+{
+	if (Visible)
+	{
+		BaseSprite::Draw();
+	}
 }
 
 BaseSprite* lua_check_base_sprite(lua_State*L, int index)
@@ -239,7 +297,7 @@ int base_sprite_stop(lua_State* L) {
 
 int base_sprite_start(lua_State* L) {
 	auto* base_sprite = lua_check_base_sprite(L, 1);
-	base_sprite->bPlay = true;
+	base_sprite->Play();
 	return 0;
 }
 
@@ -346,6 +404,14 @@ int base_sprite_get_group_count(lua_State* L) {
 	return 1;
 }
 
+int base_sprite_enable_drag(lua_State* L) {
+	auto* base_sprite = lua_check_base_sprite(L, 1);
+	bool enable = lua_toboolean(L, 2);
+	base_sprite->EnableDrag(enable);
+	return 0;
+}
+
+
 int base_sprite_export(lua_State* L) {
 	auto* base_sprite = lua_check_base_sprite(L, 1);
 	const char* dir = lua_tostring(L, 2);
@@ -375,7 +441,7 @@ luaL_Reg MT_BASE_SPRITE[] = {
 { "SetDir",base_sprite_set_dir },
 { "GetDir",base_sprite_get_dir },
 { "Stop",base_sprite_stop},
-{ "Start",base_sprite_start},
+{ "Play",base_sprite_start},
 { "SetFrameInterval",base_sprite_set_frame_interval },
 { "GetFrameInterval",base_sprite_get_frame_interval },
 { "GetWidth", base_sprite_get_width },
@@ -393,6 +459,7 @@ luaL_Reg MT_BASE_SPRITE[] = {
 { "SetCurrentFrame", base_sprite_set_current_frame },
 { "GetGroupFrameCount", base_sprite_get_group_frame_count },
 { "GetGroupCount", base_sprite_get_group_count },
+{ "EnableDrag", base_sprite_enable_drag },
 { "Export", base_sprite_export },
 { "Destroy", base_sprite_destroy },
 { NULL, NULL }
@@ -430,32 +497,3 @@ void luaopen_sprite(lua_State* L)
 	script_system_register_luac_function(L, base_sprite_create);
 }
 
-
-Animation::Animation(uint64_t resoureID /*= 0*/) :BaseSprite(resoureID)
-{
-	Visible = true;
-}
-
-void Animation::Update()
-{
-	if (Visible) {
-		float dt = WINDOW_INSTANCE->GetDeltaTime();
-		PlayTime = PlayTime + dt;
-		if (PlayTime >= FrameInterval)
-		{
-			PlayTime = (PlayTime - std::floor(PlayTime / FrameInterval)*FrameInterval);
-			CurrentFrame = CurrentFrame + 1;
-			if (CurrentFrame >= GroupFrameCount) {
-				Visible = false;
-			}
-		}
-	}
-}
-
-void Animation::Draw()
-{
-	if (Visible)
-	{
-		BaseSprite::Draw();
-	}
-}

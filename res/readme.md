@@ -36,3 +36,19 @@ id name lv type action_was_id
 
 
 git -c filter.lfs.smudge= -c filter.lfs.required=false clone url path
+
+
+右上
+右框中心点对准左框右边线中点
+
+
+右下
+右框中心点对准左框右边线1/4高度
+
+左下
+左框中心点对准右框左边线底
+
+左上
+左框中心点对准右框左线1/4高度
+
+

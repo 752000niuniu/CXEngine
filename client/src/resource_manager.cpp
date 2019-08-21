@@ -5,15 +5,72 @@
 #include "file_loading.h"
 #include <string>
 #include "logger.h"
+#include "tsv.h"
+#include "actor/action.h"
+
+
+
+
+static std::map<uint32_t, std::string> s_PackPathMap =
+{
+	{ ADDONWDF,    "addon.wdf" },
+{ ATOMWDF,     "atom.wdf" },
+{ CHATWDF,     "chat.wdf" },
+{ FIREWORKWDF, "firework.wdf" },
+{ GOODSWDF,    "goods.wdf" },
+{ ITEMWDF,     "item.wdf" },
+{ MAGICWDF,    "magic.wdf" },
+{ MAPANIWDF,   "mapani.wdf" },
+{ MHIMAGEWDF,  "mhimage.wdf" },
+{ MISCWDF,     "misc.wdf" },
+{ MUSICWDF,    "music.wdf" },
+{ SCENEWDF,    "scene.wdf" },
+{ SHAPEWDF,    "shape.wdf" },
+{ SHAPEWD1,    "shape.wd1" },
+{ SHAPEWD2,    "shape.wd2" },
+{ SHAPEWD3,    "shape.wd3" },
+{ SHAPEWD4,    "shape.wd4" },
+{ SHAPEWD5,    "shape.wd5" },
+{ SHAPEWD6,    "shape.wd6" },
+{ SHAPEWD7,    "shape.wd7" },
+{ SMAPWDF,     "smap.wdf" },
+{ SOUNDWDF,    "sound.wdf" },
+{ STOCKWDF,    "stock.wdf" },
+{ WADDONWDF,   "waddon.wdf" },
+{ WZIFEWDF,    "wzife.wdf" },
+{ WZIFEWD1,    "wzife.wd1" }
+};
 
 
 static std::vector<String> s_PackToName = { "addon.wdf","atom.wdf","chat.wdf","firework.wdf","goods.wdf","item.wdf","magic.wdf","mapani.wdf","mhimage.wdf","misc.wdf","music.wdf","scene.wdf","shape.wd1","shape.wd2","shape.wd3","shape.wd4","shape.wd5","shape.wd6","shape.wd7","shape.wdf","smap.wdf","sound.wdf","stock.wdf","waddon.wdf","wzife.wd1","wzife.wdf","wzimage.wdf" };
 static std::map<uint32_t, NE::WDF*> s_Loaders;
+namespace utils
+{
+	std::string GetPathByPackID(uint32 packID)
+	{
+		auto it = s_PackPathMap.find(packID);
+		if (it != s_PackPathMap.end())
+		{
+			return FileSystem::GetWDFPath(it->second);
+		}
+		else
+		{
+			printf("GetPathByPackID error!\n");
+			return "";
+		}
+	}
+
+	
+
+}
+
 
 ResourceManager::ResourceManager()
-	:Singleton<ResourceManager>()
+	:Singleton<ResourceManager>(),
+	m_AvatarRoleTSV(FileSystem::GetTablePath("avatar_role.tsv")),
+	m_AvatarWeaponTSV(FileSystem::GetTablePath("avatar_weapon.tsv")),
+	m_AvatarNpcTSV(FileSystem::GetTablePath("avatar_npc.tsv"))
 {
-
 }
 
 ResourceManager::~ResourceManager()
@@ -100,55 +157,170 @@ void ResourceManager::OnUpdate()
 
 }
 
-
-static std::map<uint32_t, std::string> s_PackPathMap =
+uint64_t ResourceManager::GetActionResID(int type, int roleID, int actionID)
 {
-	{ ADDONWDF,    "addon.wdf" },
-{ ATOMWDF,     "atom.wdf" },
-{ CHATWDF,     "chat.wdf" },
-{ FIREWORKWDF, "firework.wdf" },
-{ GOODSWDF,    "goods.wdf" },
-{ ITEMWDF,     "item.wdf" },
-{ MAGICWDF,    "magic.wdf" },
-{ MAPANIWDF,   "mapani.wdf" },
-{ MHIMAGEWDF,  "mhimage.wdf" },
-{ MISCWDF,     "misc.wdf" },
-{ MUSICWDF,    "music.wdf" },
-{ SCENEWDF,    "scene.wdf" },
-{ SHAPEWDF,    "shape.wdf" },
-{ SHAPEWD1,    "shape.wd1" },
-{ SHAPEWD2,    "shape.wd2" },
-{ SHAPEWD3,    "shape.wd3" },
-{ SHAPEWD4,    "shape.wd4" },
-{ SHAPEWD5,    "shape.wd5" },
-{ SHAPEWD6,    "shape.wd6" },
-{ SHAPEWD7,    "shape.wd7" },
-{ SMAPWDF,     "smap.wdf" },
-{ SOUNDWDF,    "sound.wdf" },
-{ STOCKWDF,    "stock.wdf" },
-{ WADDONWDF,   "waddon.wdf" },
-{ WZIFEWDF,    "wzife.wdf" },
-{ WZIFEWD1,    "wzife.wd1" }
-};
+	if (actionID < 0) return 0;
+	if (roleID < 0) return 0;
 
-namespace utils
-{
-	std::string GetPathByPackID(uint32 packID)
+	utils::tsv* rowTable = FindAvatarTable(type);
+	std::string wasIDstr("");
+	if (actionID == ACTION_BATIDLE)
 	{
-		auto it = s_PackPathMap.find(packID);
-		if (it != s_PackPathMap.end())
-		{
-			return FileSystem::GetWDFPath(it->second);
-		}
-		else
-		{
-			printf("GetPathByPackID error!\n");
-			return "";
+		auto wasIdle = rowTable->Rows[roleID][action_get_name(ACTION_IDLE)];
+		auto wasBatidle = rowTable->Rows[roleID][action_get_name(ACTION_BATIDLE)];
+		if (wasBatidle != "")wasIDstr = wasBatidle;
+		else wasIDstr = wasIdle;
+	}
+	else if (actionID == ACTION_IDLE) {
+
+		auto wasIdle = rowTable->Rows[roleID][action_get_name(ACTION_IDLE)];
+		auto wasBatidle = rowTable->Rows[roleID][action_get_name(ACTION_BATIDLE)];
+		if (wasIdle != "")wasIDstr = wasIdle;
+		else wasIDstr = wasBatidle;
+	}
+	else
+	{
+		wasIDstr = rowTable->Rows[roleID][action_get_name(actionID)];
+	}
+	if (wasIDstr == "")
+	{
+		return 0;
+	}
+
+	auto ids = utils::split_by_cnt(wasIDstr, ',', 1);
+	if (ids.size() == 0)return 0;
+	auto resid = utils::split_by_cnt(ids[0], '-', 2);
+
+	uint32 pack_index = std::stoul(resid[0], 0);
+	uint32 wasID = std::stoul(resid[1], 0, 16);
+	return RESOURCE_MANAGER_INSTANCE->EncodeWAS(pack_index, wasID);
+}
+
+uint64_t ResourceManager::GetActionResID(int type, std::string id, int action)
+{
+	if (type >= AVATAR_TYPE_COUNT || type < 0)return 0;
+	utils::tsv* tbl = nullptr;
+	if (type == AVATAR_TYPE_ROLE)
+		tbl = &m_AvatarRoleTSV;
+	else if (type == AVATAR_TYPE_WEAPON)
+		tbl = &m_AvatarWeaponTSV;
+	else if (type == AVATAR_TYPE_NPC)
+		tbl = &m_AvatarNpcTSV;
+	assert(tbl != nullptr);
+	
+	std::string idstr = tbl->MapRows[id][action_get_name(action)];
+	if(idstr==""){
+		if(action==ACTION_IDLE){
+			idstr = tbl->MapRows[id][action_get_name(ACTION_BATIDLE)];
+		}else if(action == ACTION_BATIDLE){
+			idstr = tbl->MapRows[id][action_get_name(ACTION_IDLE)];
 		}
 	}
+	if (idstr == "")return 0;
+	
+	auto ids = utils::split_by_cnt(idstr, ',', 1);
+	if (ids.size() == 0)return 0;
+	auto first_res_id= utils::split_by_cnt(ids[0], '-', 2);
+
+	uint32 pack = std::stoul(first_res_id[0], 0);
+	uint32 wasID = std::stoul(first_res_id[1], 0, 16);
+	return EncodeWAS(pack, wasID);
+}
+
+uint64_t ResourceManager::GetWeaponResID(int weaponID, int actionID)
+{
+	if (actionID < 0) return 0;
+	if (weaponID < 0) return 0;
+
+	std::string wasIDstr("");
+	if (actionID == ACTION_BATIDLE)
+	{
+		auto wasIdle = m_AvatarWeaponTSV.Rows[weaponID][action_get_name(ACTION_IDLE)];
+		auto wasBatidle = m_AvatarWeaponTSV.Rows[weaponID][action_get_name(ACTION_BATIDLE)];
+		if (wasIdle != "")wasIDstr = wasBatidle;
+		else wasBatidle = wasIdle;
+	}
+	else
+	{
+		wasIDstr = m_AvatarWeaponTSV.Rows[weaponID][action_get_name(actionID)];
+	}
+	if (wasIDstr == "")return 0;
+
+	auto ids = utils::split_by_cnt(wasIDstr, ',', 1);
+	if (ids.size() == 0)return 0;
+	auto resid = utils::split_by_cnt(ids[0], '-', 2);
+
+	uint32 pack_index = std::stoul(resid[0], 0);
+	uint32 wasID = std::stoul(resid[1], 0, 16);
+	return RESOURCE_MANAGER_INSTANCE->EncodeWAS(pack_index, wasID);
 }
 
 
+int ResourceManager::GetRoleIDByName(int actorType, const char* templ_name)
+{
+	utils::tsv* rowTable = FindAvatarTable(actorType);
+	for (size_t i = 0; i < rowTable->Rows.size(); i++)
+	{
+		auto& row = rowTable->Rows[i];
+		if (row["ID"] == templ_name)
+		{
+			return (int)i;
+		}
+	}
+	return 0;
+}
+
+utils::tsv* ResourceManager::FindAvatarTable(int actor_type)
+{
+	utils::tsv* rowTable = nullptr;
+	switch (actor_type)
+	{
+	case ACTOR_TYPE_DEFAULT:
+		rowTable = &m_AvatarNpcTSV;
+		break;
+	case ACTOR_TYPE_PLAYER:
+		rowTable = &m_AvatarRoleTSV;
+		break;
+	case ACTOR_TYPE_PET:
+	case ACTOR_TYPE_NPC:
+		rowTable = &m_AvatarNpcTSV;
+		break;
+	default:
+		break;
+	}
+	return rowTable;
+}
+int ResourceManager::ActorTypeToAvatarType(int actorType)
+{
+	if (actorType == ACTOR_TYPE_DEFAULT || actorType == ACTOR_TYPE_PLAYER)
+		return AVATAR_TYPE_ROLE;
+	if (actorType == ACTOR_TYPE_PET || actorType == ACTOR_TYPE_NPC)
+		return AVATAR_TYPE_NPC;
+	return AVATAR_TYPE_ROLE;
+}
+
+int ResourceManager::GetRoleID(CXString id)
+{
+	return 0;
+}
+int resource_get_action_id(lua_State* L)
+{
+	auto type = (int)lua_tointeger(L, 1);
+	auto id = lua_tostring(L, 2);
+	auto actionID = (int)lua_tointeger(L, 3);
+	auto resid = RESOURCE_MANAGER_INSTANCE->GetActionResID(type, id, actionID);
+	lua_pushinteger(L, resid);
+	return 1;
+}
+
+int resource_get_weapon_id(lua_State* L)
+{
+	auto weaponID = (int)lua_tointeger(L, 1);
+	auto actionID = (int)lua_tointeger(L, 2);
+	auto wasid = RESOURCE_MANAGER_INSTANCE->GetWeaponResID(weaponID, actionID);
+	lua_pushinteger(L, wasid);
+	return 1;
+}
 
 void resource_manager_init()
 {
@@ -195,11 +367,17 @@ void luaopen_resource_manager(lua_State* L)
 	REG_ENUM(WADDONWDF);
 	REG_ENUM(WZIFEWDF);
 	REG_ENUM(WZIFEWD1);
-#undef REG_ENUM
 
+	REG_ENUM(AVATAR_TYPE_ROLE);
+	REG_ENUM(AVATAR_TYPE_WEAPON);
+	REG_ENUM(AVATAR_TYPE_NPC);
+	REG_ENUM(AVATAR_TYPE_COUNT);
+#undef REG_ENUM
 
 	script_system_register_function(L, resource_manager_init);
 	script_system_register_function(L, resource_manager_update);
 	script_system_register_function(L, resource_manager_deinit);
+	script_system_register_luac_function(L, resource_get_action_id);
+	script_system_register_luac_function(L, resource_get_weapon_id);
 	
 }

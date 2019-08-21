@@ -14,7 +14,6 @@ local BeHitAnim
 ---待战-> Runto-> Attack-> Runback -> 待战
 function OnAttackActionCapter(actor, avatar)
     local file = io.open(vfs_makepath('a.txt'), 'a+')
-    
     file:write('ROLE:'..actor:GetRoleID()..' Cur:'..avatar:GetCurrentFrame()..' '..avatar:GetGroupFrameCount()..'\n')
     file:close()
 end
@@ -22,26 +21,41 @@ end
 
 function OnSceneInit()
     BeHitAnim =  base_sprite_create(ADDONWDF,0x1D3FF13C)
+    BeHitAnim:EnableDrag(true)
 
     player = actor_manager_create_actor(os.time())
-    player:SetRoleID(math.tointeger(RoleIDSB:str()))
-    player:SetWeaponID(math.tointeger(WeaponIDSB:str()))
-    player:SetActionID(ACTION_ATTACK)
-    player:SetDir(2)
-    player:SetX(615.0)
-    player:SetY(275.0)
+    -- player:SetRoleID(math.tointeger(RoleIDSB:str()))
+    -- player:SetWeaponID(math.tointeger(WeaponIDSB:str()))
+    -- player:SetAvatarID('JXK-SWORD')
+    -- player:SetWeaponAvatarID('JXK-SWORD-120-四法青云')
+    player:SetType(ACTOR_TYPE_PET)
+    player:SetAvatarID('巡游天神')
+    -- player:SetDir(2)
+    -- player:SetX(615.0)
+    -- player:SetY(275.0)
+
+     player:SetX(375.0)
+     player:SetY(170.0)
+
+    player:SetActionID(ACTION_IDLE)
     -- player:GetAvatar():Stop()
 
-    enemy  = actor_manager_create_actor(os.time() + 100)
+
+    enemy  = actor_manager_create_actor(os.time() + 222)
     enemy:SetType(ACTOR_TYPE_PET)
-    
-    enemy:SetRoleID(35)
-    enemy:SetWeaponID(0)
-    enemy:SetActionID(ACTION_BEHIT)
+    enemy:SetAvatarID('巡游天神')
+    -- enemy:SetWeaponAvatarID('JXK-KNIFE-120-晓风残月')
+
+    -- enemy:SetRoleID(35)
+    -- enemy:SetWeaponID(0)
+    -- enemy:SetActionID(ACTION_BEHIT)
     enemy:SetDir(player:GetDir())
     enemy:ReverseDir()
-    enemy:SetX(375.0)
-    enemy:SetY(170.0)
+    -- enemy:SetX(375.0)
+    -- enemy:SetY(170.0)
+    enemy:SetX(615.0)
+    enemy:SetY(275.0)
+    enemy:SetActionID(ACTION_IDLE)
     -- enemy:GetAvatar():Stop()
 end
 
@@ -68,9 +82,33 @@ function draw_sprite_info(sprite)
     imgui.Text(string.format('dt '.. string.format('%.2f',sprite:GetFrameInterval()) ))
 end
 
+function draw_sprite_bounding_box(avatar)
+    local  orix , oriy = scene_manager_get_imgui_cursor_pos()
+    local avx, avy = avatar:GetPos()
+    local tlx = orix + avx 
+    local tly = oriy + avy
+    local center_x = tlx + avatar:GetKeyX()
+    local center_y = tly + avatar:GetKeyY()
+    imgui.AddCircleFilled(center_x,center_y,4,0xff0000ff)
+
+    local brx = orix + avx + avatar:GetWidth()
+    local bry = oriy + avy + avatar:GetHeight()
+    imgui.AddRect(tlx,tly,brx,bry,0xff00ffff)
+
+    center_x = center_x - avatar:GetFrameKeyX(curframe)
+    center_y = center_y - avatar:GetFrameKeyY(curframe)
+    imgui.AddCircleFilled(center_x,center_y,4,0xff00ff00)
+
+    brx = center_x + avatar:GetFrameWidth(curframe)
+    bry = center_y + avatar:GetFrameHeight(curframe)
+    imgui.AddRect(center_x,center_y,brx,bry,0xff00ff00)
+end
+
+
 local actor_dir = 0
 local actor_action = 0
 local actor_frame = 0
+local actor_show_boudingbox={}
 function imgui_draw_actor(actor)
     if actor then
         local x ,y = actor:GetX() , actor:GetY()
@@ -118,33 +156,22 @@ function imgui_draw_actor(actor)
             avatar:SetCurrentFrame(actor_frame)    
         end
 
-        if imgui.Button('ActionCapter##'..actor:GetID()) then
-            local file = io.open(vfs_makepath('a.txt'), 'a+')
-            file:write('ROLE:'..actor:GetRoleID()..' Cur:'..avatar:GetCurrentFrame()..' Total:'..avatar:GetGroupFrameCount()..'\n')
-            file:close()
+        if imgui.Button('Play##'..actor:GetID()) then
+            avatar:Play()
         end
+        imgui.SameLine()
+        if imgui.Button('Stop##'..actor:GetID()) then
+            avatar:Stop()
+        end
+        res, actor_show_boudingbox[actor:GetID()] = imgui.Checkbox('BoudingBox###bb'..actor:GetID(),actor_show_boudingbox[actor:GetID()] or false)
 
         local curframe = avatar:GetCurrentFrame()
         draw_sprite_info(avatar)
-        local  orix , oriy = scene_manager_get_imgui_cursor_pos()
-        local avx, avy = avatar:GetPos()
-        local tlx = orix + avx 
-        local tly = oriy + avy
-        local center_x = tlx + avatar:GetKeyX()
-        local center_y = tly + avatar:GetKeyY()
-        imgui.AddCircleFilled(center_x,center_y,4,0xff0000ff)
-
-        local brx = orix + avx + avatar:GetWidth()
-        local bry = oriy + avy + avatar:GetHeight()
-        imgui.AddRect(tlx,tly,brx,bry,0xff00ffff)
-
-        center_x = center_x - avatar:GetFrameKeyX(curframe)
-        center_y = center_y - avatar:GetFrameKeyY(curframe)
-        imgui.AddCircleFilled(center_x,center_y,4,0xff00ff00)
-
-        brx = center_x + avatar:GetFrameWidth(curframe)
-        bry = center_y + avatar:GetFrameHeight(curframe)
-        imgui.AddRect(center_x,center_y,brx,bry,0xff00ff00)
+        if  actor_show_boudingbox[actor:GetID()] then
+            draw_sprite_bounding_box(avatar)
+        end
+        
+        
         imgui.EndGroup()
     end
 end
@@ -224,7 +251,7 @@ end
 
 function OnSceneDraw()
     enemy:Draw()
-    BeHitAnim:Draw()
+    -- BeHitAnim:Draw()
     player:Draw()
 end
 

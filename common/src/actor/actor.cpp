@@ -35,7 +35,9 @@ Actor::Actor(uint64_t pid)
 	m_IsAutoRun(false),
 	m_FrameSpeed(0.080f),
 	m_DirCount(8),
-	m_ActorType(ACTOR_TYPE_PLAYER)
+	m_ActorType(ACTOR_TYPE_PLAYER),
+	m_AvatarID(""),
+	m_WeaponAvatarID("")
 {
 	m_MoveHandle = new MoveHandle(this);
 #ifndef SIMPLE_SERVER
@@ -113,17 +115,11 @@ void Actor::SetActionID(int action)
 void Actor::SetRoleID(int id)
 {
 	m_RoleID = id;
-#ifndef SIMPLE_SERVER
-	m_ASM->SetAvatar(id);
-#endif
 }
 
 void Actor::SetWeaponID(int weapon)
 {
 	m_WeaponID = weapon;
-#ifndef SIMPLE_SERVER
-	m_ASM->SetWeapon(m_WeaponID);
-#endif
 }
 
 void Actor::SetPos(float x, float y)
@@ -525,6 +521,38 @@ int actor_get_weapon_id(lua_State* L) {
 	return 1;
 }
 
+int actor_set_avatar_id(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	auto id = lua_tostring(L, 2);
+	actor->SetAvatarID(id);
+#ifndef SIMPLE_SERVER
+	actor->GetASM()->Reset();
+#endif // !SIMPLE_SERVER
+	return 0;
+}
+
+int actor_get_avatar_id(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	lua_pushstring(L, actor->GetAvatarID().c_str());
+	return 1;
+}
+
+int actor_set_weapon_avatar_id(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	auto id = lua_tostring(L, 2);
+	actor->SetWeaponAvatarID(id);
+#ifndef SIMPLE_SERVER
+	actor->GetASM()->Reset();
+#endif // !SIMPLE_SERVER
+	return 0;
+}
+
+int actor_get_weapon_avatar_id(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	lua_pushstring(L, actor->GetWeaponAvatarID().c_str());
+	return 1;
+}
+
 int actor_clear_frames(lua_State* L) {
 #ifndef SIMPLE_SERVER
 	Actor* actor = lua_check_actor(L, 1);
@@ -605,6 +633,10 @@ luaL_Reg mt_actor[] = {
 {"GetRoleID", actor_get_role_id},
 {"SetWeaponID", actor_set_weapon_id},
 {"GetWeaponID", actor_get_weapon_id},
+{"SetWeaponAvatarID", actor_set_weapon_avatar_id},
+{"GetWeaponAvatarID", actor_get_weapon_avatar_id},
+{"SetAvatarID", actor_set_avatar_id},
+{"GetAvatarID", actor_get_avatar_id},
 {"SetDir", actor_set_dir},
 {"GetDir", actor_get_dir},
 { "ReverseDir", actor_reverse_dir},

@@ -135,6 +135,12 @@ public:
 	bool IsTurnReady() { return m_CombatProps.HasReady; };
 	BaseScene* GetScene();
 	MoveHandle* GetMoveHandle() { return m_MoveHandle; }
+
+	CXString GetAvatarID() { return m_AvatarID; }
+	void SetAvatarID(CXString id) { m_AvatarID = id; }
+	CXString GetWeaponAvatarID() { return m_WeaponAvatarID; }
+	void SetWeaponAvatarID(CXString id) { m_WeaponAvatarID = id; }
+
 #ifndef SIMPLE_SERVER
 	ActionStateMachine* GetASM() { return m_ASM; };
 	Bound GetViewBounds() override;
@@ -142,7 +148,6 @@ public:
 	void OnDragMove(int x, int y)override;
 #endif
 protected:
-	int m_RoleID;				//current role
 	int m_ActorID;
 	bool m_IsAutoRun;
 
@@ -151,9 +156,15 @@ protected:
 	std::string m_NickName;
 	// bool m_HasWeapon;
 
+	CXString m_AvatarID;
+	CXString m_WeaponAvatarID;
+
 	int m_SceneID;
-	int m_WeaponID;				//current weapon
-	int m_ActionID;				//current action
+
+	int m_RoleID;			
+	int m_WeaponID;
+	int m_WeaponType;
+	int m_ActionID;			
 
 	Pos m_Pos;
 	Pos m_MoveToPos;
@@ -175,10 +186,13 @@ protected:
 	int m_SayDuration;
 	bool m_IsLocalPlayer;
 
+	
 	MoveHandle* m_MoveHandle;
 	ActorCombatProps m_CombatProps;
 #ifndef SIMPLE_SERVER
 	ActionStateMachine* m_ASM;
+	
+	
 #endif
 };
 

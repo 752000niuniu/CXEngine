@@ -15,7 +15,6 @@ bool action_is_battle_action(int action);
 
 
 
-
 #ifndef SIMPLE_SERVER
 class Actor;
 class ActionStateMachine;
@@ -95,12 +94,12 @@ class ActionStateMachine
 {
 public:
 	ActionStateMachine(Actor* actor);
-	~ActionStateMachine() {};
+	~ActionStateMachine();
 	void Update();
 	void Draw();
 
-	void SetWeapon(int id);
-	void SetAvatar(int id);
+	void SetWeapon(CXString id);
+	void SetAvatar(CXString id);
 	void SetAction(int id);
 
 	void RestoreAction();
@@ -120,8 +119,8 @@ private:
 	Actor * m_Actor;
 	float m_TimeInterval;
 	int m_ActionID;
-	int m_WeaponID;
-	int m_AvatarID;
+	CXString m_WeaponID;
+	CXString m_AvatarID;
 	bool m_HasWeapon;
 	Action* m_pPreviousAction;
 	Action* m_pCurrentAction;

@@ -3,9 +3,11 @@
 #include "ui.h"
 
 struct NE::Sprite;
+struct NE::Sprite::Sequence;
 class BaseSprite : public View
 {
 public:
+	
 	BaseSprite(uint64_t resoureID = 0);
 	BaseSprite(uint32_t pkg, uint32_t wasID);
 	virtual ~BaseSprite();
@@ -16,10 +18,13 @@ public:
 	void Reset();
 	void Stop();
 	void Play();
+	NE::Sprite::Sequence* GetFrame(int index = -1);
 	int GetFrameKeyX(int index = -1);
 	int GetFrameKeyY(int index = -1);
 	int GetFrameWidth(int index = -1);
 	int GetFrameHeight(int index = -1);
+
+	void EnableDrag(bool enable);
 
 	int TotalFrames;
 	int CurrentFrame;
@@ -39,7 +44,8 @@ public:
 	float FrameInterval;
 	float PlayTime;
 	bool Visible;
-
+	bool bEnableDrag;
+	int AttackKeyFrame;
 	Bound GetViewBounds() override;
 	bool CheckDrag(int x, int y) override;
 	void OnDragMove(int x, int y)override;

@@ -7,34 +7,34 @@
 #include "resource_manager.h"
 #include "animation/sprite.h"
 #endif
+#include "cxmath.h"
 
-std::map<int, int> g_AttackKeyFrame ={
-	{ 0 ,5 },
-	{ 1 ,9 },
-	{ 2 ,7 },
-	{ 3 ,8 },
-	{ 4 ,9 },
-	{ 5 ,7 },
-	{ 6 ,7 },
-	{ 7 ,8 },
-	{ 8 ,7 },
-	{ 9 ,7 },
-	{ 10 ,4 },
-	{ 11 ,6 },
-	{ 12 ,8 },
-	{ 13 ,6 },
-	{ 14 ,6 },
-	{ 15 ,10 },
-	{ 16 ,8 },
-	{ 17 ,4 },
-	{ 18 ,7 },
-	{ 19 ,4 },
-	{ 20 ,4 },
-	{ 21 ,5 },
-	{ 22 ,5 },
-	{ 23 ,7 }
+std::map<CXString, int> g_AttackKeyFrame ={
+	{"FYN-DBSWORDS" ,5 },
+	{"FYN-RING" ,9 },
+	{"GJL-CLAW" ,7 },
+	{"GJL-WAND" ,8 },
+	{"HMR-CLAW" ,9 },
+	{"HMR-WHIP" ,7 },
+	{"HTG-AXE" ,7 },
+	{"HTG-HAMMER" ,8 },
+	{"JMW-AXE" ,7 },
+	{"JMW-KNIFE" ,7 },
+	{"JXK-KNIFE" ,4 },
+	{"JXK-SWORD" ,6 },
+	{"LTZ-FAN" ,8 },
+	{"LTZ-SPEAR" ,6 },
+	{"STB-HAMMER" ,6 },
+	{"STB-SPEAR" ,10 },
+	{"WTJ-RIBBON" ,8 },
+	{"WTJ-RING" ,4 },
+	{"XCE-RIBBON" ,7 },
+	{"XCE-WAND" ,4 },
+	{"XYS-FAN" ,4 },
+	{"XYS-SWORD" ,5 },
+	{"YNX-DBSWORDS" ,5 },
+	{"YNX-WHIP" ,7 }
 };
-
 
 static std::vector<std::string> s_ActionSet = { u8"idle",u8"walk",u8"sit",u8"angry",u8"sayhi",u8"dance",u8"salute",u8"clps",u8"cry",u8"batidle",u8"attack",u8"cast",u8"behit",u8"runto",u8"runback",u8"defend",u8"unknown" };;
 std::string action_get_name(int i)
@@ -120,10 +120,7 @@ void Action::Update()
 
 void Action::Enter()
 {
-	/*int action = actor->GetActionID();
-	if (action != pASM->GetActionID()) {
-		pASM->SetAction(action);
-	}*/
+	
 }
 
 ActionStateMachine::ActionStateMachine(Actor* _actor)
@@ -141,17 +138,30 @@ ActionStateMachine::ActionStateMachine(Actor* _actor)
 	m_ActionID = ACTION_IDLE;
 }
 
+ActionStateMachine::~ActionStateMachine()
+{
+	for (auto& it : m_AvatarActions) {
+		SafeDelete(it.second);
+	}
+	m_AvatarActions.clear();
+
+	for (auto& it : m_WeaponActions) {
+		SafeDelete(it.second);
+	}
+	m_WeaponActions.clear();
+}
+	
 void ActionStateMachine::Update()
 {
-	if (m_AvatarID != m_Actor->GetRoleID()) {
-		SetAvatar(m_Actor->GetRoleID());
+	if (m_AvatarID != m_Actor->GetAvatarID()) {
+		SetAvatar(m_Actor->GetAvatarID());
 	}
-	if (m_HasWeapon != (m_Actor->GetWeaponID() != 0)) {
-		m_HasWeapon = (m_Actor->GetWeaponID() != 0);
+	if (m_HasWeapon != (m_Actor->GetWeaponAvatarID() != "")) {
+		m_HasWeapon = (m_Actor->GetWeaponAvatarID() != "");
 	}
 	if (m_HasWeapon) {
-		if (m_WeaponID != m_Actor->GetWeaponID()) {
-			SetWeapon(m_Actor->GetWeaponID());
+		if (m_WeaponID != m_Actor->GetWeaponAvatarID()) {
+			SetWeapon(m_Actor->GetWeaponAvatarID());
 		}
 	}
 	
@@ -199,17 +209,17 @@ void ActionStateMachine::Draw()
 	
 }
 
-void ActionStateMachine::SetWeapon(int id)
+void ActionStateMachine::SetWeapon(CXString id)
 {
 	for (auto& it : m_WeaponActions) {
 		SafeDelete(it.second);
 	}
 	m_WeaponActions.clear();
 	m_WeaponID = id;
-	m_HasWeapon = m_WeaponID >= 0;
+	m_HasWeapon = id == "";
 }
 
-void ActionStateMachine::SetAvatar(int id)
+void ActionStateMachine::SetAvatar(CXString id)
 {
 	for (auto& it : m_AvatarActions) {
 		SafeDelete(it.second);
@@ -260,7 +270,8 @@ void ActionStateMachine::EnsureLoadAction(int action)
 	if (action < ACTION_IDLE || action >= ACTION_COUNT)return;
 
 	if (m_AvatarActions[action] == nullptr) {
-		auto resid = GAME_INSTANCE->GetActionResID(m_Actor->GetType(), m_AvatarID, action);
+		int avatarType = RESOURCE_MANAGER_INSTANCE->ActorTypeToAvatarType(m_Actor->GetType());
+		auto resid = RESOURCE_MANAGER_INSTANCE->GetActionResID(avatarType, m_AvatarID, action);
 		m_AvatarActions[action] = new BaseSprite(resid);
 		m_AvatarActions[action]->FrameInterval = m_TimeInterval;
 		m_AvatarActions[action]->Dir = m_Actor->GetDir();
@@ -268,7 +279,7 @@ void ActionStateMachine::EnsureLoadAction(int action)
 
 	if (m_HasWeapon) {
 		if (m_WeaponActions[action] == nullptr) {
-			auto resid = GAME_INSTANCE->GetWeaponResID(m_WeaponID, action);
+			auto resid = RESOURCE_MANAGER_INSTANCE->GetActionResID(AVATAR_TYPE_WEAPON, m_WeaponID, action);
 			m_WeaponActions[action] = new BaseSprite(resid);
 			m_WeaponActions[action]->FrameInterval = m_TimeInterval;
 			m_WeaponActions[action]->Dir = m_Actor->GetDir();
@@ -292,8 +303,8 @@ BaseSprite* ActionStateMachine::GetWeapon(int action)
 
 void ActionStateMachine::Reset()
 {
-	SetAvatar(m_Actor->GetRoleID());
-	SetWeapon(m_Actor->GetWeaponID());
+	SetAvatar(m_Actor->GetAvatarID());
+	SetWeapon(m_Actor->GetWeaponAvatarID());
 }
 
 int ActionStateMachine::GetDirCount(int action)
@@ -335,17 +346,42 @@ void AttackAction::Update()
 
 			if (m_Target) {
 				Pos runto = m_Target->GetPos();
-				
+				float degree = actor->GetMoveDestAngle(runto);
+				int dir = actor->GetDirByDegree(degree);
+				actor->SetDir(dir);
+				m_Target->SetDir(dir);
+				m_Target->ReverseDir();
+
 				auto* attackAvatar = pASM->GetAvatar(ACTION_ATTACK);
-				auto* targetAvatar = m_Target->GetASM()->GetAvatar();
+				auto* targetAvatar = m_Target->GetASM()->GetAvatar(ACTION_BEHIT);
 				if(attackAvatar && targetAvatar){
-					int keyframe = g_AttackKeyFrame[actor->GetRoleID()];
+
+					int attackKeyframe = g_AttackKeyFrame[actor->GetAvatarID()];
+					if (attackKeyframe == 0)attackKeyframe = attackAvatar->AttackKeyFrame;
+					auto* attackFrame = attackAvatar->GetFrame(dir*attackAvatar->GroupFrameCount + attackKeyframe);
+					assert(targetAvatar->GroupFrameCount == 2);
+					
+					auto* targetFrame = targetAvatar->GetFrame(m_Target->GetDir()* 2 + 1);
 					float x = targetAvatar->Pos.x + targetAvatar->KeyX;
-					float y = targetAvatar->Pos.y + targetAvatar->KeyY - attackAvatar->GetFrameHeight(keyframe) / 2;
-					x = x + attackAvatar->GetFrameKeyX(keyframe);
-					y = y + attackAvatar->GetFrameKeyY(keyframe);
-					runto.x = x;
-					runto.y = y;
+					float y = targetAvatar->Pos.y + targetAvatar->KeyY;
+					if (dir == DIR_NE) {
+						x = x - attackFrame->width;
+						y = y - targetFrame->key_y + targetFrame->height *0.5f - attackFrame->height / 2;
+					}
+					else if (dir == DIR_NW) {
+						x = x;
+						y = y - targetFrame->key_y + targetFrame->height *0.5f - attackFrame->height / 2;
+					}
+					else if (dir == DIR_SE) {
+						x = x - attackFrame->width;
+						y = y - targetFrame->key_y + targetFrame->height *0.5f - attackFrame->height / 2;
+					}
+					else if (dir == DIR_SW) {
+						x = x;
+						y = y - targetFrame->key_y + targetFrame->height *0.5f - attackFrame->height / 2;
+					}
+					runto.x = x + attackFrame->key_x;
+					runto.y = y + attackFrame->key_y;
 				}
 
 				actor->GetMoveHandle()->MoveTo(runto.x, runto.y);
@@ -385,16 +421,22 @@ void AttackAction::Update()
 			float velocity = perframe_dist / perframetime;
 			avatar->FrameInterval = perframetime;
 			actor->SetVelocity(velocity);
+
+			m_Target->SetActionID(ACTION_BATIDLE);
+			
 		}
 		else if (avatar->bFrameUpdated) {
-			int roleID = actor->GetRoleID();
-			if(avatar->CurrentFrame == g_AttackKeyFrame[roleID]){
+			int attackKeyframe = g_AttackKeyFrame[actor->GetAvatarID()];
+			if (attackKeyframe == 0)attackKeyframe = avatar->AttackKeyFrame;
+			if(avatar->CurrentFrame == attackKeyframe){
 				auto* targetAvatar = m_Target->GetASM()->GetAvatar();
 				if(targetAvatar){
 					pBeHitAnim->Pos.x = targetAvatar->Pos.x + targetAvatar->KeyX - pBeHitAnim->KeyX ;
 					pBeHitAnim->Pos.y = targetAvatar->Pos.y + targetAvatar->KeyY - pBeHitAnim->KeyY;
 					pBeHitAnim->Visible = true;
 				}
+
+				m_Target->SetActionID(ACTION_BEHIT);
 			}
 		}
 
@@ -405,6 +447,8 @@ void AttackAction::Update()
 			actor->SetActionID(ACTION_BATIDLE);
 			auto* new_action = new Action(actor);
 			pASM->ChangeAction(new_action);
+
+			
 		}
 	}
 }
@@ -438,6 +482,8 @@ void AttackAction::Enter()
 	if (m_Target) {
 		m_Target->SetDir(actor->GetDir());
 		m_Target->ReverseDir();
+		//m_Target->GetASM()->SetAction(ACTION_BATIDLE);
+		m_Target->SetActionID(ACTION_BATIDLE);
 	}
 }
 
