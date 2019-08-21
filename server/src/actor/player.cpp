@@ -9,7 +9,6 @@
 #include "scene/scene_manager.h"
 #include "scene/scene.h"
 #include "cxmath.h"
-#include "game.h"
 #include "utils.h"
 #include "window.h"
 

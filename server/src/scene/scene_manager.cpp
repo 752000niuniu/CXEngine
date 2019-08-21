@@ -3,7 +3,6 @@
 #include "script_system.h"
 #include "profile.h"
 #include "scene.h"
-#include "game.h"
 #include "cxmath.h"
 #include "file_system.h"
 #include "window.h"

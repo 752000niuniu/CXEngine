@@ -1,6 +1,5 @@
 #pragma once
 
-#include "game.h"
 #include "singleton.h"
 
 class Window : public Singleton<Window>

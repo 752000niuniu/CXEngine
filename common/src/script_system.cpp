@@ -14,10 +14,10 @@
 #include "time/time_manager.h"
 #include "luadbg.h"
 #include "time/timer_manager.h"
-#include "game.h"
 #include "actor/actor_manager.h"
 
 #ifndef SIMPLE_SERVER
+#include "game.h"
 #include "ui.h"
 #include "text_renderer.h"
 #include "input_manager.h"
