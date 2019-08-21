@@ -138,7 +138,7 @@ public:
 
 	CXString GetAvatarID() { return m_AvatarID; }
 	void SetAvatarID(CXString id) { m_AvatarID = id; }
-	CXString GetWeaponAvatarID() { return m_WeaponAvatarID; }
+	CXString GetWeaponAvatarID();
 	void SetWeaponAvatarID(CXString id) { m_WeaponAvatarID = id; }
 
 #ifndef SIMPLE_SERVER

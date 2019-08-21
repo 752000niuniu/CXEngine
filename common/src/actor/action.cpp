@@ -205,8 +205,7 @@ void ActionStateMachine::Draw()
 
 	if (m_pCurrentAction) {
 		m_pCurrentAction->Draw();
-	}
-	
+	}	
 }
 
 void ActionStateMachine::SetWeapon(CXString id)
@@ -275,6 +274,7 @@ void ActionStateMachine::EnsureLoadAction(int action)
 		m_AvatarActions[action] = new BaseSprite(resid);
 		m_AvatarActions[action]->FrameInterval = m_TimeInterval;
 		m_AvatarActions[action]->Dir = m_Actor->GetDir();
+		m_AvatarActions[action]->Pos = m_Actor->GetPos();
 	}
 
 	if (m_HasWeapon) {
@@ -283,6 +283,7 @@ void ActionStateMachine::EnsureLoadAction(int action)
 			m_WeaponActions[action] = new BaseSprite(resid);
 			m_WeaponActions[action]->FrameInterval = m_TimeInterval;
 			m_WeaponActions[action]->Dir = m_Actor->GetDir();
+			m_WeaponActions[action]->Pos= m_Actor->GetPos();
 		}
 	}
 }
@@ -316,8 +317,6 @@ int ActionStateMachine::GetDirCount(int action)
 	return 4;
 }
 
-
-
 AttackAction::AttackAction(Actor* actor)
 	:Action(actor)
 {
@@ -346,16 +345,11 @@ void AttackAction::Update()
 
 			if (m_Target) {
 				Pos runto = m_Target->GetPos();
-				float degree = actor->GetMoveDestAngle(runto);
-				int dir = actor->GetDirByDegree(degree);
-				actor->SetDir(dir);
-				m_Target->SetDir(dir);
-				m_Target->ReverseDir();
 
 				auto* attackAvatar = pASM->GetAvatar(ACTION_ATTACK);
 				auto* targetAvatar = m_Target->GetASM()->GetAvatar(ACTION_BEHIT);
 				if(attackAvatar && targetAvatar){
-
+					int dir = actor->GetDir();
 					int attackKeyframe = g_AttackKeyFrame[actor->GetAvatarID()];
 					if (attackKeyframe == 0)attackKeyframe = attackAvatar->AttackKeyFrame;
 					auto* attackFrame = attackAvatar->GetFrame(dir*attackAvatar->GroupFrameCount + attackKeyframe);
@@ -386,7 +380,6 @@ void AttackAction::Update()
 
 				actor->GetMoveHandle()->MoveTo(runto.x, runto.y);
 				avatar = pASM->GetAvatar();
-
 				float dist = std::sqrt(actor->GetMoveDestDistSquare(runto));
 				float perframetime = 0.016f * 6;
 				float perframe_dist = dist / avatar->GroupFrameCount;
@@ -447,7 +440,6 @@ void AttackAction::Update()
 			actor->SetActionID(ACTION_BATIDLE);
 			auto* new_action = new Action(actor);
 			pASM->ChangeAction(new_action);
-
 			
 		}
 	}
@@ -475,16 +467,20 @@ void AttackAction::Enter()
 {
 	m_BackupActionID = actor->GetActionID();
 	m_BackupPos = actor->GetPos();
-	pASM->SetAction(ACTION_BATIDLE);
-	
-	m_Velocity = actor->GetVelocity();
 
 	if (m_Target) {
-		m_Target->SetDir(actor->GetDir());
+		Pos runto = m_Target->GetPos();
+		float degree = actor->GetMoveDestAngle(runto);
+		int dir = actor->GetDirByDegree(degree);
+		actor->SetDir(dir);
+		m_Target->SetDir(dir);
 		m_Target->ReverseDir();
-		//m_Target->GetASM()->SetAction(ACTION_BATIDLE);
-		m_Target->SetActionID(ACTION_BATIDLE);
+
+		m_Target->GetASM()->SetAction(ACTION_BATIDLE);
 	}
+
+	pASM->SetAction(ACTION_BATIDLE);
+	m_Velocity = actor->GetVelocity();
 }
 
 BeHitAction::BeHitAction(Actor* actor, Actor* attacker)

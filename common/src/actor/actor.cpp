@@ -210,6 +210,12 @@ BaseScene* Actor::GetScene()
 	return scene_manager_fetch_scene(m_SceneID);
 }
 
+CXString Actor::GetWeaponAvatarID()
+{
+	if (m_ActorType == ACTOR_TYPE_NPC)
+		return "";
+	return m_WeaponAvatarID;
+}
 #ifndef SIMPLE_SERVER
 Bound Actor::GetViewBounds()
 {

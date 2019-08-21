@@ -26,11 +26,11 @@ function OnSceneInit()
     player = actor_manager_create_actor(os.time())
     -- player:SetRoleID(math.tointeger(RoleIDSB:str()))
     -- player:SetWeaponID(math.tointeger(WeaponIDSB:str()))
-    -- player:SetAvatarID('JXK-SWORD')
-    -- player:SetWeaponAvatarID('JXK-SWORD-120-四法青云')
+    -- player:SetAvatarID('LTZ-SPEAR')
+    -- player:SetWeaponAvatarID('LTZ-SPEAR-120-飞龙在天')
     player:SetType(ACTOR_TYPE_PET)
     player:SetAvatarID('巡游天神')
-    -- player:SetDir(2)
+    player:SetDir(0)
     -- player:SetX(615.0)
     -- player:SetY(275.0)
 
@@ -40,12 +40,11 @@ function OnSceneInit()
     player:SetActionID(ACTION_IDLE)
     -- player:GetAvatar():Stop()
 
-
-    enemy  = actor_manager_create_actor(os.time() + 222)
+    enemy  = actor_manager_create_actor(os.time() + 1)
     enemy:SetType(ACTOR_TYPE_PET)
     enemy:SetAvatarID('巡游天神')
+    enemy:SetDir(0)
     -- enemy:SetWeaponAvatarID('JXK-KNIFE-120-晓风残月')
-
     -- enemy:SetRoleID(35)
     -- enemy:SetWeaponID(0)
     -- enemy:SetActionID(ACTION_BEHIT)
@@ -213,6 +212,10 @@ function OnSceneImGuiUpdate()
 
     if imgui.Button('Attack') then
         player:PlayAttack(enemy)
+    end
+
+    if imgui.Button('EnemyAttack') then
+        enemy:PlayAttack(player)
     end
 
     if imgui.Button('LoadPlayer') then
