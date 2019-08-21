@@ -81,6 +81,14 @@ void BaseSprite::Update()
 	bFrameUpdated = false;
 	if (bPlay) {
 		float dt = WINDOW_INSTANCE->GetDeltaTime();
+		if (m_Pause) {
+			m_PauseTime = m_PauseTime - WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
+			if (m_PauseTime <= 0) {
+				m_Pause = false;
+			}
+			return;
+		}
+
 		PlayTime = PlayTime + dt;
 		if (PlayTime >= FrameInterval)
 		{
@@ -126,7 +134,7 @@ void BaseSprite::Reset()
 {
 	PlayTime = 0;
 	CurrentFrame = 0;
-	FrameInterval = 0.016f * 4;
+	//FrameInterval = 0.016f * 4;
 }
 
 void BaseSprite::Stop()
@@ -139,6 +147,12 @@ void BaseSprite::Play()
 	bPlay = true;
 }
 
+
+void BaseSprite::Pause(int ms)
+{
+	m_PauseTime = ms;
+	m_Pause = true;
+}
 
 NE::Sprite::Sequence* BaseSprite::GetFrame(int index /*= -1*/)
 {

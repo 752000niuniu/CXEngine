@@ -18,6 +18,7 @@ public:
 	void Reset();
 	void Stop();
 	void Play();
+	void Pause(int ms);
 	NE::Sprite::Sequence* GetFrame(int index = -1);
 	int GetFrameKeyX(int index = -1);
 	int GetFrameKeyY(int index = -1);
@@ -49,6 +50,10 @@ public:
 	Bound GetViewBounds() override;
 	bool CheckDrag(int x, int y) override;
 	void OnDragMove(int x, int y)override;
+
+private:
+	int m_PauseTime;
+	int m_Pause;
 };
 
 

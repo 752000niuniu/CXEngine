@@ -62,17 +62,18 @@ private:
 	int m_BackupActionID;
 	float m_Velocity;
 	int m_ID;
-	Animation* pBeHitAnim;
+
 };
 
 class BeHitAction : public Action
 {
 public:
 	BeHitAction(Actor* actor, Actor* attacker);
-	virtual ~BeHitAction() {};
+	virtual ~BeHitAction();
 	virtual  void Update();
 	virtual void Exit();
 	virtual void Enter();
+	void Draw();
 private:
 	Actor* m_Attacker;
 	int m_State;

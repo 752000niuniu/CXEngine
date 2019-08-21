@@ -8,6 +8,8 @@
 #include "animation/sprite.h"
 #endif
 #include "cxmath.h"
+#include "time/timer_manager.h"
+#include "window.h"
 
 std::map<CXString, int> g_AttackKeyFrame ={
 	{"FYN-DBSWORDS" ,5 },
@@ -97,13 +99,11 @@ bool action_is_battle_action(int action)
 }
 
 
-
 #ifndef SIMPLE_SERVER
 Action::Action(Actor* _actor) :
 	actor(_actor)
 {
 	pASM = actor->GetASM();
-	
 }
  
 void Action::Update()
@@ -118,6 +118,7 @@ void Action::Update()
 	}
 }
 
+
 void Action::Enter()
 {
 	
@@ -126,7 +127,7 @@ void Action::Enter()
 ActionStateMachine::ActionStateMachine(Actor* _actor)
 	:m_Actor(_actor)
 {
-	m_TimeInterval = 0.016f * 4;
+	m_TimeInterval = 0.016f * 6;
 	m_pCurrentAction = nullptr;
 	m_pPreviousAction = nullptr;
 	for (int action = ACTION_IDLE; action < ACTION_COUNT; action++) {
@@ -322,13 +323,11 @@ int ActionStateMachine::GetDirCount(int action)
 AttackAction::AttackAction(Actor* actor)
 	:Action(actor)
 {
-	pBeHitAnim = new Animation(ADDONWDF, 0x1D3FF13C);
-	pBeHitAnim->Visible = false;
 }
 
 AttackAction::~AttackAction()
 {
-	delete pBeHitAnim;
+	
 }
 
 void AttackAction::Update()
@@ -337,9 +336,6 @@ void AttackAction::Update()
 	if (!avatar)return;
 	avatar->Update();
 
-	if(pBeHitAnim->Visible){
-		pBeHitAnim->Update();
-	}
 	int action = pASM->GetActionID();
 	if (action == ACTION_BATIDLE) {
 		if (avatar->bGroupEndUpdate) {
@@ -381,7 +377,7 @@ void AttackAction::Update()
 				actor->GetMoveHandle()->MoveTo(runto.x, runto.y);
 				avatar = pASM->GetAvatar();
 				float dist = std::sqrt(actor->GetMoveDestDistSquare(runto));
-				float perframetime = 0.016f * 6;
+				float perframetime = 0.016f * 4;
 				float perframe_dist = dist / avatar->GroupFrameCount;
 				float velocity = perframe_dist / perframetime;
 				avatar->FrameInterval = perframetime;
@@ -397,7 +393,7 @@ void AttackAction::Update()
 			
 			pASM->SetAction(ACTION_ATTACK);
 			avatar = pASM->GetAvatar();
-			avatar->FrameInterval = avatar->FrameInterval * 2;
+			//avatar->FrameInterval = avatar->FrameInterval * 2;
 		}
 	}
 	else if (action == ACTION_ATTACK) {
@@ -409,7 +405,7 @@ void AttackAction::Update()
 			avatar = pASM->GetAvatar();
 
 			float dist = std::sqrt(actor->GetMoveDestDistSquare(m_BackupPos));
-			float perframetime = 0.016f * 6;
+			float perframetime = 0.016f *4;
 			float perframe_dist = dist / avatar->GroupFrameCount;
 			float velocity = perframe_dist / perframetime;
 			avatar->FrameInterval = perframetime;
@@ -422,13 +418,9 @@ void AttackAction::Update()
 			int attackKeyframe = g_AttackKeyFrame[actor->GetAvatarID()];
 			if (attackKeyframe == 0)attackKeyframe = avatar->AttackKeyFrame;
 			if(avatar->CurrentFrame == attackKeyframe){
-				auto* targetAvatar = m_Target->GetASM()->GetAvatar();
-				if(targetAvatar){
-					pBeHitAnim->Pos.x = targetAvatar->Pos.x + targetAvatar->KeyX - pBeHitAnim->KeyX ;
-					pBeHitAnim->Pos.y = targetAvatar->Pos.y + targetAvatar->KeyY - pBeHitAnim->KeyY;
-					pBeHitAnim->Visible = true;
-				}
-				m_Target->SetActionID(ACTION_BEHIT);
+				BeHitAction* behit = new BeHitAction(m_Target,actor);
+				m_Target->GetASM()->ChangeAction(behit);
+				avatar->Pause(200);
 			}
 		}
 
@@ -446,9 +438,7 @@ void AttackAction::Update()
 
 void AttackAction::Draw()
 {
-	if(pBeHitAnim->Visible){
-		pBeHitAnim->Draw();
-	}
+
 }
 
 void AttackAction::AddTarget(Actor* target)
@@ -486,14 +476,37 @@ BeHitAction::BeHitAction(Actor* actor, Actor* attacker)
 	:Action(actor),
 	m_Attacker(attacker)
 {
+	m_BehitAnim = new Animation(ADDONWDF, 0x1D3FF13C);
+	m_BehitAnim->Visible = false;
+}
 
+BeHitAction::~BeHitAction()
+{
+	delete m_BehitAnim;
 }
 
 void BeHitAction::Update()
 {
+	if (m_BehitAnim->Visible) {
+		m_BehitAnim->Update();
+	}
+
 	auto* avatar = pASM->GetAvatar();
 	if (!avatar)return;
 	avatar->Update();
+
+	int action = pASM->GetActionID();
+	if (action == ACTION_BEHIT) {
+		if(avatar->bGroupEndUpdate){
+			pASM->SetAction(ACTION_BATIDLE);
+		}
+		else if(avatar->bFrameUpdated) {
+			if (avatar->CurrentFrame == 1) {
+				avatar->Pause(350);
+				m_BehitAnim->Visible = true;
+			}
+		}
+	}
 }
 void BeHitAction::Exit()
 {
@@ -501,7 +514,20 @@ void BeHitAction::Exit()
 }
 void BeHitAction::Enter()
 {
+	auto* avatar = pASM->GetAvatar();
+	if (avatar) {
+		m_BehitAnim->Pos.x = avatar->Pos.x + avatar->KeyX - m_BehitAnim->KeyX;
+		m_BehitAnim->Pos.y = avatar->Pos.y + avatar->KeyY - m_BehitAnim->KeyY;
+		m_BehitAnim->Visible = true;
+	}
+	pASM->SetAction(ACTION_BEHIT);
+}
 
+void BeHitAction::Draw()
+{
+	if (m_BehitAnim->Visible) {
+		m_BehitAnim->Draw();
+	}
 }
 
 void IdleAction::Enter()
