@@ -196,7 +196,7 @@ uint64_t ResourceManager::GetActionResID(int type, int roleID, int actionID)
 	return RESOURCE_MANAGER_INSTANCE->EncodeWAS(pack_index, wasID);
 }
 
-uint64_t ResourceManager::GetActionResID(int type, std::string id, int action)
+uint64_t ResourceManager::GetActionResID(int type, CXString id, int action)
 {
 	if (type >= AVATAR_TYPE_COUNT || type < 0)return 0;
 	utils::tsv* tbl = nullptr;
@@ -303,6 +303,18 @@ int ResourceManager::GetRoleID(CXString id)
 {
 	return 0;
 }
+
+uint64_t ResourceManager::GetActorActionResID(int actorType, CXString roleID, int actionID)
+{
+	int type = ActorTypeToAvatarType(actorType);
+	return GetActionResID(type, roleID, actionID);
+}
+
+uint64_t ResourceManager::GetWeaponActionResID(CXString id, int actionID)
+{
+	return GetActionResID(AVATAR_TYPE_WEAPON, id, actionID);
+}
+
 int resource_get_action_id(lua_State* L)
 {
 	auto type = (int)lua_tointeger(L, 1);

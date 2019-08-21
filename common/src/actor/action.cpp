@@ -269,12 +269,12 @@ void ActionStateMachine::EnsureLoadAction(int action)
 	if (action < ACTION_IDLE || action >= ACTION_COUNT)return;
 
 	if (m_AvatarActions[action] == nullptr) {
-		int avatarType = RESOURCE_MANAGER_INSTANCE->ActorTypeToAvatarType(m_Actor->GetType());
-		auto resid = RESOURCE_MANAGER_INSTANCE->GetActionResID(avatarType, m_AvatarID, action);
+		auto resid = RESOURCE_MANAGER_INSTANCE->GetActorActionResID(m_Actor->GetType(), m_AvatarID, action);
 		m_AvatarActions[action] = new BaseSprite(resid);
 		m_AvatarActions[action]->FrameInterval = m_TimeInterval;
 		m_AvatarActions[action]->Dir = m_Actor->GetDir();
-		m_AvatarActions[action]->Pos = m_Actor->GetPos();
+		m_AvatarActions[action]->Pos.x = m_Actor->GetPos().x - m_AvatarActions[action]->KeyX;
+		m_AvatarActions[action]->Pos.y = m_Actor->GetPos().y - m_AvatarActions[action]->KeyY;
 	}
 
 	if (m_HasWeapon) {
@@ -283,7 +283,9 @@ void ActionStateMachine::EnsureLoadAction(int action)
 			m_WeaponActions[action] = new BaseSprite(resid);
 			m_WeaponActions[action]->FrameInterval = m_TimeInterval;
 			m_WeaponActions[action]->Dir = m_Actor->GetDir();
-			m_WeaponActions[action]->Pos= m_Actor->GetPos();
+			m_WeaponActions[action]->Pos.x = m_Actor->GetPos().x - m_WeaponActions[action]->KeyX;
+			m_WeaponActions[action]->Pos.y = m_Actor->GetPos().y - m_WeaponActions[action]->KeyY;
+
 		}
 	}
 }
@@ -342,10 +344,8 @@ void AttackAction::Update()
 	if (action == ACTION_BATIDLE) {
 		if (avatar->bGroupEndUpdate) {
 			pASM->SetAction(ACTION_RUNTO);
-
 			if (m_Target) {
 				Pos runto = m_Target->GetPos();
-
 				auto* attackAvatar = pASM->GetAvatar(ACTION_ATTACK);
 				auto* targetAvatar = m_Target->GetASM()->GetAvatar(ACTION_BEHIT);
 				if(attackAvatar && targetAvatar){
@@ -356,23 +356,23 @@ void AttackAction::Update()
 					assert(targetAvatar->GroupFrameCount == 2);
 					
 					auto* targetFrame = targetAvatar->GetFrame(m_Target->GetDir()* 2 + 1);
-					float x = targetAvatar->Pos.x + targetAvatar->KeyX;
-					float y = targetAvatar->Pos.y + targetAvatar->KeyY;
+					float x = runto.x ;
+					float y = runto.y;
 					if (dir == DIR_NE) {
-						x = x - attackFrame->width;
-						y = y - targetFrame->key_y + targetFrame->height *0.5f - attackFrame->height / 2;
+						x = x - attackFrame->width -5;
+						y = y - targetFrame->key_y + targetFrame->height *0.5f - attackFrame->height /2  +11;
 					}
 					else if (dir == DIR_NW) {
-						x = x;
-						y = y - targetFrame->key_y + targetFrame->height *0.5f - attackFrame->height / 2;
+						x = x + 5;
+						y = y - targetFrame->key_y + targetFrame->height *0.5f - attackFrame->height / 2 + 11;
 					}
 					else if (dir == DIR_SE) {
-						x = x - attackFrame->width;
-						y = y - targetFrame->key_y + targetFrame->height *0.5f - attackFrame->height / 2;
+						x = x - attackFrame->width - 5;
+						y = y - targetFrame->key_y + targetFrame->height *0.5f - attackFrame->height /2 -11;
 					}
 					else if (dir == DIR_SW) {
-						x = x;
-						y = y - targetFrame->key_y + targetFrame->height *0.5f - attackFrame->height / 2;
+						x = x + 5;
+						y = y - targetFrame->key_y + targetFrame->height *0.5f - attackFrame->height / 2 - 11;
 					}
 					runto.x = x + attackFrame->key_x;
 					runto.y = y + attackFrame->key_y;
@@ -428,7 +428,6 @@ void AttackAction::Update()
 					pBeHitAnim->Pos.y = targetAvatar->Pos.y + targetAvatar->KeyY - pBeHitAnim->KeyY;
 					pBeHitAnim->Visible = true;
 				}
-
 				m_Target->SetActionID(ACTION_BEHIT);
 			}
 		}

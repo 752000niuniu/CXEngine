@@ -54,7 +54,10 @@ public:
 	void DecodeWAS(uint64_t resID, uint32_t& pack, uint32_t& wasID) {  pack = resID >> 32; wasID = (resID & 4294967295); };
 	
 
-	uint64_t GetActionResID(int type,std::string id,int action);
+	uint64_t GetActionResID(int type,CXString id,int action);
+
+	uint64_t GetActorActionResID(int actorType, CXString id, int actionID);
+	uint64_t GetWeaponActionResID(CXString id, int actionID);
 
 	uint64_t GetActionResID(int type, int roleID, int actionID);
 	uint64_t GetWeaponResID(int weaponID, int actionID);
