@@ -9,6 +9,7 @@ class MoveHandle;
 #ifndef SIMPLE_SERVER
 #include "ui.h"
 class ActionStateMachine;
+class TextView;
 #endif
 class GameMap;
 
@@ -148,6 +149,7 @@ public:
 	Bound GetViewBounds() override;
 	bool CheckDrag(int x, int y) override;
 	void OnDragMove(int x, int y)override;
+	void Say(std::string Text);
 #endif
 protected:
 	int m_ActorID;
@@ -190,6 +192,7 @@ protected:
 	MoveHandle* m_MoveHandle;
 	ActorCombatProps m_CombatProps;
 #ifndef SIMPLE_SERVER
+	TextView* m_SayWidget;
 	ActionStateMachine* m_ASM;
 #endif
 };

@@ -110,26 +110,25 @@ Action::Action(Actor* _actor) :
 
 void Action::Update()
 {
+	int action = actor->GetActionID();
+	if (action != pASM->GetActionID()) {
+			pASM->SetAction(action);
+	}
+
 	auto* avatar = pASM->GetAvatar();
 	if (!avatar)return;
 	avatar->Update();
-
-	int action = actor->GetActionID();
-	if (action != pASM->GetActionID()) {
-		pASM->SetAction(action);
-	}
-}
+} 
 
 
 void Action::Enter()
 {
-
 }
 
 ActionStateMachine::ActionStateMachine(Actor* _actor)
 	:m_Actor(_actor)
 {
-	m_TimeInterval = 0.016f *5;
+	m_TimeInterval = 0.016f * 5;
 	m_pCurrentAction = nullptr;
 	m_pPreviousAction = nullptr;
 	for (int action = ACTION_IDLE; action < ACTION_COUNT; action++) {

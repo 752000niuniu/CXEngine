@@ -11,6 +11,8 @@
 #include "action.h"
 #include "input_manager.h"
 #include "animation/sprite.h"
+#include "text_renderer.h"
+#include "resource_manager.h"
 #endif
 #include "move.h"
 
@@ -42,6 +44,13 @@ Actor::Actor(uint64_t pid)
 	
 	m_MoveHandle = new MoveHandle(this);
 #ifndef SIMPLE_SERVER
+	m_SayWidget = new TextView();
+	m_SayWidget->PaddingHorizontal = 4;
+	m_SayWidget->PaddingVertical = 2;
+	m_SayWidget->ShowEmotion = true;
+	m_SayWidget->BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WZIFEWDF, 0xEF073E43); //F3FAAAF2´ó¿ò
+																							   //m_SayWidget->BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WZIFEWDF, 0xA4120EA9);
+	m_SayDuration = 0;
 	m_ASM = new ActionStateMachine(this);  
 	INPUT_MANAGER_INSTANCE->RegisterView(this);
 	PathMoveAction*action = new PathMoveAction(this);
@@ -57,6 +66,7 @@ Actor::~Actor()
 #ifndef SIMPLE_SERVER
 	INPUT_MANAGER_INSTANCE->UnRegisterView(this);
 	SafeDelete(m_ASM);
+	SafeDelete(m_SayWidget);
 #endif
 }
 
@@ -65,6 +75,13 @@ void Actor::OnUpdate()
 	m_MoveHandle->Update();
 #ifndef SIMPLE_SERVER
 	m_ASM->Update();
+	if (m_SayDuration > 0)
+	{
+		if (m_SayWidget)
+		{
+			m_SayWidget->OnUpdate();
+		}
+	}
 #endif
 }
 
@@ -72,6 +89,21 @@ void Actor::OnDraw()
 {
 #ifndef SIMPLE_SERVER
 	m_ASM->Draw();
+	if (m_SayDuration > 0)
+	{
+		int past = (int)WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
+		m_SayDuration -= past;
+
+		if (m_SayWidget->Background != nullptr)
+		{
+			float bgWidth = (float)m_SayWidget->Width;
+			float bgHeight = (float)m_SayWidget->Height;
+			auto* avatar = m_ASM->GetAvatar();
+			m_SayWidget->X = avatar->Pos.x - bgWidth / 2;
+			m_SayWidget->Y = avatar->Pos.y - (float)avatar->KeyY - bgHeight;
+		}
+		m_SayWidget->OnDraw();
+	}
 #endif
 }
 
@@ -238,6 +270,14 @@ void Actor::OnDragMove(int dx, int dy)
 	m_Pos.x += (float)dx;
 	m_Pos.y += (float)dy;
 }
+
+void Actor::Say(std::string Text)
+{
+	std::wstring wText = utils::StringToWstring(Text);
+	m_SayDuration = 1000 * 60 * 24;
+	m_SayWidget->TextCache.assign(wText.begin(), wText.end());
+}
+
 #endif
 
 Actor* lua_check_actor(lua_State*L, int index)
@@ -386,10 +426,7 @@ int actor_move_to(lua_State* L){
 int actor_say(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	const char* msg = lua_tostring(L, 2);
-	if (actor->GetType() == ACTOR_TYPE_PLAYER) {
-		Player* player = dynamic_cast<Player*> (actor);
-		player->Say(msg);
-	}
+	actor->Say(msg);
 	return 0;
 }
 
