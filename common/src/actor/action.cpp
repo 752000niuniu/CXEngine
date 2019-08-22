@@ -212,8 +212,14 @@ void ActionStateMachine::Draw()
 		avatar->Pos.y = py;
 	}
 	else {
-		avatar->Pos.x = pos.x;
-		avatar->Pos.y = pos.y;
+		if (m_Actor->GetScene() != nullptr&&m_Actor->GetScene()->GetGameMap() != nullptr) {
+			Pos p = GAME_INSTANCE->MapPosToScreenPos(m_Actor->GetPos());
+			avatar->Pos = p;
+		}
+		else{
+			avatar->Pos.x = pos.x;
+			avatar->Pos.y = pos.y;
+		}
 	}
 
 	avatar->Dir = dir;

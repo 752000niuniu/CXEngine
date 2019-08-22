@@ -79,9 +79,6 @@ function game_dispatch_message(pt)
 			local player = actor_manager_create_actor(pinfo.pid)
 			player:SetName(pinfo.name)
 			player:SetSceneID(pinfo.scene_id)
-			-- player:SetRoleID(pinfo.role_id)
-			-- player:SetWeaponID(pinfo.weapon_id)
-
 			player:SetAvatarID('JXK-KNIFE')
    			player:SetWeaponAvatarID('JXK-KNIFE-120-晓风残月')
 
@@ -90,6 +87,17 @@ function game_dispatch_message(pt)
 			if pinfo.is_local then
 				local_pinfo = pinfo
 			end
+
+
+			local test_player = actor_manager_create_actor(pinfo.pid+10)
+			test_player:SetName(pinfo.name)
+			test_player:SetSceneID(pinfo.scene_id)
+			test_player:SetAvatarID('JXK-SWORD')
+   			test_player:SetWeaponAvatarID('JXK-SWORD-60-X')
+
+			test_player:SetX(pinfo.x + 100)
+			test_player:SetY(pinfo.y - 100)
+
 		end
 		if local_pinfo then
 			actor_manager_set_local_player(local_pinfo.pid)
