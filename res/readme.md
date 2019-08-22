@@ -23,32 +23,18 @@ id	name
 14	宝珠
 15	弓弩
 
-
-avatar表
-id name type（npc role pet） role_id  weapon_id 
-
-
-角色表
-id name weapon_type action_was_id
-
-weapon 表
-id name lv type action_was_id
-
-
 git -c filter.lfs.smudge= -c filter.lfs.required=false clone url path
 
+下一步计划
 
-右上
-右框中心点对准左框右边线中点
-
-
-右下
-右框中心点对准左框右边线1/4高度
-
-左下
-左框中心点对准右框左边线底
-
-左上
-左框中心点对准右框左线1/4高度
-
+1. 动画系统， 动画队列 动画插值
+2. 渲染系统 支持层级 更好的渲染效率
+3. 击飞动画 简单的技能拼装
+4. actor属性代码生成
+5. 技能编辑器
+6. 战斗框架
+7. 服务器尝试位移帧同步
+8. 打包 解包 支持PNG
+9. UI系统
+10. 程序模块化 UI插件化 热更
 

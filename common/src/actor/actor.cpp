@@ -89,6 +89,16 @@ void Actor::OnDraw()
 {
 #ifndef SIMPLE_SERVER
 	m_ASM->Draw();
+	if (!m_Name.empty())
+	{
+		auto green = glm::vec3(115 / 255.0f, 1.0f, 137 / 255.0f);
+		TextRenderer::GetInstance()->DrawTextC(m_Name.c_str(),
+			((int)m_Pos.x),
+			((int)m_Pos.y + 20),
+			TextRenderer::CENTER
+		);
+	}
+
 	if (m_SayDuration > 0)
 	{
 		int past = (int)WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
