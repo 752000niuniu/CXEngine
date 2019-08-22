@@ -131,7 +131,7 @@ void BaseSprite::OnDragMove(int dx, int dy)
 Animation::Animation(uint64_t resoureID /*= 0*/) :BaseSprite(resoureID)
 {
 	m_Visible = true;
-	m_State = ANIMATION_LOOP;
+	m_State = ANIMATION_PLAY;
 	m_LoopCount = 0;
 	m_bFrameUpdate = false;
 	m_bGroupEndUpdate = false;
@@ -182,6 +182,7 @@ void Animation::Replay()
 	Play();
 	m_Visible = true;
 }
+
 void Animation::Update()
 {
 	if (!m_pSprite)return;

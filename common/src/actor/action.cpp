@@ -127,7 +127,7 @@ void Action::Enter()
 ActionStateMachine::ActionStateMachine(Actor* _actor)
 	:m_Actor(_actor)
 {
-	m_TimeInterval = 0.016f * 6;
+	m_TimeInterval = 0.016f *5;
 	m_pCurrentAction = nullptr;
 	m_pPreviousAction = nullptr;
 	for (int action = ACTION_IDLE; action < ACTION_COUNT; action++) {
@@ -273,6 +273,7 @@ void ActionStateMachine::EnsureLoadAction(int action)
 		auto resid = RESOURCE_MANAGER_INSTANCE->GetActorActionResID(m_Actor->GetType(), m_AvatarID, action);
 		m_AvatarActions[action] = new Animation(resid);
 		m_AvatarActions[action]->FrameInterval = m_TimeInterval;
+		m_AvatarActions[action]->SetLoop(0);
 	}
 
 	if (m_HasWeapon) {
@@ -280,6 +281,7 @@ void ActionStateMachine::EnsureLoadAction(int action)
 			auto resid = RESOURCE_MANAGER_INSTANCE->GetActionResID(AVATAR_TYPE_WEAPON, m_WeaponID, action);
 			m_WeaponActions[action] = new Animation(resid);
 			m_WeaponActions[action]->FrameInterval = m_TimeInterval;
+			m_WeaponActions[action]->SetLoop(0);
 
 		}
 	}
@@ -328,7 +330,7 @@ void AttackAction::Update()
 				actor->GetMoveHandle()->MoveTo(m_Runto.x, m_Runto.y);
 				avatar = pASM->GetAvatar();
 				float dist = std::sqrt(actor->GetMoveDestDistSquare(m_Runto));
-				float perframetime = 0.016f * 4;
+				float perframetime = 0.016f * 2.5f;
 				float perframe_dist = dist / avatar->GroupFrameCount;
 				float velocity = perframe_dist / perframetime;
 				avatar->FrameInterval = perframetime;
@@ -351,7 +353,7 @@ void AttackAction::Update()
 			actor->GetMoveHandle()->MoveTo(m_BackupPos.x, m_BackupPos.y);
 			avatar = pASM->GetAvatar();
 			float dist = std::sqrt(actor->GetMoveDestDistSquare(m_BackupPos));
-			float perframetime = 0.016f * 4;
+			float perframetime = 0.016f * 2.5f;
 			float perframe_dist = dist / avatar->GroupFrameCount;
 			float velocity = perframe_dist / perframetime;
 			avatar->FrameInterval = perframetime;

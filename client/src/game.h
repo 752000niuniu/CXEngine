@@ -12,9 +12,6 @@ public:
 	~Game();
 	Pos MapPosToScreenPos(Pos mapPos);
 	Pos ScreenPosToMapPos(Pos screenPos);
-	uint64_t GetActionResID(int type, int roleID, int actionID);
-	uint64_t GetWeaponResID(int weaponID, int actionID);
-	int GetRoleIDByName(int actorType, const char* templ_name);
 private:
 	bool IsRunning();
 };
