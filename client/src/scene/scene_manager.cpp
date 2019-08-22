@@ -15,6 +15,7 @@
 #include "net.h"
 #include "logger.h"
 #include "actor/actor_manager.h"
+#include "animation/sprite.h"
 
 
 static bool s_DrawMask, s_DrawStrider, s_DrawCell, s_DrawMap, s_DrawAnnouncement, s_AutoRun;
@@ -220,6 +221,7 @@ void SceneManager::Update()
 		if (m_pCurrentScene)
 		{
 			m_pCurrentScene->Update();
+			AnimationManager::GetInstance()->Update();
 			script_system_call_function(script_system_get_luastate(),"on_scene_manager_update", m_pCurrentScene->GetName());
 		}
 	} 
@@ -249,6 +251,7 @@ void SceneManager::Draw()
 		glViewport(0, 0, gameWidth, gameHeight);
 		m_pCurrentScene->Draw();
 		script_system_call_function(script_system_get_luastate(), "on_scene_manager_draw", m_pCurrentScene->GetName());
+		AnimationManager::GetInstance()->Draw();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		ImVec2 cursorPos = ImGui::GetCursorPos();
@@ -261,8 +264,11 @@ void SceneManager::Draw()
 
 		script_system_call_function(script_system_get_luastate(), "on_game_imgui_update", m_pCurrentScene->GetName());
 		
+
 		ImGui::EndChild();
 		ImGui::End();
+
+
 	}
 };
 

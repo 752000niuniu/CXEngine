@@ -141,6 +141,9 @@ public:
 	CXString GetWeaponAvatarID();
 	void SetWeaponAvatarID(CXString id) { m_WeaponAvatarID = id; }
 
+	int GetCastID() { return m_CastID; };
+	void SetCastID(uint32_t id) { m_CastID = id; }
+
 #ifndef SIMPLE_SERVER
 	ActionStateMachine* GetASM() { return m_ASM; };
 	Bound GetViewBounds() override;
@@ -177,6 +180,7 @@ protected:
 	float m_MoveVelocity;
 	bool m_bInCombat;	
 	int m_TargetID;
+	uint32_t m_CastID;
 
 	bool m_bSkillFrameShow;
 

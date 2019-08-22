@@ -580,6 +580,18 @@ int actor_play_attack(lua_State*L){
 	return 0;
 }
 
+int actor_play_cast(lua_State*L) {
+#ifndef SIMPLE_SERVER 
+	Actor* actor = lua_check_actor(L, 1);
+	Actor* target = lua_check_actor(L, 2);
+	uint32_t skill = (uint32_t)lua_tointeger(L, 3);
+	actor->SetCastID(skill);
+	CastAction* action = new CastAction(actor, target, skill);
+	actor->GetASM()->ChangeAction(action);
+#endif
+	return 0;
+}
+
 int actor_set_time_interval(lua_State*L) {
 #ifndef SIMPLE_SERVER
 	Actor* actor = lua_check_actor(L, 1);
@@ -594,7 +606,7 @@ int actor_get_avatar(lua_State*L) {
 	Actor* actor = lua_check_actor(L, 1);
 	auto* avatar = actor->GetASM()->GetAvatar();
 	if (avatar == nullptr)return 0;
-	lua_push_base_sprite(L, avatar);
+	lua_push_animation(L, avatar);
 	return 1;
 #else
 	return 0;
@@ -606,7 +618,7 @@ int actor_get_weapon(lua_State*L) {
 	Actor* actor = lua_check_actor(L, 1);
 	auto* weapon = actor->GetASM()->GetWeapon();
 	if (weapon == nullptr)return 0;
-	lua_push_base_sprite(L, weapon);
+	lua_push_animation(L, weapon);
 	return 1;
 #else
 	return 0;
@@ -659,6 +671,8 @@ luaL_Reg mt_actor[] = {
 {"Say", actor_say},
 {"ClearFrames", actor_clear_frames},
 { "PlayAttack", actor_play_attack},
+{ "PlayCast", actor_play_cast},
+
 { "SetTimeInterval", actor_set_time_interval },
 { "GetAvatar", actor_get_avatar},
 { "GetWeapon", actor_get_weapon},

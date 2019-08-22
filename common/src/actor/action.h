@@ -3,22 +3,17 @@
 #include <string>
 #include "pos.h"
 
-
-
 std::string action_get_name(int i);
 size_t action_get_size();
 std::string action_system_get_action(int i);
 bool action_is_show_weapon(int action);
-
 bool action_is_emotion_action(int action);
 bool action_is_battle_action(int action);
-
-
 
 #ifndef SIMPLE_SERVER
 class Actor;
 class ActionStateMachine;
-class BaseSprite;
+class Animation;
 class Animation;
 class Action
 {
@@ -48,8 +43,8 @@ Defender:   behit effect           behitback          clps|behit fly
 class AttackAction : public Action
 {
 public:
-	AttackAction(Actor* actor);
-	virtual ~AttackAction();
+	AttackAction(Actor* actor) :Action(actor) {};
+	virtual ~AttackAction() {};
 	virtual  void Update();
 	virtual  void Draw() ;
 	void AddTarget(Actor* target);
@@ -65,11 +60,26 @@ private:
 
 };
 
+
+class CastAction :public Action
+{
+public:
+	CastAction(Actor* actor, Actor* target, uint32_t skill) :Action(actor), m_Target(target), m_Skill(skill) {};
+	virtual ~CastAction() {};
+	virtual  void Update();
+	virtual void Exit();
+	virtual void Enter();
+private:
+	Actor* m_Target;
+	uint32_t m_Skill;
+};
+
+
 class BeHitAction : public Action
 {
 public:
-	BeHitAction(Actor* actor, Actor* attacker);
-	virtual ~BeHitAction();
+	BeHitAction(Actor* actor, Actor* attacker) :Action(actor), m_Attacker(attacker) {};
+	virtual ~BeHitAction() {};
 	virtual  void Update();
 	virtual void Exit();
 	virtual void Enter();
@@ -77,17 +87,20 @@ public:
 private:
 	Actor* m_Attacker;
 	int m_State;
-	Animation* m_BehitAnim;
 	Animation* m_DamageAnim;
 };
 
-class IdleAction : public Action
+class BeCastAction : public Action
 {
 public:
-	IdleAction(Actor* actor) :Action(actor) { };
-	virtual ~IdleAction() {};
-	void Enter();
-	
+	BeCastAction(Actor* actor, Actor* attacker) :Action(actor), m_Attacker(attacker) {};
+	virtual ~BeCastAction() {};
+	virtual  void Update();
+	virtual void Exit();
+	virtual void Enter();
+private:
+	Actor* m_Attacker;
+	int m_State;
 };
 
 
@@ -107,8 +120,8 @@ public:
 	void ChangeAction(Action* action);
 	void EnsureLoadAction(int action);
 
-	BaseSprite* GetAvatar(int action = -1);
-	BaseSprite* GetWeapon(int action = -1);
+	Animation* GetAvatar(int action = -1);
+	Animation* GetWeapon(int action = -1);
 	bool HasWeapon() { return m_HasWeapon; }
 	Action* GetAction() { return m_pCurrentAction; }
 	void SetTimeInterval(float ti) { m_TimeInterval = ti; }
@@ -125,8 +138,8 @@ private:
 	bool m_HasWeapon;
 	Action* m_pPreviousAction;
 	Action* m_pCurrentAction;
-	std::map<int, BaseSprite*> m_WeaponActions;
-	std::map<int, BaseSprite*> m_AvatarActions;
+	std::map<int, Animation*> m_WeaponActions;
+	std::map<int, Animation*> m_AvatarActions;
 };
 #endif // !SIMPLE_SERVER
 

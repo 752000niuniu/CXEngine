@@ -20,7 +20,7 @@ end
 
 
 function OnSceneInit()
-    BeHitAnim =  base_sprite_create(ADDONWDF,0x1D3FF13C)
+    BeHitAnim =  animation_create(ADDONWDF,0x1D3FF13C)
     BeHitAnim:EnableDrag(true)
 
     player = actor_manager_create_actor(os.time())
@@ -29,7 +29,7 @@ function OnSceneInit()
     -- player:SetAvatarID('JXK-KNIFE')
     -- player:SetWeaponAvatarID('JXK-KNIFE-120-晓风残月')
     player:SetType(ACTOR_TYPE_PET)
-    player:SetAvatarID('超级金猴')
+    player:SetAvatarID('古代瑞兽')
     player:SetDir(0)
     -- player:SetX(615.0)
     -- player:SetY(275.0)
@@ -41,10 +41,11 @@ function OnSceneInit()
     -- player:GetAvatar():Stop()
 
     enemy  = actor_manager_create_actor(os.time() + 1)
-    enemy:SetType(ACTOR_TYPE_PET)
-    enemy:SetAvatarID('踏云兽')
-    enemy:SetDir(0)
-    -- enemy:SetWeaponAvatarID('JXK-KNIFE-120-晓风残月')
+    -- enemy:SetType(ACTOR_TYPE_PET)
+    -- enemy:SetAvatarID('踏云兽')
+    -- enemy:SetDir(0)
+    enemy:SetAvatarID('JXK-KNIFE')
+    enemy:SetWeaponAvatarID('JXK-KNIFE-120-晓风残月')
     -- enemy:SetRoleID(35)
     -- enemy:SetWeaponID(0)
     -- enemy:SetActionID(ACTION_BEHIT)
@@ -214,8 +215,51 @@ function OnSceneImGuiUpdate()
         player:PlayAttack(enemy)
     end
 
+
+--     3	残月	090643F5
+-- 4	失心符	091ADDC7
+-- 5	落岩	0AC30DE6
+-- 6	未知	0F689A42
+-- 7	烟花	11C66BC9
+-- 8	泰山压顶	133F8E31
+-- 9	楚楚可怜	182CE63B
+-- 10	力劈华山	FF33B0EE
+-- 11	三味真火	FCDCCCEC
+-- 12	奔雷咒	F54C4025
+-- 13	姐妹同心	EF3E3FE4
+-- 14	红袖添香	E5F52524
+-- 15	百毒不侵	D69CAE82
+-- 16	龙卷雨击4	D61E2519
+-- 17	失忆符	D4AA2F8A
+-- 18	追魂符	D4024676
+-- 19	千里神行	C813882A
+-- 20	佛法无边	C8011EF1
+-- 21	唧唧歪歪	C12C2663
+-- 22	地狱烈火	BE325D99
+-- 23	同甘共苦	B0E5AE1E
+-- 24	心如明镜	A7469D8F
+-- 25	宁心	A72FDB18
+-- 26	日月乾坤	A70D1263
+-- 27	双龙戏珠	A680A821
+-- 28	神龙摆尾	A4790CE1
+
+    if imgui.Button('Cast1') then
+        player:PlayCast(enemy,0x133F8E31)
+    end
+    if imgui.Button('Cast2') then
+        player:PlayCast(enemy,0x783F9D20)
+    end
+    if imgui.Button('Cast3') then
+        player:PlayCast(enemy,0x99ED4688)
+    end
+
+
     if imgui.Button('EnemyAttack') then
         enemy:PlayAttack(player)
+    end
+
+    if imgui.Button('EnemyCast') then
+        enemy:PlayCast(player,0xC12C2663)
     end
 
     if imgui.Button('LoadPlayer') then

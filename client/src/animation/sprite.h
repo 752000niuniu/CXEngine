@@ -7,18 +7,13 @@ struct NE::Sprite::Sequence;
 class BaseSprite : public View
 {
 public:
-	
 	BaseSprite(uint64_t resoureID = 0);
 	BaseSprite(uint32_t pkg, uint32_t wasID);
 	virtual ~BaseSprite();
 
-	virtual void Update();
-	virtual void Draw();
-	void SetLoop(bool loop);
-	void Reset();
-	void Stop();
-	void Play();
-	void Pause(int ms);
+	virtual void Update() {};
+	virtual void Draw() {};
+	
 	NE::Sprite::Sequence* GetFrame(int index = -1);
 	int GetFrameKeyX(int index = -1);
 	int GetFrameKeyY(int index = -1);
@@ -36,26 +31,26 @@ public:
 	int KeyX;
 	int KeyY;
 	int Dir;
-	int bLoop;
-	int bPlay;
-	int bGroupEndUpdate;
-	int bFrameUpdated;
+	
 	Pos Pos;
 	NE::Sprite* m_pSprite;
 	float FrameInterval;
 	float PlayTime;
-	bool Visible;
+	
 	bool bEnableDrag;
-	int AttackKeyFrame;
 	Bound GetViewBounds() override;
 	bool CheckDrag(int x, int y) override;
 	void OnDragMove(int x, int y)override;
 
-private:
-	int m_PauseTime;
-	int m_Pause;
 };
 
+enum EAnimationState
+{
+	ANIMATION_PLAY = 0,
+	ANIMATION_STOP,
+	ANIMATION_PAUSE,
+	ANIMATION_LOOP,
+};
 
 class Animation : public BaseSprite
 {
@@ -65,8 +60,61 @@ public:
 	virtual ~Animation() {};
 	void Update() override;
 	void Draw() override;
+	void SetVisible(bool visible) { m_Visible = visible; };
+	bool GetVisible() { return m_Visible; };
+
+	void Pause(int ms);
+	void SetLoop(int loop);
+	void Reset();
+	void Stop();
+	void Play();
+	void Replay();
+	
+
+	void SetFrameInterval(float interval) { FrameInterval = interval; };
+	float GetFrameInterval() { return FrameInterval; };
+
+	void SetDir(int dir) { Dir = dir; };
+	int GetDir() { return Dir; };
+	bool IsGroupEndUpdate() { return m_bGroupEndUpdate; };
+	bool IsFrameUpdate() { return m_bFrameUpdate; };
+	int GetAttackKeyFrame() { return AttackKeyFrame; };
+
+	int GetState() { return m_State; };
+private:
+	bool m_bGroupEndUpdate;
+	bool m_bFrameUpdate;
+	int m_LoopCount;
+	int AttackKeyFrame;
+	int bPlay;
+	int m_PreviousState;
+	int m_State;
+	bool m_Visible;
+	int m_PauseTime;
+};
+
+class ActionAnimation :public BaseSprite
+{
+public:
+	ActionAnimation(uint64_t resoureID = 0);
+	ActionAnimation(uint32_t pkg, uint32_t wasID) :BaseSprite(pkg, wasID) {  };
+	virtual ~ActionAnimation() {};
+	void Update() override;
+	void Draw() override;
+};
+
+class AnimationManager :public Singleton<AnimationManager>
+{
+public:
+	AnimationManager() ;
+	~AnimationManager() ;
+	void AddQueue(Animation* animation);
+	void Update();
+	void Draw();
+private:
+	std::vector<Animation*> m_Animations;
 	
 };
 
-void lua_push_base_sprite(lua_State*L, BaseSprite* sprite);
+void lua_push_animation(lua_State*L, Animation* sprite);
 void luaopen_sprite(lua_State* L);
