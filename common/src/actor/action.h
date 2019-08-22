@@ -55,9 +55,9 @@ private:
 	Actor * m_Target;
 	Pos m_BackupPos;
 	int m_BackupActionID;
-	float m_Velocity;
+	float m_SavedVelocity;
 	int m_ID;
-
+	Pos m_Runto;
 };
 
 

@@ -79,8 +79,12 @@ function game_dispatch_message(pt)
 			local player = actor_manager_create_player(pinfo.pid)
 			player:SetName(pinfo.name)
 			player:SetSceneID(pinfo.scene_id)
-			player:SetRoleID(pinfo.role_id)
-			player:SetWeaponID(pinfo.weapon_id)
+			-- player:SetRoleID(pinfo.role_id)
+			-- player:SetWeaponID(pinfo.weapon_id)
+
+			player:SetAvatarID('JXK-KNIFE')
+   			player:SetWeaponAvatarID('JXK-KNIFE-120-晓风残月')
+
 			player:SetX(pinfo.x)
 			player:SetY(pinfo.y)
 			if pinfo.is_local then

@@ -176,7 +176,6 @@ void Animation::Play()
 	m_State = ANIMATION_PLAY;
 }
 
-
 void Animation::Replay()
 {
 	Reset();
@@ -245,10 +244,8 @@ void Animation::Draw()
 	if (texture)
 	{
 		auto& frame = m_pSprite->mFrames[Dir*GroupFrameCount + CurrentFrame];
-		int kx = (m_pSprite->mKeyX - frame.key_x);
-		int ky = (m_pSprite->mKeyY - frame.key_y);
 		SPRITE_RENDERER_INSTANCE->DrawFrameSprite(texture,
-			glm::vec2(Pos.x + kx, Pos.y + ky),
+			glm::vec2(Pos.x - frame.key_x, Pos.y - frame.key_y),
 			glm::vec2(frame.width, frame.height), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	}

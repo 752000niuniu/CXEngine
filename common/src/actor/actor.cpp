@@ -87,18 +87,7 @@ void Actor::SetDir(int dir)
 
 void Actor::ReverseDir()
 {
-	switch (m_Dir)
-	{
-	case 6: m_Dir = 4; break;
-	case 4: m_Dir = 6; break;
-	case 5: m_Dir = 7; break;
-	case 7: m_Dir = 5; break;
-	case 3: m_Dir = 1; break;
-	case 1: m_Dir = 3; break;
-	case 2: m_Dir = 0; break;
-	case 0: m_Dir = 2; break;
-	}
-	SetDir(m_Dir);
+	SetDir(GMath::GetReverseDir(m_Dir));
 }
 
 void Actor::SetActionID(int action)
@@ -222,6 +211,8 @@ Bound Actor::GetViewBounds()
 	auto* avatar = m_ASM->GetAvatar();
 	if (avatar == nullptr) return { 0,0,0,0 };
 	Pos pos = avatar->Pos;
+	pos.x -= avatar->KeyX;
+	pos.y -= avatar->KeyY;
 	return Bound{ pos.x, (pos.x + avatar->Width),
 		pos.y,(pos.y + avatar->Height) };
 }

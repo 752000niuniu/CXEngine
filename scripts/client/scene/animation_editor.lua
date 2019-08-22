@@ -26,16 +26,17 @@ function OnSceneInit()
     player = actor_manager_create_actor(os.time())
     -- player:SetRoleID(math.tointeger(RoleIDSB:str()))
     -- player:SetWeaponID(math.tointeger(WeaponIDSB:str()))
-    -- player:SetAvatarID('JXK-KNIFE')
-    -- player:SetWeaponAvatarID('JXK-KNIFE-120-晓风残月')
-    player:SetType(ACTOR_TYPE_PET)
-    player:SetAvatarID('古代瑞兽')
-    player:SetDir(0)
-    -- player:SetX(615.0)
-    -- player:SetY(275.0)
+    player:SetAvatarID('XYS-FAN')
+    player:SetWeaponAvatarID('XYS-FAN-120-画龙点睛')
+    -- player:SetType(ACTOR_TYPE_PET)
+    -- player:SetAvatarID('古代瑞兽')
 
-     player:SetX(375.0)
-     player:SetY(170.0)
+
+    player:SetDir(0)
+    player:SetX(375.0)
+    player:SetY(170.0)
+
+     
 
     player:SetActionID(ACTION_IDLE)
     -- player:GetAvatar():Stop()
@@ -83,25 +84,25 @@ function draw_sprite_info(sprite)
 end
 
 function draw_sprite_bounding_box(avatar)
-    local  orix , oriy = scene_manager_get_imgui_cursor_pos()
+    local orix , oriy = scene_manager_get_imgui_cursor_pos()
     local avx, avy = avatar:GetPos()
-    local tlx = orix + avx 
-    local tly = oriy + avy
-    local center_x = tlx + avatar:GetKeyX()
-    local center_y = tly + avatar:GetKeyY()
-    imgui.AddCircleFilled(center_x,center_y,4,0xff0000ff)
+    avx = orix + avx
+    avy = oriy + avy
+    imgui.AddCircleFilled(avx,avy,2,0xff0000ff)
 
-    local brx = orix + avx + avatar:GetWidth()
-    local bry = oriy + avy + avatar:GetHeight()
-    imgui.AddRect(tlx,tly,brx,bry,0xff00ffff)
+    local tlx = avx - avatar:GetKeyX()
+    local tly = avy - avatar:GetKeyY()
+    local brx = tlx + avatar:GetWidth()
+    local bry = tly + avatar:GetHeight()
+    imgui.AddRect( tlx,tly,brx,bry,0xff00ffff)
 
-    center_x = center_x - avatar:GetFrameKeyX(curframe)
-    center_y = center_y - avatar:GetFrameKeyY(curframe)
-    imgui.AddCircleFilled(center_x,center_y,4,0xff00ff00)
+    local cx = avx - avatar:GetFrameKeyX(curframe)
+    local cy = avy - avatar:GetFrameKeyY(curframe)
+    imgui.AddCircleFilled(cx,cy,2,0xff00ff00)
 
-    brx = center_x + avatar:GetFrameWidth(curframe)
-    bry = center_y + avatar:GetFrameHeight(curframe)
-    imgui.AddRect(center_x,center_y,brx,bry,0xff00ff00)
+    brx = cx + avatar:GetFrameWidth(curframe)
+    bry = cy + avatar:GetFrameHeight(curframe)
+    imgui.AddRect(cx,cy,brx,bry,0xff00ff00)
 end
 
 
