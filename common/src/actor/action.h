@@ -2,6 +2,7 @@
 
 #include <string>
 #include "pos.h"
+#include <list>
 
 std::string action_get_name(int i);
 size_t action_get_size();
@@ -103,6 +104,18 @@ private:
 	int m_State;
 };
 
+
+class PathMoveAction : public Action
+{
+public:
+	PathMoveAction(Actor* actor) :Action(actor){};
+	virtual ~PathMoveAction() {};
+	virtual  void Update();
+	virtual void Exit();
+	virtual void Enter();
+private:
+	int m_State;
+};
 
 class ActionStateMachine
 {

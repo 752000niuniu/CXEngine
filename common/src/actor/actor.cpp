@@ -39,11 +39,16 @@ Actor::Actor(uint64_t pid)
 	m_AvatarID(""),
 	m_WeaponAvatarID("")
 {
+	
 	m_MoveHandle = new MoveHandle(this);
 #ifndef SIMPLE_SERVER
 	m_ASM = new ActionStateMachine(this);  
 	INPUT_MANAGER_INSTANCE->RegisterView(this);
+	PathMoveAction*action = new PathMoveAction(this);
+	m_ASM->ChangeAction(action);
 #endif
+
+	
 	
 }
 Actor::~Actor()
@@ -67,8 +72,6 @@ void Actor::OnDraw()
 {
 #ifndef SIMPLE_SERVER
 	m_ASM->Draw();
-	auto* avatar = m_ASM->GetAvatar();
-	
 #endif
 }
 
@@ -175,8 +178,14 @@ int Actor::GetDirByDegree(float degree)
 #endif
 }
 
+bool Actor::IsLocal()
+{
+	return actor_manager_is_local_player(this);
+}
 float Actor::GetCombatDistSquare()
 {
+	Pos& pos = GetPos();
+	Pos& targetPos = GetCombatTargetPos();
 	return ::GMath::Astar_GetDistanceSquare(m_CombatProps.Pos.x, m_CombatProps.Pos.y, m_CombatProps.TargetPos.x, m_CombatProps.TargetPos.y);
 }
 
@@ -186,6 +195,8 @@ float Actor::GetMoveDestDistSquare(Pos dest)
 }
 float Actor::GetCombatAngle()
 {
+	Pos& pos = GetPos();
+	Pos& targetPos = GetCombatTargetPos();
 	return ::GMath::Astar_GetAngle(m_CombatProps.Pos.x, m_CombatProps.Pos.y, m_CombatProps.TargetPos.x, m_CombatProps.TargetPos.y);
 }
 
@@ -363,47 +374,13 @@ int actor_translate_y(lua_State* L) {
 	return 0;
 }
 
-int actor_change_action(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	int action = (int)luaL_optinteger(L, 2, 0);
-	if (actor->GetType() != ACTOR_TYPE_PLAYER) return 0;
-
-	Player* player = dynamic_cast<Player*>(actor);
-	player->ChangeAction(action);
-	return 0;
-}
-
-
-int actor_change_weapon(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	int weapon= (int)luaL_optinteger(L, 2, 0);
-	if (actor->GetType() != ACTOR_TYPE_PLAYER) return 0;
-
-	Player* player = dynamic_cast<Player*>(actor);
-	player->ChangeWeapon(weapon);
-	return 0;
-}
-
-int actor_change_role(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	int role = (int)luaL_optinteger(L, 2, 0);
-	if (actor->GetType() != ACTOR_TYPE_PLAYER) return 0;
-
-	Player* player = dynamic_cast<Player*>(actor);
-	player->ChangeRole(role);
-	return 0;
-}
 
 int actor_move_to(lua_State* L){
 	Actor* actor = lua_check_actor(L, 1);
 	float x = (float)lua_tonumber(L, 2);
 	float y = (float)lua_tonumber(L, 3);
-	if (actor->GetType()==ACTOR_TYPE_PLAYER){
-		Player* player = dynamic_cast<Player*> (actor);
-		player->MoveTo(x, y);
-	}else{
-		actor->GetMoveHandle()->MoveTo(x, y);
-	}
+	actor->GetMoveHandle()->MoveTo(x, y);
+	
 	return 0;
 }
 int actor_say(lua_State* L) {
@@ -551,12 +528,7 @@ int actor_get_weapon_avatar_id(lua_State* L) {
 }
 
 int actor_clear_frames(lua_State* L) {
-#ifndef SIMPLE_SERVER
-	Actor* actor = lua_check_actor(L, 1);
-	if (actor->GetType() == ACTOR_TYPE_PLAYER) {
-		dynamic_cast<Player*>(actor)->ClearFrames();
-	}
-#endif
+
 	return 0;
 }
 
@@ -617,7 +589,7 @@ int actor_get_weapon(lua_State*L) {
 }
 
 luaL_Reg mt_actor[] = {
-{ "__gc",actor_destroy },
+//{ "__gc",actor_destroy },
 { "Destroy",actor_destroy },
 { "Update",actor_update},
 { "Draw",actor_draw },
@@ -655,15 +627,11 @@ luaL_Reg mt_actor[] = {
 {"GetActionID", actor_get_action_id},
 {"TranslateX", actor_translate_x},
 { "TranslateY", actor_translate_y },
-{ "ChangeAction", actor_change_action },
-{ "ChangeWeapon", actor_change_weapon },
-{ "ChangeRole", actor_change_role },
 {"MoveTo", actor_move_to},
 {"Say", actor_say},
 {"ClearFrames", actor_clear_frames},
 { "PlayAttack", actor_play_attack},
 { "PlayCast", actor_play_cast},
-
 { "SetTimeInterval", actor_set_time_interval },
 { "GetAvatar", actor_get_avatar},
 { "GetWeapon", actor_get_weapon},

@@ -58,7 +58,6 @@ add_executable(SimpleEngine
     ${GAME_SOURCES_HEADER}
     ${GAME_COMMON_SRCS}
     src/actor/player.cpp
-    src/actor/player_state.cpp
     src/scene/scene.cpp
 	src/scene/scene_manager.cpp
 )

@@ -13,7 +13,6 @@
 #include "actor/action.h"
 #include "combat/Skill.h"
 #include "resource_manager.h"
-#include "actor/player_state.h"
 #include <algorithm>
 #include "net.h"
 #include "script_system.h"
@@ -22,6 +21,8 @@
 #include "lua_bind.h"
 #include "text_renderer.h"
 #include "scene/game_map.h"
+#include "actor/actor.h"
+#include "actor/move.h"
 
 bool s_IsCombat = true;
 TextView* s_Announcement;
@@ -118,14 +119,14 @@ FrameAnimation* Scene::GetNpcDialogBG()
 
 void Scene::OnSmapClick(float x, float y, float w, float h)
 {
-	Player* player= actor_manager_fetch_local_player();
+	Actor* player= actor_manager_fetch_local_player();
 	if (player)
 	{
 		x = std::min(w, std::max(0.f, x));
 		y = std::min(h, std::max(0.f, y));
 		float dx = x / w * m_Map->GetMapWidth();
 		float dy = y / h * m_Map->GetMapHeight();
-		player->MoveTo(m_Map, (int)dx, (int)dy);
+		player->GetMoveHandle()->MoveTo(dx, dy);
 	}
 }
 

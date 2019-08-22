@@ -90,13 +90,6 @@ int Player::GetDrawY()
 
 
 
-
-void Player::SetBox()
-{
-	m_Box.x = GetBoxX();
-	m_Box.y = GetBoxY();
-}
-
 void Player::MoveTo(GameMap* gameMapPtr, int destX, int destY)
 {
 	if (!gameMapPtr)return;

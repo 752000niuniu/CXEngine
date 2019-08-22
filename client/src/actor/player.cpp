@@ -1,5 +1,4 @@
 #include "player.h"
-#include "player_state.h"
 #include "text_renderer.h"
 #include "resource_manager.h"
 #include "input_manager.h"
@@ -10,20 +9,15 @@
 #include "scene/game_map.h"
 #include "scene/base_scene.h"
 #include "scene/scene_manager.h"
+#include "actor/actor.h"
+#include "actor/action.h"
 
 
 
 Player::Player(uint64_t pid):
-Actor(pid),
-m_pFSM(nullptr),
-m_SkillFrame(nullptr)
+	Actor(pid)
 {
 	m_ActorType = ACTOR_TYPE_PLAYER;
-	
-	m_pFSM = new StateMachine<Player>(this);
-	m_pFSM->SetCurrentState(PlayerIdleState::GetInstance());
-	m_pFSM->SetGlobalState(PlayerCombatGlobalState::GetInstance());
-	
 	m_SayWidget = new TextView();
 	m_SayWidget->PaddingHorizontal = 4;
 	m_SayWidget->PaddingVertical = 2;
@@ -31,176 +25,24 @@ m_SkillFrame(nullptr)
 	m_SayWidget->BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WZIFEWDF, 0xEF073E43); //F3FAAAF2´ó¿ò
 	//m_SayWidget->BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WZIFEWDF, 0xA4120EA9);
 	m_SayDuration = 0;
-
-	m_PlayerFrames.clear();
-	m_WeaponFrames.clear();
-	//INPUT_MANAGER_INSTANCE->RegisterView(this);
 }
 
 
 Player::~Player()
 {
-	//INPUT_MANAGER_INSTANCE->UnRegisterView(this);
-	if (m_pFSM)
-	{
-		delete m_pFSM;
-		m_pFSM = nullptr;
-	}
-
 	SafeDelete(m_SayWidget);
-	ClearFrames();
-	m_SkillFrame = nullptr;
-
 }
 
-void Player::ClearFrames()
-{
-	for (auto& it : m_PlayerFrames)
-	{
-		SafeDelete(it.second);
-	}
-	m_PlayerFrames.clear();
-	for (auto& it : m_WeaponFrames)
-	{
-		SafeDelete(it.second);
-	}
-	m_WeaponFrames.clear();
-}
-
-float Player::GetCombatDistSquare()
-{
-	Pos& pos = GetPos();
-	Pos& targetPos = GetCombatTargetPos();
-	return ::GMath::Astar_GetDistanceSquare(pos.x, pos.y, targetPos.x, targetPos.y);
-}
-
-float Player::GetMoveDestDistSquare(Pos dest)
-{
-	return ::GMath::Astar_GetDistanceSquare(m_Pos.x, m_Pos.y, dest.x, dest.y);
-}
-float Player::GetCombatAngle()
-{
-	Pos& pos = GetPos();
-	Pos& targetPos = GetCombatTargetPos();
-	return ::GMath::Astar_GetAngle(pos.x, pos.y, targetPos.x, targetPos.y);
-}
-float Player::GetMoveDestAngle(Pos dest)
-{
-	return ::GMath::Astar_GetAngle(m_Pos.x, m_Pos.y, dest.x, dest.y);
-}
-
-void Player::ReloadFrames()
-{
-	ClearFrames();
-}
-
-void Player::ChangeRole(int roleID)
-{
-	m_RoleID = roleID;
-	
-	for (auto& it : m_PlayerFrames)
-	{
-		SafeDelete(it.second);
-	}
-	m_PlayerFrames.clear();
-	
-}
-
-void Player::ChangeWeapon(int WeaponID )
-{
-	m_WeaponID = WeaponID;
-	for (auto& it : m_WeaponFrames)
-	{
-		SafeDelete(it.second);
-	}
-	m_WeaponFrames.clear();
-}
-
-void Player::ChangeAction(int actionID)
-{
-	m_ActionID = actionID;
-}
-
-
-void Player::SaveFrame(int index)
-{
-	//TODO 
-}
 
 void Player::OnUpdate()
 {
 	float dt = WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
-	if (m_pFSM)
+	if (m_ASM)
 	{
-		m_pFSM->Update();
+		
+		m_ASM->Update();
 	}
 
-	if (m_PlayerFrames.find(m_ActionID) != m_PlayerFrames.end())
-	{
-		m_PlayerFrames[m_ActionID]->OnUpdate();
-	}
-	else
-	{
-		auto playerFrameWasID = RESOURCE_MANAGER_INSTANCE->GetActionResID(m_ActorType, m_RoleID, m_ActionID);
-		if (playerFrameWasID != -1) {
-			m_PlayerFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(playerFrameWasID)));
-			m_PlayerFrames[m_ActionID]->ResetAnim(m_Dir);
-			m_PlayerFrames[m_ActionID]->SetFrameTimeBase(m_FrameSpeed);
-			if (m_ActionID == ACTION_CLPS)
-			{
-				m_PlayerFrames[m_ActionID]->SetPlayLoop(false);
-			}
-			
-			if (m_WeaponFrames.find(m_ActionID) != m_WeaponFrames.end())
-			{
-				m_WeaponFrames[m_ActionID]->ResetAnim(m_Dir);
-				m_WeaponFrames[m_ActionID]->SetFrameTimeBase(m_FrameSpeed);
-				int groupCount = m_WeaponFrames[m_ActionID]->GetGroupFrameCount();
-				m_PlayerFrames[m_ActionID]->ResetFrameTimeByGroupCount(groupCount);
-			}
-		}
-	}
-
-	if (m_WeaponFrames.find(m_ActionID) != m_WeaponFrames.end())
-	{
-		m_WeaponFrames[m_ActionID]->OnUpdate();
-	}
-	else
-	{
-		auto weaponFrameWasID = RESOURCE_MANAGER_INSTANCE->GetWeaponResID(m_WeaponID,m_ActionID);
-		if (weaponFrameWasID != -1) {
-			m_WeaponFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(weaponFrameWasID)));
-			m_WeaponFrames[m_ActionID]->ResetAnim(m_Dir);
-			m_WeaponFrames[m_ActionID]->SetFrameTimeBase(m_FrameSpeed);
-			if (m_ActionID == ACTION_CLPS)
-			{
-				m_WeaponFrames[m_ActionID]->SetPlayLoop(false);
-			}
-			if (m_PlayerFrames.find(m_ActionID) != m_PlayerFrames.end())
-			{
-				m_PlayerFrames[m_ActionID]->ResetAnim(m_Dir);
-				m_PlayerFrames[m_ActionID]->SetFrameTimeBase(m_FrameSpeed);
-				auto groupCount = m_PlayerFrames[m_ActionID]->GetGroupFrameCount();
-				m_WeaponFrames[m_ActionID]->ResetFrameTimeByGroupCount(groupCount);
-			}
-		}
-	}
-
-
-	if(m_bInCombat)
-	{
-		if (m_SkillFrame != nullptr)
-		{
-			if (m_bSkillFrameShow)
-			{
-				m_SkillFrame->OnUpdate();
-			}
-			if (m_SkillFrame->IsNextFrameRestart())
-			{
-				m_bSkillFrameShow = false;
-			}
-		}
-	}
 	if (m_SayDuration > 0)
 	{
 		if (m_SayWidget)
@@ -212,67 +54,27 @@ void Player::OnUpdate()
 
 int Player::GetDrawY()
 {
-	auto* frame = GetCurrentPlayerFrame();
-	if (frame != nullptr && frame->GetSprite()!=nullptr)
-	{
-		int current = frame->GetCurrentFrame();
-		if (current >= frame->GetFrameCount())return GetY();
-		auto& keyframeinfo = frame->GetSprite()->mFrames[current];
-		int drawY = GetY() - frame->GetHeight()+frame->GetKeyY() -keyframeinfo.key_y;
-		return drawY;
-	}
-	else
-	{
-		return GetY();
-	}
-	
+	return (int)m_Pos.y;
 }
 
-FrameAnimation* Player::GetPlayerFrame(int actionID)
-{
-	auto it = m_PlayerFrames.find(actionID);
-	if (it != m_PlayerFrames.end())
-	{
-		return it->second;
-	}
-	else
-	{
-		return nullptr;
-	}
-}
 
 void Player::OnDraw(GameMap* gameMapPtr)
 {
-	if (!gameMapPtr) return;
-	Pos pos = GAME_INSTANCE->MapPosToScreenPos(m_Pos);
-	if (m_PlayerFrames.find(m_ActionID) != m_PlayerFrames.end())
-	{
-		auto& player = *m_PlayerFrames[m_ActionID];
+	//m_ASM->Draw();
+
+	//if (!gameMapPtr) return;
+	//Pos pos = GAME_INSTANCE->MapPosToScreenPos(m_Pos);
 	
-		int _px = (int)pos.x - player.GetWidth() / 2 + 10  ;
-		int _py = (int)pos.y - player.GetHeight() + 20 ;
-		player.SetPos({ _px,_py });
-		player.Draw();
-
-		if (m_WeaponFrames.find(m_ActionID) != m_WeaponFrames.end())
-		{
-			auto& weapon = *m_WeaponFrames[m_ActionID];
-			int px2 = _px - (weapon.GetKeyX() - player.GetKeyX());
-			int py2 = _py - (weapon.GetKeyY() - player.GetKeyY());
-			weapon.SetPos({ px2,py2 });
-			weapon.Draw();
-		}
-
-		if (!m_NickName.empty())
-		{
-			auto green = glm::vec3(115 / 255.0f, 1.0f, 137 / 255.0f);
-			TextRenderer::GetInstance()->DrawTextC(m_NickName.c_str(),
-				((int)pos.x + 11),
-				((int)pos.y + 20),
-				TextRenderer::CENTER
-			);
-		}
+	if (!m_NickName.empty())
+	{
+		auto green = glm::vec3(115 / 255.0f, 1.0f, 137 / 255.0f);
+		TextRenderer::GetInstance()->DrawTextC(m_NickName.c_str(),
+			((int)m_Pos.x + 11),
+			((int)m_Pos.y + 20),
+			TextRenderer::CENTER
+		);
 	}
+	
 
 	if (m_SayDuration > 0)
 	{
@@ -283,248 +85,41 @@ void Player::OnDraw(GameMap* gameMapPtr)
 		{
 			int bgWidth = m_SayWidget->Width;
 			int bgHeight = m_SayWidget->Height;
-			auto& player = *m_PlayerFrames[m_ActionID];
+			//auto& player = *m_PlayerFrames[m_ActionID];
 			
-			m_SayWidget->X = (int)pos.x - bgWidth / 2 + 10;
-			m_SayWidget->Y = (int)pos.y - player.GetHeight() + 20 - bgHeight;
-
-
+			//m_SayWidget->X = (int)pos.x - bgWidth / 2 + 10;
+			//sm_SayWidget->Y = (int)pos.y - player.GetHeight() + 20 - bgHeight;
 		}
 		m_SayWidget->OnDraw();
 	}
 	
 }
 
-void Player::OnDraw(int px,int py)
-{	
-	if(m_PlayerFrames.find(m_ActionID)!= m_PlayerFrames.end() )
-	{
-		auto& player = *m_PlayerFrames[m_ActionID];
-		int _px = px - player.GetWidth() / 2 + 10;
-		int _py = py - player.GetHeight() + 20;
-	    player.SetPos({_px,_py});
-		player.Draw();
-		
-		if(m_WeaponFrames.find(m_ActionID)!= m_WeaponFrames.end() )
-		{
-			auto& weapon = *m_WeaponFrames[m_ActionID];
-			int px2 = _px - (weapon.GetKeyX() - player.GetKeyX());
-			int py2 = _py - (weapon.GetKeyY() - player.GetKeyY());
-            weapon.SetPos({px2,py2});
-			weapon.Draw();
-		}
-
-		if(!m_NickName.empty())
-		{
-			auto green = glm::vec3(115/255.0f,1.0f,137/255.0f);
-			TextRenderer::GetInstance()->DrawTextC(m_NickName.c_str(),
-				(px + 11),
-				(py + 20),
-				TextRenderer::CENTER
-				);
-		}
-		if (m_bSkillFrameShow && m_SkillFrame != nullptr)
-		{
-			int px2 = _px - (m_SkillFrame->GetKeyX() - player.GetKeyX());
-			int py2 = _py - (m_SkillFrame->GetKeyY() - player.GetKeyY()) - 15;
-            m_SkillFrame->SetPos({px2,py2});
-			m_SkillFrame->Draw();
-		}
-	}
-
-	if (m_SayDuration > 0)
-	{
-		int past = (int)WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
-		m_SayDuration -= past;
-
-		if (m_SayWidget->Background != nullptr)
-		{
-			int bgWidth = m_SayWidget->Width;
-			int bgHeight = m_SayWidget->Height;
-			auto& player = *m_PlayerFrames[m_ActionID];
-
-			m_SayWidget->X = px - bgWidth / 2 +10 ;
-			m_SayWidget->Y = py - player.GetHeight() + 20 - bgHeight ;
-		}
-		m_SayWidget->OnDraw();
-	}
-}
 
 
-void Player::OnDraw()
-{
-	Player::OnDraw(GetX(), GetY());
-}
 
-void Player::SetBox()
-{
-    m_Box.x= GetBoxX();
-    m_Box.y = GetBoxY();
-}
-
-void Player::MoveTo(GameMap* gameMapPtr, int destX, int destY)
-{
-	if (!gameMapPtr)return;
-	m_BackupMoveList.clear();
-	m_BackupMoveList = gameMapPtr->Move(GetBoxX(), GetBoxY(), destX / 20, destY / 20);
-	if (m_BackupMoveList.size() < 2)return;
-	m_BackupMoveList.pop_front();
-	m_BackupMoveList.pop_back();
-
-	m_MoveToPos.x = (float)destX;
-	m_MoveToPos.y = (float)destY;
-
-	m_pFSM->ChangeState(PlayerMoveState::GetInstance());
-}
-
-void Player::MoveTo(float x, float y)
-{
-	BaseScene* scene = GetScene();
-	GameMap* gameMapPtr = scene->GetGameMap();
-	if (!gameMapPtr)return;
-
-	
-	m_BackupMoveList.clear();
-	m_BackupMoveList = gameMapPtr->Move(GetBoxX(), GetBoxY(), (int)(x/20), (int)(y/20));
-	if (m_BackupMoveList.size() < 2)return;
-	m_BackupMoveList.pop_front();
-	m_BackupMoveList.pop_back();
-
-	m_MoveToPos.x = x;
-	m_MoveToPos.y = y;
-	m_pFSM->ChangeState(PlayerMoveState::GetInstance());
-
-}
-
-void Player::MoveToRandom()
-{
-	Scene* scene = dynamic_cast<Scene*>(SCENE_MANAGER_INSTANCE->GetCurrentScene());
-	GameMap* gameMapPtr = scene->GetGameMap();
-	if (!gameMapPtr)return;
-	
-	IntPos dest = gameMapPtr->GetRandomPos();
-	int destBoxX = dest.x; 
-	int destBoxY = dest.y;
-
-	m_BackupMoveList.clear();
-	m_BackupMoveList = gameMapPtr->Move(GetBoxX(), GetBoxY(), destBoxX, destBoxY);
-	if (m_BackupMoveList.size() < 2)return;
-	m_BackupMoveList.pop_front();
-	m_BackupMoveList.pop_back(); 
-
-	m_MoveToPos.x = destBoxX * 20.f + 10;
-	m_MoveToPos.y = destBoxY * 20.f + 10;
-	m_pFSM->ChangeState(PlayerMoveState::GetInstance());
-}
 
 void Player::ResetDirAll(int dir)
 {
-	for (auto& playerIt : m_PlayerFrames)
-		playerIt.second->ResetAnim(dir);
-
-	for (auto& weaponIt : m_WeaponFrames)
-		weaponIt.second->ResetAnim(dir);
 	m_Dir = dir;
 }
 
 void Player::ResetDir(int dir)
 {
-	for (auto& playerIt : m_PlayerFrames)
-		playerIt.second->Reset(dir);
-
-	for (auto& weaponIt : m_WeaponFrames)
-		weaponIt.second->Reset(dir);
 	m_Dir = dir;
 }
 
 void Player::SetDir(int dir)
 {
-	for (auto& playerIt : m_PlayerFrames)
-		playerIt.second->SetCurrentGroup(dir);
-
-	for (auto& weaponIt : m_WeaponFrames)
-		weaponIt.second->SetCurrentGroup(dir);
-	
 	m_Dir = dir;
 }
 
-bool Player::HandleMessage(const Telegram& msg) 
-{	
-	return GetFSM()->HandleMessage(msg);
-};
 
 void Player::SetAction(int state)
 { 
 	m_ActionID = state; 
-	if (m_bInCombat)
-	{
-		if (m_PlayerFrames.find(m_ActionID) != m_PlayerFrames.end())
-		{
-			m_PlayerFrames[m_ActionID]->OnUpdate();
-		}
-		else
-		{
-			auto playerFrameWasID = RESOURCE_MANAGER_INSTANCE->GetActionResID(m_ActorType, m_RoleID, m_ActionID);
-			if (playerFrameWasID != -1) {
-				m_PlayerFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(playerFrameWasID)));
-				m_PlayerFrames[m_ActionID]->ResetAnim(m_Dir);
-				if (m_ActionID == ACTION_CLPS)
-				{
-					m_PlayerFrames[m_ActionID]->SetPlayLoop(false);
-				}
-
-				if (m_WeaponFrames.find(m_ActionID) != m_WeaponFrames.end())
-				{
-					m_WeaponFrames[m_ActionID]->ResetAnim(m_Dir);
-					int groupCount = m_PlayerFrames[m_ActionID]->GetGroupFrameCount();
-					m_WeaponFrames[m_ActionID]->ResetFrameTimeByGroupCount(groupCount);
-				}
-			}
-		}
-
-		if (m_WeaponFrames.find(m_ActionID) != m_WeaponFrames.end())
-		{
-			m_WeaponFrames[m_ActionID]->OnUpdate();
-		}
-		else
-		{
-			auto weaponFrameWasID = RESOURCE_MANAGER_INSTANCE->GetWeaponResID(m_WeaponID, m_ActionID);
-			if (weaponFrameWasID != -1) {
-				m_WeaponFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(weaponFrameWasID)));
-				m_WeaponFrames[m_ActionID]->ResetAnim(m_Dir);
-				if (m_ActionID == ACTION_CLPS)
-				{
-					m_WeaponFrames[m_ActionID]->SetPlayLoop(false);
-				}
-				if (m_PlayerFrames.find(m_ActionID) != m_PlayerFrames.end())
-				{
-					m_PlayerFrames[m_ActionID]->ResetAnim(m_Dir);
-					auto groupCount = m_PlayerFrames[m_ActionID]->GetGroupFrameCount();
-					m_WeaponFrames[m_ActionID]->ResetFrameTimeByGroupCount(groupCount);
-				}
-			}
-		}
-	}
 }
 
-
-FrameAnimation* Player::GetCurrentPlayerFrame()
-{
-	return m_PlayerFrames.find(m_ActionID) != m_PlayerFrames.end() ? m_PlayerFrames[m_ActionID] : nullptr;
-};
-
-FrameAnimation* Player::GetCurrentWeaponFrame()
-{
-	return m_WeaponFrames.find(m_ActionID) != m_WeaponFrames.end() ? m_WeaponFrames[m_ActionID] : nullptr;
-};
-
-void Player::SetSkillFrame(FrameAnimation* anim)
-{
-	if(!anim ) return;
-	m_bSkillFrameShow = true;
-	m_SkillFrame =  anim;
-	m_SkillFrame->ResetAnim(0);
-}
 
 
 void Player::LogInfo()
@@ -546,76 +141,16 @@ void Player::Say(std::string Text)
 	m_SayWidget->TextCache.assign(wText.begin(), wText.end());
 }
 
-bool Player::CanMove()
-{
-	return m_Pos.x != m_MoveToPos.x || m_Pos.y != m_MoveToPos.y;
-}
 
-float Player::GetWidth()
-{
-	auto* player = GetCurrentPlayerFrame();
-	if (player == nullptr) return 0;
-	return (float)player->GetWidth();
-}
-
-float Player::GetHeight()
-{
-	auto* player = GetCurrentPlayerFrame();
-	if (player == nullptr) return 0;
-	return (float)player->GetHeight();
-}
 
 Bound Player::GetScreenBound()
 {
-	auto* player = GetCurrentPlayerFrame();
-	if (player == nullptr) return { 0,0,0,0 };
-	auto screenIntPos = player->GetPos();
-	Pos screenPos{ (float)screenIntPos.x,(float)screenIntPos.y };
+	return GetViewBounds();
+	/*Pos screenPos{ (float)screenIntPos.x,(float)screenIntPos.y };
 	return Bound{ screenPos.x, (screenPos.x + GetWidth()), 
-		screenPos.y,(screenPos.y + GetHeight()) };
+		screenPos.y,(screenPos.y + GetHeight()) };*/
 }
 
-void Player::LoadRoleFrame()
-{
-	if (m_RoleID > 0)
-	{
-		auto playerFrameWasID = RESOURCE_MANAGER_INSTANCE->GetActionResID(m_ActorType, m_RoleID, m_ActionID);
-		if (playerFrameWasID != -1)
-		{
-			FrameAnimation* frame = nullptr;
-			auto it = m_PlayerFrames.find(m_ActionID);
-			if (it == m_PlayerFrames.end())
-			{
-				m_PlayerFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(playerFrameWasID)));
-			}
-			else
-			{
-				delete it->second;
-			}
-		}
-	}
-}
-
-void Player::LoadWeaponFrame()
-{
-	if (m_WeaponID > 0)
-	{
-		auto weaponFrameWasID = RESOURCE_MANAGER_INSTANCE->GetWeaponResID(m_WeaponID, m_ActionID);
-		if (weaponFrameWasID != -1) {
-			m_WeaponFrames.insert(std::make_pair(m_ActionID, new FrameAnimation(weaponFrameWasID)));
-		}
-	}
-}
-
-void Player::SyncRoleWeaponFrame()
-{
-	if (m_PlayerFrames.find(m_ActionID) != m_PlayerFrames.end())
-	{
-		m_PlayerFrames[m_ActionID]->ResetAnim(m_Dir);
-		auto groupCount = m_PlayerFrames[m_ActionID]->GetGroupFrameCount();
-		m_WeaponFrames[m_ActionID]->ResetFrameTimeByGroupCount(groupCount);
-	}
-}
 
 Npc::Npc(const char* player_name, float x, float y, int dir, int role_id, int action_id, std::string msg)
 	:Player(role_id)
@@ -707,7 +242,6 @@ Pet::Pet(const char* player_name, float x, float y, int dir, int role_id, int ac
 
 void Pet::OnDraw(int px, int py)
 {
-	Player::OnDraw(px,py);
 }
 
 Pet::~Pet()

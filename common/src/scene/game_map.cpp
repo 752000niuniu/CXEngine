@@ -331,7 +331,6 @@ void GameMap::Draw(int playerX, int playerY)
 						m_MapTiles[unit] = new Texture(m_MapTileWidth, m_MapTileHeight, false, imgBuffer);
 						delete imgBuffer;
 						imgBuffer = nullptr;
-
 					}
 
 				}

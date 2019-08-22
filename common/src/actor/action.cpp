@@ -10,6 +10,8 @@
 #include "cxmath.h"
 #include "time/timer_manager.h"
 #include "window.h"
+#include "scene/base_scene.h"
+#include "scene/game_map.h"
 
 std::map<CXString, int> g_AttackKeyFrame = {
 	{"FYN-DBSWORDS" ,5 },
@@ -185,8 +187,34 @@ void ActionStateMachine::Draw()
 
 	Pos pos = m_Actor->GetPos();
 	int dir = m_Actor->GetDir();
-	avatar->Pos.x = pos.x;
-	avatar->Pos.y = pos.y;
+	if(m_Actor->IsLocal()){
+		int screenWidth = WINDOW_INSTANCE->GetWidth();
+		int screenHeight = WINDOW_INSTANCE->GetHeight();
+		int halfScreenWidth = screenWidth / 2;
+		int halfScreenHeight = screenHeight / 2; 
+		int mapWidth = m_Actor->GetScene()->GetGameMap()->GetWidth();
+		int mapHeight = m_Actor->GetScene()->GetGameMap()->GetHeight();
+
+		int px = m_Actor->GetX();
+		int py = m_Actor->GetY();
+
+		int maxMapOffsetX = mapWidth - halfScreenWidth;
+		int maxMapOffsetY = mapHeight - halfScreenHeight;
+
+		px = px < halfScreenWidth ? px :
+			(px > maxMapOffsetX ?
+			(screenWidth - (mapWidth - px)) : halfScreenWidth);
+		py = py < halfScreenHeight ? py :
+			(py > maxMapOffsetY ?
+			(screenHeight - (mapHeight - py)) : halfScreenHeight);
+
+		avatar->Pos.x = px;
+		avatar->Pos.y = py;
+	}
+	else {
+		avatar->Pos.x = pos.x;
+		avatar->Pos.y = pos.y;
+	}
 
 	avatar->Dir = dir;
 	avatar->Draw();
@@ -327,7 +355,7 @@ void AttackAction::Update()
 		if (avatar->IsGroupEndUpdate()) {
 			pASM->SetAction(ACTION_RUNTO);
 			if (m_Target) {
-				actor->GetMoveHandle()->MoveTo(m_Runto.x, m_Runto.y);
+				actor->GetMoveHandle()->MoveOnScreen(m_Runto.x, m_Runto.y);
 				avatar = pASM->GetAvatar();
 				float dist = std::sqrt(actor->GetMoveDestDistSquare(m_Runto));
 				float perframetime = 0.016f * 2.5f;
@@ -350,7 +378,7 @@ void AttackAction::Update()
 		if (avatar->IsGroupEndUpdate()) {
 			pASM->SetAction(ACTION_RUNBACK);
 			actor->ReverseDir();
-			actor->GetMoveHandle()->MoveTo(m_BackupPos.x, m_BackupPos.y);
+			actor->GetMoveHandle()->MoveOnScreen(m_BackupPos.x, m_BackupPos.y);
 			avatar = pASM->GetAvatar();
 			float dist = std::sqrt(actor->GetMoveDestDistSquare(m_BackupPos));
 			float perframetime = 0.016f * 2.5f;
@@ -549,10 +577,43 @@ void BeCastAction::Exit()
 {
 
 }
+
 void BeCastAction::Enter()
 {
 	pASM->SetAction(ACTION_BEHIT);
+}
 
+void PathMoveAction::Update()
+{
+	auto* avatar = pASM->GetAvatar();
+	if (!avatar)return;
+	avatar->Update();
+	int action = pASM->GetActionID();
+	if (action == ACTION_IDLE) {
+		if (avatar->IsFrameUpdate()) {
+			if (actor->GetMoveHandle()->IsMove()) {
+				pASM->SetAction(ACTION_WALK);
+			}
+		}
+	}
+	else if (action == ACTION_WALK) {
+		if (avatar->IsFrameUpdate()) {
+			if (!actor->GetMoveHandle()->IsMove()) {
+				pASM->SetAction(ACTION_IDLE);
+			}
+		}
+	}
+}
 
+void PathMoveAction::Exit()
+{
+
+}
+
+void PathMoveAction::Enter()
+{
+	if (actor->GetActionID() != ACTION_IDLE)
+		actor->SetActionID(ACTION_IDLE);
+	pASM->SetAction(ACTION_IDLE);
 }
 #endif

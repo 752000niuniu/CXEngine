@@ -20,6 +20,12 @@ bool actor_manager_is_local_player(Actor* actor) {
 	return actor->GetID() == g_LocalPid;
 }
 
+void actor_manager_set_scene(int id)
+{
+	for(auto& it : g_Players){
+		it.second->SetSceneID(id);
+	}
+}
 int lua_actor_manager_fetch_local_player(lua_State*L)
 {
 	auto it = g_Players.find(g_LocalPid);
@@ -30,11 +36,11 @@ int lua_actor_manager_fetch_local_player(lua_State*L)
 	return 0;
 }
 
-Player* actor_manager_fetch_local_player()
+Actor* actor_manager_fetch_local_player()
 {
 	auto it = g_Players.find(g_LocalPid);
 	if (it != g_Players.end()) {
-		return dynamic_cast<Player*>(it->second);
+		return it->second;
 	}
 	return nullptr;
 }
@@ -70,42 +76,29 @@ void actor_manager_draw()
 		Actor* player = it.second;
 		if (localPlayer == player)
 		{
-			int screenWidth = WINDOW_INSTANCE->GetWidth();
-			int screenHeight = WINDOW_INSTANCE->GetHeight();
-			int halfScreenWidth = screenWidth / 2;
-			int halfScreenHeight = screenHeight / 2;
-			int mapWidth = scene->GetGameMap()->GetWidth();
-			int mapHeight = scene->GetGameMap()->GetHeight();
-
-			int px = localPlayer->GetX();
-			int py = localPlayer->GetY();
-
-			int maxMapOffsetX = mapWidth - halfScreenWidth;
-			int maxMapOffsetY = mapHeight - halfScreenHeight;
-
-			px = px < halfScreenWidth ? px :
-				(px > maxMapOffsetX ?
-				(screenWidth - (mapWidth - px)) : halfScreenWidth);
-			py = py < halfScreenHeight ? py :
-				(py > maxMapOffsetY ?
-				(screenHeight - (mapHeight - py)) : halfScreenHeight);
-			if (SCENE_MANAGER_INSTANCE->IsDrawStrider())
-				localPlayer->OnDraw(px, py);
+			
+			if (SCENE_MANAGER_INSTANCE->IsDrawStrider()) {
+				localPlayer->OnDraw();
+			}
+				//localPlayer->OnDraw(px, py);
 			if (SCENE_MANAGER_INSTANCE->IsDrawMask()) {
-				scene->GetGameMap()->DrawMask(localPlayer->GetX(), localPlayer->GetY(), dynamic_cast<Player*>(localPlayer)->GetDrawY());
+				scene->GetGameMap()->DrawMask(localPlayer->GetX(), localPlayer->GetY(), (localPlayer)->GetY());
 			}
 
 		}
 		else {
-			player->OnDraw(scene->GetGameMap());
+		//	player->OnDraw(scene->GetGameMap());
+
+			player->OnDraw();
 		}
+		
 	}
 #endif // !SIMPLE_SERVER
 }
 int lua_actor_manager_create_player(lua_State*L)
 {
 	uint64_t pid = (uint64_t)lua_tointeger(L, 1);
-	Player* player = new Player(pid);
+	Actor* player = new Actor(pid);
 	g_Players.insert({ pid, player });
 	lua_push_actor(L, player);
 	return 1;

@@ -1,4 +1,6 @@
 #pragma once
+#include "pos.h"
+#include <list>
 
 
 class GameMap;
@@ -10,9 +12,14 @@ public:
 	MoveHandle(Actor* actor);
 	virtual ~MoveHandle();
 	void Update();
+	void MoveOnScreen(float x, float y);
 	void MoveTo(float x, float y);
+	bool IsMove() { return m_bMove; };
+	
 private:
+	std::list<Pos> m_MoveList;
+	std::list<Pos> m_BackupMoveList;
 	bool m_bMove;
-	GameMap* m_Map; 
 	Actor * m_Actor;
+	
 };

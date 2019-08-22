@@ -76,7 +76,7 @@ function game_dispatch_message(pt)
 	if  type == PTO_C2C_PLAYER_ENTER then
 		local pinfos = req 
 		for k,pinfo in ipairs(pinfos) do
-			local player = actor_manager_create_player(pinfo.pid)
+			local player = actor_manager_create_actor(pinfo.pid)
 			player:SetName(pinfo.name)
 			player:SetSceneID(pinfo.scene_id)
 			-- player:SetRoleID(pinfo.role_id)

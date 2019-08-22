@@ -177,7 +177,7 @@ void SceneManager::Update()
 			script_system_call_function(script_system_get_luastate(), "on_scene_manager_init_scene", m_pCurrentScene->GetName());
 
 			//m_pCurrentScene->SetPlayerByIndex(0);
-			Player* player = actor_manager_fetch_local_player();
+			Actor* player = actor_manager_fetch_local_player();
 			if (player)
 			{
 

@@ -20,7 +20,7 @@ end
 
 function pto_c2s_login(req)
     print('pto_c2s_login req', cjson.encode(req))
-    local req_player = actor_manager_create_player(req.pid)
+    local req_player = actor_manager_create_actor(req.pid)
     req_player:SetName(req.name)
     req_player:SetSceneID(req.scene_id)
     req_player:SetRoleID(req.role_id)

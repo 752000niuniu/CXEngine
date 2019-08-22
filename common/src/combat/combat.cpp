@@ -4,7 +4,6 @@
 #ifndef SIMPLE_SERVER
 #include "input_manager.h"
 #include "animation/frame_animation.h"
-#include "actor/player_state.h"
 #endif
 #include "actor/action.h"
 

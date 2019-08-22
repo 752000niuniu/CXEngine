@@ -40,8 +40,7 @@ public:
 
 	
 
-	std::list<Pos>& GetMoveList() { return m_MoveList; };
-	std::list<Pos>& GetBackupMoveList() { return m_BackupMoveList; };
+	
 	void LogInfo();
 
 	void Say(std::wstring Text);
@@ -56,15 +55,13 @@ public:
 
 	Bound GetScreenBound();
 
-	void SetBox();
 	void SetDir(int dir);
 	void SetActionID(int state);
 
 
 protected:
 
-	std::list<Pos> m_MoveList;
-	std::list<Pos> m_BackupMoveList;
+
 	std::vector<Player*> m_Targets;
 
 };

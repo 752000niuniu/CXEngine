@@ -53,7 +53,7 @@ public:
 	void SetSceneID(int id) { m_SceneID = id; };
 	int GetSceneID() { return m_SceneID; };
 
-	void SetRoleID(int id) ;
+	void SetRoleID(int id);
 	int GetRoleID() { return m_RoleID; };
 
 	void SetWeaponID(int weapon);
@@ -73,14 +73,12 @@ public:
 	void SetCombatTargetPos(Pos pos) { m_CombatProps.TargetPos = pos; };
 	Pos GetCombatTargetPos() { return m_CombatProps.TargetPos; };
 
-	void SetBoxX(int x) { m_Box.x = x; };
-	void SetBoxY(int y) { m_Box.y = y; }
 	int GetBoxX() { return static_cast<int>(GetPos().x / 20); }
 	int GetBoxY() { return static_cast<int>(GetPos().y / 20); }
 
 	int GetX() { return static_cast<int>(GetPos().x); }
 	int GetY() { return static_cast<int>(GetPos().y); }
-	
+
 	void SetX(float x) { (IsCombat() ? m_CombatProps.Pos : m_Pos).x = x; }
 	void SetY(float y) { (IsCombat() ? m_CombatProps.Pos : m_Pos).y = y; }
 
@@ -117,7 +115,7 @@ public:
 	void AddMP(float mp) { m_MP += mp; }
 
 	void SetLocal(bool local) { m_IsLocalPlayer = local; }
-	bool IsLocal() { return m_IsLocalPlayer; }
+	bool IsLocal();
 
 	float GetFrameSpeed() { return m_FrameSpeed; };
 	void SetFrameSpeed(float frame_speed) { m_FrameSpeed = frame_speed; };
@@ -134,6 +132,7 @@ public:
 	void SetTurnReady(bool ready) { m_CombatProps.HasReady = ready; };
 	bool IsTurnReady() { return m_CombatProps.HasReady; };
 	BaseScene* GetScene();
+	
 	MoveHandle* GetMoveHandle() { return m_MoveHandle; }
 
 	CXString GetAvatarID() { return m_AvatarID; }
@@ -157,22 +156,17 @@ protected:
 	float m_FrameSpeed;
 	int m_ActorType;
 	std::string m_NickName;
-	// bool m_HasWeapon;
 
 	CXString m_AvatarID;
 	CXString m_WeaponAvatarID;
-
 	int m_SceneID;
-
 	int m_RoleID;			
 	int m_WeaponID;
 	int m_WeaponType;
 	int m_ActionID;			
-
+	
 	Pos m_Pos;
 	Pos m_MoveToPos;
-
-	BoxPos m_Box;
 
 	int m_Dir;
 	int m_DirCount;
@@ -190,13 +184,13 @@ protected:
 	int m_SayDuration;
 	bool m_IsLocalPlayer;
 
+	std::list<Pos> m_MoveList;
+	std::list<Pos> m_BackupMoveList;
 	
 	MoveHandle* m_MoveHandle;
 	ActorCombatProps m_CombatProps;
 #ifndef SIMPLE_SERVER
 	ActionStateMachine* m_ASM;
-	
-	
 #endif
 };
 
