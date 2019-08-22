@@ -27,8 +27,6 @@ public:
 
 	void SaveFrame(int index);
 
-	void LogInfo();
-
 	void Say(std::wstring Text);
 	void Say(std::string Text);
 

@@ -120,13 +120,6 @@ void Player::SetAction(int state)
 	m_ActionID = state; 
 }
 
-
-
-void Player::LogInfo()
-{
-    
-}
-
 void Player::Say(std::wstring Text)
 {
 	//m_SayDuration = 9000;

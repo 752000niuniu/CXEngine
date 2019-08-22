@@ -29,9 +29,6 @@ Player::~Player()
 
 }
 
-
-
-
 void Player::ChangeRole(int roleID)
 {
 	m_RoleID = roleID;
