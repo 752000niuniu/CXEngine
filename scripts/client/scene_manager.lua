@@ -118,7 +118,9 @@ end
 function on_game_imgui_update(name)
     fix_input_manager_mouse_pos()
 
-    imgui.Dummy(700)
+    imgui.Dummy(600)
+    imgui.SameLine()
+    imgui.Text('FPS:'.. math.floor(window_system_get_fps()*1000))
     imgui.SameLine()
     if imgui.Button('RELOAD') then
         scene_manager_reload(name)

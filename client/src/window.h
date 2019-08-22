@@ -22,6 +22,7 @@ public:
 	float GetDeltaTime();
 	float GetDeltaTimeMilliseconds();
 	void OnFrameBufferSizeCallback(int width, int height);
+	float GetFPS() { return m_FPS; }
 private:
 	int m_Width;
 	int m_Height;

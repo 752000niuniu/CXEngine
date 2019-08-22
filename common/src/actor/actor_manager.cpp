@@ -6,6 +6,7 @@
 #include "scene/base_scene.h"
 #include "scene/game_map.h"
 #include "utils.h"
+#include "cxmath.h"
 
 std::map<uint64_t, Actor*> g_Players;
 uint64_t g_LocalPid = 0;
@@ -71,25 +72,25 @@ void actor_manager_draw()
 
 	BaseScene* scene = scene_manager_fetch_scene(localPlayer->GetSceneID());
 	if (scene == nullptr || scene->GetGameMap() == nullptr)return;
+
 	for (auto& it : g_Players)
 	{
 		Actor* player = it.second;
 		if (localPlayer == player)
 		{
-			
 			if (SCENE_MANAGER_INSTANCE->IsDrawStrider()) {
 				localPlayer->OnDraw();
 			}
-				//localPlayer->OnDraw(px, py);
 			if (SCENE_MANAGER_INSTANCE->IsDrawMask()) {
 				scene->GetGameMap()->DrawMask(localPlayer->GetX(), localPlayer->GetY(), (localPlayer)->GetY());
 			}
-
 		}
 		else {
-		//	player->OnDraw(scene->GetGameMap());
-
-			player->OnDraw();
+			Pos lpos = localPlayer->GetPos();
+			Pos pos = player->GetPos();
+			if (GMath::Astar_GetDistanceSquare(lpos.x, lpos.y, pos.x, pos.y) <= 400 * 400) {
+				player->OnDraw();
+			}
 		}
 		
 	}

@@ -203,13 +203,13 @@ void ActionStateMachine::Draw()
 
 		px = px < halfScreenWidth ? px :
 			(px > maxMapOffsetX ?
-			(screenWidth - (mapWidth - px)) : halfScreenWidth);
+			(screenWidth - (mapWidth - px)) : halfScreenWidth); 
 		py = py < halfScreenHeight ? py :
-			(py > maxMapOffsetY ?
+			(py > maxMapOffsetY ? 
 			(screenHeight - (mapHeight - py)) : halfScreenHeight);
 
-		avatar->Pos.x = px;
-		avatar->Pos.y = py;
+		avatar->Pos.x = (float)px;
+		avatar->Pos.y = (float)py;
 	}
 	else {
 		if (m_Actor->GetScene() != nullptr&&m_Actor->GetScene()->GetGameMap() != nullptr) {

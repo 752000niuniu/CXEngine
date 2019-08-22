@@ -87,9 +87,6 @@ int Player::GetDrawY()
 	return 0;
 }
 
-
-
-
 void Player::MoveTo(GameMap* gameMapPtr, int destX, int destY)
 {
 	if (!gameMapPtr)return;
