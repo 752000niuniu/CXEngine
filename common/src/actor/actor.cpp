@@ -96,11 +96,11 @@ void Actor::OnDraw()
 
 		if (m_SayWidget->Background != nullptr)
 		{
-			float bgWidth = (float)m_SayWidget->Width;
-			float bgHeight = (float)m_SayWidget->Height;
+			int bgWidth = m_SayWidget->Width;
+			int bgHeight = m_SayWidget->Height;
 			auto* avatar = m_ASM->GetAvatar();
-			m_SayWidget->X = avatar->Pos.x - bgWidth / 2;
-			m_SayWidget->Y = avatar->Pos.y - (float)avatar->KeyY - bgHeight;
+			m_SayWidget->X = (int)avatar->Pos.x - bgWidth / 2;
+			m_SayWidget->Y = (int)avatar->Pos.y - avatar->KeyY - bgHeight;
 		}
 		m_SayWidget->OnDraw();
 	}
@@ -424,9 +424,11 @@ int actor_move_to(lua_State* L){
 	return 0;
 }
 int actor_say(lua_State* L) {
+#ifndef SIMPLE_SERVER
 	Actor* actor = lua_check_actor(L, 1);
 	const char* msg = lua_tostring(L, 2);
 	actor->Say(msg);
+#endif
 	return 0;
 }
 
