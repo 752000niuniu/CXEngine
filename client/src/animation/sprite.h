@@ -1,9 +1,11 @@
 
 #pragma once
 #include "ui.h"
+#include <functional>
 
 struct NE::Sprite;
 struct NE::Sprite::Sequence;
+using CXPos = Pos;
 class BaseSprite : public View
 {
 public:
@@ -32,7 +34,7 @@ public:
 	int KeyY;
 	int Dir;
 	
-	Pos Pos;
+	CXPos Pos;
 	NE::Sprite* m_pSprite;
 	float FrameInterval;
 	float PlayTime;
@@ -56,7 +58,7 @@ class Animation : public BaseSprite
 {
 public:
 	Animation(uint64_t resoureID = 0);
-	Animation(uint32_t pkg, uint32_t wasID) :BaseSprite(pkg, wasID) {  };
+	Animation(uint32_t pkg, uint32_t wasID);
 	virtual ~Animation() {};
 	void Update() override;
 	void Draw() override;
@@ -70,7 +72,7 @@ public:
 	void Play();
 	void Replay();
 	
-
+	void AddFrameCallback(int frame, std::function<void()> callback);
 	void SetFrameInterval(float interval) { FrameInterval = interval; };
 	float GetFrameInterval() { return FrameInterval; };
 
@@ -91,6 +93,7 @@ private:
 	int m_State;
 	bool m_Visible;
 	int m_PauseTime;
+	std::map<int, std::function<void()>> m_Callbacks;
 };
 
 class ActionAnimation :public BaseSprite

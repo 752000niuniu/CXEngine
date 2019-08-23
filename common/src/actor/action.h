@@ -59,6 +59,7 @@ private:
 	float m_SavedVelocity;
 	int m_ID;
 	Pos m_Runto;
+	Pos m_AttackVec;
 };
 
 
@@ -85,6 +86,7 @@ public:
 	virtual void Exit();
 	virtual void Enter();
 	void Draw();
+	Pos MoveVec;
 private:
 	Actor* m_Attacker;
 	int m_State;

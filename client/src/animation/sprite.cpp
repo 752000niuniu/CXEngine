@@ -137,8 +137,8 @@ Animation::Animation(uint64_t resoureID /*= 0*/) :BaseSprite(resoureID)
 	m_bGroupEndUpdate = false;
 	int max_dx = 0;
 	int max_frame = 0;
-	for (int i = 0; i < GroupFrameCount - 1; i++) {
-		int dx = (m_pSprite->mFrames[i].key_x - m_pSprite->mFrames[i + 1].key_x);
+	for (int i = std::max(GroupFrameCount / 2 - 1, 0); i < GroupFrameCount - 1; i++) {
+		int dx = std::pow((m_pSprite->mFrames[i].key_x - m_pSprite->mFrames[i + 1].key_x), 2);// + std::abs(m_pSprite->mFrames[i].width*m_pSprite->mFrames[i].height - m_pSprite->mFrames[i + 1].width*m_pSprite->mFrames[i + 1].height);
 		if (max_dx < dx) {
 			max_dx = dx;
 			max_frame = i + 1;
@@ -147,6 +147,11 @@ Animation::Animation(uint64_t resoureID /*= 0*/) :BaseSprite(resoureID)
 	AttackKeyFrame = max_frame;
 }
 
+Animation::Animation(uint32_t pkg, uint32_t wasID)
+	:Animation(RESOURCE_MANAGER_INSTANCE->EncodeWAS(pkg, wasID))
+{
+
+}
 void Animation::SetLoop(int loop)
 {
 	if (loop < 0) {
@@ -183,6 +188,11 @@ void Animation::Replay()
 	m_Visible = true;
 }
 
+void Animation::AddFrameCallback(int frame, std::function<void()> callback)
+{
+	m_Callbacks[frame] = callback;
+}
+
 void Animation::Update()
 {
 	if (!m_pSprite)return;
@@ -197,6 +207,9 @@ void Animation::Update()
 			m_bFrameUpdate = true;
 			PlayTime = (PlayTime - std::floor(PlayTime / FrameInterval)*FrameInterval);
 			CurrentFrame = CurrentFrame + 1;
+			if (m_Callbacks[CurrentFrame]) {
+				m_Callbacks[CurrentFrame]();
+			}
 			if (CurrentFrame >= GroupFrameCount) {
 				m_bGroupEndUpdate = true;
 				CurrentFrame = CurrentFrame - 1;
@@ -211,7 +224,9 @@ void Animation::Update()
 			m_bFrameUpdate = true;
 			PlayTime = (PlayTime - std::floor(PlayTime / FrameInterval)*FrameInterval);
 			CurrentFrame = CurrentFrame + 1;
-			
+			if (m_Callbacks[CurrentFrame]) {
+				m_Callbacks[CurrentFrame]();
+			}
 			if (CurrentFrame >= GroupFrameCount) {
 				m_bGroupEndUpdate = true;
 				CurrentFrame = 0;
@@ -521,6 +536,8 @@ ActionAnimation::ActionAnimation(uint64_t resoureID /*= 0*/)
 
 void ActionAnimation::Update()
 {
+	if (!m_pSprite)return;
+	float dt = WINDOW_INSTANCE->GetDeltaTime();
 	
 }
 
@@ -542,7 +559,7 @@ AnimationManager::~AnimationManager()
 void AnimationManager::AddQueue(Animation* animation)
 {
 	animation->Reset();
-	animation->Play();
+//	animation->Play();
 	m_Animations.push_back(animation);
 }
 
