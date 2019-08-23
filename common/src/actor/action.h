@@ -26,8 +26,8 @@ public:
 	virtual  void Update();
 	virtual  void Draw() {};
 protected:
-	ActionStateMachine *  pASM;
-	Actor* actor;
+	ActionStateMachine *  m_pASM;
+	Actor* m_Actor;
 };
 
 /*

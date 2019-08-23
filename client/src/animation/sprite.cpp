@@ -138,7 +138,7 @@ Animation::Animation(uint64_t resoureID /*= 0*/) :BaseSprite(resoureID)
 	int max_dx = 0;
 	int max_frame = 0;
 	for (int i = std::max(GroupFrameCount / 2 - 1, 0); i < GroupFrameCount - 1; i++) {
-		int dx = std::pow((m_pSprite->mFrames[i].key_x - m_pSprite->mFrames[i + 1].key_x), 2);// + std::abs(m_pSprite->mFrames[i].width*m_pSprite->mFrames[i].height - m_pSprite->mFrames[i + 1].width*m_pSprite->mFrames[i + 1].height);
+		int dx =(int)std::pow((m_pSprite->mFrames[i].key_x - m_pSprite->mFrames[i + 1].key_x), 2);// + std::abs(m_pSprite->mFrames[i].width*m_pSprite->mFrames[i].height - m_pSprite->mFrames[i + 1].width*m_pSprite->mFrames[i + 1].height);
 		if (max_dx < dx) {
 			max_dx = dx;
 			max_frame = i + 1;
@@ -152,6 +152,7 @@ Animation::Animation(uint32_t pkg, uint32_t wasID)
 {
 
 }
+
 void Animation::SetLoop(int loop)
 {
 	if (loop < 0) {

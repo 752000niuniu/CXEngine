@@ -103,19 +103,19 @@ bool action_is_battle_action(int action)
 
 #ifndef SIMPLE_SERVER
 Action::Action(Actor* _actor) :
-	actor(_actor)
+	m_Actor(_actor)
 {
-	pASM = actor->GetASM();
+	m_pASM = m_Actor->GetASM();
 }
 
 void Action::Update()
 {
-	int action = actor->GetActionID();
-	if (action != pASM->GetActionID()) {
-			pASM->SetAction(action);
+	int action = m_Actor->GetActionID();
+	if (action != m_pASM->GetActionID()) {
+			m_pASM->SetAction(action);
 	}
 
-	auto* avatar = pASM->GetAvatar();
+	auto* avatar = m_pASM->GetAvatar();
 	if (!avatar)return;
 	avatar->Update();
 } 
@@ -351,23 +351,23 @@ int ActionStateMachine::GetDirCount(int action)
 
 void AttackAction::Update()
 {
-	auto* avatar = pASM->GetAvatar();
+	auto* avatar = m_pASM->GetAvatar();
 	if (!avatar)return;
 	avatar->Update();
 
-	int action = pASM->GetActionID();
+	int action = m_pASM->GetActionID();
 	if (action == ACTION_BATIDLE) {
 		if (avatar->IsGroupEndUpdate()) {
-			pASM->SetAction(ACTION_RUNTO);
+			m_pASM->SetAction(ACTION_RUNTO);
 			if (m_Target) {
-				actor->GetMoveHandle()->MoveOnScreen(m_Runto.x, m_Runto.y);
-				avatar = pASM->GetAvatar();
-				float dist = std::sqrt(actor->GetMoveDestDistSquare(m_Runto));
+				m_Actor->GetMoveHandle()->MoveOnScreen(m_Runto.x, m_Runto.y);
+				avatar = m_pASM->GetAvatar();
+				float dist = std::sqrt(m_Actor->GetMoveDestDistSquare(m_Runto));
 				float perframetime = 0.016f * 2.5f;
 				float perframe_dist = dist / avatar->GroupFrameCount;
 				float velocity = perframe_dist / perframetime;
 				avatar->FrameInterval = perframetime;
-				actor->SetVelocity(velocity);
+				m_Actor->SetVelocity(velocity);
 			}
 		}
 		else {
@@ -376,28 +376,28 @@ void AttackAction::Update()
 	}
 	else if (action == ACTION_RUNTO) {
 		if (avatar->IsGroupEndUpdate()) {
-			pASM->SetAction(ACTION_ATTACK);
+			m_pASM->SetAction(ACTION_ATTACK);
 		}
 	}
 	else if (action == ACTION_ATTACK) {
 		if (avatar->IsGroupEndUpdate()) {
-			pASM->SetAction(ACTION_RUNBACK);
-			actor->ReverseDir();
-			actor->GetMoveHandle()->MoveOnScreen(m_BackupPos.x, m_BackupPos.y);
-			avatar = pASM->GetAvatar();
-			float dist = std::sqrt(actor->GetMoveDestDistSquare(m_BackupPos));
+			m_pASM->SetAction(ACTION_RUNBACK);
+			m_Actor->ReverseDir();
+			m_Actor->GetMoveHandle()->MoveOnScreen(m_BackupPos.x, m_BackupPos.y);
+			avatar = m_pASM->GetAvatar();
+			float dist = std::sqrt(m_Actor->GetMoveDestDistSquare(m_BackupPos));
 			float perframetime = 0.016f * 2.5f;
 			float perframe_dist = dist / avatar->GroupFrameCount;
 			float velocity = perframe_dist / perframetime;
 			avatar->FrameInterval = perframetime;
-			actor->SetVelocity(velocity);
+			m_Actor->SetVelocity(velocity);
 			m_Target->SetActionID(ACTION_BATIDLE);
 		}
 		else if (avatar->IsFrameUpdate()) {
-			int attackKeyframe = g_AttackKeyFrame[actor->GetAvatarID()];
+			int attackKeyframe = g_AttackKeyFrame[m_Actor->GetAvatarID()];
 			if (attackKeyframe == 0)attackKeyframe = avatar->GetAttackKeyFrame();
 			if (avatar->CurrentFrame == attackKeyframe) {
-				BeHitAction* behit = new BeHitAction(m_Target, actor);
+				BeHitAction* behit = new BeHitAction(m_Target, m_Actor);
 				behit->MoveVec = m_AttackVec;
 				m_Target->GetASM()->ChangeAction(behit);
 				avatar->Pause(200);
@@ -406,10 +406,10 @@ void AttackAction::Update()
 	}
 	else if (action == ACTION_RUNBACK) {
 		if (avatar->IsGroupEndUpdate()) {
-			actor->ReverseDir();
-			actor->SetActionID(ACTION_BATIDLE);
-			auto* new_action = new Action(actor);
-			pASM->ChangeAction(new_action);
+			m_Actor->ReverseDir();
+			m_Actor->SetActionID(ACTION_BATIDLE);
+			auto* new_action = new Action(m_Actor);
+			m_pASM->ChangeAction(new_action);
 		}
 	}
 }
@@ -426,29 +426,29 @@ void AttackAction::AddTarget(Actor* target)
 
 void AttackAction::Exit()
 {
-	actor->SetPos(m_BackupPos);
-	actor->SetVelocity(m_SavedVelocity);
+	m_Actor->SetPos(m_BackupPos);
+	m_Actor->SetVelocity(m_SavedVelocity);
 }
 
 void AttackAction::Enter()
 {
-	m_BackupActionID = actor->GetActionID();
-	m_BackupPos = actor->GetPos();
+	m_BackupActionID = m_Actor->GetActionID();
+	m_BackupPos = m_Actor->GetPos();
 
 	if (m_Target) {
-		glm::vec2  v(m_Target->GetPos().x - actor->GetPos().x, m_Target->GetPos().y - actor->GetPos().y);
+		glm::vec2  v(m_Target->GetPos().x - m_Actor->GetPos().x, m_Target->GetPos().y - m_Actor->GetPos().y);
 		v = glm::normalize(v);
 		m_AttackVec.x = v.x ;
 		m_AttackVec.y = v.y ;
 
-		auto* attackAvatar = pASM->GetAvatar(ACTION_ATTACK);
+		auto* attackAvatar = m_pASM->GetAvatar(ACTION_ATTACK);
 		auto* targetAvatar = m_Target->GetASM()->GetAvatar(ACTION_BEHIT);
 		if (attackAvatar && targetAvatar) {
-			float degree = actor->GetMoveDestAngle(m_Target->GetPos());
-			int dir = actor->GetDirByDegree(degree);
+			float degree = m_Actor->GetMoveDestAngle(m_Target->GetPos());
+			int dir = m_Actor->GetDirByDegree(degree);
 			dir = GMath::Dir8toDir4(dir);
 
-			int attackKeyframe = g_AttackKeyFrame[actor->GetAvatarID()];
+			int attackKeyframe = g_AttackKeyFrame[m_Actor->GetAvatarID()];
 			if (attackKeyframe == 0)attackKeyframe = attackAvatar->GetAttackKeyFrame();
 			auto* attackFrame = attackAvatar->GetFrame(dir*attackAvatar->GroupFrameCount + attackKeyframe);
 			assert(targetAvatar->GroupFrameCount == 2);
@@ -475,36 +475,36 @@ void AttackAction::Enter()
 			y = y + attackFrame->key_y;
 			m_Runto.x = x;
 			m_Runto.y = y;
-			actor->SetDir(dir);
+			m_Actor->SetDir(dir);
 			m_Target->SetDir(dir);
 			m_Target->ReverseDir();
 			m_Target->SetActionID(ACTION_BATIDLE);
 		}
 	}
 
-	pASM->SetAction(ACTION_BATIDLE);
-	m_SavedVelocity = actor->GetVelocity();
+	m_pASM->SetAction(ACTION_BATIDLE);
+	m_SavedVelocity = m_Actor->GetVelocity();
 }
 
 
 void CastAction::Update()
 {
-	auto* avatar = pASM->GetAvatar();
+	auto* avatar = m_pASM->GetAvatar();
 	if (!avatar)return;
 	avatar->Update();
 
-	int action = pASM->GetActionID();
+	int action = m_pASM->GetActionID();
 	if (action == ACTION_BATIDLE) {
 		if (avatar->IsGroupEndUpdate()) {
-			pASM->SetAction(ACTION_CAST);
+			m_pASM->SetAction(ACTION_CAST);
 		}
 	}
 	else if (action == ACTION_CAST) {
 		if (avatar->IsGroupEndUpdate()) {
-			actor->SetActionID(ACTION_BATIDLE);
-			auto* new_action = new Action(actor);
-			pASM->ChangeAction(new_action);
-			BeCastAction* action = new BeCastAction(m_Target, actor);
+			m_Actor->SetActionID(ACTION_BATIDLE);
+			auto* new_action = new Action(m_Actor);
+			m_pASM->ChangeAction(new_action);
+			BeCastAction* action = new BeCastAction(m_Target, m_Actor);
 			m_Target->GetASM()->ChangeAction(action);
 		}
 		else if (avatar->IsFrameUpdate()) {
@@ -521,23 +521,23 @@ void CastAction::Exit()
 
 void CastAction::Enter()
 {
-	pASM->SetAction(ACTION_BATIDLE);
+	m_pASM->SetAction(ACTION_BATIDLE);
 }
 
 void BeHitAction::Update()
 {
-	auto* avatar = pASM->GetAvatar();
+	auto* avatar = m_pASM->GetAvatar();
 	if (!avatar)return;
 	avatar->Update();
-	int action = pASM->GetActionID();
+	int action = m_pASM->GetActionID();
 	if (action == ACTION_BEHIT) {
 		if (avatar->IsGroupEndUpdate()) {
-			Pos pos = actor->GetPos();
+			Pos pos = m_Actor->GetPos();
 			pos.x = pos.x - MoveVec.x * 20;
 			pos.y = pos.y - MoveVec.y * 20;
-			actor->SetPos(pos);
+			m_Actor->SetPos(pos);
 
-			pASM->SetAction(ACTION_BATIDLE);
+			m_pASM->SetAction(ACTION_BATIDLE);
 		}
 		else if (avatar->IsFrameUpdate()) {
 			if (avatar->CurrentFrame == 1) {
@@ -545,20 +545,20 @@ void BeHitAction::Update()
 				anim->Pos.x = avatar->Pos.x;
 				anim->Pos.y = avatar->Pos.y - 10;
 				anim->AddFrameCallback(1, [this,anim]() {
-					Pos pos = actor->GetPos();
+					Pos pos = m_Actor->GetPos();
 					pos.x = pos.x + MoveVec.x * 10;
 					pos.y = pos.y + MoveVec.y * 10;
-					actor->SetPos(pos);
+					m_Actor->SetPos(pos);
 
 					anim->Pos.x += MoveVec.x * 10;
 					anim->Pos.y += MoveVec.y * 10;
 				});
 
 				anim->AddFrameCallback(anim->GroupFrameCount/2, [this, anim]() {
-					Pos pos = actor->GetPos();
+					Pos pos = m_Actor->GetPos();
 					pos.x = pos.x + MoveVec.x * 10;
 					pos.y = pos.y + MoveVec.y * 10;
-					actor->SetPos(pos);
+					m_Actor->SetPos(pos);
 				});
 				AnimationManager::GetInstance()->AddQueue(anim);
 				int tm = (int)(anim->GroupFrameCount*anim->FrameInterval * 1000);
@@ -575,7 +575,7 @@ void BeHitAction::Exit()
 
 void BeHitAction::Enter()
 {
-	pASM->SetAction(ACTION_BEHIT);
+	m_pASM->SetAction(ACTION_BEHIT);
 }
 
 void BeHitAction::Draw()
@@ -585,13 +585,13 @@ void BeHitAction::Draw()
 
 void BeCastAction::Update()
 {
-	auto* avatar = pASM->GetAvatar();
+	auto* avatar = m_pASM->GetAvatar();
 	if (!avatar)return;
 	avatar->Update();
-	int action = pASM->GetActionID();
+	int action = m_pASM->GetActionID();
 	if (action == ACTION_BEHIT) {
 		if (avatar->IsGroupEndUpdate()) {
-			pASM->SetAction(ACTION_BATIDLE);
+			m_pASM->SetAction(ACTION_BATIDLE);
 		}
 		else if (avatar->IsFrameUpdate()) {
 			if (avatar->CurrentFrame == 1) {
@@ -613,26 +613,26 @@ void BeCastAction::Exit()
 
 void BeCastAction::Enter()
 {
-	pASM->SetAction(ACTION_BEHIT);
+	m_pASM->SetAction(ACTION_BEHIT);
 }
 
 void PathMoveAction::Update()
 {
-	auto* avatar = pASM->GetAvatar();
+	auto* avatar = m_pASM->GetAvatar();
 	if (!avatar)return;
 	avatar->Update();
-	int action = pASM->GetActionID();
+	int action = m_pASM->GetActionID();
 	if (action == ACTION_IDLE) {
 		if (avatar->IsFrameUpdate()) {
-			if (actor->GetMoveHandle()->IsMove()) {
-				pASM->SetAction(ACTION_WALK);
+			if (m_Actor->GetMoveHandle()->IsMove()) {
+				m_pASM->SetAction(ACTION_WALK);
 			}
 		}
 	}
 	else if (action == ACTION_WALK) {
 		if (avatar->IsFrameUpdate()) {
-			if (!actor->GetMoveHandle()->IsMove()) {
-				pASM->SetAction(ACTION_IDLE);
+			if (!m_Actor->GetMoveHandle()->IsMove()) {
+				m_pASM->SetAction(ACTION_IDLE);
 			}
 		}
 	}
@@ -645,8 +645,8 @@ void PathMoveAction::Exit()
 
 void PathMoveAction::Enter()
 {
-	if (actor->GetActionID() != ACTION_IDLE)
-		actor->SetActionID(ACTION_IDLE);
-	pASM->SetAction(ACTION_IDLE);
+	if (m_Actor->GetActionID() != ACTION_IDLE)
+		m_Actor->SetActionID(ACTION_IDLE);
+	m_pASM->SetAction(ACTION_IDLE);
 }
 #endif
