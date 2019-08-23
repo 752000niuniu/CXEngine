@@ -504,12 +504,11 @@ void CastAction::Update()
 			m_Actor->SetActionID(ACTION_BATIDLE);
 			auto* new_action = new Action(m_Actor);
 			m_pASM->ChangeAction(new_action);
-			BeCastAction* action = new BeCastAction(m_Target, m_Actor);
-			m_Target->GetASM()->ChangeAction(action);
 		}
 		else if (avatar->IsFrameUpdate()) {
 			if (avatar->CurrentFrame == avatar->GroupFrameCount / 2) {
-
+				BeCastAction* action = new BeCastAction(m_Target, m_Actor);
+				m_Target->GetASM()->ChangeAction(action);
 			}
 		}
 	}
@@ -532,18 +531,20 @@ void BeHitAction::Update()
 	int action = m_pASM->GetActionID();
 	if (action == ACTION_BEHIT) {
 		if (avatar->IsGroupEndUpdate()) {
-			Pos pos = m_Actor->GetPos();
+			/*Pos pos = m_Actor->GetPos();
 			pos.x = pos.x - MoveVec.x * 20;
 			pos.y = pos.y - MoveVec.y * 20;
-			m_Actor->SetPos(pos);
+			m_Actor->SetPos(pos);*/
 
-			m_pASM->SetAction(ACTION_BATIDLE);
+			DeadFlyAction* action = new DeadFlyAction(m_Actor, MoveVec);
+			m_pASM->ChangeAction(action);
+			//m_pASM->SetAction(ACTION_BATIDLE);
 		}
 		else if (avatar->IsFrameUpdate()) {
 			if (avatar->CurrentFrame == 1) {
 				Animation* anim = new Animation(ADDONWDF, 0x1D3FF13C);
 				anim->Pos.x = avatar->Pos.x;
-				anim->Pos.y = avatar->Pos.y - 10;
+				anim->Pos.y = avatar->Pos.y - avatar->GetFrameKeyY() + avatar->GetFrameHeight() / 2.0f;
 				anim->AddFrameCallback(1, [this,anim]() {
 					Pos pos = m_Actor->GetPos();
 					pos.x = pos.x + MoveVec.x * 10;
@@ -599,7 +600,7 @@ void BeCastAction::Update()
 
 				Animation* anim = new Animation(MAGICWDF, m_Attacker->GetCastID());
 				anim->Pos.x = avatar->Pos.x;
-				anim->Pos.y = avatar->Pos.y;
+				anim->Pos.y = avatar->Pos.y - avatar->GetFrameKeyY() + avatar->GetFrameHeight() / 2.0f;
 				AnimationManager::GetInstance()->AddQueue(anim);
 			}
 		}
@@ -648,5 +649,62 @@ void PathMoveAction::Enter()
 	if (m_Actor->GetActionID() != ACTION_IDLE)
 		m_Actor->SetActionID(ACTION_IDLE);
 	m_pASM->SetAction(ACTION_IDLE);
+}
+
+void DeadFlyAction::Update()
+{
+	auto* avatar = m_pASM->GetAvatar();
+	if (!avatar)return;
+	avatar->Update();
+
+	int dir = m_Actor->GetDir();
+	Pos pos = m_Actor->GetPos();
+
+	if (pos.y - avatar->GetFrameKeyY() <= 0) {
+		m_Dir.y = -m_Dir.y;
+	}
+
+	if (pos.y - avatar->GetFrameKeyY() + avatar->GetFrameHeight() >= 600) {
+		m_Dir.y = -m_Dir.y;
+	}
+
+
+	if (avatar->IsFrameUpdate()) {
+		pos.x += m_Dir.x * 49;
+		pos.y += m_Dir.y * 49;
+		m_Actor->SetPos(pos);
+	}
+
+	
+	if (m_Dir.x < 0) {
+		if (pos.x - avatar->GetFrameKeyX() < 0 ) {
+			Action* action = new Action(m_Actor);
+			m_Actor->GetASM()->ChangeAction(action);
+			m_Actor->SetPos(m_SavedPos);
+			m_Actor->SetActionID(ACTION_IDLE);
+		}
+	}
+	else if (m_Dir.x >=0) {
+		if (pos.x - avatar->GetFrameKeyX() + avatar->GetFrameWidth() >= 800) {
+			Action* action = new Action(m_Actor);
+			m_Actor->GetASM()->ChangeAction(action);
+			m_Actor->SetPos(m_SavedPos);
+			m_Actor->SetActionID(ACTION_IDLE);
+		}
+	}
+
+	if(avatar->IsGroupEndUpdate()){
+		dir = GMath::NextDir4(dir);
+		m_Actor->SetDir(dir);
+	}
+}
+
+void DeadFlyAction::Enter()
+{
+	m_pASM->SetAction(ACTION_BEHIT);
+	m_SavedPos = m_Actor->GetPos();
+	auto* avatar = m_pASM->GetAvatar();
+	avatar->SetFrameInterval(0.016f * 4);
+	avatar->SetLoop(0);
 }
 #endif

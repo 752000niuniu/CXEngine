@@ -106,6 +106,19 @@ private:
 	int m_State;
 };
 
+class DeadFlyAction : public Action
+{
+public:
+	DeadFlyAction(Actor* actor, Pos dir) :Action(actor), m_Dir(dir) {};
+	virtual ~DeadFlyAction() {};
+	virtual  void Update();
+	virtual void Enter();
+private:
+	Pos m_Dir;
+	Pos m_FlyPos;
+	Pos m_SavedPos;
+};
+
 
 class PathMoveAction : public Action
 {
