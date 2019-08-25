@@ -72,6 +72,7 @@ public:
 	virtual void Exit();
 	virtual void Enter();
 private:
+	Pos m_AttackVec;
 	Actor* m_Target;
 	uint32_t m_Skill;
 };
@@ -101,6 +102,7 @@ public:
 	virtual  void Update();
 	virtual void Exit();
 	virtual void Enter();
+	Pos MoveVec;
 private:
 	Actor* m_Attacker;
 	int m_State;

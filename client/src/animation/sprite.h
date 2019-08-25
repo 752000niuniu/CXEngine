@@ -33,7 +33,7 @@ public:
 	int KeyX;
 	int KeyY;
 	int Dir;
-	
+	uint64_t ResID;
 	CXPos Pos;
 	NE::Sprite* m_pSprite;
 	float FrameInterval;

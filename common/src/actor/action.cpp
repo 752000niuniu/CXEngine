@@ -451,8 +451,7 @@ void AttackAction::Enter()
 			int attackKeyframe = g_AttackKeyFrame[m_Actor->GetAvatarID()];
 			if (attackKeyframe == 0)attackKeyframe = attackAvatar->GetAttackKeyFrame();
 			auto* attackFrame = attackAvatar->GetFrame(dir*attackAvatar->GroupFrameCount + attackKeyframe);
-			assert(targetAvatar->GroupFrameCount == 2);
-			auto* targetFrame = targetAvatar->GetFrame(GMath::GetReverseDir(dir) * 2 + 1);
+			auto* targetFrame = targetAvatar->GetFrame(GMath::GetReverseDir(dir) * targetAvatar->GroupFrameCount + targetAvatar->GroupFrameCount-1);
 			float x = (float)m_Target->GetX();
 			float y = (float)m_Target->GetY();
 			if (dir == DIR_NE) {
@@ -508,6 +507,7 @@ void CastAction::Update()
 		else if (avatar->IsFrameUpdate()) {
 			if (avatar->CurrentFrame == avatar->GroupFrameCount / 2) {
 				BeCastAction* action = new BeCastAction(m_Target, m_Actor);
+				action->MoveVec = m_AttackVec;
 				m_Target->GetASM()->ChangeAction(action);
 			}
 		}
@@ -520,6 +520,13 @@ void CastAction::Exit()
 
 void CastAction::Enter()
 {
+	if(m_Target){
+		glm::vec2  v(m_Target->GetPos().x - m_Actor->GetPos().x, m_Target->GetPos().y - m_Actor->GetPos().y);
+		v = glm::normalize(v);
+		m_AttackVec.x = v.x;
+		m_AttackVec.y = v.y;
+	}
+	
 	m_pASM->SetAction(ACTION_BATIDLE);
 }
 
@@ -592,16 +599,38 @@ void BeCastAction::Update()
 	int action = m_pASM->GetActionID();
 	if (action == ACTION_BEHIT) {
 		if (avatar->IsGroupEndUpdate()) {
+			Pos pos = m_Actor->GetPos();
+			pos.x = pos.x - MoveVec.x * 20;
+			pos.y = pos.y - MoveVec.y * 20;
+			m_Actor->SetPos(pos);
 			m_pASM->SetAction(ACTION_BATIDLE);
 		}
 		else if (avatar->IsFrameUpdate()) {
 			if (avatar->CurrentFrame == 1) {
-				avatar->Pause(150);
 
 				Animation* anim = new Animation(MAGICWDF, m_Attacker->GetCastID());
 				anim->Pos.x = avatar->Pos.x;
 				anim->Pos.y = avatar->Pos.y - avatar->GetFrameKeyY() + avatar->GetFrameHeight() / 2.0f;
+				anim->AddFrameCallback(1, [this, anim]() {
+					Pos pos = m_Actor->GetPos();
+					pos.x = pos.x + MoveVec.x * 10;
+					pos.y = pos.y + MoveVec.y * 10;
+					m_Actor->SetPos(pos);
+
+					anim->Pos.x += MoveVec.x * 10;
+					anim->Pos.y += MoveVec.y * 10;
+				});
+
+				anim->AddFrameCallback(anim->GroupFrameCount / 2, [this, anim]() {
+					Pos pos = m_Actor->GetPos();
+					pos.x = pos.x + MoveVec.x * 10;
+					pos.y = pos.y + MoveVec.y * 10;
+					m_Actor->SetPos(pos);
+				});
 				AnimationManager::GetInstance()->AddQueue(anim);
+				int tm = (int)(anim->GroupFrameCount*anim->FrameInterval * 1000);
+				avatar->Pause(tm);
+
 			}
 		}
 	}

@@ -91,10 +91,11 @@ void Actor::OnDraw()
 	m_ASM->Draw();
 	if (!m_Name.empty())
 	{
+		auto* avatar = m_ASM->GetAvatar();
 		auto green = glm::vec3(115 / 255.0f, 1.0f, 137 / 255.0f);
 		TextRenderer::GetInstance()->DrawTextC(m_Name.c_str(),
-			((int)m_Pos.x),
-			((int)m_Pos.y + 20),
+			((int)avatar->Pos.x),
+			((int)avatar->Pos.y + 20),
 			TextRenderer::CENTER
 		);
 	}
@@ -285,7 +286,8 @@ void Actor::Say(std::string Text)
 {
 	std::wstring wText = utils::StringToWstring(Text);
 	m_SayDuration = 1000 * 60 * 24;
-	m_SayWidget->TextCache.assign(wText.begin(), wText.end());
+	m_SayWidget->Text = wText;
+	m_SayWidget->TextCache = std::vector<uint32_t>(wText.begin(), wText.end());
 }
 
 #endif

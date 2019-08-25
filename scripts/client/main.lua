@@ -80,7 +80,10 @@ function game_dispatch_message(pt)
 			player:SetName(pinfo.name)
 			player:SetSceneID(pinfo.scene_id)
 			player:SetAvatarID('JXK-KNIFE')
-   			player:SetWeaponAvatarID('JXK-KNIFE-120-晓风残月')
+			player:SetWeaponAvatarID('JXK-KNIFE-120-晓风残月')
+	
+			-- player:SetAvatarID('JXK-KNIFE')
+   			-- player:SetWeaponAvatarID('JXK-KNIFE-120-晓风残月')
 
 			player:SetX(pinfo.x)
 			player:SetY(pinfo.y)

@@ -26,6 +26,7 @@ Texture* UtilsGetFrameTexture(Sprite* m_pSprite, int index)
 }
 
 BaseSprite::BaseSprite(uint64_t resoureID)
+	:ResID(resoureID)
 {
 	if (resoureID == 0) { m_pSprite = nullptr; return; }
 	m_pSprite = RESOURCE_MANAGER_INSTANCE->LoadWASSpriteByID(resoureID, true);
@@ -459,6 +460,16 @@ int animation_export(lua_State* L) {
 	return 0;
 }
 
+
+int animation_export_was(lua_State* L) {
+	auto* animation = lua_check_animation(L, 1);
+	const char* path = lua_tostring(L, 2);
+	RESOURCE_MANAGER_INSTANCE->ExportWas(animation->ResID,path);
+	return 0;
+}
+
+
+
 int animation_destroy(lua_State* L) {
 	Animation** ptr = (Animation**)lua_touserdata(L, 1);
 	delete *ptr;
@@ -494,6 +505,7 @@ luaL_Reg MT_BASE_SPRITE[] = {
 { "GetGroupCount", animation_get_group_count },
 { "EnableDrag", animation_enable_drag },
 { "Export", animation_export },
+{ "ExportWas", animation_export_was},
 { "Destroy", animation_destroy },
 { NULL, NULL }
 };

@@ -26,10 +26,10 @@ function OnSceneInit()
     player = actor_manager_create_actor(os.time())
     -- player:SetRoleID(math.tointeger(RoleIDSB:str()))
     -- player:SetWeaponID(math.tointeger(WeaponIDSB:str()))
-    -- player:SetAvatarID('XYS-SWORD')
-    -- player:SetWeaponAvatarID('XYS-SWORD-120-灵犀神剑')
+    -- player:SetAvatarID('JXK-SWORD')
+    -- player:SetWeaponAvatarID('JXK-SWORD-030-X')
     player:SetType(ACTOR_TYPE_PET)
-    player:SetAvatarID('超级泡泡')
+    player:SetAvatarID('龙龟')
 
     player:SetDir(0)
     player:SetX(375.0)
@@ -115,6 +115,11 @@ function imgui_draw_actor(actor)
         imgui.SameLine()
         if imgui.Button('Stop##'..actor:GetID()) then
             avatar:Stop()
+        end
+
+        if imgui.Button('ExportWas##'..actor:GetID()) then
+            local path = vfs_makepath('a.was')
+            avatar:ExportWas(path)
         end
 
         res, actor_show_boudingbox[actor:GetID()] = imgui.Checkbox('BoudingBox###bb'..actor:GetID(),actor_show_boudingbox[actor:GetID()] or false)

@@ -315,6 +315,13 @@ uint64_t ResourceManager::GetWeaponActionResID(CXString id, int actionID)
 	return GetActionResID(AVATAR_TYPE_WEAPON, id, actionID);
 }
 
+void ResourceManager::ExportWas(uint64_t id, CXString path)
+{
+	uint32_t pack, wasid;
+	DecodeWAS(id, pack, wasid);
+	s_Loaders[pack]->SaveWAS(id, path.c_str());
+}
+
 int resource_get_action_id(lua_State* L)
 {
 	auto type = (int)lua_tointeger(L, 1);
