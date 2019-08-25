@@ -1,5 +1,4 @@
 #include "was_viewer_scene.h"
-#include "scene/splash_scene.h"
 #include "window.h"
 #include "scene/scene_manager.h"
 #include "file_system.h"
@@ -115,13 +114,6 @@ void WASViewerScene::Update()
             //ImGui::PushItemWidth(-1);
             //ImGui::ListBox("##listbox2", &listbox_item_current2, listbox_items, IM_ARRAYSIZE(listbox_items), 4);
             //ImGui::PopItemWidth();
-		if(ImGui::Button("Back"))
-		{
-			SCENE_MANAGER_INSTANCE->SwitchScene("Splash");
-			SplashScene* p =(SplashScene*) SCENE_MANAGER_INSTANCE->GetScene("Splash");
-			p->Reset();
-			return;
-		}
 		if(s_WASIDs.size()>0)
 		{
 			ImGui::PushItemWidth(-1);	

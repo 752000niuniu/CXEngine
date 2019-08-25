@@ -58,25 +58,4 @@ protected:
 
 
 
-class BattleScene : public Scene
-{
-public:
-	BattleScene(int sceneID, String sceneName);
-
-	virtual ~BattleScene() override;
-
-	virtual void OnLoad() override;
-
-	virtual void OnUnLoad() override;
-
-	virtual void Update() override;
-
-	virtual void Draw() override;
-
-protected:
-
-	Texture* m_CombatBG;
-};
-
-
 void luaopen_scene(lua_State* L);

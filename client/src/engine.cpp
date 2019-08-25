@@ -6,7 +6,6 @@
 #include "input_manager.h"
 #include "script_system.h"
 #include "scene/scene_manager.h"
-#include "scene/splash_scene.h"
 #include "window.h"
 #include "resource_manager.h"
 #include "sprite_renderer.h"

@@ -16,10 +16,10 @@ public:
 
 	virtual ~BaseScene();
 
-	virtual void Update() = 0;
+	virtual void Update() {};
 
 #ifndef SIMPLE_SERVER
-	virtual void Draw() = 0;
+	virtual void Draw() {};
 #endif
 	
 
@@ -54,9 +54,9 @@ public:
 	void UnLoad();
 
 protected:
-	virtual void OnLoad() = 0;
+	virtual void OnLoad() {} ;
 
-	virtual void OnUnLoad() = 0;
+	virtual void OnUnLoad() {};
 
 	std::string m_Name;
 

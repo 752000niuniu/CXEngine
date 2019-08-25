@@ -11,6 +11,7 @@ script_system_dofile('editor/scene_editor.lua')
 local scene_lua_files = 
 {
     {name='AnimationEditor' ,  file= 'scene/animation_editor.lua'},
+    {name='PackageUnpacker' ,  file= 'scene/package_unpacker.lua'},
     {name='BattleScene' ,            file= 'scene/battle_scene.lua'},
     {name='门派_方寸山全景' ,       file= 'scene/fangcunshan_scene.lua'},
     {name='Splash' ,            file= 'scene/splash_scene.lua'},
@@ -32,6 +33,7 @@ function on_scene_manager_init()
 	scene_manager_add_custom_scene(-102, "UIScene");
 	scene_manager_add_custom_scene(-103, "TestScene");
     scene_manager_add_custom_scene(-105, "AnimationEditor");
+    scene_manager_add_custom_scene(-106, "PackageUnpacker");
     
     for i,v in ipairs(scene_lua_files) do
         local path = lua_file_path(v.file)

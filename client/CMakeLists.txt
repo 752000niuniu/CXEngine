@@ -42,12 +42,10 @@ add_executable(SimpleEngine
     src/objects/object.cpp
     src/main.cpp
     src/resource_manager.cpp
-    src/scene/splash_scene.cpp
     src/scene/ui_scene.cpp
     src/scene/was_viewer_scene.cpp
     src/sprite_batch.cpp
     src/sprite_renderer.cpp
-    src/test_scene.cpp
     src/text_renderer.cpp
     src/texture_manager.cpp
     src/tiny_thread_pool.cpp

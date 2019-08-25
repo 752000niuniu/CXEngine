@@ -29,3 +29,16 @@ private:
 };
 
 
+class TestScene : public BaseScene
+{
+public:
+
+	TestScene(int id, String name);
+	virtual ~TestScene();
+	void OnLoad() override;
+	void OnUnLoad() override;
+	void Update() override;
+	void Draw() override;
+	void Reset();
+};
+

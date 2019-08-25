@@ -1,11 +1,9 @@
 #include "scene_manager.h"
 #include "cxrandom.h"
-#include "scene/splash_scene.h"
 #include "scene/was_viewer_scene.h"
 #include "scene/ui_scene.h"
 #include "script_system.h"
 #include "profile.h"
-#include "test_scene.h"
 #include "scene.h"
 #include "input_manager.h"
 #include "game.h"
@@ -349,23 +347,14 @@ void scene_manager_add_scene(int id , const char* name)
 
 void scene_manager_add_custom_scene(int id, const char* name)
 {
-	if (strcmp(name, "BattleScene") == 0) {
-		SCENE_MANAGER_INSTANCE->AddScene(new BattleScene(id, name));
-	}
-	else if (strcmp(name, "Splash") == 0) {
-		SCENE_MANAGER_INSTANCE->AddScene(new SplashScene(id, name));
-	}
-	else if (strcmp(name, "WASViewer") == 0) {
+	if (strcmp(name, "WASViewer") == 0) {
 		SCENE_MANAGER_INSTANCE->AddScene(new WASViewerScene(id, name));
 	}
 	else if (strcmp(name, "UIScene") == 0) {
 		SCENE_MANAGER_INSTANCE->AddScene(new UIScene(id, name));
 	}
-	else if (strcmp(name, "TestScene") == 0) {
-		SCENE_MANAGER_INSTANCE->AddScene(new TestScene(id, name));
-	}
-	else if (strcmp(name, "AnimationEditor") == 0) {
-		SCENE_MANAGER_INSTANCE->AddScene(new AnimationEditorScene(id, name));
+	else {
+		SCENE_MANAGER_INSTANCE->AddScene(new BaseScene(id, name));
 	}
 }
 

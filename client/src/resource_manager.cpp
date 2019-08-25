@@ -357,6 +357,19 @@ void resource_manager_deinit()
 	RESOURCE_MANAGER_INSTANCE->Clear();
 }
 
+int res_get_was(lua_State* L) {
+	uint32_t pack = (uint32_t)lua_tointeger(L, 1);
+	uint32_t wasid = (uint32_t)lua_tointeger(L, 2);
+	const char* path = lua_tostring(L, 3);
+
+	if (s_Loaders.find(pack) == s_Loaders.end())
+	{
+		s_Loaders[pack] = new NE::WDF(utils::GetPathByPackID(pack));
+	}
+	s_Loaders[pack]->SaveWAS(wasid, path);
+	return 0;
+}
+
 void luaopen_resource_manager(lua_State* L)
 {
 #define REG_ENUM(e)  (lua_pushinteger(L, e),lua_setglobal(L, #e))
@@ -399,4 +412,5 @@ void luaopen_resource_manager(lua_State* L)
 	script_system_register_luac_function(L, resource_get_action_id);
 	script_system_register_luac_function(L, resource_get_weapon_id);
 	
+	script_system_register_luac_function(L, res_get_was);
 }
