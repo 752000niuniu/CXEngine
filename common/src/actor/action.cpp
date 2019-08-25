@@ -600,8 +600,8 @@ void BeCastAction::Update()
 	if (action == ACTION_BEHIT) {
 		if (avatar->IsGroupEndUpdate()) {
 			Pos pos = m_Actor->GetPos();
-			pos.x = pos.x - MoveVec.x * 20;
-			pos.y = pos.y - MoveVec.y * 20;
+			pos.x = pos.x - MoveVec.x * 5;
+			pos.y = pos.y - MoveVec.y * 5;
 			m_Actor->SetPos(pos);
 			m_pASM->SetAction(ACTION_BATIDLE);
 		}
@@ -611,22 +611,13 @@ void BeCastAction::Update()
 				Animation* anim = new Animation(MAGICWDF, m_Attacker->GetCastID());
 				anim->Pos.x = avatar->Pos.x;
 				anim->Pos.y = avatar->Pos.y - avatar->GetFrameKeyY() + avatar->GetFrameHeight() / 2.0f;
-				anim->AddFrameCallback(1, [this, anim]() {
+				anim->AddFrameCallback(anim->GroupFrameCount*5 / 6 , [this, anim]() {
 					Pos pos = m_Actor->GetPos();
-					pos.x = pos.x + MoveVec.x * 10;
-					pos.y = pos.y + MoveVec.y * 10;
-					m_Actor->SetPos(pos);
-
-					anim->Pos.x += MoveVec.x * 10;
-					anim->Pos.y += MoveVec.y * 10;
-				});
-
-				anim->AddFrameCallback(anim->GroupFrameCount / 2, [this, anim]() {
-					Pos pos = m_Actor->GetPos();
-					pos.x = pos.x + MoveVec.x * 10;
-					pos.y = pos.y + MoveVec.y * 10;
+					pos.x = pos.x + MoveVec.x * 5;
+					pos.y = pos.y + MoveVec.y * 5;
 					m_Actor->SetPos(pos);
 				});
+
 				AnimationManager::GetInstance()->AddQueue(anim);
 				int tm = (int)(anim->GroupFrameCount*anim->FrameInterval * 1000);
 				avatar->Pause(tm);
