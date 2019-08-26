@@ -319,7 +319,7 @@ void ResourceManager::ExportWas(uint64_t id, CXString path)
 {
 	uint32_t pack, wasid;
 	DecodeWAS(id, pack, wasid);
-	s_Loaders[pack]->SaveWAS(id, path.c_str());
+	s_Loaders[pack]->SaveWAS(wasid, path.c_str());
 }
 
 int resource_get_action_id(lua_State* L)
