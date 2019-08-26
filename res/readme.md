@@ -38,3 +38,7 @@ git -c filter.lfs.smudge= -c filter.lfs.required=false clone url path
 9. UI系统
 10. 程序模块化 UI插件化 热更
 
+
+红色伤害数字 WDF:misc  0x30F737D8
+绿色伤害数字 WDF:misc  0x3CF8F9FE
+

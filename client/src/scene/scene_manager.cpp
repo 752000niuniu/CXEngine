@@ -200,18 +200,6 @@ void SceneManager::Update()
 			m_pCurrentScene->Load();
 			
 			script_system_call_function(script_system_get_luastate(), "on_scene_manager_init_scene" ,m_pCurrentScene->GetName());
-
-			actor_manager_set_scene(m_pCurrentScene->GetSceneID());
-			//m_pCurrentScene->SetPlayerByIndex(0);
-			Actor* player = actor_manager_fetch_local_player();
-			if (player)
-			{
-
-				if (m_PlayerEnterX != 0 && m_PlayerEnterY != 0)
-				{
-					player->SetPos((float)m_PlayerEnterX, (float)m_PlayerEnterY);
-				}
-			}
 		}
 		m_SwitchingScene = false;
 	}
@@ -388,6 +376,14 @@ int scene_manager_get_imgui_cursor_pos(lua_State* L) {
 	return 2;
 };
 
+int scene_manager_get_current_scene_id(){
+	auto* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
+	if(scene){
+		return scene->GetSceneID();
+	}
+	return 0;
+}
+
 void luaopen_scene_manager(lua_State* L)
 {
 	script_system_register_function(L, scene_manager_init);
@@ -406,6 +402,8 @@ void luaopen_scene_manager(lua_State* L)
 
 	script_system_register_function(L, scene_set_announcement);
 	script_system_register_function(L, scene_set_chat);
+
+	script_system_register_function(L, scene_manager_get_current_scene_id);
 
 	script_system_register_function(L, scene_manager_sync_draw_cbx);
 

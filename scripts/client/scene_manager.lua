@@ -65,6 +65,7 @@ function on_scene_manager_init()
 end
 
 function on_scene_manager_init_scene(name)
+    actor_manager_set_scene(scene_manager_get_current_scene_id())
     scene_list[name].OnSceneInit() 
 end
 

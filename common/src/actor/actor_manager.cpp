@@ -170,7 +170,7 @@ void luaopen_actor_manager(lua_State* L) {
 
 	script_system_register_luac_function_with_name(L, "actor_manager_fetch_all_players", lua_actor_manager_fetch_all_players);
 	
-
+	script_system_register_function(L, actor_manager_set_scene);
 	script_system_register_luac_function(L, actor_manager_set_local_player);
 	
 

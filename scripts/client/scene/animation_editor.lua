@@ -174,17 +174,17 @@ function OnSceneImGuiUpdate()
 
 
     if imgui.Button('Cast1') then
-        player:PlayCast(enemy,0x387C1EEB)
+        player:PlayCast(enemy,0x133F8E31)
     end
     if imgui.Button('Cast2') then
-        player:PlayCast(enemy,0x9EC0624E)
+        player:PlayCast(enemy,0x99ED4688)
     end
     if imgui.Button('Cast3') then
-        player:PlayCast(enemy,0xC1825B80)
+        player:PlayCast(enemy,0x783F9D20)
     end
 
     if imgui.Button('Cast4') then
-        player:PlayCast(enemy,0x9EB11259)
+        player:PlayCast(enemy,0x7367AF0F)
     end
 
     
