@@ -174,14 +174,17 @@ function OnSceneImGuiUpdate()
         player:PlayCast(enemy,id)
     end
     if imgui.Button('Cast2') then
-        player:PlayCast(enemy,0x99ED4688)
+        local id = magic_tsv['MWZ_三味真火'].resid
+        player:PlayCast(enemy,id)
     end
     if imgui.Button('Cast3') then
-        player:PlayCast(enemy,0x783F9D20)
+        local id = magic_tsv['PS_勾魂'].resid
+        player:PlayCast(enemy,id)
     end
 
     if imgui.Button('Cast4') then
-        player:PlayCast(enemy,0x7367AF0F)
+        local id = magic_tsv['WZG_烟雨'].resid
+        player:PlayCast(enemy,id)
     end
 
     
