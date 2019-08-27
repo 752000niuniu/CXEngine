@@ -8,7 +8,7 @@ local LoadActionID = ACTION_IDLE
 local TimeInterval = 0.016 * 4
 
 local BeHitAnim 
-
+local magic_tsv 
 
 --剑侠客 攻击
 ---待战-> Runto-> Attack-> Runback -> 待战
@@ -20,6 +20,7 @@ end
 
 
 function OnSceneInit()
+    magic_tsv =   content_system_get_table('magic')
     BeHitAnim =  animation_create(ADDONWDF,0x1D3FF13C)
     BeHitAnim:EnableDrag(true)
 
@@ -168,9 +169,9 @@ function OnSceneImGuiUpdate()
         player:PlayAttack(enemy)
     end
 
-
     if imgui.Button('Cast1') then
-        player:PlayCast(enemy,0x133F8E31)
+        local id = magic_tsv['DF_阎罗令'].resid
+        player:PlayCast(enemy,id)
     end
     if imgui.Button('Cast2') then
         player:PlayCast(enemy,0x99ED4688)

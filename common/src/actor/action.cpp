@@ -607,8 +607,8 @@ void BeCastAction::Update()
 		}
 		else if (avatar->IsFrameUpdate()) {
 			if (avatar->CurrentFrame == 1) {
-
-				Animation* anim = new Animation(MAGICWDF, m_Attacker->GetCastID());
+				uint64_t id = m_Attacker->GetCastID();
+				Animation* anim = new Animation(id);
 				anim->Pos.x = avatar->Pos.x;
 				anim->Pos.y = avatar->Pos.y - avatar->GetFrameKeyY() + avatar->GetFrameHeight() / 2.0f;
 				anim->AddFrameCallback(anim->GroupFrameCount*5 / 6 , [this, anim]() {

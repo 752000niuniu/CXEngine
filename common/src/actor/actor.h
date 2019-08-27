@@ -141,8 +141,8 @@ public:
 	CXString GetWeaponAvatarID();
 	void SetWeaponAvatarID(CXString id) { m_WeaponAvatarID = id; }
 
-	int GetCastID() { return m_CastID; };
-	void SetCastID(uint32_t id) { m_CastID = id; }
+	uint64_t GetCastID() { return m_CastID; };
+	void SetCastID(uint64_t id) { m_CastID = id; }
 
 #ifndef SIMPLE_SERVER
 	ActionStateMachine* GetASM() { return m_ASM; };
@@ -176,7 +176,7 @@ protected:
 	float m_MoveVelocity;
 	bool m_bInCombat;	
 	int m_TargetID;
-	uint32_t m_CastID;
+	uint64_t m_CastID;
 
 	bool m_bSkillFrameShow;
 

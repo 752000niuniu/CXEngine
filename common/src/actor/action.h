@@ -66,7 +66,7 @@ private:
 class CastAction :public Action
 {
 public:
-	CastAction(Actor* actor, Actor* target, uint32_t skill) :Action(actor), m_Target(target), m_Skill(skill) {};
+	CastAction(Actor* actor, Actor* target, uint64_t skill) :Action(actor), m_Target(target), m_Skill(skill) {};
 	virtual ~CastAction() {};
 	virtual  void Update();
 	virtual void Exit();
@@ -74,7 +74,7 @@ public:
 private:
 	Pos m_AttackVec;
 	Actor* m_Target;
-	uint32_t m_Skill;
+	uint64_t m_Skill;
 };
 
 

@@ -598,7 +598,7 @@ int actor_play_cast(lua_State*L) {
 #ifndef SIMPLE_SERVER 
 	Actor* actor = lua_check_actor(L, 1);
 	Actor* target = lua_check_actor(L, 2);
-	uint32_t skill = (uint32_t)lua_tointeger(L, 3);
+	uint64_t skill = (uint64_t)lua_tointeger(L, 3);
 	actor->SetCastID(skill);
 	CastAction* action = new CastAction(actor, target, skill);
 	actor->GetASM()->ChangeAction(action);

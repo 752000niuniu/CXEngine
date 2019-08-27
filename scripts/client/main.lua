@@ -13,11 +13,12 @@ script_system_dofile 'actor_manager.lua'
 -- script_system_dofile('generator/imgui_binding_generator.lua')
 -- script_system_dofile('generator/table_template.lua')
 
+-- luadbg_listen(9527)
 IsCombat = false
 --聊天背景框 wzife 39D3BD99 
 function main()
-    window_system_init(SCREEN_WIDTH,SCREEN_HEIGHT)
-    window_system_show()	
+	-- script_system_dofile('parser.lua')
+    window_system_init(SCREEN_WIDTH,SCREEN_HEIGHT); window_system_show()	
 end
 
 function on_script_system_init()
