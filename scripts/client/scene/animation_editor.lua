@@ -56,19 +56,15 @@ function OnSceneInit()
     -- enemy:GetAvatar():Stop()
 end
 
-
-
 local actor_dir = 0
 local actor_action = 0
 local actor_frame = 0
 local actor_show_boudingbox={}
 function imgui_draw_actor(actor)
     if actor then
-        local x ,y = actor:GetX() , actor:GetY()
-        local h = actor:GetHeight()
-        local w = actor:GetWidth()
+        local x ,y  = actor:GetX(), actor:GetY()
         local avatar = actor:GetAvatar()
-        imgui.SetCursorPos(x-w//2,y+20)
+        imgui.SetCursorPos(x-55,y+20)
         imgui.BeginGroup()
         
         if imgui.Button('+##Dir'..actor:GetID(),30) then
