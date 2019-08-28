@@ -94,19 +94,17 @@ function imgui_draw_actor(actor)
         if imgui.Button('+##Frame'..actor:GetID(),30) then
             actor_frame = actor_frame+1
             if actor_frame >= avatar:GetGroupFrameCount() then actor_frame  = 0 end
-            avatar:Stop()
-            avatar:SetCurrentFrame(actor_frame)    
+            avatar:LockFrame(actor_frame)    
         end
         imgui.SameLine();imgui.Text('Frame');imgui.SameLine()
         if imgui.Button('-##Frame'..actor:GetID(),30) then
             actor_frame = actor_frame-1
             if actor_frame <= 0 then actor_frame  = avatar:GetGroupFrameCount() end
-            avatar:Stop()
-            avatar:SetCurrentFrame(actor_frame)    
+            avatar:LockFrame(actor_frame)    
         end
 
         if imgui.Button('Play##'..actor:GetID()) then
-            avatar:Play()
+            avatar:UnLockFrame()
         end
         imgui.SameLine()
         if imgui.Button('Stop##'..actor:GetID()) then
@@ -167,7 +165,17 @@ function OnSceneImGuiUpdate()
     if imgui.Button('Attack') then
         player:PlayAttack(enemy)
     end
+    if imgui.Button('Translate') then
+        MagicAnim:Pause(200)
+        MagicAnim:Translate(0,-200,300)
+    end
 
+    if imgui.Button('LockFrame') then
+        -- MagicAnim:Pause(200)
+        MagicAnim:LockFrame(1)
+    end
+
+    
     if imgui.Button('Cast1') then
         local id = magic_tsv['DF_阎罗令'].resid
         player:PlayCast(enemy,id)

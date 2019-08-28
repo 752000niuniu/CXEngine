@@ -81,7 +81,10 @@ public:
 	bool IsGroupEndUpdate() { return m_bGroupEndUpdate; };
 	bool IsFrameUpdate() { return m_bFrameUpdate; };
 	int GetAttackKeyFrame() { return AttackKeyFrame; };
-
+	
+	void Translate(CXPos pos, int duration);
+	void LockFrame(int frame);
+	void UnLockFrame();
 	int GetState() { return m_State; };
 private:
 	bool m_bGroupEndUpdate;
@@ -94,17 +97,29 @@ private:
 	bool m_Visible;
 	int m_PauseTime;
 	std::map<int, std::function<void()>> m_Callbacks;
+	int m_LockFrame;
+	bool m_bLockFrame;
+	bool m_bTranslate;
+	CXPos m_TranslatePos;
+	float m_Duration;
+	CXPos m_Velocity;
 };
 
-class ActionAnimation :public BaseSprite
+class MagicAnimation  : public Animation
 {
 public:
-	ActionAnimation(uint64_t resoureID = 0);
-	ActionAnimation(uint32_t pkg, uint32_t wasID) :BaseSprite(pkg, wasID) {  };
-	virtual ~ActionAnimation() {};
+	MagicAnimation(uint64_t resoureID = 0) : Animation(resoureID) {};
+	virtual ~MagicAnimation() { }
 	void Update() override;
 	void Draw() override;
+
+	void Translate(CXPos pos,int duration);
+private:
+	CXPos m_TranslatePos;
+	int m_Duration;
+	CXPos m_Velocity;
 };
+
 
 class AnimationManager :public Singleton<AnimationManager>
 {

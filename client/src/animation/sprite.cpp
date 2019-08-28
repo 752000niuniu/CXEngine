@@ -6,6 +6,7 @@
 #include "sprite_renderer.h"
 #include "input_manager.h"
 #include "logger.h"
+#include "cxmath.h"
 
 String UtilsGetFramePath(Sprite* m_pSprite, int index)
 {
@@ -114,8 +115,8 @@ void BaseSprite::EnableDrag(bool enable)
 
 Bound BaseSprite::GetViewBounds()
 {
-	return Bound{ Pos.x, (Pos.x + Width),
-		Pos.y,(Pos.y + Height) };
+	return Bound{ Pos.x - KeyX, Pos.x - KeyX + Width,
+		Pos.y - KeyY,Pos.y - KeyY + Height };
 }
 
 bool BaseSprite::CheckDrag(int dx, int dy)
@@ -146,6 +147,13 @@ Animation::Animation(uint64_t resoureID /*= 0*/) :BaseSprite(resoureID)
 		}
 	}
 	AttackKeyFrame = max_frame;
+	m_bTranslate = false;
+	m_TranslatePos.x = Pos.x;
+	m_TranslatePos.y = Pos.y;
+	m_Velocity.x = 0;
+	m_Velocity.y = 0;
+	m_bLockFrame = false;
+	m_LockFrame = CurrentFrame;
 }
 
 Animation::Animation(uint32_t pkg, uint32_t wasID)
@@ -195,10 +203,29 @@ void Animation::AddFrameCallback(int frame, std::function<void()> callback)
 	m_Callbacks[frame] = callback;
 }
 
+void Animation::Translate(CXPos pos, int duration)
+{
+	m_bTranslate = true;
+	m_Duration = duration/1000.f;
+	m_TranslatePos = pos;
+	m_Velocity = CXPos((m_TranslatePos.x - Pos.x) / m_Duration, (m_TranslatePos.y - Pos.y) / m_Duration);
+}
+
+void Animation::LockFrame(int frame)
+{
+	m_bLockFrame = true;
+	m_LockFrame = frame;
+}
+
+void Animation::UnLockFrame()
+{
+	m_bLockFrame = false;
+	m_LockFrame = 0;
+}
+
 void Animation::Update()
 {
 	if (!m_pSprite)return;
-	
 	m_bGroupEndUpdate = false;
 	m_bFrameUpdate = false;
 	float dt = WINDOW_INSTANCE->GetDeltaTime();
@@ -249,6 +276,23 @@ void Animation::Update()
 		m_PauseTime = m_PauseTime - ms;
 		if (m_PauseTime <= 0) {
 			m_State = m_PreviousState;
+		}
+	}
+	if (m_bLockFrame) {
+		CurrentFrame = m_LockFrame;
+	}
+	if(m_State!=ANIMATION_STOP){
+		if (m_bTranslate) {
+			float dist = std::pow(m_Velocity.x*dt, 2) + std::pow(m_Velocity.y*dt, 2);
+			if (GMath::Astar_GetDistanceSquare(Pos.x, Pos.y, m_TranslatePos.x, m_TranslatePos.y) > dist) {
+				Pos.x = Pos.x + m_Velocity.x*dt;
+				Pos.y = Pos.y + m_Velocity.y*dt;
+			}
+			else {
+				Pos.x = m_TranslatePos.x;
+				Pos.y = m_TranslatePos.y;
+				m_bTranslate = false;
+			}
 		}
 	}
 }
@@ -323,6 +367,13 @@ int animation_get_dir(lua_State* L) {
 	return 1;
 }
 
+int animation_pause(lua_State* L) {
+	auto* animation = lua_check_animation(L, 1);
+	int ms = (int)lua_tointeger(L, 2);
+	animation->Pause(ms);
+	return 0;
+}
+
 int animation_stop(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	animation->Stop();
@@ -332,6 +383,19 @@ int animation_stop(lua_State* L) {
 int animation_start(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	animation->Play();
+	return 0;
+}
+
+int animation_lock_frame(lua_State* L) {
+	auto* animation = lua_check_animation(L, 1);
+	int frame = (int)luaL_optinteger(L, 2, animation->CurrentFrame);
+	animation->LockFrame(frame);
+	return 0;
+}
+
+int animation_unlock_frame(lua_State* L) {
+	auto* animation = lua_check_animation(L, 1);
+	animation->UnLockFrame();
 	return 0;
 }
 
@@ -464,6 +528,15 @@ int animation_enable_drag(lua_State* L) {
 	return 0;
 }
 
+int animation_translate(lua_State*L){
+	auto* animation = lua_check_animation(L, 1);
+	float x = (float)lua_tonumber(L, 2);
+	float y = (float)lua_tonumber(L, 3);
+	int dur = (int)lua_tointeger(L, 4);
+	Pos tpos(animation->Pos.x + x, animation->Pos.y + y);
+	animation->Translate(tpos, dur);
+	return 0;
+}
 
 int animation_export(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
@@ -503,8 +576,11 @@ luaL_Reg MT_BASE_SPRITE[] = {
 { "GetPos", animation_get_pos },
 { "SetDir",animation_set_dir },
 { "GetDir",animation_get_dir },
+{ "Pause",animation_pause},
 { "Stop",animation_stop},
 { "Play",animation_start},
+{ "LockFrame",animation_lock_frame },
+{ "UnLockFrame",animation_unlock_frame },
 { "SetLoop",animation_set_loop},
 { "SetFrameInterval",animation_set_frame_interval },
 { "GetFrameInterval",animation_get_frame_interval },
@@ -526,6 +602,7 @@ luaL_Reg MT_BASE_SPRITE[] = {
 { "GetGroupFrameCount", animation_get_group_frame_count },
 { "GetGroupCount", animation_get_group_count },
 { "EnableDrag", animation_enable_drag },
+{ "Translate", animation_translate},
 { "Export", animation_export },
 { "ExportWas", animation_export_was},
 { "Destroy", animation_destroy },
@@ -574,21 +651,32 @@ void luaopen_sprite(lua_State* L)
 	script_system_register_luac_function(L, animation_get_metatable);
 }
 
-ActionAnimation::ActionAnimation(uint64_t resoureID /*= 0*/)
+void MagicAnimation::Update()
 {
-
-}
-
-void ActionAnimation::Update()
-{
-	if (!m_pSprite)return;
+	Animation::Update();
 	float dt = WINDOW_INSTANCE->GetDeltaTime();
-	
+	float dist = std::pow(m_Velocity.x*dt, 2) + std::pow(m_Velocity.y*dt, 2);
+	if (GMath::Astar_GetDistanceSquare(Pos.x, Pos.y, m_TranslatePos.x, m_TranslatePos.y) > dist) {
+		Pos.x = Pos.x + m_Velocity.x*dt;
+		Pos.y = Pos.y + m_Velocity.y*dt;
+	}
+	else {
+		Pos.x = m_TranslatePos.x;
+		Pos.y = m_TranslatePos.y;
+	}
 }
 
-void ActionAnimation::Draw()
+void MagicAnimation::Draw()
 {
+	Animation::Draw();
+}
 
+
+void MagicAnimation::Translate(CXPos pos,int duration)
+{
+	m_Duration = duration;
+	m_TranslatePos = pos;
+	m_Velocity = CXPos((m_TranslatePos.x - Pos.x) / duration, (m_TranslatePos.y - Pos.y) / duration);
 }
 
 AnimationManager::AnimationManager()
@@ -631,3 +719,4 @@ void AnimationManager::Draw()
 		it->Draw();
 	}
 }
+
