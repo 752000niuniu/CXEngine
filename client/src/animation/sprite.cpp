@@ -335,6 +335,12 @@ int animation_start(lua_State* L) {
 	return 0;
 }
 
+int animation_set_loop(lua_State* L) {
+	auto* animation = lua_check_animation(L, 1);
+	int loop = (int)lua_tointeger(L, 2);
+	animation->SetLoop(loop);
+	return 0;
+}
 
 int animation_set_frame_interval(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
@@ -427,6 +433,19 @@ int animation_set_current_frame(lua_State* L) {
 	return 0;
 }
 
+int animation_get_visible(lua_State* L) {
+	auto* animation = lua_check_animation(L, 1);
+	lua_pushinteger(L, animation->GetVisible());
+	return 1;
+}
+
+int animation_set_visible(lua_State* L) {
+	auto* animation = lua_check_animation(L, 1);
+	int visible = (int)lua_tointeger(L, 2);
+	animation->SetVisible(visible);
+	return 0;
+}
+
 int animation_get_group_frame_count(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	lua_pushinteger(L, animation->GroupFrameCount);
@@ -486,6 +505,7 @@ luaL_Reg MT_BASE_SPRITE[] = {
 { "GetDir",animation_get_dir },
 { "Stop",animation_stop},
 { "Play",animation_start},
+{ "SetLoop",animation_set_loop},
 { "SetFrameInterval",animation_set_frame_interval },
 { "GetFrameInterval",animation_get_frame_interval },
 { "GetWidth", animation_get_width },
@@ -501,6 +521,8 @@ luaL_Reg MT_BASE_SPRITE[] = {
 { "GetTotalFrames", animation_get_total_frames },
 { "GetCurrentFrame", animation_get_current_frame },
 { "SetCurrentFrame", animation_set_current_frame },
+{ "GetVisible", animation_get_visible},
+{ "SetVisible", animation_set_visible},
 { "GetGroupFrameCount", animation_get_group_frame_count },
 { "GetGroupCount", animation_get_group_count },
 { "EnableDrag", animation_enable_drag },
@@ -537,9 +559,19 @@ int animation_create(lua_State*L)
 	return 1;
 }
 
+int animation_get_metatable(lua_State* L) {
+	if (luaL_newmetatable(L, "MT_BASE_SPRITE")) {
+		luaL_setfuncs(L, MT_BASE_SPRITE, 0);
+		lua_pushvalue(L, -1);
+		lua_setfield(L, -2, "__index");
+	}
+	return 1;
+}
+
 void luaopen_sprite(lua_State* L)
 {
 	script_system_register_luac_function(L, animation_create);
+	script_system_register_luac_function(L, animation_get_metatable);
 }
 
 ActionAnimation::ActionAnimation(uint64_t resoureID /*= 0*/)

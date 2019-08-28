@@ -610,7 +610,7 @@ void BeCastAction::Update()
 				uint64_t id = m_Attacker->GetCastID();
 				Animation* anim = new Animation(id);
 				anim->Pos.x = avatar->Pos.x;
-				anim->Pos.y = avatar->Pos.y - avatar->GetFrameKeyY() + avatar->GetFrameHeight() / 2.0f;
+				anim->Pos.y = avatar->Pos.y - avatar->GetFrameKeyY() + avatar->GetFrameHeight() / 2;
 				anim->AddFrameCallback(anim->GroupFrameCount*5 / 6 , [this, anim]() {
 					Pos pos = m_Actor->GetPos();
 					pos.x = pos.x + MoveVec.x * 5;

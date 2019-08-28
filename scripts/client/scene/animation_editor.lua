@@ -6,7 +6,7 @@ local RoleIDSB = imgui.CreateStrbuf('0',256)
 local WeaponIDSB = imgui.CreateStrbuf('3',256)
 local LoadActionID = ACTION_IDLE
 local TimeInterval = 0.016 * 4
-
+local MagicAnim 
 local BeHitAnim 
 local magic_tsv 
 
@@ -21,16 +21,17 @@ end
 
 function OnSceneInit()
     magic_tsv =   content_system_get_table('magic')
-    BeHitAnim =  animation_create(ADDONWDF,0x1D3FF13C)
-    BeHitAnim:EnableDrag(true)
+    MagicAnim =  animation_create(6,0x387C1EEB)
+    MagicAnim:EnableDrag(true)
+    MagicAnim:SetLoop(0)
+    MagicAnim:SetFrameInterval(0.016*8)
+    -- MagicAnim:SetVisible(false)
 
     player = actor_manager_create_actor(os.time())
-    -- player:SetRoleID(math.tointeger(RoleIDSB:str()))
-    -- player:SetWeaponID(math.tointeger(WeaponIDSB:str()))
-    -- player:SetAvatarID('JXK-SWORD')
-    -- player:SetWeaponAvatarID('JXK-SWORD-030-X')
-    player:SetType(ACTOR_TYPE_PET)
-    player:SetAvatarID('龙龟')
+    player:SetAvatarID('JXK-SWORD')
+    player:SetWeaponAvatarID('JXK-SWORD-030-X')
+    -- player:SetType(ACTOR_TYPE_PET)
+    -- player:SetAvatarID('龙龟')
 
     player:SetDir(0)
     player:SetX(375.0)
@@ -39,13 +40,11 @@ function OnSceneInit()
     player:SetActionID(ACTION_IDLE)
     -- player:GetAvatar():Stop()
     enemy  = actor_manager_create_actor(os.time() + 1)
-    enemy:SetType(ACTOR_TYPE_PET)
-    enemy:SetAvatarID('超级大象')
+    -- enemy:SetType(ACTOR_TYPE_PET)
+    -- enemy:SetAvatarID('超级大象')
     -- enemy:SetDir(0)
-    -- enemy:SetAvatarID('JXK-KNIFE')
-    -- enemy:SetWeaponAvatarID('JXK-KNIFE-120-晓风残月')
-    -- enemy:SetRoleID(35)
-    -- enemy:SetWeaponID(0)
+    enemy:SetAvatarID('JXK-KNIFE')
+    enemy:SetWeaponAvatarID('JXK-KNIFE-120-晓风残月')
     -- enemy:SetActionID(ACTION_BEHIT)
     enemy:SetDir(player:GetDir())
     enemy:ReverseDir()
@@ -178,16 +177,14 @@ function OnSceneImGuiUpdate()
         player:PlayCast(enemy,id)
     end
     if imgui.Button('Cast3') then
-        local id = magic_tsv['PS_勾魂'].resid
+        local id = magic_tsv['FC_催眠符'].resid
         player:PlayCast(enemy,id)
     end
 
     if imgui.Button('Cast4') then
-        local id = magic_tsv['WZG_烟雨'].resid
+        local id = magic_tsv['FC_五雷咒'].resid
         player:PlayCast(enemy,id)
     end
-
-    
 
     if imgui.Button('EnemyAttack') then
         enemy:PlayAttack(player)
@@ -220,20 +217,18 @@ function OnSceneImGuiUpdate()
     imgui.EndGroup()
     imgui_draw_actor(player)
     imgui_draw_actor(enemy)   
-    -- draw_sprite_info(BeHitAnim)
+    MagicAnim:DrawBoundingBox()
 end
 
 function OnSceneUpdate()
     player:Update()
     enemy:Update()
-    local x,y = enemy:GetPos()
-    -- BeHitAnim:SetPos(x,y)
-    BeHitAnim:Update()
+    MagicAnim:Update()
 end
 
 function OnSceneDraw()
     enemy:Draw()
-    -- BeHitAnim:Draw()
     player:Draw()
+    MagicAnim:Draw()
 end
 
