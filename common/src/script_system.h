@@ -26,4 +26,14 @@ T script_system_get_globle(const char* name)
 	return any_cast<T>(v);
 }
 
+template <typename T>
+T* lua_check_pointer(lua_State* L, int index){
+	T** ptr = (T**)lua_touserdata(L, index);
+	return *ptr;
+};
 
+template <typename T>
+void lua_push_pointer(lua_State* L, T* ptr) {
+	T** ud = (T**)lua_newuserdata(L, sizeof(T*));
+	*ud = ptr;
+}

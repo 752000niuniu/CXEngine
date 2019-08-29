@@ -9,6 +9,7 @@ local TimeInterval = 0.016 * 4
 local MagicAnim 
 local BeHitAnim 
 local magic_tsv 
+local BeatNumber 
 
 --剑侠客 攻击
 ---待战-> Runto-> Attack-> Runback -> 待战
@@ -26,6 +27,10 @@ function OnSceneInit()
     MagicAnim:SetLoop(0)
     MagicAnim:SetFrameInterval(0.016*8)
     -- MagicAnim:SetVisible(false)
+
+    BeatNumber = beat_number_create()
+
+
 
     player = actor_manager_create_actor(os.time())
     player:SetAvatarID('JXK-SWORD')
@@ -175,7 +180,12 @@ function OnSceneImGuiUpdate()
         MagicAnim:LockFrame(1)
     end
 
-    
+    if imgui.Button('ShowBeatNumber') then
+        local x,y = player:GetX(),player:GetY()
+        local avatar = player:GetAvatar()
+        y = y - avatar:GetFrameKeyY() + avatar:GetFrameHeight() / 2;
+        BeatNumber:Show(x,y, 1940)
+    end
     if imgui.Button('Cast1') then
         local id = magic_tsv['DF_阎罗令'].resid
         player:PlayCast(enemy,id)
@@ -232,11 +242,13 @@ function OnSceneUpdate()
     player:Update()
     enemy:Update()
     MagicAnim:Update()
+    BeatNumber:Update()
 end
 
 function OnSceneDraw()
     enemy:Draw()
     player:Draw()
     MagicAnim:Draw()
+    BeatNumber:Draw()
 end
 

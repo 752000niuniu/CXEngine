@@ -50,8 +50,7 @@ enum EAnimationState
 {
 	ANIMATION_PLAY = 0,
 	ANIMATION_STOP,
-	ANIMATION_PAUSE,
-	ANIMATION_LOOP,
+	ANIMATION_PAUSE
 };
 
 class Animation : public BaseSprite
@@ -103,23 +102,40 @@ private:
 	CXPos m_TranslatePos;
 	float m_Duration;
 	CXPos m_Velocity;
+	bool m_bLoop;
 };
 
-class MagicAnimation  : public Animation
+class BeatNumber 
 {
 public:
-	MagicAnimation(uint64_t resoureID = 0) : Animation(resoureID) {};
-	virtual ~MagicAnimation() { }
-	void Update() override;
-	void Draw() override;
-
-	void Translate(CXPos pos,int duration);
+	struct Digit
+	{
+		int8_t digit;
+		float y;
+	};
+	BeatNumber();
+	virtual ~BeatNumber() { }
+	void Update();
+	void Draw();
+	void SetPos(float x, float y);
+	void SetNumber(int num);
+	void Beat();
+	void SetVisible(bool visible) { m_Visible = visible; };
+	bool GetVisible() { return m_Visible; };
 private:
-	CXPos m_TranslatePos;
-	int m_Duration;
-	CXPos m_Velocity;
+	bool m_bBeat;
+	bool m_Visible;
+	float m_PlayTime;
+	float m_BeatTime;
+	float m_PauseTime;
+	float m_BeatHeights;
+	float m_AdvanceX;
+	int m_Number;
+	CXPos m_Pos;
+	std::deque<Digit>m_Digits;
+	Animation m_HealAnim;
+	Animation m_HitAnim;
 };
-
 
 class AnimationManager :public Singleton<AnimationManager>
 {

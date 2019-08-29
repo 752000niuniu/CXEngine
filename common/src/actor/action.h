@@ -15,7 +15,7 @@ bool action_is_battle_action(int action);
 class Actor;
 class ActionStateMachine;
 class Animation;
-class Animation;
+class BeatNumber;
 class Action
 {
 public:
@@ -91,7 +91,6 @@ public:
 private:
 	Actor* m_Attacker;
 	int m_State;
-	Animation* m_DamageAnim;
 };
 
 class BeCastAction : public Action
@@ -159,6 +158,8 @@ public:
 	int GetDirCount(int action = -1);
 
 	int GetActionID() { return m_ActionID; };
+	void AddAnimation(Animation* anim);
+	BeatNumber* GetBeatNumber() { return m_BeatNumber; }
 private:
 	Actor * m_Actor;
 	float m_TimeInterval;
@@ -170,6 +171,8 @@ private:
 	Action* m_pCurrentAction;
 	std::map<int, Animation*> m_WeaponActions;
 	std::map<int, Animation*> m_AvatarActions;
+	std::vector<Animation*> m_Animations;
+	BeatNumber* m_BeatNumber;
 };
 #endif // !SIMPLE_SERVER
 

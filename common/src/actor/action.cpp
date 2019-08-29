@@ -12,6 +12,7 @@
 #include "window.h"
 #include "scene/base_scene.h"
 #include "scene/game_map.h"
+#include "cxrandom.h"
 
 std::map<CXString, int> g_AttackKeyFrame = {
 	{"FYN-DBSWORDS" ,5 },
@@ -138,6 +139,7 @@ ActionStateMachine::ActionStateMachine(Actor* _actor)
 	m_WeaponID = m_Actor->GetWeaponID();
 	m_AvatarID = m_Actor->GetRoleID();
 	m_ActionID = ACTION_IDLE;
+	m_BeatNumber = new BeatNumber();
 }
 
 ActionStateMachine::~ActionStateMachine()
@@ -151,6 +153,8 @@ ActionStateMachine::~ActionStateMachine()
 		SafeDelete(it.second);
 	}
 	m_WeaponActions.clear();
+
+	SafeDelete(m_BeatNumber);
 }
 
 void ActionStateMachine::Update()
@@ -167,6 +171,21 @@ void ActionStateMachine::Update()
 		}
 	}
 
+	std::vector<Animation*> updateSet(m_Animations.begin(), m_Animations.end());
+	for (auto& it : updateSet) {
+		it->Update();
+	}
+	m_Animations.clear();
+	for (auto& it : updateSet) {
+		if (it->GetState() != ANIMATION_STOP) {
+			m_Animations.push_back(it);
+		}
+		else {
+			delete it;
+		}
+	}
+	m_BeatNumber->Update();
+
 	if (m_pCurrentAction) {
 		m_pCurrentAction->Update();
 	}
@@ -174,9 +193,10 @@ void ActionStateMachine::Update()
 	auto* avatar = GetAvatar(m_ActionID);
 	if (!avatar)return;
 
-	if (!HasWeapon() || !action_is_show_weapon(m_ActionID))return;
-	auto* weapon = GetWeapon(m_ActionID);
-	weapon->CurrentFrame = avatar->CurrentFrame;
+	if (HasWeapon() && action_is_show_weapon(m_ActionID)){
+		auto* weapon = GetWeapon(m_ActionID);
+		weapon->CurrentFrame = avatar->CurrentFrame;
+	}
 }
 
 void ActionStateMachine::Draw()
@@ -223,23 +243,21 @@ void ActionStateMachine::Draw()
 
 	avatar->Dir = dir;
 	avatar->Draw();
-
-
-	if (!HasWeapon() || !action_is_show_weapon(m_ActionID)) {
-		if (m_pCurrentAction) {
-			m_pCurrentAction->Draw();
-		}
-		return;
+	if (HasWeapon() && action_is_show_weapon(m_ActionID)) {
+		auto* weapon = GetWeapon(m_ActionID);
+		weapon->Pos.x = avatar->Pos.x;
+		weapon->Pos.y = avatar->Pos.y;
+		weapon->Dir = dir;
+		weapon->Draw();
 	}
-	auto* weapon = GetWeapon(m_ActionID);
-	weapon->Pos.x = avatar->Pos.x;
-	weapon->Pos.y = avatar->Pos.y;
-	weapon->Dir = dir;
-	weapon->Draw();
 
+	for (auto& it : m_Animations) {
+		it->Draw();
+	}
 	if (m_pCurrentAction) {
 		m_pCurrentAction->Draw();
 	}
+	m_BeatNumber->Draw();
 }
 
 void ActionStateMachine::SetWeapon(CXString id)
@@ -349,12 +367,17 @@ int ActionStateMachine::GetDirCount(int action)
 	return 4;
 }
 
+void ActionStateMachine::AddAnimation(Animation* anim)
+{
+	anim->Reset();
+	m_Animations.push_back(anim);
+}
+
 void AttackAction::Update()
 {
 	auto* avatar = m_pASM->GetAvatar();
 	if (!avatar)return;
 	avatar->Update();
-
 	int action = m_pASM->GetActionID();
 	if (action == ACTION_BATIDLE) {
 		if (avatar->IsGroupEndUpdate()) {
@@ -401,6 +424,8 @@ void AttackAction::Update()
 				behit->MoveVec = m_AttackVec;
 				m_Target->GetASM()->ChangeAction(behit);
 				avatar->Pause(200);
+			
+				m_Target->GetASM()->GetBeatNumber()->Beat();
 			}
 		}
 	}
@@ -416,7 +441,6 @@ void AttackAction::Update()
 
 void AttackAction::Draw()
 {
-
 }
 
 void AttackAction::AddTarget(Actor* target)
@@ -440,7 +464,7 @@ void AttackAction::Enter()
 		v = glm::normalize(v);
 		m_AttackVec.x = v.x ;
 		m_AttackVec.y = v.y ;
-
+	
 		auto* attackAvatar = m_pASM->GetAvatar(ACTION_ATTACK);
 		auto* targetAvatar = m_Target->GetASM()->GetAvatar(ACTION_BEHIT);
 		if (attackAvatar && targetAvatar) {
@@ -478,6 +502,22 @@ void AttackAction::Enter()
 			m_Target->SetDir(dir);
 			m_Target->ReverseDir();
 			m_Target->SetActionID(ACTION_BATIDLE);
+
+			
+			float bny = (float)(m_Target->GetY() - targetAvatar->GetFrameKeyY() + targetAvatar->GetFrameHeight() / 2);
+			m_Target->GetASM()->GetBeatNumber()->SetPos((float)m_Target->GetX(), bny);
+			std::set<int> randoms;
+			randoms.insert(RANDOM_INSTANCE->NextInt(10, 99));
+			randoms.insert(RANDOM_INSTANCE->NextInt(100, 999));
+			randoms.insert(RANDOM_INSTANCE->NextInt(1000, 9999));
+			randoms.insert(RANDOM_INSTANCE->NextInt(10000, 99999));
+			randoms.insert(RANDOM_INSTANCE->NextInt(100000, 999999));
+			int cnt = (int)RANDOM_INSTANCE->NextInt(0, (int)randoms.size() - 1);
+			auto it = randoms.begin();
+			while (cnt--) {
+				it++;
+			}
+			m_Target->GetASM()->GetBeatNumber()->SetNumber(*it);
 		}
 	}
 
@@ -509,6 +549,8 @@ void CastAction::Update()
 				BeCastAction* action = new BeCastAction(m_Target, m_Actor);
 				action->MoveVec = m_AttackVec;
 				m_Target->GetASM()->ChangeAction(action);
+
+				m_Target->GetASM()->GetBeatNumber()->Beat();
 			}
 		}
 	}
@@ -525,6 +567,22 @@ void CastAction::Enter()
 		v = glm::normalize(v);
 		m_AttackVec.x = v.x;
 		m_AttackVec.y = v.y;
+
+		auto* targetAvatar = m_Target->GetASM()->GetAvatar(ACTION_BEHIT);
+		float bny = (float)(m_Target->GetY() - targetAvatar->GetFrameKeyY() + targetAvatar->GetFrameHeight() / 2);
+		m_Target->GetASM()->GetBeatNumber()->SetPos((float)m_Target->GetX(), bny);
+		std::set<int> randoms;
+		randoms.insert(RANDOM_INSTANCE->NextInt(10, 99));
+		randoms.insert(RANDOM_INSTANCE->NextInt(100, 999));
+		randoms.insert(RANDOM_INSTANCE->NextInt(1000, 9999));
+		randoms.insert(RANDOM_INSTANCE->NextInt(10000, 99999));
+		randoms.insert(RANDOM_INSTANCE->NextInt(100000, 999999));
+		int cnt = (int)RANDOM_INSTANCE->NextInt(0, (int)randoms.size() - 1);
+		auto it = randoms.begin();
+		while (cnt--) {
+			it++;
+		}
+		m_Target->GetASM()->GetBeatNumber()->SetNumber(*it);
 	}
 	
 	m_pASM->SetAction(ACTION_BATIDLE);
@@ -535,21 +593,24 @@ void BeHitAction::Update()
 	auto* avatar = m_pASM->GetAvatar();
 	if (!avatar)return;
 	avatar->Update();
+	
 	int action = m_pASM->GetActionID();
 	if (action == ACTION_BEHIT) {
 		if (avatar->IsGroupEndUpdate()) {
-			/*Pos pos = m_Actor->GetPos();
+			Pos pos = m_Actor->GetPos();
 			pos.x = pos.x - MoveVec.x * 20;
 			pos.y = pos.y - MoveVec.y * 20;
-			m_Actor->SetPos(pos);*/
+			m_Actor->SetPos(pos);
+			m_pASM->SetAction(ACTION_BATIDLE);
 
-			DeadFlyAction* action = new DeadFlyAction(m_Actor, MoveVec);
-			m_pASM->ChangeAction(action);
-			//m_pASM->SetAction(ACTION_BATIDLE);
+			//DeadFlyAction* action = new DeadFlyAction(m_Actor, MoveVec);
+			//m_pASM->ChangeAction(action);
 		}
 		else if (avatar->IsFrameUpdate()) {
 			if (avatar->CurrentFrame == 1) {
+				
 				Animation* anim = new Animation(ADDONWDF, 0x1D3FF13C);
+				anim->SetLoop(1);
 				anim->Pos.x = avatar->Pos.x;
 				anim->Pos.y = avatar->Pos.y - avatar->GetFrameKeyY() + avatar->GetFrameHeight() / 2.0f;
 				anim->AddFrameCallback(1, [this,anim]() {
@@ -560,15 +621,16 @@ void BeHitAction::Update()
 
 					anim->Pos.x += MoveVec.x * 10;
 					anim->Pos.y += MoveVec.y * 10;
+
 				});
 
-				anim->AddFrameCallback(anim->GroupFrameCount/2, [this, anim]() {
+				anim->AddFrameCallback(anim->GroupFrameCount / 2, [this, anim]() {
 					Pos pos = m_Actor->GetPos();
 					pos.x = pos.x + MoveVec.x * 10;
 					pos.y = pos.y + MoveVec.y * 10;
 					m_Actor->SetPos(pos);
 				});
-				AnimationManager::GetInstance()->AddQueue(anim);
+				m_pASM->AddAnimation(anim);
 				int tm = (int)(anim->GroupFrameCount*anim->FrameInterval * 1000);
 				avatar->Pause(tm);
 			}
@@ -588,7 +650,7 @@ void BeHitAction::Enter()
 
 void BeHitAction::Draw()
 {
-
+	
 }
 
 void BeCastAction::Update()
@@ -609,6 +671,7 @@ void BeCastAction::Update()
 			if (avatar->CurrentFrame == 1) {
 				uint64_t id = m_Attacker->GetCastID();
 				Animation* anim = new Animation(id);
+				anim->SetLoop(1);
 				anim->Pos.x = avatar->Pos.x;
 				anim->Pos.y = avatar->Pos.y - avatar->GetFrameKeyY() + avatar->GetFrameHeight() / 2;
 				anim->AddFrameCallback(anim->GroupFrameCount*5 / 6 , [this, anim]() {
@@ -617,8 +680,7 @@ void BeCastAction::Update()
 					pos.y = pos.y + MoveVec.y * 5;
 					m_Actor->SetPos(pos);
 				});
-
-				AnimationManager::GetInstance()->AddQueue(anim);
+				m_pASM->AddAnimation(anim);
 				int tm = (int)(anim->GroupFrameCount*anim->FrameInterval * 1000);
 				avatar->Pause(tm);
 
