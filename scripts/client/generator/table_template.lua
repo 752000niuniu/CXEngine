@@ -94,7 +94,7 @@ action_affix_keys = {'idle','walk','sit','angry','sayhi','dance','salute','clps'
 weapon_affix = 
 {
     SPEAR       =   {"枪矛","枪"},
-    AXE         =   {"斧钺","斧铽"},
+    AXE         =   {"斧钺","斧铽",'斧子'},
     SWORD       =   {"剑"},
     DBSWORDS    =   {"双短剑","双剑"},
     RIBBON      =   {"飘带"},
@@ -618,8 +618,35 @@ end
 function new_shapewdf_update_npc_avatar(tbl,type,code,resid)
 
 end
-function new_shapewdf_update_weapon_avatar(tbl,code,resid)
 
+function new_shapewdf_update_weapon_avatar(tbl,code,resid)
+    local strs = utils_string_split(code,' ')
+    assert(#strs == 3, 'code:..'..code..' resid..'..resid)
+    local level, weapon_name = string.match(strs[1],'(%d+)(.+)') 
+    level = ''.. math.tointeger(level)
+    local weapon_type = find_weapon_key(weapon_name)
+    local role = find_role_key(strs[2])  
+    local action = find_action_key(strs[3])  
+    -- cxlog_info(role, level, weapon_name,weapon_type,action,resid)
+    for k,v in pairs(tbl) do
+        if v.role == role and v.level == level then
+            -- cxlog_info('tbl row..'..cjson.encode(v))
+            if math.tointeger(level) < 90 and v.type == weapon_type then
+                if v[action] then
+                    v[action] = resid
+                    return true
+                end
+            else
+                if weapon_name==v.name then
+                    if v[action] then
+                        v[action] = resid
+                        return true
+                    end
+                end
+            end
+        end
+    end
+    return false
 end
 
 function new_shapewdf_update_role_avatar(tbl,code,resid)
@@ -721,15 +748,30 @@ function parse_second_shape_wdf_ini()
                     ok = false
                 end
                 if not ok then
-                    table.insert(parse_err_tbl,line)
+                    table.insert(parse_err_tbl[current_type],line)
                 end
             elseif line~='' then 
                 current_type = line
+                parse_err_tbl[current_type] = {}
             end
         end
 
-        new_shape_wdf_write_avater_file(vfs_makepath('res/tables/avatar_role.tsv'),
-            {'ID','name','role','weapon_type'},avatar_role_tbl)
+        -- new_shape_wdf_write_avater_file(vfs_makepath('res/tables/avatar_role.tsv'),
+        --     {'ID','name','role','weapon_type'},avatar_role_tbl)
+        -- if parse_err_tbl['role'] then
+        --     for i, v in ipairs(parse_err_tbl['role'] ) do
+        --         cxlog_info('error : ' .. v)
+        --     end        
+        -- end
+
+        new_shape_wdf_write_avater_file(vfs_makepath('res/tables/avatar_weapon.tsv'),
+             {'ID', 'name','type','role','level'},avatar_weapon_tbl)
+        if parse_err_tbl['weapon'] then
+            for i, v in ipairs(parse_err_tbl['weapon'] ) do
+                cxlog_info('error : ' .. v)
+            end        
+        end
+        
     end
     
 --    local avatar_npc_path = vfs_makepath('res/tables/avatar_npc.tsv')
