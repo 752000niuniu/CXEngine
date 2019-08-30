@@ -437,26 +437,30 @@ void AnimationManager::AddBeatNumber(BeatNumber* bn)
 
 void AnimationManager::Update()
 {
-	for (auto it = m_Animations.begin(); m_Animations.size() != 0 && it != m_Animations.end(); ) {
-		(*it)->Update();
-		if ((*it)->GetState() == ANIMATION_STOP) {
-			delete *it;
-			m_Animations.erase(it);
-		}
-		else {
-			++it;
+	{
+		std::vector<Animation*> tmpSet(m_Animations.begin(), m_Animations.end());
+		m_Animations.clear();
+		for(auto& it : tmpSet){
+			it->Update();
+			if (it->GetState() == ANIMATION_STOP) {
+				delete it;
+			}
+			else {
+				m_Animations.push_back(it);
+			}
 		}
 	}
-
-	for (auto it = m_BeatNumbers.begin(); m_BeatNumbers.size() != 0 && it != m_BeatNumbers.end();)
 	{
-		(*it)->Update();
-		if ((*it)->GetVisible() == false) {
-			delete *it;
-			m_BeatNumbers.erase(it);
-		}
-		else {
-			++it;
+		std::vector<BeatNumber*> tmpSet(m_BeatNumbers.begin(), m_BeatNumbers.end());
+		m_BeatNumbers.clear();
+		for (auto& it : tmpSet) {
+			it->Update();
+			if (it->GetVisible() == false) {
+				delete it;
+			}
+			else {
+				m_BeatNumbers.push_back(it);
+			}
 		}
 	}
 }

@@ -61,6 +61,7 @@ private:
 	int m_ID;
 	Pos m_Runto;
 	Pos m_AttackVec;
+	int m_ComboCount;
 };
 
 

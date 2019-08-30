@@ -399,17 +399,23 @@ void AttackAction::Update()
 	}
 	else if (action == ACTION_ATTACK) {
 		if (avatar->IsGroupEndUpdate()) {
-			m_pASM->SetAction(ACTION_RUNBACK);
-			m_Actor->ReverseDir();
-			m_Actor->GetMoveHandle()->MoveOnScreen(m_BackupPos.x, m_BackupPos.y);
-			avatar = m_pASM->GetAvatar();
-			float dist = std::sqrt(m_Actor->GetMoveDestDistSquare(m_BackupPos));
-			float perframetime = 0.016f * 2.5f;
-			float perframe_dist = dist / avatar->GroupFrameCount;
-			float velocity = perframe_dist / perframetime;
-			avatar->FrameInterval = perframetime;
-			m_Actor->SetVelocity(velocity);
-			m_Target->SetActionID(ACTION_BATIDLE);
+			m_ComboCount = m_ComboCount - 1;
+			if (m_ComboCount == 0 || m_Target->IsDead()) {
+				m_pASM->SetAction(ACTION_RUNBACK);
+				m_Actor->ReverseDir();
+				m_Actor->GetMoveHandle()->MoveOnScreen(m_BackupPos.x, m_BackupPos.y);
+				avatar = m_pASM->GetAvatar();
+				float dist = std::sqrt(m_Actor->GetMoveDestDistSquare(m_BackupPos));
+				float perframetime = 0.016f * 2.5f;
+				float perframe_dist = dist / avatar->GroupFrameCount;
+				float velocity = perframe_dist / perframetime;
+				avatar->FrameInterval = perframetime;
+				m_Actor->SetVelocity(velocity);
+				m_Target->SetActionID(ACTION_BATIDLE);
+			}
+			else {
+				m_pASM->SetAction(ACTION_ATTACK);
+			}
 		}
 		else if (avatar->IsFrameUpdate()) {
 			int attackKeyframe = g_AttackKeyFrame[m_Actor->GetAvatarID()];
@@ -423,10 +429,6 @@ void AttackAction::Update()
 				}else{
 					avatar->Pause(200);
 				}
-				
-
-				m_BeatNumber->Beat();
-				AnimationManager::GetInstance()->AddBeatNumber(m_BeatNumber);
 			}
 		}
 	}
@@ -457,25 +459,26 @@ void AttackAction::Exit()
 
 void AttackAction::Enter()
 {
+	m_ComboCount = RANDOM_INSTANCE->NextInt(1, 3);
 	m_BackupActionID = m_Actor->GetActionID();
 	m_BackupPos = m_Actor->GetPos();
 
 	if (m_Target) {
-		int dead = (int)RANDOM_INSTANCE->NextInt(0, 1);
-		m_Target->SetDead(dead);
-
 		glm::vec2  v(m_Target->GetPos().x - m_Actor->GetPos().x, m_Target->GetPos().y - m_Actor->GetPos().y);
 		v = glm::normalize(v);
 		m_AttackVec.x = v.x ;
 		m_AttackVec.y = v.y ;
 	
+		float degree = m_Actor->GetMoveDestAngle(m_Target->GetPos());
+		int dir = m_Actor->GetDirByDegree(degree);
+		dir = GMath::Dir8toDir4(dir);
+		m_Actor->SetDir(dir);
+		m_Target->SetDir(dir);
+		m_Target->ReverseDir();
+
 		auto* attackAvatar = m_pASM->GetAvatar(ACTION_ATTACK);
 		auto* targetAvatar = m_Target->GetASM()->GetAvatar(ACTION_BEHIT);
 		if (attackAvatar && targetAvatar) {
-			float degree = m_Actor->GetMoveDestAngle(m_Target->GetPos());
-			int dir = m_Actor->GetDirByDegree(degree);
-			dir = GMath::Dir8toDir4(dir);
-
 			int attackKeyframe = g_AttackKeyFrame[m_Actor->GetAvatarID()];
 			if (attackKeyframe == 0)attackKeyframe = attackAvatar->GetAttackKeyFrame();
 			auto* attackFrame = attackAvatar->GetFrame(dir*attackAvatar->GroupFrameCount + attackKeyframe);
@@ -502,26 +505,9 @@ void AttackAction::Enter()
 			y = y + attackFrame->key_y;
 			m_Runto.x = x;
 			m_Runto.y = y;
-			m_Actor->SetDir(dir);
-			m_Target->SetDir(dir);
-			m_Target->ReverseDir();
+			
 			m_Target->SetActionID(ACTION_BATIDLE);
 
-			m_BeatNumber = new BeatNumber();
-			float bny = (float)(m_Target->GetY() - targetAvatar->GetFrameKeyY() + targetAvatar->GetFrameHeight() / 2);
-			m_BeatNumber->SetPos((float)m_Target->GetX(), bny);
-			std::set<int> randoms;
-			randoms.insert(RANDOM_INSTANCE->NextInt(10, 99));
-			randoms.insert(RANDOM_INSTANCE->NextInt(100, 999));
-			randoms.insert(RANDOM_INSTANCE->NextInt(1000, 9999));
-			randoms.insert(RANDOM_INSTANCE->NextInt(10000, 99999));
-			randoms.insert(RANDOM_INSTANCE->NextInt(100000, 999999));
-			int cnt = (int)RANDOM_INSTANCE->NextInt(0, (int)randoms.size() - 1);
-			auto it = randoms.begin();
-			while (cnt--) {
-				it++;
-			}
-			m_BeatNumber->SetNumber(*it);
 		}
 	}
 
@@ -553,9 +539,6 @@ void CastAction::Update()
 				BeCastAction* action = new BeCastAction(m_Target, m_Actor);
 				action->MoveVec = m_AttackVec;
 				m_Target->GetASM()->ChangeAction(action);
-
-				m_BeatNumber->Beat();
-				AnimationManager::GetInstance()->AddBeatNumber(m_BeatNumber);
 			}
 		}
 	}
@@ -568,30 +551,17 @@ void CastAction::Exit()
 void CastAction::Enter()
 {
 	if(m_Target){
-		int dead = (int)RANDOM_INSTANCE->NextInt(0, 1);
-		m_Target->SetDead(dead);
-
 		glm::vec2  v(m_Target->GetPos().x - m_Actor->GetPos().x, m_Target->GetPos().y - m_Actor->GetPos().y);
 		v = glm::normalize(v);
 		m_AttackVec.x = v.x;
 		m_AttackVec.y = v.y;
 
-		m_BeatNumber = new BeatNumber();
-		auto* targetAvatar = m_Target->GetASM()->GetAvatar(ACTION_BEHIT);
-		float bny = (float)(m_Target->GetY() - targetAvatar->GetFrameKeyY() + targetAvatar->GetFrameHeight() / 2);
-		m_BeatNumber->SetPos((float)m_Target->GetX(), bny);
-		std::set<int> randoms;
-		randoms.insert(RANDOM_INSTANCE->NextInt(10, 99));
-		randoms.insert(RANDOM_INSTANCE->NextInt(100, 999));
-		randoms.insert(RANDOM_INSTANCE->NextInt(1000, 9999));
-		randoms.insert(RANDOM_INSTANCE->NextInt(10000, 99999));
-		randoms.insert(RANDOM_INSTANCE->NextInt(100000, 999999));
-		int cnt = (int)RANDOM_INSTANCE->NextInt(0, (int)randoms.size() - 1);
-		auto it = randoms.begin();
-		while (cnt--) {
-			it++;
-		}
-		m_BeatNumber->SetNumber(*it);
+		float degree = m_Actor->GetMoveDestAngle(m_Target->GetPos());
+		int dir = m_Actor->GetDirByDegree(degree);
+		dir = GMath::Dir8toDir4(dir);
+		m_Actor->SetDir(dir);
+		m_Target->SetDir(dir);
+		m_Target->ReverseDir();
 	}
 	
 	m_pASM->SetAction(ACTION_BATIDLE);
@@ -665,6 +635,28 @@ void BeHitAction::Exit()
 void BeHitAction::Enter()
 {
 	m_pASM->SetAction(ACTION_BEHIT);
+
+	int dead = RANDOM_INSTANCE->NextInt(1, 10);
+	m_Actor->SetDead(dead < 3);
+
+	auto*targetAvatar = m_pASM->GetAvatar();
+	BeatNumber* beatNumber = new BeatNumber();
+	float bny = (float)(m_Actor->GetY() - targetAvatar->GetFrameKeyY() + targetAvatar->GetFrameHeight() / 2);
+	beatNumber->SetPos((float)m_Actor->GetX(), bny);
+	std::set<int> randoms;
+	randoms.insert(RANDOM_INSTANCE->NextInt(10, 99));
+	randoms.insert(RANDOM_INSTANCE->NextInt(100, 999));
+	randoms.insert(RANDOM_INSTANCE->NextInt(1000, 9999));
+	randoms.insert(RANDOM_INSTANCE->NextInt(10000, 99999));
+	randoms.insert(RANDOM_INSTANCE->NextInt(100000, 999999));
+	int cnt = (int)RANDOM_INSTANCE->NextInt(0, (int)randoms.size() - 1);
+	auto it = randoms.begin();
+	while (cnt--) {
+		it++;
+	}
+	beatNumber->SetNumber(*it);
+	beatNumber->Beat();
+	AnimationManager::GetInstance()->AddBeatNumber(beatNumber);
 }
 
 void BeHitAction::Draw()
@@ -721,6 +713,27 @@ void BeCastAction::Exit()
 void BeCastAction::Enter()
 {
 	m_pASM->SetAction(ACTION_BEHIT);
+	int dead = (int)RANDOM_INSTANCE->NextInt(0, 1);
+	m_Actor->SetDead(dead);
+
+	auto*targetAvatar = m_pASM->GetAvatar();
+	BeatNumber* beatNumber = new BeatNumber();
+	float bny = (float)(m_Actor->GetY() - targetAvatar->GetFrameKeyY() + targetAvatar->GetFrameHeight() / 2);
+	beatNumber->SetPos((float)m_Actor->GetX(), bny);
+	std::set<int> randoms;
+	randoms.insert(RANDOM_INSTANCE->NextInt(10, 99));
+	randoms.insert(RANDOM_INSTANCE->NextInt(100, 999));
+	randoms.insert(RANDOM_INSTANCE->NextInt(1000, 9999));
+	randoms.insert(RANDOM_INSTANCE->NextInt(10000, 99999));
+	randoms.insert(RANDOM_INSTANCE->NextInt(100000, 999999));
+	int cnt = (int)RANDOM_INSTANCE->NextInt(0, (int)randoms.size() - 1);
+	auto it = randoms.begin();
+	while (cnt--) {
+		it++;
+	}
+	beatNumber->SetNumber(*it);
+	beatNumber->Beat();
+	AnimationManager::GetInstance()->AddBeatNumber(beatNumber);
 }
 
 void PathMoveAction::Update()

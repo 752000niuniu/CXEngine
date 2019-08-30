@@ -150,8 +150,8 @@ public:
 	void Update();
 	void Draw();
 private:
-	std::deque<Animation*> m_Animations;
-	std::deque<BeatNumber*> m_BeatNumbers;
+	std::vector<Animation*> m_Animations;
+	std::vector<BeatNumber*> m_BeatNumbers;
 	
 };
 
