@@ -124,6 +124,14 @@ void Action::Update()
 
 void Action::Enter()
 {
+	int action = m_Actor->GetActionID();
+	if (action != m_pASM->GetActionID()) {
+		m_pASM->SetAction(action);
+	}
+
+	auto* avatar = m_pASM->GetAvatar();
+	if (!avatar)return;
+	avatar->Reset();
 }
 
 void AttackAction::Update()
@@ -164,12 +172,11 @@ void AttackAction::Update()
 				m_Actor->GetMoveHandle()->MoveOnScreen(m_BackupPos.x, m_BackupPos.y);
 				avatar = m_pASM->GetAvatar();
 				float dist = std::sqrt(m_Actor->GetMoveDestDistSquare(m_BackupPos));
-				float perframetime = 0.016f * 2.5f;
+				float perframetime = 0.016f * 2.5f ;
 				float perframe_dist = dist / avatar->GroupFrameCount;
 				float velocity = perframe_dist / perframetime;
 				avatar->FrameInterval = perframetime;
 				m_Actor->SetVelocity(velocity);
-				m_Target->SetActionID(ACTION_BATIDLE);
 			}
 			else {
 				m_pASM->SetAction(ACTION_ATTACK);
@@ -449,7 +456,7 @@ void BeCastAction::Update()
 				anim->SetLoop(1);
 				anim->Pos.x = avatar->Pos.x;
 				anim->Pos.y = avatar->Pos.y - avatar->GetFrameKeyY() + avatar->GetFrameHeight() / 2;
-				anim->AddFrameCallback(anim->GroupFrameCount*5 / 6 , [this, anim]() {
+				anim->AddFrameCallback(anim->GroupFrameCount * 5 / 6, [this, anim]() {
 					Pos pos = m_Actor->GetPos();
 					pos.x = pos.x + MoveVec.x * 5;
 					pos.y = pos.y + MoveVec.y * 5;
@@ -560,6 +567,7 @@ void DeadFlyAction::Update()
 			m_Actor->SetPos(m_SavedPos);
 			m_Actor->SetDir(m_SavedDir);
 			m_Actor->SetActionID(ACTION_BATIDLE);
+			return;
 		}
 	}
 	else if (m_Dir.x >=0) {
@@ -569,6 +577,7 @@ void DeadFlyAction::Update()
 			m_Actor->SetPos(m_SavedPos);
 			m_Actor->SetDir(m_SavedDir);
 			m_Actor->SetActionID(ACTION_BATIDLE);
+			return;
 		}
 	}
 
