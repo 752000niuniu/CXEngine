@@ -126,248 +126,6 @@ void Action::Enter()
 {
 }
 
-ActionStateMachine::ActionStateMachine(Actor* _actor)
-	:m_Actor(_actor)
-{ 
-	m_TimeInterval = 0.016f * 5;
-	m_pCurrentAction = nullptr;
-	m_pPreviousAction = nullptr;
-	for (int action = ACTION_IDLE; action < ACTION_COUNT; action++) {
-		m_AvatarActions.insert({ action,nullptr });
-		m_WeaponActions.insert({ action,nullptr });
-	}
-	m_WeaponID = m_Actor->GetWeaponID();
-	m_AvatarID = m_Actor->GetRoleID();
-	m_ActionID = ACTION_IDLE;
-}
-
-ActionStateMachine::~ActionStateMachine()
-{
-	for (auto& it : m_AvatarActions) {
-		SafeDelete(it.second);
-	}
-	m_AvatarActions.clear();
-
-	for (auto& it : m_WeaponActions) {
-		SafeDelete(it.second);
-	}
-	m_WeaponActions.clear();
-}
-
-void ActionStateMachine::Update()
-{
-	if (m_AvatarID != m_Actor->GetAvatarID()) {
-		SetAvatar(m_Actor->GetAvatarID());
-	}
-	if (m_HasWeapon != (m_Actor->GetWeaponAvatarID() != "")) {
-		m_HasWeapon = (m_Actor->GetWeaponAvatarID() != "");
-	}
-	if (m_HasWeapon) {
-		if (m_WeaponID != m_Actor->GetWeaponAvatarID()) {
-			SetWeapon(m_Actor->GetWeaponAvatarID());
-		}
-	}
-
-	std::vector<Animation*> updateSet(m_Animations.begin(), m_Animations.end());
-	for (auto& it : updateSet) {
-		it->Update();
-	}
-	m_Animations.clear();
-	for (auto& it : updateSet) {
-		if (it->GetState() != ANIMATION_STOP) {
-			m_Animations.push_back(it);
-		}
-		else {
-			delete it;
-		}
-	}
-
-	if (m_pCurrentAction) {
-		m_pCurrentAction->Update();
-	}
-
-	auto* avatar = GetAvatar(m_ActionID);
-	if (!avatar)return;
-
-	if (HasWeapon() && action_is_show_weapon(m_ActionID)){
-		auto* weapon = GetWeapon(m_ActionID);
-		weapon->CurrentFrame = avatar->CurrentFrame;
-	}
-}
-
-void ActionStateMachine::Draw()
-{
-	auto* avatar = GetAvatar(m_ActionID);
-	if (!avatar)return;
-
-	Pos pos = m_Actor->GetPos();
-	int dir = m_Actor->GetDir();
-	if(m_Actor->IsLocal()){
-		int screenWidth = WINDOW_INSTANCE->GetWidth();
-		int screenHeight = WINDOW_INSTANCE->GetHeight();
-		int halfScreenWidth = screenWidth / 2;
-		int halfScreenHeight = screenHeight / 2; 
-		int mapWidth = m_Actor->GetScene()->GetGameMap()->GetWidth();
-		int mapHeight = m_Actor->GetScene()->GetGameMap()->GetHeight();
-
-		int px = m_Actor->GetX();
-		int py = m_Actor->GetY();
-
-		int maxMapOffsetX = mapWidth - halfScreenWidth;
-		int maxMapOffsetY = mapHeight - halfScreenHeight;
-
-		px = px < halfScreenWidth ? px :
-			(px > maxMapOffsetX ?
-			(screenWidth - (mapWidth - px)) : halfScreenWidth); 
-		py = py < halfScreenHeight ? py :
-			(py > maxMapOffsetY ? 
-			(screenHeight - (mapHeight - py)) : halfScreenHeight);
-
-		avatar->Pos.x = (float)px;
-		avatar->Pos.y = (float)py;
-	}
-	else {
-		if (m_Actor->GetScene() != nullptr&&m_Actor->GetScene()->GetGameMap() != nullptr) {
-			Pos p = GAME_INSTANCE->MapPosToScreenPos(m_Actor->GetPos());
-			avatar->Pos = p;
-		}
-		else{
-			avatar->Pos.x = pos.x;
-			avatar->Pos.y = pos.y;
-		}
-	}
-
-	avatar->Dir = dir;
-	avatar->Draw();
-	if (HasWeapon() && action_is_show_weapon(m_ActionID)) {
-		auto* weapon = GetWeapon(m_ActionID);
-		weapon->Pos.x = avatar->Pos.x;
-		weapon->Pos.y = avatar->Pos.y;
-		weapon->Dir = dir;
-		weapon->Draw();
-	}
-
-	for (auto& it : m_Animations) {
-		it->Draw();
-	}
-	if (m_pCurrentAction) {
-		m_pCurrentAction->Draw();
-	}
-}
-
-void ActionStateMachine::SetWeapon(CXString id)
-{
-	for (auto& it : m_WeaponActions) {
-		SafeDelete(it.second);
-	}
-	m_WeaponActions.clear();
-	m_WeaponID = id;
-	m_HasWeapon = id == "";
-}
-
-void ActionStateMachine::SetAvatar(CXString id)
-{
-	for (auto& it : m_AvatarActions) {
-		SafeDelete(it.second);
-	}
-	m_AvatarActions.clear();
-	m_AvatarID = id;
-}
-
-void ActionStateMachine::SetAction(int id)
-{
-	m_ActionID = id;
-	EnsureLoadAction(m_ActionID);
-
-	auto* avatar = GetAvatar(m_ActionID);
-	avatar->Reset();
-	if (!HasWeapon() || !action_is_show_weapon(m_ActionID))return;
-	auto* weapon = GetWeapon(m_ActionID);
-	weapon->Reset();
-}
-
-void ActionStateMachine::RestoreAction()
-{
-	if (m_pCurrentAction) {
-		delete m_pCurrentAction;
-		m_pCurrentAction = nullptr;
-	}
-	m_pCurrentAction = m_pPreviousAction;
-}
-
-void ActionStateMachine::ChangeAction(Action* action)
-{
-	if (m_pCurrentAction) {
-		m_pCurrentAction->Exit();
-	}
-	if (m_pPreviousAction) {
-		delete m_pPreviousAction;
-		m_pPreviousAction = nullptr;
-	}
-	m_pPreviousAction = m_pCurrentAction;
-	m_pCurrentAction = action;
-	if (m_pCurrentAction) {
-		m_pCurrentAction->Enter();
-	}
-}
-
-void ActionStateMachine::EnsureLoadAction(int action)
-{
-	if (action < ACTION_IDLE || action >= ACTION_COUNT)return;
-
-	if (m_AvatarActions[action] == nullptr) {
-		auto resid = RESOURCE_MANAGER_INSTANCE->GetActorActionResID(m_Actor->GetType(), m_AvatarID, action);
-		m_AvatarActions[action] = new Animation(resid);
-		m_AvatarActions[action]->FrameInterval = m_TimeInterval;
-		m_AvatarActions[action]->SetLoop(0);
-	}
-
-	if (m_HasWeapon) {
-		if (m_WeaponActions[action] == nullptr) {
-			auto resid = RESOURCE_MANAGER_INSTANCE->GetActionResID(AVATAR_TYPE_WEAPON, m_WeaponID, action);
-			m_WeaponActions[action] = new Animation(resid);
-			m_WeaponActions[action]->FrameInterval = m_TimeInterval;
-			m_WeaponActions[action]->SetLoop(0);
-
-		}
-	}
-}
-
-Animation* ActionStateMachine::GetAvatar(int action)
-{
-	if (action == -1)action = m_ActionID;
-	EnsureLoadAction(action);
-	return m_AvatarActions[action];
-}
-
-Animation* ActionStateMachine::GetWeapon(int action)
-{
-	if (action == -1)action = m_ActionID;
-	EnsureLoadAction(action);
-	return m_WeaponActions[action];
-}
-
-void ActionStateMachine::Reset()
-{
-	SetAvatar(m_Actor->GetAvatarID());
-	SetWeapon(m_Actor->GetWeaponAvatarID());
-}
-
-int ActionStateMachine::GetDirCount(int action)
-{
-	if (action == -1)action = m_ActionID;
-	if (m_AvatarActions[action]) {
-		return m_AvatarActions[action]->GroupCount;
-	}
-	return 4;
-}
-
-void ActionStateMachine::AddAnimation(Animation* anim)
-{
-	anim->Reset();
-	m_Animations.push_back(anim);
-}
-
 void AttackAction::Update()
 {
 	auto* avatar = m_pASM->GetAvatar();
@@ -619,7 +377,7 @@ void BeHitAction::Update()
 					pos.y = pos.y + MoveVec.y * 10;
 					m_Actor->SetPos(pos);
 				});
-				AnimationManager::GetInstance()->AddAnimation(anim);// ->AddAnimation(anim);
+				AnimationManager::GetInstance()->AddAnimation(anim); 
 				int tm = (int)(anim->GroupFrameCount*anim->FrameInterval * 1000);
 				avatar->Pause(tm);
 			}
@@ -829,4 +587,225 @@ void DeadFlyAction::Enter()
 	avatar->SetFrameInterval(0.016f * 4);
 	avatar->SetLoop(0);
 }
+
+
+ActionStateMachine::ActionStateMachine(Actor* _actor)
+	:m_Actor(_actor)
+{
+	m_TimeInterval = 0.016f * 5;
+	m_pCurrentAction = nullptr;
+	m_pPreviousAction = nullptr;
+	for (int action = ACTION_IDLE; action < ACTION_COUNT; action++) {
+		m_AvatarActions.insert({ action,nullptr });
+		m_WeaponActions.insert({ action,nullptr });
+	}
+	m_WeaponID = m_Actor->GetWeaponID();
+	m_AvatarID = m_Actor->GetRoleID();
+	m_ActionID = ACTION_IDLE;
+}
+
+ActionStateMachine::~ActionStateMachine()
+{
+	for (auto& it : m_AvatarActions) {
+		SafeDelete(it.second);
+	}
+	m_AvatarActions.clear();
+
+	for (auto& it : m_WeaponActions) {
+		SafeDelete(it.second);
+	}
+	m_WeaponActions.clear();
+}
+
+void ActionStateMachine::Update()
+{
+	if (m_AvatarID != m_Actor->GetAvatarID()) {
+		SetAvatar(m_Actor->GetAvatarID());
+	}
+	if (m_HasWeapon != (m_Actor->GetWeaponAvatarID() != "")) {
+		m_HasWeapon = (m_Actor->GetWeaponAvatarID() != "");
+	}
+	if (m_HasWeapon) {
+		if (m_WeaponID != m_Actor->GetWeaponAvatarID()) {
+			SetWeapon(m_Actor->GetWeaponAvatarID());
+		}
+	}
+
+	auto* avatar = GetAvatar(m_ActionID);
+	if (!avatar)return;
+
+	if (m_pCurrentAction) {
+		m_pCurrentAction->Update();
+	}
+
+	if (HasWeapon() && action_is_show_weapon(m_ActionID)) {
+		auto* weapon = GetWeapon(m_ActionID);
+		weapon->CurrentFrame = avatar->CurrentFrame;
+	}
+}
+
+void ActionStateMachine::Draw()
+{
+	auto* avatar = GetAvatar(m_ActionID);
+	if (!avatar)return;
+
+	Pos pos = m_Actor->GetPos();
+	int dir = m_Actor->GetDir();
+	if (m_Actor->IsLocal()) {
+		int screenWidth = WINDOW_INSTANCE->GetWidth();
+		int screenHeight = WINDOW_INSTANCE->GetHeight();
+		int halfScreenWidth = screenWidth / 2;
+		int halfScreenHeight = screenHeight / 2;
+		int mapWidth = m_Actor->GetScene()->GetGameMap()->GetWidth();
+		int mapHeight = m_Actor->GetScene()->GetGameMap()->GetHeight();
+
+		int px = m_Actor->GetX();
+		int py = m_Actor->GetY();
+
+		int maxMapOffsetX = mapWidth - halfScreenWidth;
+		int maxMapOffsetY = mapHeight - halfScreenHeight;
+
+		px = px < halfScreenWidth ? px :
+			(px > maxMapOffsetX ?
+			(screenWidth - (mapWidth - px)) : halfScreenWidth);
+		py = py < halfScreenHeight ? py :
+			(py > maxMapOffsetY ?
+			(screenHeight - (mapHeight - py)) : halfScreenHeight);
+
+		avatar->Pos.x = (float)px;
+		avatar->Pos.y = (float)py;
+	}
+	else {
+		if (m_Actor->GetScene() != nullptr&&m_Actor->GetScene()->GetGameMap() != nullptr) {
+			Pos p = GAME_INSTANCE->MapPosToScreenPos(m_Actor->GetPos());
+			avatar->Pos = p;
+		}
+		else {
+			avatar->Pos.x = pos.x;
+			avatar->Pos.y = pos.y;
+		}
+	}
+
+	avatar->Dir = dir;
+	avatar->Draw();
+	if (HasWeapon() && action_is_show_weapon(m_ActionID)) {
+		auto* weapon = GetWeapon(m_ActionID);
+		weapon->Pos.x = avatar->Pos.x;
+		weapon->Pos.y = avatar->Pos.y;
+		weapon->Dir = dir;
+		weapon->Draw();
+	}
+
+	if (m_pCurrentAction) {
+		m_pCurrentAction->Draw();
+	}
+}
+
+void ActionStateMachine::SetWeapon(CXString id)
+{
+	for (auto& it : m_WeaponActions) {
+		SafeDelete(it.second);
+	}
+	m_WeaponActions.clear();
+	m_WeaponID = id;
+	m_HasWeapon = id == "";
+}
+
+void ActionStateMachine::SetAvatar(CXString id)
+{
+	for (auto& it : m_AvatarActions) {
+		SafeDelete(it.second);
+	}
+	m_AvatarActions.clear();
+	m_AvatarID = id;
+}
+
+void ActionStateMachine::SetAction(int id)
+{
+	m_ActionID = id;
+	EnsureLoadAction(m_ActionID);
+
+	auto* avatar = GetAvatar(m_ActionID);
+	avatar->Reset();
+	if (!HasWeapon() || !action_is_show_weapon(m_ActionID))return;
+	auto* weapon = GetWeapon(m_ActionID);
+	weapon->Reset();
+}
+
+void ActionStateMachine::RestoreAction()
+{
+	if (m_pCurrentAction) {
+		delete m_pCurrentAction;
+		m_pCurrentAction = nullptr;
+	}
+	m_pCurrentAction = m_pPreviousAction;
+}
+
+void ActionStateMachine::ChangeAction(Action* action)
+{
+	if (m_pCurrentAction) {
+		m_pCurrentAction->Exit();
+	}
+	if (m_pPreviousAction) {
+		delete m_pPreviousAction;
+		m_pPreviousAction = nullptr;
+	}
+	m_pPreviousAction = m_pCurrentAction;
+	m_pCurrentAction = action;
+	if (m_pCurrentAction) {
+		m_pCurrentAction->Enter();
+	}
+}
+
+void ActionStateMachine::EnsureLoadAction(int action)
+{
+	if (action < ACTION_IDLE || action >= ACTION_COUNT)return;
+
+	if (m_AvatarActions[action] == nullptr) {
+		auto resid = RESOURCE_MANAGER_INSTANCE->GetActorActionResID(m_Actor->GetType(), m_AvatarID, action);
+		m_AvatarActions[action] = new Animation(resid);
+		m_AvatarActions[action]->FrameInterval = m_TimeInterval;
+		m_AvatarActions[action]->SetLoop(0);
+	}
+
+	if (m_HasWeapon) {
+		if (m_WeaponActions[action] == nullptr) {
+			auto resid = RESOURCE_MANAGER_INSTANCE->GetActionResID(AVATAR_TYPE_WEAPON, m_WeaponID, action);
+			m_WeaponActions[action] = new Animation(resid);
+			m_WeaponActions[action]->FrameInterval = m_TimeInterval;
+			m_WeaponActions[action]->SetLoop(0);
+
+		}
+	}
+}
+
+Animation* ActionStateMachine::GetAvatar(int action)
+{
+	if (action == -1)action = m_ActionID;
+	EnsureLoadAction(action);
+	return m_AvatarActions[action];
+}
+
+Animation* ActionStateMachine::GetWeapon(int action)
+{
+	if (action == -1)action = m_ActionID;
+	EnsureLoadAction(action);
+	return m_WeaponActions[action];
+}
+
+void ActionStateMachine::Reset()
+{
+	SetAvatar(m_Actor->GetAvatarID());
+	SetWeapon(m_Actor->GetWeaponAvatarID());
+}
+
+int ActionStateMachine::GetDirCount(int action)
+{
+	if (action == -1)action = m_ActionID;
+	if (m_AvatarActions[action]) {
+		return m_AvatarActions[action]->GroupCount;
+	}
+	return 4;
+}
+
 #endif

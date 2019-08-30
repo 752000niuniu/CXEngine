@@ -160,7 +160,6 @@ public:
 	int GetDirCount(int action = -1);
 
 	int GetActionID() { return m_ActionID; };
-	void AddAnimation(Animation* anim);
 private:
 	Actor * m_Actor;
 	float m_TimeInterval;
@@ -172,7 +171,6 @@ private:
 	Action* m_pCurrentAction;
 	std::map<int, Animation*> m_WeaponActions;
 	std::map<int, Animation*> m_AvatarActions;
-	std::vector<Animation*> m_Animations;
 };
 #endif // !SIMPLE_SERVER
 
