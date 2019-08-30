@@ -71,19 +71,19 @@ role_affix =
 action_affix = 
 {
 	idle      	=	{"静立",'站立','站立1','站立2'},
-	walk      	=	{"行走","行走2"},
+	walk      	=	{"行走","行走2",'走动'},
 	sit       	=	{"坐下",'静坐'},
-	angry     	=	{"愤怒","发怒"},
-	sayhi     	=	{"招呼","挥手"},
+	angry     	=	{"愤怒","发怒",'发火'},
+	sayhi     	=	{"招呼","挥手",'打招呼'},
 	dance     	=	{"舞蹈","跳舞"},
 	salute    	=	{"行礼","鞠躬"},
-	clps      	=	{"倒地"},
+	clps      	=	{"倒地",'死亡'},
 	cry       	=	{"哭泣"},
-	batidle   	=	{"待战","待站"},
+	batidle   	=	{"待战","待站",'战斗'},
 	attack    	=	{"攻击","攻击2","攻击1",'攻击效果','攻击1效果','攻击2效果'},
 	cast      	=	{"施法","法术"},
-	behit     	=	{"被击中"},
-	runto     	=	{"跑去","跑动"},
+	behit     	=	{"被击中",'被打'},
+	runto     	=	{"跑去","跑动",'向前冲'},
 	runback   	=	{"跑回","返回",'攻击返回','攻击返回1','攻击返回2'},
     defend    	=	{"防御"},
     unknown     =   {"X","不知",'法术效果'}
@@ -100,9 +100,9 @@ weapon_affix =
     RIBBON      =   {"飘带"},
     CLAW        =   {"爪刺"},
     FAN         =   {"扇","扇子"},
-    WAND        =   {"魔棒","棒"},
-    HAMMER      =   {"锤"},
-    WHIP        =   {"鞭"},
+    WAND        =   {"魔棒","棒",'棒子'},
+    HAMMER      =   {"锤",'锤子'},
+    WHIP        =   {"鞭",'鞭子'},
     RING        =   {"环圈","双环"},
     KNIFE       =   {"刀"},
     STAFF       =   {"法杖"},
@@ -580,28 +580,160 @@ function generate_avatar_role_tsv()
 end
 
 
-init_table_templates()
-generate_avatar_role_tsv()
+-- init_table_templates()
+-- generate_avatar_role_tsv()
 
-
-function generate_avatar_weapon_tsv()
+--抽取工具
+function new_parse_avatar_tsv_file(path)
+    local tbl = {}
+    local col_names = {}
+    local index = 1
+    for line in io.lines(path) do  
+        if index == 1 then
+            for col, name in ipairs(utils_string_split(line,'\t')) do
+                if name~='' then
+                    table.insert(col_names, name)
+                end
+            end
+            -- cxlog_info('colname :'..cjson.encode(col_names))
+        else
+            if line~='' and not line:match('^%*') then
+                local row = {}
+                local vals = utils_string_split_fixcnt(line,'\t',#col_names)
+                for i,col in ipairs(col_names) do
+                    row[col] = vals[i]
+                end
+                table.insert(tbl,row)
+            end
+        end
+        index = index + 1
+    end
+    if #col_names>0 then
+        table.sort(tbl,function(a,b) return a[col_names[1]]<b[col_names[1]] end)
+    end
+    return tbl, col_names
 end
 
-function generate_avatar_pet_tsv()
+
+function new_shapewdf_update_npc_avatar(tbl,type,code,resid)
+
+end
+function new_shapewdf_update_weapon_avatar(tbl,code,resid)
+
 end
 
-function generate_avatar_npc_tsv()
+function new_shapewdf_update_role_avatar(tbl,code,resid)
+    local strs = utils_string_split(code,' ')
+    assert(#strs < 4, 'code:..'..code..' resid..'..resid)
+
+    local role = find_role_key(strs[1])
+    local action = find_action_key(strs[2])
+    if #strs==2 then
+        for ID,v in pairs(tbl) do
+            if ID:match(role) then
+                if v[action]~=resid then
+                    v[action] = resid
+                end
+            end
+        end
+        return true
+    elseif #strs==3 then
+        local weapon_type = find_weapon_key(strs[3])
+        local id = role..'-'..weapon_type 
+        if tbl[id] then
+            tbl[id][action] = resid
+        end
+        return true
+    end
+    return false
 end
 
+function simple_read_avatar_tbl(path)
+    local tbl = new_parse_avatar_tsv_file(vfs_makepath(path))
+    local new_tbl = {}
+    for i,v in ipairs(tbl) do
+        new_tbl[v.ID] = v
+    end
+    return new_tbl
+end
 
-function search_item_res_id(name)
+function new_shape_wdf_write_avater_file(path, header_keys, av_table)
+    cxlog_info('new_shape_wdf_write_avater_file', path)
+    local col_names = {}
+    for i,k in ipairs(header_keys) do table.insert(col_names, k) end
+    for i,k in ipairs(action_affix_keys) do table.insert(col_names, k) end
+
+    local file = io.open(path, 'w')
+    for i,name in ipairs(col_names) do
+        file:write(name..'\t')
+    end
+    file:write('\n*\n')
     
+    local av_rows = sort_and_convert_tbl_by_ID(av_table)
+    for i,v in ipairs(av_rows) do
+        for ci,key in ipairs(col_names) do
+            if v[key] then
+                if type(v[key]) =='table' then
+                    for _i, _v in ipairs(v[key]) do
+                        if _i == 1 then
+                            file:write( _v)
+                        else
+                            file:write( ','.._v)
+                        end
+                    end
+                    file:write('\t')
+                else
+                    file:write(v[key]..'\t')
+                end
+            end
+        end
+        file:write('\n')
+    end
+    file:close()
 end
 
-function search_shape_res_id(name)
+function parse_second_shape_wdf_ini()
+    local avatar_role_tbl = simple_read_avatar_tbl('res/tables/avatar_role.tsv')
+    local avatar_weapon_tbl = simple_read_avatar_tbl('res/tables/avatar_weapon.tsv')
+    local avatar_npc_tbl = simple_read_avatar_tbl('res/tables/avatar_npc.tsv')
 
+    local parse_err_tbl = {}
+    do
+        local current_type = ''
+        for line in io.lines(vfs_get_tablepath('second/shape.wdf.parsed.ini')) do
+            if line:match('=') then
+                local ok = false
+                local strs = utils_string_split(line,'=')
+                local code = strs[1]
+                local resid = SHAPEWDF..'-'..strs[2]
+                if current_type == 'npc' then
+                    ok = new_shapewdf_update_npc_avatar(avatar_npc_tbl,'npc',code,resid)
+                elseif current_type=='battle_npc' then
+                    ok = new_shapewdf_update_npc_avatar(avatar_npc_tbl,'battle_npc',code,resid)
+                elseif current_type=='pet' then
+                    ok =new_shapewdf_update_npc_avatar(avatar_npc_tbl,'pet',code,resid)
+                elseif current_type=='item' then
+                elseif current_type=='weapon' then
+                    ok =new_shapewdf_update_weapon_avatar(avatar_weapon_tbl,code,resid)
+                elseif current_type=='role' then
+                    ok =new_shapewdf_update_role_avatar(avatar_role_tbl,code,resid)
+                elseif current_type =='zodiac' then
+                    ok = false
+                end
+                if not ok then
+                    table.insert(parse_err_tbl,line)
+                end
+            elseif line~='' then 
+                current_type = line
+            end
+        end
+
+        new_shape_wdf_write_avater_file(vfs_makepath('res/tables/avatar_role.tsv'),
+            {'ID','name','role','weapon_type'},avatar_role_tbl)
+    end
+    
+--    local avatar_npc_path = vfs_makepath('res/tables/avatar_npc.tsv')
+--    local avatar_weapon_path = vfs_makepath('res/tables/avatar_weapon.tsv')
 end
 
-function search_magic_res_id(name)
-
-end
+parse_second_shape_wdf_ini()

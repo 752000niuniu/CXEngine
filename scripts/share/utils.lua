@@ -10,6 +10,20 @@ function utils_string_split(str, cut)
     return res
 end
 
+
+function utils_string_split_fixcnt(str, cut, fixcnt)
+    local strs = utils_str_split(str,cut)
+    while #strs > fixcnt do
+        table.remove(strs,#strs)
+    end
+    while #strs < fixcnt do
+        table.insert(strs,'')
+    end
+    assert(#strs==fixcnt,'fixcnt is error')
+    return strs 
+end
+
+
 function utils_dump_table(t)
     if not t or type(t)~='table' then return end
    
