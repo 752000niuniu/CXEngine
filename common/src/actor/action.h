@@ -53,7 +53,6 @@ public:
 	virtual void Enter();
 	
 private:
-	BeatNumber* m_BeatNumber;
 	Actor * m_Target;
 	Pos m_BackupPos;
 	int m_BackupActionID;
@@ -74,7 +73,6 @@ public:
 	virtual void Exit();
 	virtual void Enter();
 private:
-	BeatNumber* m_BeatNumber;
 	Pos m_AttackVec;
 	Actor* m_Target;
 	uint64_t m_Skill;
@@ -118,6 +116,7 @@ public:
 	virtual  void Update();
 	virtual void Enter();
 private:
+	int m_SavedDir;
 	Pos m_Dir;
 	Pos m_FlyPos;
 	Pos m_SavedPos;

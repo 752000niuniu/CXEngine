@@ -800,7 +800,8 @@ void DeadFlyAction::Update()
 			Action* action = new Action(m_Actor);
 			m_Actor->GetASM()->ChangeAction(action);
 			m_Actor->SetPos(m_SavedPos);
-			m_Actor->SetActionID(ACTION_IDLE);
+			m_Actor->SetDir(m_SavedDir);
+			m_Actor->SetActionID(ACTION_BATIDLE);
 		}
 	}
 	else if (m_Dir.x >=0) {
@@ -808,7 +809,8 @@ void DeadFlyAction::Update()
 			Action* action = new Action(m_Actor);
 			m_Actor->GetASM()->ChangeAction(action);
 			m_Actor->SetPos(m_SavedPos);
-			m_Actor->SetActionID(ACTION_IDLE);
+			m_Actor->SetDir(m_SavedDir);
+			m_Actor->SetActionID(ACTION_BATIDLE);
 		}
 	}
 
@@ -823,6 +825,7 @@ void DeadFlyAction::Enter()
 	m_pASM->SetAction(ACTION_BEHIT);
 	m_SavedPos = m_Actor->GetPos();
 	auto* avatar = m_pASM->GetAvatar();
+	m_SavedDir = avatar->GetDir();
 	avatar->SetFrameInterval(0.016f * 4);
 	avatar->SetLoop(0);
 }

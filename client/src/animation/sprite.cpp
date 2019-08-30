@@ -321,7 +321,7 @@ BeatNumber::BeatNumber() :
 	m_Number(0),
 	m_Pos(0, 0),
 	m_PlayTime(0),
-	m_BeatTime(0.3f),
+	m_BeatTime(0.2f),
 	m_AdvanceX(12.f),
 	m_BeatHeights(2.5f),
 	m_Visible(false),
