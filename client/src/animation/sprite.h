@@ -122,7 +122,10 @@ public:
 	void Beat();
 	void SetVisible(bool visible) { m_Visible = visible; };
 	bool GetVisible() { return m_Visible; };
+	void AddPlayCallback(int ms, std::function<void()> cb) { m_Callbacks[ms] = cb; };
+	
 private:
+	std::map<int, std::function<void()>> m_Callbacks;
 	bool m_bBeat;
 	bool m_Visible;
 	float m_PlayTime;
@@ -142,11 +145,13 @@ class AnimationManager :public Singleton<AnimationManager>
 public:
 	AnimationManager() ;
 	~AnimationManager() ;
-	void AddQueue(Animation* animation);
+	void AddAnimation(Animation* animation);
+	void AddBeatNumber(BeatNumber* bn);
 	void Update();
 	void Draw();
 private:
-	std::vector<Animation*> m_Animations;
+	std::deque<Animation*> m_Animations;
+	std::deque<BeatNumber*> m_BeatNumbers;
 	
 };
 

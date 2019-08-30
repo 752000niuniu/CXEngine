@@ -27,11 +27,7 @@ function OnSceneInit()
     MagicAnim:SetLoop(0)
     MagicAnim:SetFrameInterval(0.016*8)
     -- MagicAnim:SetVisible(false)
-
     BeatNumber = beat_number_create()
-
-
-
     player = actor_manager_create_actor(os.time())
     player:SetAvatarID('JXK-SWORD')
     player:SetWeaponAvatarID('JXK-SWORD-030-X')
@@ -239,15 +235,13 @@ function OnSceneImGuiUpdate()
 end
 
 function OnSceneUpdate()
-    player:Update()
-    enemy:Update()
+   	actor_manager_update()
     MagicAnim:Update()
     BeatNumber:Update()
 end
 
 function OnSceneDraw()
-    enemy:Draw()
-    player:Draw()
+    actor_manager_draw()
     MagicAnim:Draw()
     BeatNumber:Draw()
 end

@@ -416,7 +416,8 @@ void BeatNumber::Beat()
 
 AnimationManager::AnimationManager()
 {
-
+	m_Animations.clear();
+	m_BeatNumbers.clear();
 }
 
 AnimationManager::~AnimationManager()
@@ -424,26 +425,38 @@ AnimationManager::~AnimationManager()
 
 }
 
-void AnimationManager::AddQueue(Animation* animation)
+void AnimationManager::AddAnimation(Animation* animation)
 {
-	animation->Reset();
-//	animation->Play();
 	m_Animations.push_back(animation);
+}
+
+void AnimationManager::AddBeatNumber(BeatNumber* bn)
+{
+	m_BeatNumbers.push_back(bn);
 }
 
 void AnimationManager::Update()
 {
-	std::vector<Animation*> updateSet(m_Animations.begin(), m_Animations.end());
-	for (auto& it : updateSet) {
-		it->Update();
-	}
-	m_Animations.clear();
-	for (auto& it : updateSet) {
-		if (it->GetState() != ANIMATION_STOP) {
-			m_Animations.push_back(it);
+	for (auto it = m_Animations.begin(); m_Animations.size() != 0 && it != m_Animations.end(); ) {
+		(*it)->Update();
+		if ((*it)->GetState() == ANIMATION_STOP) {
+			delete *it;
+			m_Animations.erase(it);
 		}
 		else {
-			delete it;
+			++it;
+		}
+	}
+
+	for (auto it = m_BeatNumbers.begin(); m_BeatNumbers.size() != 0 && it != m_BeatNumbers.end();)
+	{
+		(*it)->Update();
+		if ((*it)->GetVisible() == false) {
+			delete *it;
+			m_BeatNumbers.erase(it);
+		}
+		else {
+			++it;
 		}
 	}
 }
@@ -452,6 +465,10 @@ void AnimationManager::Draw()
 {
 	for (auto& it : m_Animations) {
 		it->Draw();
+	}
+	for (auto it = m_BeatNumbers.begin(); it != m_BeatNumbers.end(); it++)
+	{
+		(*it)->Draw();
 	}
 }
 

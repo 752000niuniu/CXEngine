@@ -47,19 +47,6 @@ function actor_manager_init()
     -- end
 end
 
-function actor_manager_update()
-    for i,actor in ipairs(tActors) do
-        actor:update()
-    end
-end
-
-function actor_manager_draw()
-    for i,actor in ipairs(tActors) do
-        actor:draw()
-    end
-
-end
-
 function actor_manager_deinit()
     
 end

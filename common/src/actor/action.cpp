@@ -113,7 +113,7 @@ void Action::Update()
 {
 	int action = m_Actor->GetActionID();
 	if (action != m_pASM->GetActionID()) {
-			m_pASM->SetAction(action);
+		m_pASM->SetAction(action);
 	}
 
 	auto* avatar = m_pASM->GetAvatar();
@@ -139,7 +139,6 @@ ActionStateMachine::ActionStateMachine(Actor* _actor)
 	m_WeaponID = m_Actor->GetWeaponID();
 	m_AvatarID = m_Actor->GetRoleID();
 	m_ActionID = ACTION_IDLE;
-	m_BeatNumber = new BeatNumber();
 }
 
 ActionStateMachine::~ActionStateMachine()
@@ -153,8 +152,6 @@ ActionStateMachine::~ActionStateMachine()
 		SafeDelete(it.second);
 	}
 	m_WeaponActions.clear();
-
-	SafeDelete(m_BeatNumber);
 }
 
 void ActionStateMachine::Update()
@@ -184,7 +181,6 @@ void ActionStateMachine::Update()
 			delete it;
 		}
 	}
-	m_BeatNumber->Update();
 
 	if (m_pCurrentAction) {
 		m_pCurrentAction->Update();
@@ -257,7 +253,6 @@ void ActionStateMachine::Draw()
 	if (m_pCurrentAction) {
 		m_pCurrentAction->Draw();
 	}
-	m_BeatNumber->Draw();
 }
 
 void ActionStateMachine::SetWeapon(CXString id)
@@ -423,9 +418,15 @@ void AttackAction::Update()
 				BeHitAction* behit = new BeHitAction(m_Target, m_Actor);
 				behit->MoveVec = m_AttackVec;
 				m_Target->GetASM()->ChangeAction(behit);
-				avatar->Pause(200);
-			
-				m_Target->GetASM()->GetBeatNumber()->Beat();
+				if(m_Target->IsDead()){
+					avatar->Pause(500);
+				}else{
+					avatar->Pause(200);
+				}
+				
+
+				m_BeatNumber->Beat();
+				AnimationManager::GetInstance()->AddBeatNumber(m_BeatNumber);
 			}
 		}
 	}
@@ -460,6 +461,9 @@ void AttackAction::Enter()
 	m_BackupPos = m_Actor->GetPos();
 
 	if (m_Target) {
+		int dead = (int)RANDOM_INSTANCE->NextInt(0, 1);
+		m_Target->SetDead(dead);
+
 		glm::vec2  v(m_Target->GetPos().x - m_Actor->GetPos().x, m_Target->GetPos().y - m_Actor->GetPos().y);
 		v = glm::normalize(v);
 		m_AttackVec.x = v.x ;
@@ -503,9 +507,9 @@ void AttackAction::Enter()
 			m_Target->ReverseDir();
 			m_Target->SetActionID(ACTION_BATIDLE);
 
-			
+			m_BeatNumber = new BeatNumber();
 			float bny = (float)(m_Target->GetY() - targetAvatar->GetFrameKeyY() + targetAvatar->GetFrameHeight() / 2);
-			m_Target->GetASM()->GetBeatNumber()->SetPos((float)m_Target->GetX(), bny);
+			m_BeatNumber->SetPos((float)m_Target->GetX(), bny);
 			std::set<int> randoms;
 			randoms.insert(RANDOM_INSTANCE->NextInt(10, 99));
 			randoms.insert(RANDOM_INSTANCE->NextInt(100, 999));
@@ -517,7 +521,7 @@ void AttackAction::Enter()
 			while (cnt--) {
 				it++;
 			}
-			m_Target->GetASM()->GetBeatNumber()->SetNumber(*it);
+			m_BeatNumber->SetNumber(*it);
 		}
 	}
 
@@ -550,7 +554,8 @@ void CastAction::Update()
 				action->MoveVec = m_AttackVec;
 				m_Target->GetASM()->ChangeAction(action);
 
-				m_Target->GetASM()->GetBeatNumber()->Beat();
+				m_BeatNumber->Beat();
+				AnimationManager::GetInstance()->AddBeatNumber(m_BeatNumber);
 			}
 		}
 	}
@@ -563,14 +568,18 @@ void CastAction::Exit()
 void CastAction::Enter()
 {
 	if(m_Target){
+		int dead = (int)RANDOM_INSTANCE->NextInt(0, 1);
+		m_Target->SetDead(dead);
+
 		glm::vec2  v(m_Target->GetPos().x - m_Actor->GetPos().x, m_Target->GetPos().y - m_Actor->GetPos().y);
 		v = glm::normalize(v);
 		m_AttackVec.x = v.x;
 		m_AttackVec.y = v.y;
 
+		m_BeatNumber = new BeatNumber();
 		auto* targetAvatar = m_Target->GetASM()->GetAvatar(ACTION_BEHIT);
 		float bny = (float)(m_Target->GetY() - targetAvatar->GetFrameKeyY() + targetAvatar->GetFrameHeight() / 2);
-		m_Target->GetASM()->GetBeatNumber()->SetPos((float)m_Target->GetX(), bny);
+		m_BeatNumber->SetPos((float)m_Target->GetX(), bny);
 		std::set<int> randoms;
 		randoms.insert(RANDOM_INSTANCE->NextInt(10, 99));
 		randoms.insert(RANDOM_INSTANCE->NextInt(100, 999));
@@ -582,7 +591,7 @@ void CastAction::Enter()
 		while (cnt--) {
 			it++;
 		}
-		m_Target->GetASM()->GetBeatNumber()->SetNumber(*it);
+		m_BeatNumber->SetNumber(*it);
 	}
 	
 	m_pASM->SetAction(ACTION_BATIDLE);
@@ -597,19 +606,29 @@ void BeHitAction::Update()
 	int action = m_pASM->GetActionID();
 	if (action == ACTION_BEHIT) {
 		if (avatar->IsGroupEndUpdate()) {
-			Pos pos = m_Actor->GetPos();
-			pos.x = pos.x - MoveVec.x * 20;
-			pos.y = pos.y - MoveVec.y * 20;
-			m_Actor->SetPos(pos);
-			m_pASM->SetAction(ACTION_BATIDLE);
-
-			//DeadFlyAction* action = new DeadFlyAction(m_Actor, MoveVec);
-			//m_pASM->ChangeAction(action);
+			if(m_Actor->IsDead()){
+				DeadFlyAction* action = new DeadFlyAction(m_Actor, MoveVec);
+				m_pASM->ChangeAction(action);
+			}else{
+				Pos pos = m_Actor->GetPos();
+				pos.x = pos.x - MoveVec.x * 20;
+				pos.y = pos.y - MoveVec.y * 20;
+				m_Actor->SetPos(pos);
+				m_pASM->SetAction(ACTION_BATIDLE);
+			}
 		}
 		else if (avatar->IsFrameUpdate()) {
 			if (avatar->CurrentFrame == 1) {
-				
-				Animation* anim = new Animation(ADDONWDF, 0x1D3FF13C);
+				std::set<uint32_t>  wasids;
+				wasids.insert(0xECD0E003);//±¬»÷
+				wasids.insert(0x1D3FF13C);//±»»÷ÖÐ
+				wasids.insert(0x3622636F);//·ÀÓù
+				int cnt = (int)RANDOM_INSTANCE->NextInt(0, (int)wasids.size() - 1);
+				auto it = wasids.begin();
+				while (cnt--) {
+					it++;
+				}
+				Animation* anim = new Animation(ADDONWDF, *it);
 				anim->SetLoop(1);
 				anim->Pos.x = avatar->Pos.x;
 				anim->Pos.y = avatar->Pos.y - avatar->GetFrameKeyY() + avatar->GetFrameHeight() / 2.0f;
@@ -630,7 +649,7 @@ void BeHitAction::Update()
 					pos.y = pos.y + MoveVec.y * 10;
 					m_Actor->SetPos(pos);
 				});
-				m_pASM->AddAnimation(anim);
+				AnimationManager::GetInstance()->AddAnimation(anim);// ->AddAnimation(anim);
 				int tm = (int)(anim->GroupFrameCount*anim->FrameInterval * 1000);
 				avatar->Pause(tm);
 			}
@@ -661,11 +680,17 @@ void BeCastAction::Update()
 	int action = m_pASM->GetActionID();
 	if (action == ACTION_BEHIT) {
 		if (avatar->IsGroupEndUpdate()) {
-			Pos pos = m_Actor->GetPos();
-			pos.x = pos.x - MoveVec.x * 5;
-			pos.y = pos.y - MoveVec.y * 5;
-			m_Actor->SetPos(pos);
-			m_pASM->SetAction(ACTION_BATIDLE);
+			if(m_Actor->IsDead()){
+				DeadFlyAction* action = new DeadFlyAction(m_Actor, MoveVec);
+				m_pASM->ChangeAction(action);
+				m_pASM->GetAvatar()->Pause(100);
+			}else{
+				Pos pos = m_Actor->GetPos();
+				pos.x = pos.x - MoveVec.x * 5;
+				pos.y = pos.y - MoveVec.y * 5;
+				m_Actor->SetPos(pos);
+				m_pASM->SetAction(ACTION_BATIDLE);	
+			}
 		}
 		else if (avatar->IsFrameUpdate()) {
 			if (avatar->CurrentFrame == 1) {
@@ -680,10 +705,9 @@ void BeCastAction::Update()
 					pos.y = pos.y + MoveVec.y * 5;
 					m_Actor->SetPos(pos);
 				});
-				m_pASM->AddAnimation(anim);
+				AnimationManager::GetInstance()->AddAnimation(anim);
 				int tm = (int)(anim->GroupFrameCount*anim->FrameInterval * 1000);
 				avatar->Pause(tm);
-
 			}
 		}
 	}

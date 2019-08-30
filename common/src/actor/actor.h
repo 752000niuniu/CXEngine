@@ -144,6 +144,8 @@ public:
 	uint64_t GetCastID() { return m_CastID; };
 	void SetCastID(uint64_t id) { m_CastID = id; }
 
+	bool IsDead() {return m_bDead;}
+	void SetDead(bool dead) { m_bDead = dead; }
 #ifndef SIMPLE_SERVER
 	ActionStateMachine* GetASM() { return m_ASM; };
 	Bound GetViewBounds() override;
@@ -154,7 +156,7 @@ public:
 protected:
 	int m_ActorID;
 	bool m_IsAutoRun;
-
+	bool m_bDead;
 	float m_FrameSpeed;
 	int m_ActorType;
 	std::string m_NickName;

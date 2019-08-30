@@ -7,6 +7,7 @@
 #include "scene/game_map.h"
 #include "utils.h"
 #include "cxmath.h"
+#include "animation/sprite.h"
 
 std::map<uint64_t, Actor*> g_Players;
 uint64_t g_LocalPid = 0;
@@ -61,39 +62,26 @@ void actor_manager_update()
 	{
 		it.second->OnUpdate();
 	}
+	AnimationManager::GetInstance()->Update();
 }
 
 void actor_manager_draw()
 {
 #ifndef SIMPLE_SERVER
-
-	auto* localPlayer = actor_manager_fetch_local_player();
-	if (localPlayer == nullptr)return;
-
-	BaseScene* scene = scene_manager_fetch_scene(localPlayer->GetSceneID());
-	if (scene == nullptr || scene->GetGameMap() == nullptr)return;
-
 	for (auto& it : g_Players)
 	{
 		Actor* player = it.second;
-		if (localPlayer == player)
+		if (player->IsLocal())
 		{
 			if (SCENE_MANAGER_INSTANCE->IsDrawStrider()) {
-				localPlayer->OnDraw();
-			}
-			if (SCENE_MANAGER_INSTANCE->IsDrawMask()) {
-				scene->GetGameMap()->DrawMask(localPlayer->GetX(), localPlayer->GetY(), (localPlayer)->GetY());
-			}
-		}
-		else {
-			Pos lpos = localPlayer->GetPos();
-			Pos pos = player->GetPos();
-			if (GMath::Astar_GetDistanceSquare(lpos.x, lpos.y, pos.x, pos.y) <= 400 * 400) {
 				player->OnDraw();
 			}
 		}
-		
+		else {
+			player->OnDraw();
+		}
 	}
+	AnimationManager::GetInstance()->Draw();
 #endif // !SIMPLE_SERVER
 }
 int lua_actor_manager_create_player(lua_State*L)
@@ -169,7 +157,9 @@ void luaopen_actor_manager(lua_State* L) {
 	script_system_register_luac_function_with_name(L, "scene_manager_fetch_local_player", lua_actor_manager_fetch_local_player);
 
 	script_system_register_luac_function_with_name(L, "actor_manager_fetch_all_players", lua_actor_manager_fetch_all_players);
-	
+
+	script_system_register_function(L, actor_manager_update);
+	script_system_register_function(L, actor_manager_draw);
 	script_system_register_function(L, actor_manager_set_scene);
 	script_system_register_luac_function(L, actor_manager_set_local_player);
 	

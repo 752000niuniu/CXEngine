@@ -53,6 +53,7 @@ public:
 	virtual void Enter();
 	
 private:
+	BeatNumber* m_BeatNumber;
 	Actor * m_Target;
 	Pos m_BackupPos;
 	int m_BackupActionID;
@@ -72,6 +73,7 @@ public:
 	virtual void Exit();
 	virtual void Enter();
 private:
+	BeatNumber* m_BeatNumber;
 	Pos m_AttackVec;
 	Actor* m_Target;
 	uint64_t m_Skill;
@@ -159,7 +161,6 @@ public:
 
 	int GetActionID() { return m_ActionID; };
 	void AddAnimation(Animation* anim);
-	BeatNumber* GetBeatNumber() { return m_BeatNumber; }
 private:
 	Actor * m_Actor;
 	float m_TimeInterval;
@@ -172,7 +173,6 @@ private:
 	std::map<int, Animation*> m_WeaponActions;
 	std::map<int, Animation*> m_AvatarActions;
 	std::vector<Animation*> m_Animations;
-	BeatNumber* m_BeatNumber;
 };
 #endif // !SIMPLE_SERVER
 

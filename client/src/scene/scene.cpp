@@ -212,7 +212,9 @@ void Scene::Draw()
 
 	actor_manager_draw();
 
-	
+	if (m_Map&&localPlayer) {
+		m_Map->DrawMask(localPlayer->GetX(), localPlayer->GetY(), localPlayer->GetY());
+	}
 	//if (GetLocalPlayer())GetLocalPlayer()->SetAutoRun(SCENE_MANAGER_INSTANCE->IsAutoRun());
 
 	if(s_Chat)

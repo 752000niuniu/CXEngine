@@ -40,7 +40,6 @@ function on_script_system_update()
     timer_manager_update()
     resource_manager_update()
     scene_manager_update()
-    actor_manager_update()
     return true
 end
 
