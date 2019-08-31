@@ -92,12 +92,14 @@ void Actor::OnDraw()
 	if (!m_Name.empty())
 	{
 		auto* avatar = m_ASM->GetAvatar();
-		auto green = glm::vec3(115 / 255.0f, 1.0f, 137 / 255.0f);
-		TextRenderer::GetInstance()->DrawTextC(m_Name.c_str(),
-			((int)avatar->Pos.x),
-			((int)avatar->Pos.y + 20),
-			TextRenderer::CENTER
-		);
+		if (avatar) {
+			auto green = glm::vec3(115 / 255.0f, 1.0f, 137 / 255.0f);
+			TextRenderer::GetInstance()->DrawTextC(m_Name.c_str(),
+				((int)avatar->Pos.x),
+				((int)avatar->Pos.y + 20),
+				TextRenderer::CENTER
+			);
+		}
 	}
 
 	if (m_SayDuration > 0)
@@ -431,8 +433,15 @@ int actor_move_to(lua_State* L){
 	Actor* actor = lua_check_actor(L, 1);
 	float x = (float)lua_tonumber(L, 2);
 	float y = (float)lua_tonumber(L, 3);
+#ifndef SIMPLE_SERVER
+	PathMoveAction* action = dynamic_cast<PathMoveAction*>(actor->GetASM()->GetAction());
+	if (action == nullptr){
+		action = new PathMoveAction(actor);
+		actor->GetASM()->ChangeAction(action);
+	}
+#endif
 	actor->GetMoveHandle()->MoveTo(x, y);
-	
+	actor->GetASM()->Update();
 	return 0;
 }
 int actor_say(lua_State* L) {

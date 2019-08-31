@@ -127,6 +127,7 @@ function on_game_imgui_update(name)
     if imgui.Button('RELOAD') then
         actor_manager_clear_all()
         scene_manager_reload(name)
+        script_system_dofile('../share/utils.lua')
         script_system_dofile('editor/imgui_editor.lua')
         collectgarbage()
         return

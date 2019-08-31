@@ -1,4 +1,13 @@
 
+function utils_fetch_sort_keys(tbl)
+    local kset = {}
+    for k,v in pairs(tbl) do
+        table.insert(kset,k)
+    end
+    table.sort(kset)
+    return kset
+end
+
 function utils_string_split(str, cut)
     str = str..cut
     local pattern  = '(.-)'..cut
@@ -45,3 +54,29 @@ function utils_dump_table(t)
     end
 end
 
+function imgui_std_horizontal_button_layout(tbl, next_fn, on_click)
+    local line_width = imgui.GetContentRegionAvailWidth()
+    local cx, cy = imgui.GetCursorPos()
+    local layout_x = cx
+    do
+        local st,v,k
+        while true do
+            st, v, k = next_fn(tbl, st)
+            if st == nil then break end
+            if k == nil then k = st end
+            if imgui.Button(k) then
+                on_click(k,v)
+            end
+            local iw,ih = imgui.GetItemRectSize()
+            layout_x = layout_x + iw + 8
+            if layout_x < line_width-iw-8 then
+                imgui.SameLine()
+            else
+                layout_x = cx 
+            end
+        end
+        if layout_x~= cx then
+            imgui.NewLine()
+        end
+    end
+end

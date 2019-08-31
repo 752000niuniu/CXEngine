@@ -31,87 +31,92 @@ function fetch_weapon_keys(tbl, avatar_key)
     return weapon_keys
 end
 
+
 function on_avatar_editor_update()
     local player = actor_manager_fetch_local_player()
     if not player then return end
     imgui.Begin('AvatarEditor')
 
     if imgui.CollapsingHeader('AvatarRole') then
-        local avatar_role_tbl =  content_system_get_table('role')    
+        local avatar_role_tbl = content_system_get_table('role')    
         local role_keys = fetch_role_keys(avatar_role_tbl)
-        for i,k in ipairs(role_keys) do
-            if imgui.Button(k) then
-                player:SetAvatarID(k)
-                player:SetWeaponAvatarID('')
-            end
-            if i%6~=0 then
-                imgui.SameLine()
-            end
-        end
+        imgui_std_horizontal_button_layout(avatar_role_tbl,function(t,st)
+            st = st==nil and 1 or (st+1)
+            if st>#role_keys then return nil end
+            return st,t[st],role_keys[st]
+        end, function(k,v)
+            player:SetAvatarID(k)
+            player:SetWeaponAvatarID('')
+        end)
     end
     if imgui.CollapsingHeader('AvatarWeapon') then
         local avatar_weapon_tbl =  content_system_get_table('weapon')    
-        local weapon_keys = fetch_weapon_keys(avatar_weapon_tbl, player:GetAvatarID())
-        for i,k in ipairs(weapon_keys) do
-            if imgui.Button(k) then
-                player:SetWeaponAvatarID(k)
-            end
-            if i%3~=0 then
-                imgui.SameLine()
-            end
-        end
+        local avatar_key = player:GetAvatarID()
+        local keys = fetch_weapon_keys(avatar_weapon_tbl,avatar_key)
+        imgui_std_horizontal_button_layout(avatar_weapon_tbl,function(t,st)
+            st = st==nil and 1 or (st+1)
+            if st>#keys then return nil end
+            return st,keys[st],keys[st]
+        end, function(k,v)
+            player:SetWeaponAvatarID(k)
+        end)
+
         if imgui.Button('DropWeapon') then
             player:SetWeaponAvatarID('')
         end
     end
 
     if imgui.CollapsingHeader('PlayAction') then
-        for i=0,action_system_get_action_size()-1 do
-            if imgui.Button(action_system_get_action_name(i)) then
-                player:SetActionID(i)
-            end
-            if i%4~=0  then
-                imgui.SameLine()
-            end
-        end
+        imgui_std_horizontal_button_layout({},function(t, st)
+            st = st==nil and 0 or (st+1) 
+            if st == action_system_get_action_size() then return nil end
+            return st, st, action_system_get_action_name(st)
+        end, 
+        function(k,v)
+            player:SetActionID(v)
+        end)
     end
 
     if imgui.CollapsingHeader('PlayerDir') then
-        for i=0,7 do
-            if imgui.Button(DIR_NAMES[i]) then
-                player:SetDir(i)
-            end
-        end
+        imgui_std_horizontal_button_layout(DIR_NAMES,function(t, st)
+            st = st==nil and 0 or (st+1) 
+            if st == 8 then return nil end
+            return st, st, t[st]
+        end, 
+        function(i,v)
+            player:SetDir(v)
+        end)
     end
 
     if imgui.CollapsingHeader('PlayerBattle') then
+        local cx,cy = imgui.GetCursorPos()
         if imgui.Button('Attack') then
             local players = actor_manager_fetch_all_players()
             for i,v in ipairs(players) do
-                if not v:IsLocal()  then
+                if not v:IsLocal() then
                     player:PlayAttack(v)
                     break
                 end
             end
         end
+
         local magic_tbl = content_system_get_table('magic')
-        local index = 1
-        for k, v in pairs(magic_tbl) do
-            if imgui.Button(k) then
-                local id = v.resid
-                local players = actor_manager_fetch_all_players()
-                for i,v in ipairs(players) do
-                    if not v:IsLocal() then
-                        player:PlayCast(v,id)
-                        break
-                    end
+        local keys = utils_fetch_sort_keys(magic_tbl)
+        imgui_std_horizontal_button_layout(magic_tbl,function(t, st)
+            st = st==nil and 1 or (st+1) 
+            if st > #keys then return nil end
+            return st, t[keys[st]], keys[st]
+        end,  
+        function(k,v) 
+            local id = v.resid
+            local players = actor_manager_fetch_all_players()
+            for i,v in ipairs(players) do
+                if not v:IsLocal() then
+                    player:PlayCast(v,id)
+                    break
                 end
             end
-            if index % 4== 0 then
-                imgui.SameLine()
-            end
-            index = index + 1
-        end
+        end)
     end
 
     
