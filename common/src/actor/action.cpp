@@ -418,7 +418,7 @@ void BeHitAction::Enter()
 	auto it = randoms.begin();
 	while (cnt--) {
 		it++;
-	}
+	} 
 	beatNumber->SetNumber(*it);
 	beatNumber->Beat();
 	AnimationManager::GetInstance()->AddBeatNumber(beatNumber);
@@ -660,7 +660,7 @@ void ActionStateMachine::Draw()
 
 	Pos pos = m_Actor->GetPos();
 	int dir = m_Actor->GetDir();
-	if (m_Actor->IsLocal()) {
+	if (m_Actor->IsLocal() && m_Actor->GetScene() != nullptr&&m_Actor->GetScene()->GetGameMap() != nullptr) {
 		int screenWidth = WINDOW_INSTANCE->GetWidth();
 		int screenHeight = WINDOW_INSTANCE->GetHeight();
 		int halfScreenWidth = screenWidth / 2;
@@ -732,13 +732,16 @@ void ActionStateMachine::SetAvatar(CXString id)
 void ActionStateMachine::SetAction(int id)
 {
 	m_ActionID = id;
+
 	EnsureLoadAction(m_ActionID);
 
 	auto* avatar = GetAvatar(m_ActionID);
+	if (!avatar)return;
 	avatar->Reset();
 	if (!HasWeapon() || !action_is_show_weapon(m_ActionID))return;
 	auto* weapon = GetWeapon(m_ActionID);
 	weapon->Reset();
+	
 }
 
 void ActionStateMachine::RestoreAction()
@@ -806,6 +809,8 @@ void ActionStateMachine::Reset()
 {
 	SetAvatar(m_Actor->GetAvatarID());
 	SetWeapon(m_Actor->GetWeaponAvatarID());
+	PathMoveAction* action = new PathMoveAction(m_Actor);
+	ChangeAction(action);
 }
 
 int ActionStateMachine::GetDirCount(int action)

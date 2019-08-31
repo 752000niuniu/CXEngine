@@ -6,8 +6,8 @@ DefaultSceneName = "门派_方寸山全景"
 -- DefaultSceneName = "WASViewer"
 scene_list_name = {}
 
-script_system_dofile('editor/enter_editor.lua')
-script_system_dofile('editor/scene_editor.lua')
+script_system_dofile('editor/imgui_editor.lua')
+
 local scene_lua_files = 
 {
     {name='AnimationEditor' ,  file= 'scene/animation_editor.lua'},
@@ -70,8 +70,7 @@ function on_scene_manager_init_scene(name)
 end
 
 function on_scene_manager_update(name)
-    on_enter_editor_update()
-    on_scene_editor_update()
+    on_imgui_editor_update()
 
     scene_list[name].OnSceneUpdate()
 end
@@ -126,7 +125,9 @@ function on_game_imgui_update(name)
     imgui.Text('FPS:'.. math.floor(window_system_get_fps()*1000))
     imgui.SameLine()
     if imgui.Button('RELOAD') then
+        actor_manager_clear_all()
         scene_manager_reload(name)
+        script_system_dofile('editor/imgui_editor.lua')
         collectgarbage()
         return
     end

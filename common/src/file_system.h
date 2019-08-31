@@ -23,6 +23,7 @@ public:
 	static std::string GetWDFPath(std::string path);
 	static std::string GetMapPath(std::string path);
 	static std::string GetFontPath(std::string path);
+	static std::string GetGameFontPath();
 	static std::string GetIconPath(std::string path);
 	static void InitWorkPath();
 

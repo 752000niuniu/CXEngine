@@ -74,19 +74,7 @@ function on_scene_editor_update()
     imgui.SameLine()
     res ,copy_actor_type = imgui.SliderInt('##actor_type',copy_actor_type, 1,3)
 
-    if imgui.CollapsingHeader('PlayAction') then
-        for i=0,action_system_get_action_size()-1 do
-            if imgui.Button(action_system_get_action_name(i)) then
-                if player then
-                    player:SetActionID(i)
-                end
-            end
-            if i~= action_system_get_action_size()-1 then
-                imgui.SameLine()
-            end
-        end
-    end
-
+    
     
     imgui.End()
 

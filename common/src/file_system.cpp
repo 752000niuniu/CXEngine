@@ -81,6 +81,12 @@ std::string FileSystem::GetFontPath(std::string path)
 {
 	return GetPath() + "res/font/" + path;
 }
+
+std::string FileSystem::GetGameFontPath()
+{
+	return FileSystem::GetFontPath("msyh.ttf");
+}
+
 std::string FileSystem::GetIconPath(std::string path)
 {
 	return GetPath() + "res/icon/" + path;

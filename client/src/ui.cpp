@@ -85,8 +85,7 @@ void ImageView::OnHover(float x, float y)
 
 void imgui_init()
 {
-	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontFromFileTTF(FileSystem::GetFontPath("msyh.ttf").c_str(), 14.0f, NULL, io.Fonts->GetGlyphRangesChineseSimplifiedCommon());
+	
 }
 
 void luaopen_ui(lua_State* L)

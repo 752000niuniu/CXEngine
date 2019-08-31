@@ -14,6 +14,7 @@
 #include "logger.h"
 #include "actor/actor_manager.h"
 #include "animation/sprite.h"
+#include "cxlua.h"
 
 
 static bool s_DrawMask, s_DrawStrider, s_DrawCell, s_DrawMap, s_DrawAnnouncement, s_AutoRun;

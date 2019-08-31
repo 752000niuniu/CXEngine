@@ -9,7 +9,6 @@ local TimeInterval = 0.016 * 4
 local MagicAnim 
 local BeHitAnim 
 local magic_tsv 
-local BeatNumber 
 
 --剑侠客 攻击
 ---待战-> Runto-> Attack-> Runback -> 待战
@@ -27,10 +26,10 @@ function OnSceneInit()
     MagicAnim:SetLoop(0)
     MagicAnim:SetFrameInterval(0.016*8)
     -- MagicAnim:SetVisible(false)
-    BeatNumber = beat_number_create()
     player = actor_manager_create_actor(os.time())
-    player:SetAvatarID('JXK-SWORD')
-    player:SetWeaponAvatarID('JXK-SWORD-060-X')
+    actor_manager_set_local_player(player:GetID())
+    player:SetAvatarID('JXK-KNIFE')
+    player:SetWeaponAvatarID('JXK-KNIFE-030-X')
     -- player:SetType(ACTOR_TYPE_PET)
     -- player:SetAvatarID('龙龟')
 
@@ -44,8 +43,8 @@ function OnSceneInit()
     -- enemy:SetType(ACTOR_TYPE_PET)
     -- enemy:SetAvatarID('超级大象')
     -- enemy:SetDir(0)
-    enemy:SetAvatarID('STB-SPEAR')
-    enemy:SetWeaponAvatarID('STB-SPEAR-060-X')
+    enemy:SetAvatarID('JMW-KNIFE')
+    enemy:SetWeaponAvatarID('JMW-KNIFE-060-X')
     -- enemy:SetActionID(ACTION_BEHIT)
     enemy:SetDir(player:GetDir())
     enemy:ReverseDir()
@@ -65,33 +64,10 @@ function imgui_draw_actor(actor)
     if actor then
         local x ,y  = actor:GetX(), actor:GetY()
         local avatar = actor:GetAvatar()
+        if not avatar then return end
         imgui.SetCursorPos(x-55,y+20)
         imgui.BeginGroup()
         
-        if imgui.Button('+##Dir'..actor:GetID(),30) then
-            actor_dir  = actor_dir +1
-            if actor_dir > 7 then actor_dir = 0 end
-            actor:SetDir(math.tointeger(actor_dir))
-        end
-        imgui.SameLine();imgui.Text('Dir');imgui.SameLine()
-        if imgui.Button('-##Dir'..actor:GetID(),30) then
-            actor_dir  = actor_dir - 1
-            if actor_dir < 0 then actor_dir = 7 end
-            actor:SetDir(math.tointeger(actor_dir))
-        end
-
-        if imgui.Button('+##Action'..actor:GetID(),30) then
-            actor_action = actor_action+1
-            if actor_action> 15 then actor_action  = 0 end
-            actor:SetActionID(math.tointeger(actor_action))
-        end
-        imgui.SameLine();imgui.Text('Action');imgui.SameLine()
-        if imgui.Button('-##Action'..actor:GetID(),30) then
-            actor_action = actor_action-1
-            if actor_action < 0 then actor_action  = 15 end
-            actor:SetActionID(math.tointeger(actor_action))
-        end
-
         if imgui.Button('+##Frame'..actor:GetID(),30) then
             actor_frame = actor_frame+1
             if actor_frame >= avatar:GetGroupFrameCount() then actor_frame  = 0 end
@@ -175,12 +151,7 @@ function OnSceneImGuiUpdate()
         MagicAnim:LockFrame(1)
     end
 
-    if imgui.Button('ShowBeatNumber') then
-        local x,y = player:GetX(),player:GetY()
-        local avatar = player:GetAvatar()
-        y = y - avatar:GetFrameKeyY() + avatar:GetFrameHeight() / 2;
-        BeatNumber:Show(x,y, 1940)
-    end
+    
     if imgui.Button('Cast1') then
         local id = magic_tsv['DF_阎罗令'].resid
         player:PlayCast(enemy,id)
@@ -236,12 +207,12 @@ end
 function OnSceneUpdate()
    	actor_manager_update()
     MagicAnim:Update()
-    BeatNumber:Update()
+    
 end
 
 function OnSceneDraw()
     actor_manager_draw()
     MagicAnim:Draw()
-    BeatNumber:Draw()
+    
 end
 

@@ -64,8 +64,8 @@ TextRenderer::TextRenderer()
 	if (FT_Init_FreeType(&m_FtLib))
 		std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
 
-
-	if (FT_New_Face(m_FtLib, FileSystem::GetFontPath("msyh.ttf").c_str(), 0, &m_FtFace))
+	
+	if (FT_New_Face(m_FtLib, FileSystem::GetGameFontPath().c_str(), 0, &m_FtFace))
 		std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
 
 	//12 14 16 18 15 13
@@ -74,7 +74,7 @@ TextRenderer::TextRenderer()
 		FT_Bitmap_Size fsize = m_FtFace->available_sizes[i];
 	}*/
 	// Set size to load glyphs as
-	m_ScreeHeight = 600;
+	m_ScreeHeight = WINDOW_INSTANCE->GetHeight();
 
 	m_FontSize = 12;
 
@@ -551,7 +551,7 @@ void TextRenderer::RenderFontText(std::string path,std::wstring text, GLfloat x,
 
 void TextRenderer::RenderPlotText(std::wstring text, GLfloat x, GLfloat y)
 {
-	RenderFontText( FileSystem::GetFontPath("msyh.ttf"), text,
+	RenderFontText( FileSystem::GetGameFontPath(), text,
 	 x,y,0.35f,	glm::vec3(1.0f, 1.0f,1.0f) );
 }
 

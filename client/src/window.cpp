@@ -120,8 +120,11 @@ void Window::Init(int w,int h)
 	ImGui_ImplGlfw_InitForOpenGL(m_pWindow, false);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
+	io.Fonts->AddFontFromFileTTF(FileSystem::GetGameFontPath().c_str(), 14.0f, NULL, io.Fonts->GetGlyphRangesChineseFull());
+
 	ImGui::GetStyle().WindowRounding = 0.0f;
 	ImGui::StyleColorsDark();
+
 
 	glfwSetFramebufferSizeCallback(m_pWindow, glfw_framebuffer_size_callback);
 	glfwSetCursorPosCallback(m_pWindow, glfw_mouse_callback);
