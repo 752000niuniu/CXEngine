@@ -28,8 +28,8 @@ function OnSceneInit()
     -- MagicAnim:SetVisible(false)
     player = actor_manager_create_actor(os.time())
     actor_manager_set_local_player(player:GetID())
-    player:SetAvatarID('JXK-KNIFE')
-    player:SetWeaponAvatarID('JXK-KNIFE-030-X')
+    player:SetAvatarID('JXK-SWORD')
+    player:SetWeaponAvatarID('JXK-SWORD-060-X')
     -- player:SetType(ACTOR_TYPE_PET)
     -- player:SetAvatarID('龙龟')
 
@@ -38,18 +38,12 @@ function OnSceneInit()
     player:SetY(170.0)
 
     player:SetActionID(ACTION_IDLE)
-    -- player:GetAvatar():Stop()
     enemy  = actor_manager_create_actor(os.time() + 1)
-    -- enemy:SetType(ACTOR_TYPE_PET)
-    -- enemy:SetAvatarID('超级大象')
-    -- enemy:SetDir(0)
     enemy:SetAvatarID('JMW-KNIFE')
     enemy:SetWeaponAvatarID('JMW-KNIFE-060-X')
     -- enemy:SetActionID(ACTION_BEHIT)
     enemy:SetDir(player:GetDir())
     enemy:ReverseDir()
-    -- enemy:SetX(375.0)
-    -- enemy:SetY(170.0)
     enemy:SetX(615.0)
     enemy:SetY(275.0)
     enemy:SetActionID(ACTION_IDLE)
@@ -108,39 +102,6 @@ function OnSceneImGuiUpdate()
     imgui.SetCursorPos(50,100)
     imgui.BeginGroup()
 
-    if imgui.Button('+##roleID', 24) then
-        local id = math.tointeger(RoleIDSB:str()) 
-        id = id + 1
-        RoleIDSB:reset(tostring(id))
-    end
-    imgui.SameLine()
-    if imgui.Button('-##roleID', 24) then
-        local id = math.tointeger(RoleIDSB:str()) 
-        id = id - 1
-        RoleIDSB:reset(tostring(id))
-    end
-    imgui.PushItemWidth(200)
-    imgui.InputText("RoleID", RoleIDSB)
-    imgui.PopItemWidth()
-
-    if imgui.Button('+##weaponID', 24) then
-        local id = math.tointeger(WeaponIDSB:str()) 
-        id = id + 9
-        WeaponIDSB:reset(tostring(id))
-    end
-    imgui.SameLine()
-    if imgui.Button('-##weaponID', 24) then
-        local id = math.tointeger(WeaponIDSB:str()) 
-        id = id - 9
-        WeaponIDSB:reset(tostring(id))
-    end
-    imgui.PushItemWidth(200)
-    imgui.InputText("WeaponID", WeaponIDSB)
-    imgui.PopItemWidth()
-
-    if imgui.Button('Attack') then
-        player:PlayAttack(enemy)
-    end
     if imgui.Button('Translate') then
         MagicAnim:Pause(200)
         MagicAnim:Translate(0,-200,300)
@@ -151,24 +112,6 @@ function OnSceneImGuiUpdate()
         MagicAnim:LockFrame(1)
     end
 
-    
-    if imgui.Button('Cast1') then
-        local id = magic_tsv['DF_阎罗令'].resid
-        player:PlayCast(enemy,id)
-    end
-    if imgui.Button('Cast2') then
-        local id = magic_tsv['MWZ_三味真火'].resid
-        player:PlayCast(enemy,id)
-    end
-    if imgui.Button('Cast3') then
-        local id = magic_tsv['FC_催眠符'].resid
-        player:PlayCast(enemy,id)
-    end
-
-    if imgui.Button('Cast4') then
-        local id = magic_tsv['FC_五雷咒'].resid
-        player:PlayCast(enemy,id)
-    end
 
     if imgui.Button('EnemyAttack') then
         enemy:PlayAttack(player)
@@ -178,13 +121,6 @@ function OnSceneImGuiUpdate()
         enemy:PlayCast(player,0xC12C2663)
     end
 
-    if imgui.Button('LoadPlayer') then
-        local roleID = math.tointeger(RoleIDSB:str())
-        local weaponID = math.tointeger(WeaponIDSB:str())
-        player:SetRoleID(roleID)
-        player:SetWeaponID(weaponID)
-        -- collectgarbage()
-    end
     
     if imgui.Button('+TimeInterval') then
         TimeInterval = TimeInterval + 0.016
