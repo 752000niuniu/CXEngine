@@ -44,7 +44,7 @@ public:
 	virtual bool HandleMessage(const Telegram& msg) { return false; };
 
 	virtual void SetDir(int dir);
-	int GetDir() { return m_Dir; };
+	int GetDir();
 	int GetDirByDegree(float degree);
 	void ReverseDir();
 

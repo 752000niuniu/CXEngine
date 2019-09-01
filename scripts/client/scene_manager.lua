@@ -66,17 +66,22 @@ end
 
 function on_scene_manager_init_scene(name)
     actor_manager_set_scene(scene_manager_get_current_scene_id())
-    scene_list[name].OnSceneInit() 
+    if scene_list[name] then
+        scene_list[name].OnSceneInit() 
+    end
 end
 
 function on_scene_manager_update(name)
     on_imgui_editor_update()
-
-    scene_list[name].OnSceneUpdate()
+    if scene_list[name] then
+        scene_list[name].OnSceneUpdate()
+    end
 end
 
 function on_scene_manager_draw(name)
-    scene_list[name].OnSceneDraw()
+    if scene_list[name] then
+        scene_list[name].OnSceneDraw()
+    end
 end
 
 function scene_manager_reload(name)
@@ -133,8 +138,10 @@ function on_game_imgui_update(name)
         return
     end
 
-    if scene_list[name].OnSceneImGuiUpdate then
-        scene_list[name].OnSceneImGuiUpdate()
+    if scene_list[name] then
+        if scene_list[name].OnSceneImGuiUpdate then
+            scene_list[name].OnSceneImGuiUpdate()
+        end
     end
 
     local player = actor_manager_fetch_local_player()

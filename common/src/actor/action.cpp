@@ -13,6 +13,7 @@
 #include "scene/base_scene.h"
 #include "scene/game_map.h"
 #include "cxrandom.h"
+#include "actor_manager.h"
 
 std::map<CXString, int> g_AttackKeyFrame = {
 	{"FYN-DBSWORDS" ,5 },
@@ -146,6 +147,7 @@ void AttackAction::Update()
 			if (m_Target) {
 				m_Actor->GetMoveHandle()->MoveOnScreen(m_Runto.x, m_Runto.y);
 				avatar = m_pASM->GetAvatar();
+				if (!avatar)return;
 				float dist = std::sqrt(m_Actor->GetMoveDestDistSquare(m_Runto));
 				float perframetime = 0.016f * 2.5f;
 				float perframe_dist = dist / avatar->GroupFrameCount;
@@ -171,6 +173,7 @@ void AttackAction::Update()
 				m_Actor->ReverseDir();
 				m_Actor->GetMoveHandle()->MoveOnScreen(m_BackupPos.x, m_BackupPos.y);
 				avatar = m_pASM->GetAvatar();
+				if (!avatar)return;
 				float dist = std::sqrt(m_Actor->GetMoveDestDistSquare(m_BackupPos));
 				float perframetime = 0.016f * 2.5f ;
 				float perframe_dist = dist / avatar->GroupFrameCount;
@@ -658,19 +661,18 @@ void ActionStateMachine::Draw()
 	auto* avatar = GetAvatar(m_ActionID);
 	if (!avatar)return;
 
+	int screenWidth = WINDOW_INSTANCE->GetWidth();
+	int screenHeight = WINDOW_INSTANCE->GetHeight();
+	int halfScreenWidth = screenWidth / 2;
+	int halfScreenHeight = screenHeight / 2;
+
 	Pos pos = m_Actor->GetPos();
 	int dir = m_Actor->GetDir();
 	if (m_Actor->IsLocal() && m_Actor->GetScene() != nullptr&&m_Actor->GetScene()->GetGameMap() != nullptr) {
-		int screenWidth = WINDOW_INSTANCE->GetWidth();
-		int screenHeight = WINDOW_INSTANCE->GetHeight();
-		int halfScreenWidth = screenWidth / 2;
-		int halfScreenHeight = screenHeight / 2;
 		int mapWidth = m_Actor->GetScene()->GetGameMap()->GetWidth();
 		int mapHeight = m_Actor->GetScene()->GetGameMap()->GetHeight();
-
 		int px = m_Actor->GetX();
 		int py = m_Actor->GetY();
-
 		int maxMapOffsetX = mapWidth - halfScreenWidth;
 		int maxMapOffsetY = mapHeight - halfScreenHeight;
 
@@ -686,8 +688,10 @@ void ActionStateMachine::Draw()
 	}
 	else {
 		if (m_Actor->GetScene() != nullptr&&m_Actor->GetScene()->GetGameMap() != nullptr) {
-			Pos p = GAME_INSTANCE->MapPosToScreenPos(m_Actor->GetPos());
-			avatar->Pos = p;
+			int offx = m_Actor->GetScene()->GetGameMap()->GetMapOffsetX();
+			int offy = m_Actor->GetScene()->GetGameMap()->GetMapOffsetY();
+			avatar->Pos.x = (float)(m_Actor->GetX() + offx);
+			avatar->Pos.y = (float)(m_Actor->GetY() + offy);
 		}
 		else {
 			avatar->Pos.x = pos.x;
@@ -775,6 +779,7 @@ void ActionStateMachine::EnsureLoadAction(int action)
 
 	if (m_AvatarActions[action] == nullptr) {
 		auto resid = RESOURCE_MANAGER_INSTANCE->GetActorActionResID(m_Actor->GetType(), m_AvatarID, action);
+		if (resid == 0)return;
 		m_AvatarActions[action] = new Animation(resid);
 		m_AvatarActions[action]->FrameInterval = m_TimeInterval;
 		m_AvatarActions[action]->SetLoop(0);
@@ -783,6 +788,10 @@ void ActionStateMachine::EnsureLoadAction(int action)
 	if (m_HasWeapon) {
 		if (m_WeaponActions[action] == nullptr) {
 			auto resid = RESOURCE_MANAGER_INSTANCE->GetActionResID(AVATAR_TYPE_WEAPON, m_WeaponID, action);
+			if (resid == 0) {
+				m_HasWeapon = false; 
+				return;
+			}
 			m_WeaponActions[action] = new Animation(resid);
 			m_WeaponActions[action]->FrameInterval = m_TimeInterval;
 			m_WeaponActions[action]->SetLoop(0);

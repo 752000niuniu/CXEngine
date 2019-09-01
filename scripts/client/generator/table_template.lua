@@ -583,38 +583,6 @@ end
 -- init_table_templates()
 -- generate_avatar_role_tsv()
 
---抽取工具
-function new_parse_avatar_tsv_file(path)
-    local tbl = {}
-    local col_names = {}
-    local index = 1
-    for line in io.lines(path) do  
-        if index == 1 then
-            for col, name in ipairs(utils_string_split(line,'\t')) do
-                if name~='' then
-                    table.insert(col_names, name)
-                end
-            end
-            -- cxlog_info('colname :'..cjson.encode(col_names))
-        else
-            if line~='' and not line:match('^%*') then
-                local row = {}
-                local vals = utils_string_split_fixcnt(line,'\t',#col_names)
-                for i,col in ipairs(col_names) do
-                    row[col] = vals[i]
-                end
-                table.insert(tbl,row)
-            end
-        end
-        index = index + 1
-    end
-    if #col_names>0 then
-        table.sort(tbl,function(a,b) return a[col_names[1]]<b[col_names[1]] end)
-    end
-    return tbl, col_names
-end
-
-
 function new_shapewdf_update_npc_avatar(tbl,type,code,resid)
 
 end
@@ -676,7 +644,7 @@ function new_shapewdf_update_role_avatar(tbl,code,resid)
 end
 
 function simple_read_avatar_tbl(path)
-    local tbl = new_parse_avatar_tsv_file(vfs_makepath(path))
+    local tbl = utils_parse_tsv_to_rows(vfs_makepath(path))
     local new_tbl = {}
     for i,v in ipairs(tbl) do
         new_tbl[v.ID] = v

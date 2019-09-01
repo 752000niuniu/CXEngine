@@ -54,7 +54,27 @@ function utils_dump_table(t)
     end
 end
 
-function imgui_std_horizontal_button_layout(tbl, next_fn, on_click)
+
+function custom_gen_next_sortk_fn(tbl,keys)
+    return function(t,st)
+        st = st==nil and 1 or (st+1)
+        if st>#keys then return nil end
+        return st,t[keys[st]],keys[st]
+    end
+end
+
+
+function gen_next_sortk_fn(tbl)
+    local keys = utils_fetch_sort_keys(tbl)
+    return function(t,st)
+        st = st==nil and 1 or (st+1)
+        if st>#keys then return nil end
+        return st,t[keys[st]],keys[st]
+    end
+end
+
+
+imgui.HorizontalLayout = function(tbl, next_fn, cb)
     local line_width = imgui.GetContentRegionAvailWidth()
     local cx, cy = imgui.GetCursorPos()
     local layout_x = cx
@@ -64,9 +84,7 @@ function imgui_std_horizontal_button_layout(tbl, next_fn, on_click)
             st, v, k = next_fn(tbl, st)
             if st == nil then break end
             if k == nil then k = st end
-            if imgui.Button(k) then
-                on_click(k,v)
-            end
+            cb(k,v)
             local iw,ih = imgui.GetItemRectSize()
             layout_x = layout_x + iw + 8
             if layout_x < line_width-iw-8 then
@@ -79,4 +97,39 @@ function imgui_std_horizontal_button_layout(tbl, next_fn, on_click)
             imgui.NewLine()
         end
     end
+end
+
+function imgui_std_horizontal_button_layout(tbl, next_fn, on_click)
+    imgui.HorizontalLayout(tbl,next_fn,function(k,v) 
+        if imgui.Button(k) then
+            on_click(k,v)
+        end
+    end)
+end
+
+function utils_parse_tsv_to_rows(path)
+    local tbl = {}
+    local col_names = {}
+    local index = 1
+    for line in io.lines(path) do  
+        if index == 1 then
+            for col, name in ipairs(utils_string_split(line,'\t')) do
+                if name~='' then
+                    table.insert(col_names, name)
+                end
+            end
+            -- cxlog_info('colname :'..cjson.encode(col_names))
+        else
+            if line~='' and not line:match('^%*') then
+                local row = {}
+                local vals = utils_string_split_fixcnt(line,'\t',#col_names)
+                for i,col in ipairs(col_names) do
+                    row[col] = vals[i]
+                end
+                table.insert(tbl,row)
+            end
+        end
+        index = index + 1
+    end
+    return tbl, col_names
 end

@@ -19,7 +19,7 @@ local function read_tsv_index_by_main_key(filename, b_parse_value, main_key)
 end
 
 function read_magic_table()
-    cxlog_info('read_magic_table')
+    -- cxlog_info('read_magic_table')
     local file = io.open(vfs_get_tablepath('magic.tsv') )
     local tbl = {}
     local col_names = {}
@@ -50,10 +50,24 @@ function read_magic_table()
     return tbl_by_name
 end
 
+function read_map_table()
+    local path = vfs_get_tsvpath('map')
+    local tbl,col_names = utils_parse_tsv_to_rows(path)
+    for i, row in ipairs(tbl) do
+        row.ID = math.tointeger(math.ID)
+    end
+    return tbl
+end
+function read_npc_table()
+    local path = vfs_get_tsvpath('avatar_npc')
+    local tbl,col_names = utils_parse_tsv_to_rows(path)
+    return tbl
+end
 
 function content_system_init()
     content_system_set_table('role', read_tsv_index_by_main_key('avatar_role',false,'ID'))
     content_system_set_table('weapon', read_tsv_index_by_main_key('avatar_weapon',false,'ID'))
-    content_system_set_table('npc', read_tsv_index_by_main_key('avatar_npc',false,'ID'))
+    content_system_set_table('npc', read_npc_table())
     content_system_set_table('magic', read_magic_table())
+    content_system_set_table('maps', read_map_table())
 end

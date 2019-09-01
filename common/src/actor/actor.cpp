@@ -133,6 +133,19 @@ void Actor::SetDir(int dir)
 #endif
 }
 
+int Actor::GetDir()
+{
+#ifndef SIMPLE_SERVER
+	auto* avatar = m_ASM->GetAvatar();
+	if (avatar) {
+		if (avatar->GroupCount == 4) {
+			m_Dir = GMath::Dir8toDir4(m_Dir);
+		}
+	}
+#endif
+	return m_Dir;
+}
+
 void Actor::ReverseDir()
 {
 	SetDir(GMath::GetReverseDir(m_Dir));
