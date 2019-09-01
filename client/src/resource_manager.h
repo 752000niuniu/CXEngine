@@ -12,6 +12,7 @@
 #include "graphics/texture.h"
 #include "script_system.h"
 #include "tsv.h"
+#include <NESupport.h>
 
 // A static singleton ResourceManager class that hosts several
 // functions to load Textures and Shaders. Each loaded texture
@@ -39,11 +40,11 @@ public:
 
 	friend Singleton<ResourceManager>;
 
-	Sprite* LoadWASSpriteByID(uint64_t resID,bool sync = false);
+	Sprite* LoadWASSpriteByID(uint64_t resID,bool sync = false, std::vector<NE::WDF::PalMatrix>* patMatrix = nullptr);
 
 	void UnLoadWASSpriteByID(uint64_t resID);
 
-	Sprite* LoadWASSprite(uint32_t pack,uint32 wasId,bool sync = false);
+	Sprite* LoadWASSprite(uint32_t pack,uint32 wasId,bool sync = false, std::vector<NE::WDF::PalMatrix>* patMatrix = nullptr);
 
 	void UnLoadWASSprite(uint32_t pack, uint32 wasId);
     

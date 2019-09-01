@@ -41,7 +41,8 @@ Actor::Actor(uint64_t pid)
 	m_AvatarID(""),
 	m_WeaponAvatarID("")
 {
-	
+	m_PatMatrix.clear();
+
 	m_MoveHandle = new MoveHandle(this);
 #ifndef SIMPLE_SERVER
 	m_SayWidget = new TextView();
@@ -62,6 +63,7 @@ Actor::Actor(uint64_t pid)
 }
 Actor::~Actor()
 {
+	m_PatMatrix.clear();
 	SafeDelete(m_MoveHandle);
 #ifndef SIMPLE_SERVER
 	INPUT_MANAGER_INSTANCE->UnRegisterView(this);
@@ -661,53 +663,115 @@ int actor_get_weapon(lua_State*L) {
 #endif
 }
 
-luaL_Reg mt_actor[] = {
+int actor_change_pal_matrix(lua_State*L) {
+#ifndef SIMPLE_SERVER
+	Actor* actor = lua_check_actor(L, 1);
+	int len = (int)luaL_len(L, 2);
+	std::vector<NE::WDF::PalMatrix> patMatrix;
+	for (int i = 1; i<=len; i++) {
+		NE::WDF::PalMatrix seg_matrix;
+		lua_geti(L, -1, i);
+		
+		lua_getfield(L, -1, "from");
+		seg_matrix.from = (uint16_t)lua_tointeger(L, -1);
+		lua_pop(L, 1);
+
+		lua_getfield(L, -1, "to");
+		seg_matrix.to = (uint16_t)lua_tointeger(L, -1);
+		lua_pop(L, 1);
+
+		lua_getfield(L, -1, "mat");
+		assert(luaL_len(L, -1) == 9);
+		seg_matrix.mat.resize(9);
+		seg_matrix.mat.clear();
+		for (int mat_i = 1; mat_i <= 9; mat_i++) {
+			lua_geti(L, -1, mat_i);
+			uint16_t val = (uint16_t)lua_tointeger(L, -1);
+			seg_matrix.mat.push_back(val);
+			lua_pop(L, 1);
+		}
+		lua_pop(L, 1);
+		
+		lua_pop(L, 1);
+		patMatrix.push_back(seg_matrix);
+	}
+	actor->SetPalette(patMatrix);
+	actor->GetASM()->Reset();
+	return 0;
+#else
+	return 0;
+#endif
+}
+
+int actor_get_pal_matrix(lua_State*L) {
+#ifndef SIMPLE_SERVER
+	Actor* actor = lua_check_actor(L, 1);
+	return 0;
+#else
+	return 0;
+#endif
+}
+
+int actor_clear_pal_matrix(lua_State*L) {
+#ifndef SIMPLE_SERVER
+	Actor* actor = lua_check_actor(L, 1);
+	return 0;
+#else
+	return 0;
+#endif
+}
+
 //{ "__gc",actor_destroy },
-{ "Destroy",actor_destroy },
-{ "Update",actor_update},
+luaL_Reg mt_actor[] = {
+	{ "Destroy",actor_destroy },
+{ "Update",actor_update },
 { "Draw",actor_draw },
 { "SetType", actor_set_type },
 { "GetType", actor_get_type },
-{ "SetPos",actor_set_pos},
-{"SetX", actor_set_x},
-{"GetX", actor_get_x},
-{"SetY", actor_set_y},
-{"GetY", actor_get_y},
+{ "SetPos",actor_set_pos },
+{ "SetX", actor_set_x },
+{ "GetX", actor_get_x },
+{ "SetY", actor_set_y },
+{ "GetY", actor_get_y },
 { "GetPos", actor_get_pos },
-{ "GetWidth", actor_get_width},
+{ "GetWidth", actor_get_width },
 { "GetHeight", actor_get_height },
-{ "SetIsCombat", actor_set_is_combat},
+{ "SetIsCombat", actor_set_is_combat },
 { "IsCombat", actor_is_combat },
-{"GetID", actor_get_id},
-{"SetSceneID", actor_set_scene_id},
-{"GetSceneID", actor_get_scene_id},
-{"SetName", actor_set_name},
-{"GetName", actor_get_name},
-{"SetRoleID", actor_set_role_id},
-{"GetRoleID", actor_get_role_id},
-{"SetWeaponID", actor_set_weapon_id},
-{"GetWeaponID", actor_get_weapon_id},
-{"SetWeaponAvatarID", actor_set_weapon_avatar_id},
-{"GetWeaponAvatarID", actor_get_weapon_avatar_id},
-{"SetAvatarID", actor_set_avatar_id},
-{"GetAvatarID", actor_get_avatar_id},
-{"SetDir", actor_set_dir},
-{"GetDir", actor_get_dir},
-{ "ReverseDir", actor_reverse_dir},
-{"SetLocal", actor_set_local},
-{"IsLocal", actor_is_local},
-{"SetActionID", actor_set_action_id},
-{"GetActionID", actor_get_action_id},
-{"TranslateX", actor_translate_x},
+{ "GetID", actor_get_id },
+{ "SetSceneID", actor_set_scene_id },
+{ "GetSceneID", actor_get_scene_id },
+{ "SetName", actor_set_name },
+{ "GetName", actor_get_name },
+{ "SetRoleID", actor_set_role_id },
+{ "GetRoleID", actor_get_role_id },
+{ "SetWeaponID", actor_set_weapon_id },
+{ "GetWeaponID", actor_get_weapon_id },
+{ "SetWeaponAvatarID", actor_set_weapon_avatar_id },
+{ "GetWeaponAvatarID", actor_get_weapon_avatar_id },
+{ "SetAvatarID", actor_set_avatar_id },
+{ "GetAvatarID", actor_get_avatar_id },
+{ "SetDir", actor_set_dir },
+{ "GetDir", actor_get_dir },
+{ "ReverseDir", actor_reverse_dir },
+{ "SetLocal", actor_set_local },
+{ "IsLocal", actor_is_local },
+{ "SetActionID", actor_set_action_id },
+{ "GetActionID", actor_get_action_id },
+{ "TranslateX", actor_translate_x },
 { "TranslateY", actor_translate_y },
-{"MoveTo", actor_move_to},
-{"Say", actor_say},
-{"ClearFrames", actor_clear_frames},
-{ "PlayAttack", actor_play_attack},
-{ "PlayCast", actor_play_cast},
+{ "MoveTo", actor_move_to },
+{ "Say", actor_say },
+{ "ClearFrames", actor_clear_frames },
+{ "PlayAttack", actor_play_attack },
+{ "PlayCast", actor_play_cast },
 { "SetTimeInterval", actor_set_time_interval },
-{ "GetAvatar", actor_get_avatar},
-{ "GetWeapon", actor_get_weapon},
+{ "GetAvatar", actor_get_avatar },
+{ "GetWeapon", actor_get_weapon },
+{ "ChangePalMatrix", actor_change_pal_matrix},
+{ "GetPalMatrix", actor_get_pal_matrix},
+{ "ClearPalMatrix", actor_clear_pal_matrix},
+
 { NULL, NULL }
 };
 

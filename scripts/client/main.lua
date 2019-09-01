@@ -93,15 +93,6 @@ function game_dispatch_message(pt)
 			end
 
 
-			local test_player = actor_manager_create_actor(pinfo.pid+10)
-			test_player:SetName(pinfo.name)
-			test_player:SetSceneID(pinfo.scene_id)
-			test_player:SetAvatarID('JXK-SWORD')
-   			test_player:SetWeaponAvatarID('JXK-SWORD-60-X')
-
-			test_player:SetX(pinfo.x + 100)
-			test_player:SetY(pinfo.y - 100)
-
 		end
 		if local_pinfo then
 			actor_manager_set_local_player(local_pinfo.pid)

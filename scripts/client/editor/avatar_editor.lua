@@ -118,14 +118,17 @@ function on_avatar_editor_update()
                         local new_pal = {}
                         new_pal.segments = COLOR_SCHEMES.segments
                         for seg_i=1,#COLOR_SCHEMES.segments-1 do
-                            local seg_mats = COLOR_SCHEMES[seg_i]
                             local mat_i = COLOR_SCHEMES_SELECT_MAP[seg_i]
+                            local seg_mats = COLOR_SCHEMES[seg_i]
                             local mat  = seg_mats[mat_i]
-                            table.insert(new_pal, mat)
+                            local seg_pal = {}
+                            seg_pal.from = COLOR_SCHEMES.segments[seg_i]
+                            seg_pal.to = COLOR_SCHEMES.segments[seg_i+1]
+                            seg_pal.mat = mat
+                            table.insert(new_pal, seg_pal)
                         end
                         cxlog_info('new_pal  '.. cjson.encode(new_pal))
-                        local avatar = player:GetAvatar()
-                        -- avatar:ChangePal(new_pal)
+                        player:ChangePalMatrix(new_pal)
                     end
                 end
                                 

@@ -7,6 +7,7 @@
 #include "input_manager.h"
 #include "logger.h"
 #include "cxmath.h"
+#include "actor/actor_manager.h"
 
 String UtilsGetFramePath(Sprite* m_pSprite, int index)
 {
@@ -26,11 +27,11 @@ Texture* UtilsGetFrameTexture(Sprite* m_pSprite, int index)
 	return TextureManager::GetInstance()->LoadTexture(path, frame.width, frame.height, true, (uint8_t*)frame.src.data());
 }
 
-BaseSprite::BaseSprite(uint64_t resoureID)
+BaseSprite::BaseSprite(uint64_t resoureID, std::vector<NE::WDF::PalMatrix>* patMatrix )
 	:ResID(resoureID)
 {
 	if (resoureID == 0) { m_pSprite = nullptr; return; }
-	m_pSprite = RESOURCE_MANAGER_INSTANCE->LoadWASSpriteByID(resoureID, true);
+	m_pSprite = RESOURCE_MANAGER_INSTANCE->LoadWASSpriteByID(resoureID, true, patMatrix);
 	Width = m_pSprite->mWidth;
 	Height = m_pSprite->mHeight;
 	KeyX = m_pSprite->mKeyX;
@@ -51,7 +52,7 @@ BaseSprite::BaseSprite(uint64_t resoureID)
 	bEnableDrag = false;
 }
 
-BaseSprite::BaseSprite(uint32_t pkg, uint32_t wasID) :BaseSprite(RESOURCE_MANAGER_INSTANCE->EncodeWAS(pkg, wasID)) {}
+BaseSprite::BaseSprite(uint32_t pkg, uint32_t wasID, std::vector<NE::WDF::PalMatrix>* patMatrix ) :BaseSprite(RESOURCE_MANAGER_INSTANCE->EncodeWAS(pkg, wasID),patMatrix) {}
 
 BaseSprite::~BaseSprite()
 {
@@ -130,7 +131,7 @@ void BaseSprite::OnDragMove(int dx, int dy)
 	Pos.y += (float)dy;
 }
 
-Animation::Animation(uint64_t resoureID /*= 0*/) :BaseSprite(resoureID)
+Animation::Animation(uint64_t resoureID /*= 0*/, std::vector<NE::WDF::PalMatrix>* patMatrix ) :BaseSprite(resoureID, patMatrix)
 {
 	m_Visible = true;
 	m_State = ANIMATION_PLAY;
@@ -157,8 +158,8 @@ Animation::Animation(uint64_t resoureID /*= 0*/) :BaseSprite(resoureID)
 	m_bLoop = true;
 }
 
-Animation::Animation(uint32_t pkg, uint32_t wasID)
-	:Animation(RESOURCE_MANAGER_INSTANCE->EncodeWAS(pkg, wasID))
+Animation::Animation(uint32_t pkg, uint32_t wasID, std::vector<NE::WDF::PalMatrix>* patMatrix)
+	:Animation(RESOURCE_MANAGER_INSTANCE->EncodeWAS(pkg, wasID),patMatrix)
 {
 
 }

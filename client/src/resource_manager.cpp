@@ -7,6 +7,7 @@
 #include "logger.h"
 #include "tsv.h"
 #include "actor/action.h"
+#include "texture_manager.h"
 
 
 
@@ -83,7 +84,7 @@ void ResourceManager::Clear()
     
 }
 
-Sprite* ResourceManager::LoadWASSpriteByID(uint64_t resID,bool sync)
+Sprite* ResourceManager::LoadWASSpriteByID(uint64_t resID,bool sync, std::vector<NE::WDF::PalMatrix>* patMatrix )
 {
 	if (!resID)return nullptr;
 	std::string path(std::to_string(resID));
@@ -104,17 +105,17 @@ Sprite* ResourceManager::LoadWASSpriteByID(uint64_t resID,bool sync)
 			{
 				s_Loaders[pack] = new NE::WDF(utils::GetPathByPackID(pack));
 			}
-			return s_Loaders[pack]->LoadSprite(wasID);
+			return s_Loaders[pack]->LoadSprite(wasID, patMatrix);
 		}
 		else
 		{
-			iothread->PostTask(path.c_str(), [this, pack, wasID](const char* path)->bool
+			iothread->PostTask(path.c_str(), [this, pack, wasID, patMatrix](const char* path)->bool
 			{
 				if (s_Loaders.find(pack) == s_Loaders.end())
 				{
 					s_Loaders[pack] = new NE::WDF(utils::GetPathByPackID(pack));
 				}
-				s_Loaders[pack]->LoadSprite(wasID);
+				s_Loaders[pack]->LoadSprite(wasID, patMatrix);
 				return true;
 			});
 			return nullptr;
@@ -139,10 +140,10 @@ void ResourceManager::UnLoadWASSpriteByID(uint64_t resID)
 }
 
 
-Sprite* ResourceManager::LoadWASSprite(uint32_t pack, uint32 wasID,bool sync)
+Sprite* ResourceManager::LoadWASSprite(uint32_t pack, uint32 wasID,bool sync, std::vector<NE::WDF::PalMatrix>* patMatrix )
 {
 	auto resID = EncodeWAS(pack, wasID);
-	return LoadWASSpriteByID(resID,sync);
+	return LoadWASSpriteByID(resID,sync, patMatrix);
 }
 
 void ResourceManager::UnLoadWASSprite(uint32_t pack, uint32 wasID)

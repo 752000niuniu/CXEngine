@@ -14,6 +14,7 @@
 #include "scene/game_map.h"
 #include "cxrandom.h"
 #include "actor_manager.h"
+#include "texture_manager.h"
 
 std::map<CXString, int> g_AttackKeyFrame = {
 	{"FYN-DBSWORDS" ,5 },
@@ -773,6 +774,8 @@ void ActionStateMachine::ChangeAction(Action* action)
 	}
 }
 
+
+
 void ActionStateMachine::EnsureLoadAction(int action)
 {
 	if (action < ACTION_IDLE || action >= ACTION_COUNT)return;
@@ -780,7 +783,13 @@ void ActionStateMachine::EnsureLoadAction(int action)
 	if (m_AvatarActions[action] == nullptr) {
 		auto resid = RESOURCE_MANAGER_INSTANCE->GetActorActionResID(m_Actor->GetType(), m_AvatarID, action);
 		if (resid == 0)return;
-		m_AvatarActions[action] = new Animation(resid);
+		if (m_Actor->GetPalette().size() != 0) {
+			m_AvatarActions[action] = new Animation(resid, &m_Actor->GetPalette());
+		}
+		else {
+			m_AvatarActions[action] = new Animation(resid);
+		}
+		
 		m_AvatarActions[action]->FrameInterval = m_TimeInterval;
 		m_AvatarActions[action]->SetLoop(0);
 	}
@@ -818,6 +827,7 @@ void ActionStateMachine::Reset()
 {
 	SetAvatar(m_Actor->GetAvatarID());
 	SetWeapon(m_Actor->GetWeaponAvatarID());
+
 	PathMoveAction* action = new PathMoveAction(m_Actor);
 	ChangeAction(action);
 }
