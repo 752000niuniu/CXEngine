@@ -133,3 +133,46 @@ function utils_parse_tsv_to_rows(path)
     end
     return tbl, col_names
 end
+
+function file_read_int4(file)
+    local n = file:read(4)
+    n = string.unpack('i4',n)
+    return n
+end
+
+function decode_mypal(path)
+    cxlog_info('decode..'..path)
+    local file = io.open(path, 'rb')
+    local flag = file:read(4)
+    flag = string.unpack('c4',flag)
+    assert(flag=='wpal', 'decode_mypal error '..path)
+
+    local seg_num = file_read_int4(file)
+    local color_segments = {}
+    for i=1,seg_num+1 do
+        local sep = file_read_int4(file) 
+        table.insert(color_segments,sep)
+    end
+    -- cxlog_info(color_segments, cjson.encode(color_segments))
+
+    local color_schemes = {}
+    color_schemes.segments = color_segments
+    for i=1,seg_num do
+        local cnt = file_read_int4(file)
+        local tbl = {}
+        for index = 1,cnt do
+            local mat = {}
+            for row=1,3 do
+                for col=1,3 do
+                    local v = file_read_int4(file)
+                    table.insert(mat,v)
+                end
+            end
+            table.insert(tbl, mat)
+        end
+        table.insert(color_schemes,tbl)
+    end
+    file:close()
+
+    return color_schemes
+end

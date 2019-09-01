@@ -14,6 +14,7 @@ script_system_dofile 'actor_manager.lua'
 -- script_system_dofile('generator/table_template.lua')
 -- script_system_dofile('parser.lua')
 
+
 -- luadbg_listen(9527)
 IsCombat = false
 --聊天背景框 wzife 39D3BD99 

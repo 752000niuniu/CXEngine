@@ -33,4 +33,25 @@ function parse_magic_wdf(path)
     f_magic_tsv:close()
 end
 
-parse_magic_wdf(vfs_get_tablepath('magic.wdf.ini'))
+
+
+
+function solve()
+    -- local files = vfs_list_files(vfs_get_tablepath('wasee_pal') )
+    -- -- cxlog_info(cjson.encode(files))
+    -- for i,path in ipairs(files) do
+    --     if path:match('0012') then
+    --         local res = decode_mypal(path)
+    --         cxlog_info(cjson.encode(res))
+    --         break
+    --     end
+    -- end
+
+    local files = vfs_list_files(vfs_get_tablepath('wasee_pal'))
+    local filenames = {}
+    for k,f in pairs(files) do
+        local  name = f:match('wasee_pal/(.+)%.')
+        table.insert(filenames,name)
+    end
+end
+solve()

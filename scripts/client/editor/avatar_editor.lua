@@ -8,6 +8,15 @@ local DIR_NAMES = {
     [0] = 'DIR_SE',
     [1] = 'DIR_SW'
 }
+local COLOR_SCHEMES 
+
+local COLOR_SCHEMES_SELECT_MAP = {}
+function update_color_schemes_select_map()
+    COLOR_SCHEMES_SELECT_MAP = {}
+    for i=1,#COLOR_SCHEMES.segments-1 do
+        COLOR_SCHEMES_SELECT_MAP[i] = 1
+    end
+end
 
 function fetch_role_keys(tbl)
     local role_keys = {}
@@ -63,7 +72,7 @@ function on_avatar_editor_update()
         end)
     end  
 
-    
+
     if imgui.CollapsingHeader('AvatarRole') then
         local avatar_role_tbl = content_system_get_table('role')    
         local role_keys = fetch_role_keys(avatar_role_tbl)
@@ -74,6 +83,61 @@ function on_avatar_editor_update()
         end)
     end
 
+    if imgui.CollapsingHeader('MyPal') then
+        local files = vfs_list_files(vfs_get_tablepath('wasee_pal'))
+        local filenames = {}
+        for k,f in pairs(files) do
+            local  name = f:match('wasee_pal/(.+)%.')
+            name = util_gb2312_to_utf8(name)
+            table.insert(filenames,name)
+        end
+
+        
+        imgui.HorizontalLayout(filenames,next,function(k,v)
+            if imgui.Button(v) then
+                select_pal = files[k]
+                COLOR_SCHEMES = decode_mypal(select_pal)
+                update_color_schemes_select_map()
+                cxlog_info('...',cjson.encode(COLOR_SCHEMES))
+                cxlog_info('...',cjson.encode(COLOR_SCHEMES_SELECT_MAP))
+            end
+        end)
+
+        if COLOR_SCHEMES then
+            for i=1,#COLOR_SCHEMES.segments-1 do
+                imgui.BeginGroup()
+                local title = COLOR_SCHEMES.segments[i]..'-'..COLOR_SCHEMES.segments[i+1]
+                imgui.AlignTextToFramePadding()
+                imgui.Text(title)
+                
+                for mat_i,mat in ipairs(COLOR_SCHEMES[i]) do
+                    local selected = imgui.RadioButton(mat_i..'##'..title ,mat_i == COLOR_SCHEMES_SELECT_MAP[i])
+                    if selected then
+                        COLOR_SCHEMES_SELECT_MAP[i] = mat_i
+                        --选择矩阵 重新load actor的avatar
+                        local new_pal = {}
+                        new_pal.segments = COLOR_SCHEMES.segments
+                        for seg_i=1,#COLOR_SCHEMES.segments-1 do
+                            local seg_mats = COLOR_SCHEMES[seg_i]
+                            local mat_i = COLOR_SCHEMES_SELECT_MAP[seg_i]
+                            local mat  = seg_mats[mat_i]
+                            table.insert(new_pal, mat)
+                        end
+                        cxlog_info('new_pal  '.. cjson.encode(new_pal))
+                        local avatar = player:GetAvatar()
+                        -- avatar:ChangePal(new_pal)
+                    end
+                end
+                                
+                imgui.EndGroup()
+                if i ~= #COLOR_SCHEMES.segments-1 then
+                    imgui.SameLine()
+                end
+            end
+        end
+        
+
+    end
     
     if imgui.CollapsingHeader('AvatarWeapon') then
         local avatar_weapon_tbl =  content_system_get_table('weapon')    

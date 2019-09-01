@@ -452,9 +452,9 @@ int actor_move_to(lua_State* L){
 		action = new PathMoveAction(actor);
 		actor->GetASM()->ChangeAction(action);
 	}
+	actor->GetASM()->Update();
 #endif
 	actor->GetMoveHandle()->MoveTo(x, y);
-	actor->GetASM()->Update();
 	return 0;
 }
 int actor_say(lua_State* L) {

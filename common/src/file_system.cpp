@@ -3,6 +3,7 @@
 #include <corecrt_io.h>
 #endif
 #include "script_system.h"
+#include "utils.h"
 
 static String VFS_WORK_PATH="";
 
@@ -198,8 +199,7 @@ std::string fs_get_tsv_path(const char* name)
 
 int vfs_list_files(lua_State* L)
 {
-	const char* rpath = luaL_checkstring(L, 1);
-	auto path = FileSystem::MakePath(rpath);
+	auto path = luaL_checkstring(L, 1); 
 	auto files = VFS_ListFiles(path);
 	lua_newtable(L);
 	int index = 1;

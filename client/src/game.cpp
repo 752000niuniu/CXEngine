@@ -7,6 +7,7 @@
 #include "actor/action.h"
 #include "scene/game_map.h"
 #include "resource_manager.h"
+#include "utils.h"
 
 
 Game::Game()
@@ -60,9 +61,14 @@ int util_screen_pos_to_map_pos(lua_State* L) {
 	return 2;
 }
 
-
+int util_gb2312_to_utf8(lua_State* L) {
+	const char* str = lua_tostring(L, 1);
+	std::string s = utils::GB2312ToUtf8(str);
+	lua_pushstring(L, s.c_str());
+	return 1;
+}
 
 void luaopen_game(lua_State* L) {
 	script_system_register_luac_function(L, util_screen_pos_to_map_pos);
-	
+	script_system_register_luac_function(L, util_gb2312_to_utf8);
 }

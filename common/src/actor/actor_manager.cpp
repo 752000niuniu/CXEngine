@@ -7,7 +7,9 @@
 #include "scene/game_map.h"
 #include "utils.h"
 #include "cxmath.h"
+#ifndef SIMPLE_SERVER
 #include "animation/sprite.h"
+#endif
 
 std::map<uint64_t, Actor*> g_Players;
 uint64_t g_LocalPid = 0;
@@ -62,7 +64,9 @@ void actor_manager_update()
 	{
 		it.second->OnUpdate();
 	}
+#ifndef SIMPLE_SERVER
 	AnimationManager::GetInstance()->Update();
+#endif
 }
 
 void actor_manager_draw()
