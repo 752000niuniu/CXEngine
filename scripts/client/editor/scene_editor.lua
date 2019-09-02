@@ -8,7 +8,6 @@ local cbx_draw_strider = true
 local cbx_draw_cell = false
 local cbx_draw_map  = true
 local cbx_draw_announcement = true
-local cbx_auto_run = false
 
     
 local checkbox_names = {
@@ -17,7 +16,6 @@ local checkbox_names = {
     {   name = 'DrawStrider', cb = function(v) v.res,cbx_draw_strider = imgui.Checkbox(v.name, cbx_draw_strider) end },
     {   name = 'DrawMask', cb = function(v) v.res,cbx_draw_mask = imgui.Checkbox(v.name, cbx_draw_mask) end },
     {   name = 'DrawAnnouncement', cb = function(v) v.res,cbx_draw_announcement = imgui.Checkbox(v.name, cbx_draw_announcement) end},
-    {   name = 'AutoRun', cb  = function(v) v.res,cbx_auto_run = imgui.Checkbox(v.name, cbx_auto_run) end },
 }
 
 function on_scene_editor_update()

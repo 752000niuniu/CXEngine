@@ -6,6 +6,7 @@
 #include "actor/actor.h"
 #include "resource_manager.h"
 #include "animation/sprite.h"
+#include "texture_manager.h"
 #endif
 #include "cxmath.h"
 #include "time/timer_manager.h"
@@ -14,7 +15,6 @@
 #include "scene/game_map.h"
 #include "cxrandom.h"
 #include "actor_manager.h"
-#include "texture_manager.h"
 
 std::map<CXString, int> g_AttackKeyFrame = {
 	{"FYN-DBSWORDS" ,5 },

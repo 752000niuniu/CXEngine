@@ -37,7 +37,6 @@ namespace utils
 class ResourceManager final : public Singleton<ResourceManager>
 {
 public:
-
 	friend Singleton<ResourceManager>;
 
 	Sprite* LoadWASSpriteByID(uint64_t resID,bool sync = false, std::vector<NE::WDF::PalMatrix>* patMatrix = nullptr);
@@ -53,7 +52,6 @@ public:
 	uint64_t EncodeWAS(uint32_t pack, uint32_t wasID) { uint64_t resID = pack;return (resID << 32) | wasID;}
 	
 	void DecodeWAS(uint64_t resID, uint32_t& pack, uint32_t& wasID) {  pack = resID >> 32; wasID = (resID & 4294967295); };
-	
 
 	uint64_t GetActionResID(int type,CXString id,int action);
 
@@ -71,12 +69,15 @@ public:
 	int ActorTypeToAvatarType(int actorType);
 
 	void ExportWas(uint64_t id,CXString path);
+
+
 private:
 	utils::tsv* FindAvatarTable(int actor_type);
 	ResourceManager();
 
 	~ResourceManager();
 
+	std::map<uint64_t, NE::PalSchemes> m_PalSchemesMap;
 	std::map<std::string, Texture*> Textures;
 	
 	utils::tsv m_AvatarRoleTSV;
