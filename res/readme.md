@@ -42,3 +42,10 @@ git -c filter.lfs.smudge= -c filter.lfs.required=false clone url path
 红色伤害数字 WDF:misc  0x30F737D8
 绿色伤害数字 WDF:misc  0x3CF8F9FE
 
+文件类型
+Sp  .was
+BIN
+TXT
+RIFF  声音.wav
+OggS 声音  .map3
+

@@ -150,8 +150,8 @@ public:
 
 
 #ifndef SIMPLE_SERVER
-	std::vector<NE::WDF::PalMatrix>& GetPalette() { return m_PatMatrix; }
-	void SetPalette(std::vector<NE::WDF::PalMatrix> patMatrix) { m_PatMatrix = patMatrix; }
+	std::vector<NE::PalSchemePart>& GetPalette() { return m_PatMatrix; }
+	void SetPalette(std::vector<NE::PalSchemePart> patMatrix) { m_PatMatrix = patMatrix; }
 	ActionStateMachine* GetASM() { return m_ASM; };
 	Bound GetViewBounds() override;
 	bool CheckDrag(int x, int y) override;
@@ -198,7 +198,7 @@ protected:
 	
 	MoveHandle* m_MoveHandle;
 	ActorCombatProps m_CombatProps;
-	std::vector<NE::WDF::PalMatrix> m_PatMatrix;
+	std::vector<NE::PalSchemePart> m_PatMatrix;
 #ifndef SIMPLE_SERVER
 	TextView* m_SayWidget;
 	ActionStateMachine* m_ASM;

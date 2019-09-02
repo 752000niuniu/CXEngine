@@ -29,10 +29,10 @@ void ImageView::OnUpdate()
 	auto backgroud = RESOURCE_MANAGER_INSTANCE->LoadWASSpriteByID(BackgroundResID);
 	if (backgroud != nullptr && Background == nullptr)
 	{
-		auto& frame = backgroud->mFrames[0];
-		Background = new Texture(frame.width, frame.height, true, (uint8*)frame.src.data());
-		Width = frame.width;
-		Height = frame.height;
+		auto& frame = backgroud->Frames[0];
+		Background = new Texture(frame.Width, frame.Height, true, (uint8*)frame.Src.data());
+		Width = frame.Width;
+		Height = frame.Height;
 		X = (int) WINDOW_INSTANCE->GetCenterX() - Width / 2;
 		Y = (int)WINDOW_INSTANCE->GetCenterY() - Height/ 2;;
 	}

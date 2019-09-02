@@ -667,9 +667,9 @@ int actor_change_pal_matrix(lua_State*L) {
 #ifndef SIMPLE_SERVER
 	Actor* actor = lua_check_actor(L, 1);
 	int len = (int)luaL_len(L, 2);
-	std::vector<NE::WDF::PalMatrix> patMatrix;
+	std::vector<NE::PalSchemePart> patMatrix;
 	for (int i = 1; i<=len; i++) {
-		NE::WDF::PalMatrix seg_matrix;
+		NE::PalSchemePart seg_matrix;
 		lua_geti(L, -1, i);
 		
 		lua_getfield(L, -1, "from");

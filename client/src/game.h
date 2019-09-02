@@ -18,4 +18,5 @@ private:
 
 #define GAME_INSTANCE Game::GetInstance()
 
+void util_save_image_file(const char* filename, int width, int height, int pixelDepth, char* data);
 void luaopen_game(lua_State* L);

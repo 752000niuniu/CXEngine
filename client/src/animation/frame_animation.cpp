@@ -101,13 +101,13 @@ FrameAnimation::FrameAnimation(uint64_t resoureID)
 {
 	m_pSprite = RESOURCE_MANAGER_INSTANCE->LoadWASSpriteByID(m_ResourceID);
 	if (!m_pSprite) return;
-	m_GroupFrameCount = m_pSprite->mFrameSize;
-	m_GroupCount = m_pSprite->mGroupSize;
-	m_TotalFrameCount = (int)m_pSprite->mFrames.size();
-	m_KeyX = m_pSprite->mKeyX;
-	m_KeyY = m_pSprite->mKeyY;
-	m_Width = m_pSprite->mWidth;
-	m_Height = m_pSprite->mHeight;
+	m_GroupFrameCount = m_pSprite->GroupFrameCount;
+	m_GroupCount = m_pSprite->GroupCount;
+	m_TotalFrameCount = (int)m_pSprite->Frames.size();
+	m_KeyX = m_pSprite->KeyX;
+	m_KeyY = m_pSprite->KeyY;
+	m_Width = m_pSprite->Width;
+	m_Height = m_pSprite->Height;
 	m_bVisible = true;
 	m_bLoop =true;
 }
@@ -169,7 +169,7 @@ String FrameAnimation::GetFramePath(int index)
 {
 	if(m_pSprite)
 	{
-		return m_pSprite->mPath + std::string("/" + std::to_string(index));
+		return m_pSprite->Path + std::string("/" + std::to_string(index));
 	}
 	return "";
 }
@@ -187,8 +187,8 @@ Texture* FrameAnimation::GetFrameTexture(int index)
 	}
 	else 
 	{
-		auto& frame = m_pSprite->mFrames[index];
-		return TextureManager::GetInstance()->LoadTexture(path,frame.width,frame.height,true,(uint8_t*)frame.src.data());
+		auto& frame = m_pSprite->Frames[index];
+		return TextureManager::GetInstance()->LoadTexture(path,frame.Width,frame.Height,true,(uint8_t*)frame.Src.data());
 	}
 }
 
@@ -235,14 +235,14 @@ void FrameAnimation::OnUpdate()
 		m_pSprite = RESOURCE_MANAGER_INSTANCE->LoadWASSpriteByID(m_ResourceID);
 		if (m_pSprite != nullptr)
 		{
-			m_GroupFrameCount = m_pSprite->mFrameSize;
-			m_GroupCount = m_pSprite->mGroupSize;
-			m_TotalFrameCount = (int)(m_pSprite->mFrames.size());
+			m_GroupFrameCount = m_pSprite->GroupFrameCount;
+			m_GroupCount = m_pSprite->GroupCount;
+			m_TotalFrameCount = (int)(m_pSprite->Frames.size());
 
-			m_KeyX = m_pSprite->mKeyX;
-			m_KeyY = m_pSprite->mKeyY;
-			m_Width = m_pSprite->mWidth;
-			m_Height = m_pSprite->mHeight;
+			m_KeyX = m_pSprite->KeyX;
+			m_KeyY = m_pSprite->KeyY;
+			m_Width = m_pSprite->Width;
+			m_Height = m_pSprite->Height;
 			m_FrameTime = m_FrameTimeBase;
 			m_CurrentFrame = m_CurrentGroup * m_GroupFrameCount;
 			m_bVisible = true;
@@ -255,7 +255,7 @@ void FrameAnimation::OnUpdate()
 		if (m_CurrentFrame < 0 || m_CurrentFrame >= m_TotalFrameCount) return;
 
 		float dt = WINDOW_INSTANCE->GetDeltaTime();
-		if (m_pSprite->mFrames[m_CurrentFrame].IsBlank)
+		if (m_pSprite->Frames[m_CurrentFrame].IsBlank)
 			dt = dt * 2;
 		m_DeltaTime += dt;
 
@@ -267,7 +267,7 @@ void FrameAnimation::OnUpdate()
 			m_DeltaTime = m_DeltaTime - std::floor(m_DeltaTime / m_FrameTime)*m_FrameTime;
 
 			m_LastFrame = m_CurrentFrame;
-			if (!m_pSprite->mFrames[m_LastFrame].IsBlank)
+			if (!m_pSprite->Frames[m_LastFrame].IsBlank)
 			{
 				m_LastNotBlankFrame = m_LastFrame;
 			}
@@ -278,12 +278,12 @@ void FrameAnimation::OnUpdate()
 				{
 					m_bIsNextFrameRestart = true;
 					m_LastFrame = (m_CurrentGroup)* m_GroupFrameCount + m_GroupFrameCount - 1;
-					if (m_LastFrame >= m_pSprite->mFrames.size())
+					if (m_LastFrame >= m_pSprite->Frames.size())
 					{
 						cxlog_err("m_LastFrame over size");
 						m_LastFrame = 0;
 					}
-					if (!m_pSprite->mFrames[m_LastFrame].IsBlank)
+					if (!m_pSprite->Frames[m_LastFrame].IsBlank)
 					{
 						m_LastNotBlankFrame = m_LastFrame;
 					}
@@ -308,14 +308,14 @@ void FrameAnimation::OnUpdateNew()
 		m_pSprite = RESOURCE_MANAGER_INSTANCE->LoadWASSpriteByID(m_ResourceID);
 		if (m_pSprite != nullptr)
 		{
-			m_GroupFrameCount = m_pSprite->mFrameSize;
-			m_GroupCount = m_pSprite->mGroupSize;
-			m_TotalFrameCount = (int)(m_pSprite->mFrames.size());
+			m_GroupFrameCount = m_pSprite->GroupFrameCount;
+			m_GroupCount = m_pSprite->GroupCount;
+			m_TotalFrameCount = (int)(m_pSprite->Frames.size());
 
-			m_KeyX = m_pSprite->mKeyX;
-			m_KeyY = m_pSprite->mKeyY;
-			m_Width = m_pSprite->mWidth;
-			m_Height = m_pSprite->mHeight;
+			m_KeyX = m_pSprite->KeyX;
+			m_KeyY = m_pSprite->KeyY;
+			m_Width = m_pSprite->Width;
+			m_Height = m_pSprite->Height;
 			m_FrameTime = m_FrameTimeBase;
 			m_CurrentFrame = m_CurrentGroup * m_GroupFrameCount;
 			m_bVisible = true;
@@ -398,7 +398,7 @@ void FrameAnimation::Draw()
 	if (!m_bVisible)return;
 	if(m_CurrentFrame <  0 || m_CurrentFrame >= m_TotalFrameCount || !m_pSprite) return;
 	
-	if(m_pSprite->mFrames[m_CurrentFrame].IsBlank)
+	if(m_pSprite->Frames[m_CurrentFrame].IsBlank)
 	{
 		m_CurrentFrame = m_LastNotBlankFrame  ;
 	}
@@ -406,12 +406,12 @@ void FrameAnimation::Draw()
 	auto* texture = GetFrameTexture(m_CurrentFrame);
 	if(texture)
 	{
-		auto& frame = m_pSprite->mFrames[m_CurrentFrame];
-		int kx = (m_KeyX - frame.key_x);
-		int ky = (m_KeyY - frame.key_y);
+		auto& frame = m_pSprite->Frames[m_CurrentFrame];
+		int kx = (m_KeyX - frame.KeyX);
+		int ky = (m_KeyY - frame.KeyY);
 		SPRITE_RENDERER_INSTANCE->DrawFrameSprite(texture,
 			glm::vec2( m_Pos.x + kx, m_Pos.y + ky),
-			glm::vec2(frame.width, frame.height), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+			glm::vec2(frame.Width, frame.Height), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	}
 	
 }
@@ -423,7 +423,7 @@ void FrameAnimation::DrawCenter(float x,float y)
 	if (!m_bVisible)return;
 	if (m_CurrentFrame < 0 || m_CurrentFrame >= m_TotalFrameCount || !m_pSprite) return;
 
-	if (m_pSprite->mFrames[m_CurrentFrame].IsBlank)
+	if (m_pSprite->Frames[m_CurrentFrame].IsBlank)
 	{
 		m_CurrentFrame = m_LastNotBlankFrame;
 	}
@@ -431,12 +431,12 @@ void FrameAnimation::DrawCenter(float x,float y)
 	auto* texture = GetFrameTexture(m_CurrentFrame);
 	if (texture)
 	{
-		auto& frame = m_pSprite->mFrames[m_CurrentFrame];
-		int kx = (m_KeyX - frame.key_x);
-		int ky = (m_KeyY - frame.key_y);
+		auto& frame = m_pSprite->Frames[m_CurrentFrame];
+		int kx = (m_KeyX - frame.KeyX);
+		int ky = (m_KeyY - frame.KeyY);
 		SPRITE_RENDERER_INSTANCE->DrawFrameSprite(texture,
-			glm::vec2(x - frame.width / 2.f + kx, y - frame.height / 2.f + ky),
-			glm::vec2(frame.width, frame.height), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+			glm::vec2(x - frame.Width / 2.f + kx, y - frame.Height / 2.f + ky),
+			glm::vec2(frame.Width, frame.Height), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 	}
 }
 

@@ -13,7 +13,7 @@ String UtilsGetFramePath(Sprite* m_pSprite, int index)
 {
 	if (m_pSprite)
 	{
-		return m_pSprite->mPath + std::string("/" + std::to_string(index));
+		return m_pSprite->Path + std::string("/" + std::to_string(index));
 	}
 	return "";
 }
@@ -21,24 +21,34 @@ String UtilsGetFramePath(Sprite* m_pSprite, int index)
 Texture* UtilsGetFrameTexture(Sprite* m_pSprite, int index)
 {
 	if (!m_pSprite)return nullptr;
-	if (index >= m_pSprite->mFrameSize * m_pSprite->mGroupSize)return nullptr;
+	if (index >= m_pSprite->GroupFrameCount * m_pSprite->GroupCount)return nullptr;
 	auto path = UtilsGetFramePath(m_pSprite, index);
-	auto& frame = m_pSprite->mFrames[index];
-	return TextureManager::GetInstance()->LoadTexture(path, frame.width, frame.height, true, (uint8_t*)frame.src.data());
+	auto& frame = m_pSprite->Frames[index];
+	return TextureManager::GetInstance()->LoadTexture(path, frame.Width, frame.Height, true, (uint8_t*)frame.Src.data());
 }
 
-BaseSprite::BaseSprite(uint64_t resoureID, std::vector<NE::WDF::PalMatrix>* patMatrix )
+BaseSprite::BaseSprite(uint64_t resoureID, std::vector<PalSchemePart>* patMatrix )
 	:ResID(resoureID)
 {
 	if (resoureID == 0) { m_pSprite = nullptr; return; }
-	m_pSprite = RESOURCE_MANAGER_INSTANCE->LoadWASSpriteByID(resoureID, true, patMatrix);
-	Width = m_pSprite->mWidth;
-	Height = m_pSprite->mHeight;
-	KeyX = m_pSprite->mKeyX;
-	KeyY = m_pSprite->mKeyY;
-	TotalFrames = m_pSprite->mGroupSize*m_pSprite->mFrameSize;
-	GroupFrameCount = m_pSprite->mFrameSize;
-	GroupCount = m_pSprite->mGroupSize;
+	PalSpriteInfo* spritInfo = nullptr;
+	if (patMatrix) {
+		spritInfo = RESOURCE_MANAGER_INSTANCE->LoadSprite(resoureID, patMatrix);
+	}
+	else {
+		spritInfo = RESOURCE_MANAGER_INSTANCE->LoadSprite(resoureID, nullptr);
+	}
+	
+
+	m_pSprite = spritInfo->sprite;
+	Width = m_pSprite->Width;
+	Height = m_pSprite->Height;
+	KeyX = m_pSprite->KeyX;
+	KeyY = m_pSprite->KeyY;
+	TotalFrames = m_pSprite->GroupCount*m_pSprite->GroupFrameCount;
+	GroupFrameCount = m_pSprite->GroupFrameCount;
+	GroupCount = m_pSprite->GroupCount;
+	m_pSprite->Path = std::to_string(resoureID) + "/" + std::to_string(spritInfo->pati);
 
 	CurrentFrame = 0;
 	for (int i = 0; i < TotalFrames; i++)
@@ -52,7 +62,7 @@ BaseSprite::BaseSprite(uint64_t resoureID, std::vector<NE::WDF::PalMatrix>* patM
 	bEnableDrag = false;
 }
 
-BaseSprite::BaseSprite(uint32_t pkg, uint32_t wasID, std::vector<NE::WDF::PalMatrix>* patMatrix ) :BaseSprite(RESOURCE_MANAGER_INSTANCE->EncodeWAS(pkg, wasID),patMatrix) {}
+BaseSprite::BaseSprite(uint32_t pkg, uint32_t wasID, std::vector<PalSchemePart>* patMatrix ) :BaseSprite(RESOURCE_MANAGER_INSTANCE->EncodeWAS(pkg, wasID),patMatrix) {}
 
 BaseSprite::~BaseSprite()
 {
@@ -64,16 +74,16 @@ NE::Sprite::Sequence* BaseSprite::GetFrame(int index /*= -1*/)
 {
 	if (!m_pSprite)return nullptr;
 	if (index == -1)index = CurrentFrame;
-	if (index >= m_pSprite->mFrames.size())return 0;
-	return &m_pSprite->mFrames[index];
+	if (index >= m_pSprite->Frames.size())return 0;
+	return &m_pSprite->Frames[index];
 }
 int BaseSprite::GetFrameKeyX(int index /*= -1*/)
 {
 	if (!m_pSprite)return 0;
 	if (index == -1)index = CurrentFrame;
 	int frame = Dir * GroupFrameCount + index;
-	if (frame >= m_pSprite->mFrames.size())return 0;
-	return m_pSprite->mFrames[frame].key_x;
+	if (frame >= m_pSprite->Frames.size())return 0;
+	return m_pSprite->Frames[frame].KeyX;
 }
 
 int BaseSprite::GetFrameKeyY(int index /*= -1*/)
@@ -81,8 +91,8 @@ int BaseSprite::GetFrameKeyY(int index /*= -1*/)
 	if (!m_pSprite)return 0;
 	if (index == -1)index = CurrentFrame;
 	int frame = Dir * GroupFrameCount + index;
-	if (frame >= m_pSprite->mFrames.size())return 0;
-	return m_pSprite->mFrames[frame].key_y;
+	if (frame >= m_pSprite->Frames.size())return 0;
+	return m_pSprite->Frames[frame].KeyY;
 }
 
 int BaseSprite::GetFrameWidth(int index /*= -1*/)
@@ -90,8 +100,8 @@ int BaseSprite::GetFrameWidth(int index /*= -1*/)
 	if (!m_pSprite)return 0;
 	if (index == -1)index = CurrentFrame;
 	int frame = Dir * GroupFrameCount + index;
-	if (frame >= m_pSprite->mFrames.size())return 0;
-	return m_pSprite->mFrames[frame].width;
+	if (frame >= m_pSprite->Frames.size())return 0;
+	return m_pSprite->Frames[frame].Width;
 }
 
 
@@ -100,8 +110,8 @@ int BaseSprite::GetFrameHeight(int index /*= -1*/)
 	if (!m_pSprite)return 0;
 	if (index == -1)index = CurrentFrame;
 	int frame = Dir * GroupFrameCount + index;
-	if (frame >= m_pSprite->mFrames.size())return 0;
-	return m_pSprite->mFrames[frame].height;
+	if (frame >= m_pSprite->Frames.size())return 0;
+	return m_pSprite->Frames[frame].Height;
 }
 
 void BaseSprite::EnableDrag(bool enable)
@@ -131,7 +141,7 @@ void BaseSprite::OnDragMove(int dx, int dy)
 	Pos.y += (float)dy;
 }
 
-Animation::Animation(uint64_t resoureID /*= 0*/, std::vector<NE::WDF::PalMatrix>* patMatrix ) :BaseSprite(resoureID, patMatrix)
+Animation::Animation(uint64_t resoureID /*= 0*/, std::vector<PalSchemePart>* patMatrix ) :BaseSprite(resoureID, patMatrix)
 {
 	m_Visible = true;
 	m_State = ANIMATION_PLAY;
@@ -141,7 +151,7 @@ Animation::Animation(uint64_t resoureID /*= 0*/, std::vector<NE::WDF::PalMatrix>
 	int max_dx = 0;
 	int max_frame = 0;
 	for (int i = std::max(GroupFrameCount / 2 - 1, 0); i < GroupFrameCount - 1; i++) {
-		int dx =(int)std::pow((m_pSprite->mFrames[i].key_x - m_pSprite->mFrames[i + 1].key_x), 2);// + std::abs(m_pSprite->mFrames[i].width*m_pSprite->mFrames[i].height - m_pSprite->mFrames[i + 1].width*m_pSprite->mFrames[i + 1].height);
+		int dx =(int)std::pow((m_pSprite->Frames[i].KeyX - m_pSprite->Frames[i + 1].KeyX), 2);// + std::abs(m_pSprite->Frames[i].width*m_pSprite->Frames[i].height - m_pSprite->Frames[i + 1].width*m_pSprite->Frames[i + 1].height);
 		if (max_dx < dx) {
 			max_dx = dx;
 			max_frame = i + 1;
@@ -158,7 +168,7 @@ Animation::Animation(uint64_t resoureID /*= 0*/, std::vector<NE::WDF::PalMatrix>
 	m_bLoop = true;
 }
 
-Animation::Animation(uint32_t pkg, uint32_t wasID, std::vector<NE::WDF::PalMatrix>* patMatrix)
+Animation::Animation(uint32_t pkg, uint32_t wasID, std::vector<PalSchemePart>* patMatrix)
 	:Animation(RESOURCE_MANAGER_INSTANCE->EncodeWAS(pkg, wasID),patMatrix)
 {
 
@@ -298,10 +308,10 @@ void Animation::Draw()
 	auto* texture = UtilsGetFrameTexture(m_pSprite, Dir*GroupFrameCount + CurrentFrame);
 	if (texture)
 	{
-		auto& frame = m_pSprite->mFrames[Dir*GroupFrameCount + CurrentFrame];
+		auto& frame = m_pSprite->Frames[Dir*GroupFrameCount + CurrentFrame];
 		SPRITE_RENDERER_INSTANCE->DrawFrameSprite(texture,
-			glm::vec2(Pos.x - frame.key_x, Pos.y - frame.key_y),
-			glm::vec2(frame.width, frame.height), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+			glm::vec2(Pos.x - frame.KeyX, Pos.y - frame.KeyY),
+			glm::vec2(frame.Width, frame.Height), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	}
 }
@@ -343,16 +353,16 @@ void BeatNumber::Update()
 			float start_time = i * (m_BeatTime / m_BeatHeights);
 			if (m_PlayTime > start_time) {
 				float dur = m_PlayTime - start_time;
-				dig.y = (m_HitAnim.m_pSprite->mHeight * m_BeatHeights / m_BeatTime)*dur;
-				if (dig.y > m_HitAnim.m_pSprite->mHeight * m_BeatHeights * 2) {
+				dig.y = (m_HitAnim.m_pSprite->Height * m_BeatHeights / m_BeatTime)*dur;
+				if (dig.y > m_HitAnim.m_pSprite->Height * m_BeatHeights * 2) {
 					dig.y = 0;
 					if (i == m_Digits.size() - 1) {
 						m_bBeat = false;
 						m_PlayTime = -m_PauseTime;
 					}
 				}
-				else if (dig.y > m_HitAnim.m_pSprite->mHeight*m_BeatHeights) {
-					dig.y = m_HitAnim.m_pSprite->mHeight * m_BeatHeights * 2 - dig.y;
+				else if (dig.y > m_HitAnim.m_pSprite->Height*m_BeatHeights) {
+					dig.y = m_HitAnim.m_pSprite->Height * m_BeatHeights * 2 - dig.y;
 				}
 			}
 		}
@@ -378,10 +388,10 @@ void BeatNumber::Draw()
 		auto* texture = UtilsGetFrameTexture(m_HitAnim.m_pSprite, dig.digit);
 		if (texture)
 		{
-			auto& frame = m_HitAnim.m_pSprite->mFrames[dig.digit];
+			auto& frame = m_HitAnim.m_pSprite->Frames[dig.digit];
 			SPRITE_RENDERER_INSTANCE->DrawFrameSprite(texture,
-				glm::vec2(x - frame.key_x, y - frame.key_y),
-				glm::vec2(frame.width, frame.height), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+				glm::vec2(x - frame.KeyX, y - frame.KeyY),
+				glm::vec2(frame.Width, frame.Height), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
 		}
 	}
 }
@@ -589,23 +599,23 @@ int animation_get_height(lua_State* L) {
 	return 1;
 }
 
-int animation_get_key_x(lua_State* L) {
+int animation_get_KeyX(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	lua_pushinteger(L, animation->KeyX);
 	return 1;
 }
-int animation_get_key_y(lua_State* L) {
+int animation_get_KeyY(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	lua_pushinteger(L, animation->KeyY);
 	return 1;
 }
-int animation_get_frame_key_x(lua_State* L) {
+int animation_get_frame_KeyX(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	int index = (int)luaL_optinteger(L, 2, -1);
 	lua_pushinteger(L, animation->GetFrameKeyX(index));
 	return 1;
 }
-int animation_get_frame_key_y(lua_State* L) {
+int animation_get_frame_KeyY(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	int index = (int)luaL_optinteger(L, 2, -1);
 	lua_pushinteger(L, animation->GetFrameKeyY(index));
@@ -742,10 +752,10 @@ luaL_Reg MT_BASE_SPRITE[] = {
 { "GetFrameInterval",animation_get_frame_interval },
 { "GetWidth", animation_get_width },
 { "GetHeight", animation_get_height },
-{ "GetKeyX", animation_get_key_x },
-{ "GetKeyY", animation_get_key_y },
-{ "GetFrameKeyX", animation_get_frame_key_x },
-{ "GetFrameKeyY", animation_get_frame_key_y },
+{ "GetKeyX", animation_get_KeyX },
+{ "GetKeyY", animation_get_KeyY },
+{ "GetFrameKeyX", animation_get_frame_KeyX },
+{ "GetFrameKeyY", animation_get_frame_KeyY },
 { "GetFrameHeight", animation_get_frame_height },
 { "GetFrameWidth", animation_get_frame_width },
 { "GetPlayTime", animation_get_play_time },

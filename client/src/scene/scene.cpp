@@ -53,8 +53,12 @@ void Scene::ApplyTemplate(const std::map<String, String>& templ)
 	m_TransportUUIDs = utils::split_by_cuts(templ.at("transport_stations"), ',');
 }
 
+
 void Scene::OnLoad()
 {
+	
+
+
 	//m_LocalPlayer = nullptr;
 	m_Switching = true;
 	m_NpcDialogBG = new FrameAnimation(WZIFEWDF, 0x1732c1ef);

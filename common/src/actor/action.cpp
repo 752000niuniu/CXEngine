@@ -255,23 +255,23 @@ void AttackAction::Enter()
 			float x = (float)m_Target->GetX();
 			float y = (float)m_Target->GetY();
 			if (dir == DIR_NE) {
-				x = x - attackFrame->width - 5;
-				y = y - targetFrame->key_y + targetFrame->height *0.5f - attackFrame->height / 2 + 11;
+				x = x - attackFrame->Width - 5;
+				y = y - targetFrame->KeyY + targetFrame->Height *0.5f - attackFrame->Height / 2 + 11;
 			}
 			else if (dir == DIR_NW) {
 				x = x + 5;
-				y = y - targetFrame->key_y + targetFrame->height *0.5f - attackFrame->height / 2 + 11;
+				y = y - targetFrame->KeyY + targetFrame->Height *0.5f - attackFrame->Height / 2 + 11;
 			}
 			else if (dir == DIR_SE) {
-				x = x - attackFrame->width - 5;
-				y = y - targetFrame->key_y + targetFrame->height *0.5f - attackFrame->height / 2 - 11;
+				x = x - attackFrame->Width - 5;
+				y = y - targetFrame->KeyY + targetFrame->Height *0.5f - attackFrame->Height / 2 - 11;
 			}
 			else if (dir == DIR_SW) {
 				x = x + 5;
-				y = y - targetFrame->key_y + targetFrame->height *0.5f - attackFrame->height / 2 - 11;
+				y = y - targetFrame->KeyY + targetFrame->Height *0.5f - attackFrame->Height / 2 - 11;
 			}
-			x = x + attackFrame->key_x;
-			y = y + attackFrame->key_y;
+			x = x + attackFrame->KeyX;
+			y = y + attackFrame->KeyY;
 			m_Runto.x = x;
 			m_Runto.y = y;
 			

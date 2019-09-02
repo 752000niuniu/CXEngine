@@ -6,11 +6,12 @@
 struct NE::Sprite;
 struct NE::Sprite::Sequence;
 using CXPos = Pos;
+using NE::PalSchemePart;
 class BaseSprite : public View
 {
 public:
-	BaseSprite(uint64_t resoureID = 0, std::vector<NE::WDF::PalMatrix>* patMatrix = nullptr);
-	BaseSprite(uint32_t pkg, uint32_t wasID, std::vector<NE::WDF::PalMatrix>* patMatrix = nullptr);
+	BaseSprite(uint64_t resoureID = 0, std::vector<PalSchemePart>* patMatrix = nullptr);
+	BaseSprite(uint32_t pkg, uint32_t wasID, std::vector<PalSchemePart>* patMatrix = nullptr);
 	virtual ~BaseSprite();
 
 	virtual void Update() {};
@@ -56,8 +57,8 @@ enum EAnimationState
 class Animation : public BaseSprite
 {
 public:
-	Animation(uint64_t resoureID = 0, std::vector<NE::WDF::PalMatrix>* patMatrix = nullptr);
-	Animation(uint32_t pkg, uint32_t wasID, std::vector<NE::WDF::PalMatrix>* patMatrix = nullptr);
+	Animation(uint64_t resoureID = 0, std::vector<PalSchemePart>* patMatrix = nullptr);
+	Animation(uint32_t pkg, uint32_t wasID, std::vector<PalSchemePart>* patMatrix = nullptr);
 	virtual ~Animation() {};
 	void Update() override;
 	void Draw() override;

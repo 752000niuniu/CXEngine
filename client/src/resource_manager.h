@@ -20,6 +20,9 @@
 // handles. All functions and resources are static and no
 // public constructor is defined.
 
+using NE::PalSchemePart;
+using NE::Sprite;
+
 enum EAvatarTableType
 {
 	AVATAR_TYPE_ROLE = 0,
@@ -34,16 +37,26 @@ namespace utils
 };
 
 
+struct PalSpriteInfo
+{
+	int pati;
+	std::vector<PalSchemePart> pat;
+	Sprite* sprite;
+};
+
 class ResourceManager final : public Singleton<ResourceManager>
 {
 public:
 	friend Singleton<ResourceManager>;
 
-	Sprite* LoadWASSpriteByID(uint64_t resID,bool sync = false, std::vector<NE::WDF::PalMatrix>* patMatrix = nullptr);
+	PalSpriteInfo* LoadSprite(uint64_t resID, std::vector<PalSchemePart>*  pat);
+	void UnLoadSprite(uint64_t resID);
+
+	Sprite* LoadWASSpriteByID(uint64_t resID,bool sync = false, std::vector<PalSchemePart>* patMatrix = nullptr);
 
 	void UnLoadWASSpriteByID(uint64_t resID);
 
-	Sprite* LoadWASSprite(uint32_t pack,uint32 wasId,bool sync = false, std::vector<NE::WDF::PalMatrix>* patMatrix = nullptr);
+	Sprite* LoadWASSprite(uint32_t pack,uint32 wasId,bool sync = false, std::vector<PalSchemePart>* patMatrix = nullptr);
 
 	void UnLoadWASSprite(uint32_t pack, uint32 wasId);
     
@@ -83,6 +96,8 @@ private:
 	utils::tsv m_AvatarRoleTSV;
 	utils::tsv m_AvatarWeaponTSV;
 	utils::tsv m_AvatarNpcTSV; 
+
+	std::map<uint64_t, std::vector<PalSpriteInfo*>> m_Sprites;
 };
 #define  RESOURCE_MANAGER_INSTANCE ResourceManager::GetInstance()
 

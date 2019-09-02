@@ -701,10 +701,10 @@ void TextView::OnUpdate()
 	auto backgroud = RESOURCE_MANAGER_INSTANCE->LoadWASSpriteByID(BackgroundResID);
 	if (backgroud != nullptr && Background == nullptr)
 	{
-		auto& frame = backgroud->mFrames[0];
-		Background = new Texture(frame.width, frame.height, true, (uint8*)frame.src.data());
-		Width = frame.width;
-		Height = frame.height;
+		auto& frame = backgroud->Frames[0];
+		Background = new Texture(frame.Width, frame.Height, true, (uint8*)frame.Src.data());
+		Width = frame.Width;
+		Height = frame.Height;
 	}
 	auto now = std::chrono::system_clock::now();
 	uint64_t currentTime = now.time_since_epoch().count() / 10000;

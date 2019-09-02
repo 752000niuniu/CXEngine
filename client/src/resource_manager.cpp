@@ -8,6 +8,7 @@
 #include "tsv.h"
 #include "actor/action.h"
 #include "texture_manager.h"
+#include "game.h"
 
 
 
@@ -61,8 +62,14 @@ namespace utils
 		}
 	}
 
-	
+}
 
+bool utils_is_pal_scheme_part_equal(std::vector<PalSchemePart> pat1, std::vector<PalSchemePart> pat2) 
+{
+	size_t sz1 = pat1.size() * sizeof(PalSchemePart);
+	size_t sz2 = pat2.size() * sizeof(PalSchemePart);
+	if (sz1 != sz2)return false;
+	return memcmp(pat1.data(), pat2.data(), sz1) ==0;
 }
 
 
@@ -72,6 +79,7 @@ ResourceManager::ResourceManager()
 	m_AvatarWeaponTSV(FileSystem::GetTablePath("avatar_weapon.tsv")),
 	m_AvatarNpcTSV(FileSystem::GetTablePath("avatar_npc.tsv"))
 {
+
 }
 
 ResourceManager::~ResourceManager()
@@ -84,7 +92,7 @@ void ResourceManager::Clear()
     
 }
 
-Sprite* ResourceManager::LoadWASSpriteByID(uint64_t resID,bool sync, std::vector<NE::WDF::PalMatrix>* patMatrix )
+Sprite* ResourceManager::LoadWASSpriteByID(uint64_t resID, bool sync, std::vector<PalSchemePart>* patMatrix)
 {
 	if (!resID)return nullptr;
 	std::string path(std::to_string(resID));
@@ -140,7 +148,7 @@ void ResourceManager::UnLoadWASSpriteByID(uint64_t resID)
 }
 
 
-Sprite* ResourceManager::LoadWASSprite(uint32_t pack, uint32 wasID,bool sync, std::vector<NE::WDF::PalMatrix>* patMatrix )
+Sprite* ResourceManager::LoadWASSprite(uint32_t pack, uint32 wasID,bool sync, std::vector<PalSchemePart>* patMatrix )
 {
 	auto resID = EncodeWAS(pack, wasID);
 	return LoadWASSpriteByID(resID,sync, patMatrix);
@@ -321,6 +329,52 @@ void ResourceManager::ExportWas(uint64_t id, CXString path)
 	uint32_t pack, wasid;
 	DecodeWAS(id, pack, wasid);
 	s_Loaders[pack]->SaveWAS(wasid, path.c_str());
+}
+
+
+PalSpriteInfo* ResourceManager::LoadSprite(uint64_t resID, std::vector<PalSchemePart>* pat)
+{
+	auto it = m_Sprites.find(resID);
+	if (it != m_Sprites.end()) {
+		if (pat == nullptr) {
+			//assert(it->second.size() == 1);
+			return it->second[0];
+		}
+		else {
+			auto& spinfos = it->second;
+			for (auto* info : spinfos)
+			{
+				if (utils_is_pal_scheme_part_equal(*pat, info->pat)) {
+					return info;
+				}
+			}
+		}
+	}
+
+	uint32_t pack, wasid;
+	DecodeWAS(resID, pack, wasid);
+	PalSpriteInfo* info = new PalSpriteInfo();
+	if (s_Loaders.find(pack) == s_Loaders.end())
+	{
+		s_Loaders[pack] = new NE::WDF(utils::GetPathByPackID(pack));
+	}
+	if(pat){
+		info->sprite = s_Loaders[pack]->UnpackSprite(wasid, *pat);
+		info->pat = *pat;
+		info->pati =(int) m_Sprites[resID].size();
+	}else{
+		info->sprite = s_Loaders[pack]->UnpackSprite(wasid, {});
+		info->pat = {};
+		info->pati = 0;
+	}
+	
+	m_Sprites[resID].push_back(info);
+	return info;
+}
+
+void ResourceManager::UnLoadSprite(uint64_t resID)
+{
+
 }
 
 int resource_get_action_id(lua_State* L)
