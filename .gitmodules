@@ -58,3 +58,6 @@
 	path = internals/luadebugger
 	url = https://github.com/oceancx/luadebugger.git
 	branch = master
+[submodule "externals/plogg"]
+	path = externals/plogg
+	url = https://github.com/oceancx/plogg.git
