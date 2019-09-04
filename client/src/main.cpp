@@ -14,7 +14,7 @@ int main(int argc, char const *argv[])
 	FileSystem::InitWorkPath();
 	script_system_prepare_init();
 	script_system_dofile("main.lua");
-	//script_system_call_function(script_system_get_luastate(),"main");
+	script_system_call_function(script_system_get_luastate(),"main");
 
 	return 0;
 }

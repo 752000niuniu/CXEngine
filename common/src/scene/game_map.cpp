@@ -31,7 +31,6 @@ GameMap::GameMap(uint32 mapID)
 	{
 		iothread->PostTask(fileName.c_str(), [this](const char* path)->bool
 		{
-			//这才是资源
 			m_XyqMap = new NE::MAP(path);
 
 			m_MapWidth = m_XyqMap->MapWidth();
