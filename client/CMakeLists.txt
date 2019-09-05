@@ -19,7 +19,6 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../common/src PREFIX "Source Files
 
 add_executable(SimpleEngine
     ${SOURCES_HEADER_PRI}
-   
     src/algorithm.cpp
     src/animation/frame_animation.cpp
     src/animation/sprite.cpp
@@ -52,6 +51,8 @@ add_executable(SimpleEngine
     src/ui.cpp
     src/vertex.cpp
     src/window.cpp
+    src/audio/audio_manager.cpp
+
 
     ${GAME_SOURCES_HEADER}
     ${GAME_COMMON_SRCS}

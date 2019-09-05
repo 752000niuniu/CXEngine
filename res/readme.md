@@ -49,3 +49,8 @@ TXT
 RIFF  声音.wav
 OggS 声音  .map3
 
+File Type: MPEG ADTS, layer III, v2, 96 kbps, 22.05 kHz, JntStereo
+MIME Type: application/octet-stream
+Suggested file extension(s): bin dms lha lzh exe class so dll img iso
+
+ PayPal - The safer, easier way to pay online! 
