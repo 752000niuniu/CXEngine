@@ -421,7 +421,7 @@ int res_get_was(lua_State* L) {
 	{
 		s_Loaders[pack] = new NE::WDF(utils::GetPathByPackID(pack));
 	}
-	s_Loaders[pack]->SaveWAS(wasid, path);
+	s_Loaders[pack]->UnpackSprite(wasid, {});
 	return 0;
 }
 

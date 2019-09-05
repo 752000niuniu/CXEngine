@@ -82,7 +82,7 @@ public:
 	int ActorTypeToAvatarType(int actorType);
 
 	void ExportWas(uint64_t id,CXString path);
-
+	
 
 private:
 	utils::tsv* FindAvatarTable(int actor_type);

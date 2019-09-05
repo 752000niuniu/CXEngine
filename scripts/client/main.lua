@@ -19,7 +19,8 @@ script_system_dofile 'actor_manager.lua'
 IsCombat = false
 --聊天背景框 wzife 39D3BD99 
 function main()
-    window_system_init(SCREEN_WIDTH,SCREEN_HEIGHT); window_system_show()	
+	res_get_was(MUSICWDF,0x65B90ACA)
+    -- window_system_init(SCREEN_WIDTH,SCREEN_HEIGHT); window_system_show()	
 end
 
 function on_script_system_init()
