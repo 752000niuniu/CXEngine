@@ -13,7 +13,8 @@
 		"iosfwd": "cpp",
 		"map": "cpp",
 		"deque": "cpp",
-		"xstring": "cpp"
+		"xstring": "cpp",
+		"stb_vorbis.c": "cpp"
 	},
 	"C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
 	"C_Cpp.configurationWarnings": "Disabled"

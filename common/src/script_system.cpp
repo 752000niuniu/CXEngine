@@ -26,6 +26,7 @@
 #include "resource_manager.h"
 #include "sprite_renderer.h"
 #include "animation/frame_animation.h"
+#include "audio/audio_manager.h"
 #else
 #include "server.h"
 #endif // !SIMPLE_SERVER
@@ -97,6 +98,7 @@ void script_system_prepare_init()
 	luaopen_sprite(L);
 	luaopen_net(L);
 	luaopen_combat_system(L);
+	luaopen_audio_manager(L);
 #else
 	luaopen_game_server(L);
 #endif // !SIMPLE_SERVER

@@ -421,8 +421,12 @@ int res_get_was(lua_State* L) {
 	{
 		s_Loaders[pack] = new NE::WDF(utils::GetPathByPackID(pack));
 	}
-	s_Loaders[pack]->UnpackSprite(wasid, {});
-	return 0;
+	uint8_t* pData;
+	size_t size;
+	s_Loaders[pack]->LoadFileData(wasid, pData, size);
+	NE::EFileType type = NE::check_file_type((char*)pData, size);
+	lua_pushinteger(L, type);
+	return 1;
 }
 
 void luaopen_resource_manager(lua_State* L)

@@ -204,6 +204,23 @@ function on_avatar_editor_update()
         end)
     end
 
+    if imgui.CollapsingHeader('PlaySound') then
+        local files = vfs_list_files([[E:\Github\SimpleEngine\res\data\sound.wdf.ResFiles]])
+        local map3 = vfs_list_files([[E:\Github\SimpleEngine\res\data\music.wdf.ResFiles]])
+        
+        for i,v in ipairs(map3) do
+            table.insert(files,v)
+        end
+        table.insert(files,1,[[e:\CloudMusic\BIGBANG - La La La.mp3]])
+        
+        imgui.HorizontalLayout(files,next,function(k,v) 
+            cxlog_info(k,v)
+            if imgui.Button(v) then
+                audio_manager_play(v)
+            end
+        end)
+    end
+
     
     imgui.End()
 end

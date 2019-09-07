@@ -77,8 +77,6 @@ target_include_directories(SimpleEngine
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/../common/src
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/../external/dist/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/../external/dist/include/freetype2
 )
 
 

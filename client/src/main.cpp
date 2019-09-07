@@ -3,7 +3,6 @@
 #include "kbase/at_exit_manager.h"
 #include "ezio/io_service_context.h"
 #include "file_system.h"
-#include "audio/audio_manager.h"
 
 int main(int argc, char const *argv[])
 {
