@@ -1,14 +1,15 @@
 #include "audio_manager.h"
 
 #define  DR_FLAC_IMPLEMENTATION
-#include "audio/extras/dr_flac.h"  /* enables flac decoding. */
+#include <extras/dr_flac.h>  /* enables flac decoding. */
 #define DR_MP3_IMPLEMENTATION 
-#include "audio/extras/dr_mp3.h"   /* enables mp3 decoding. */
+#include <extras/dr_mp3.h>   /* enables mp3 decoding. */
 #define DR_WAV_IMPLEMENTATION 
-#include "audio/extras/dr_wav.h"   /* enables wav decoding. */
+#define DR_WAVE_FORMAT_GSM_IMPLEMENTATION
+#include <extras/dr_wav.h>   /* enables wav decoding. */
 
 #define MINIAUDIO_IMPLEMENTATION
-#include "audio/miniaudio.h"
+#include <miniaudio.h>
 
 void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount)
 {

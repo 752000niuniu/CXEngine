@@ -8,6 +8,8 @@ find_package(glfw3)
 find_package(freetype CONFIG)
 find_package(IMGui)
 find_package(luadbg)
+find_package(gsm)
+find_package(miniaudio)
 
 file(GLOB_RECURSE  SOURCES_CPP "src/*.cpp" )
 file(GLOB_RECURSE  SOURCES_HEADER_PRI "src/*.h"  "src/*.hpp" "src/*.inl")
@@ -116,6 +118,8 @@ target_link_libraries(SimpleEngine
     CXBase::CXBase
     IMGui::IMGui
     luadbg_static
+    gsm
+    miniaudio
 )
 
 # add_custom_command(TARGET SimpleEngine
