@@ -61,3 +61,9 @@
 [submodule "externals/plogg"]
 	path = externals/plogg
 	url = https://github.com/oceancx/plogg.git
+[submodule "internals/gsm-cmake"]
+	path = internals/gsm-cmake
+	url = https://github.com/oceancx/gsm-cmake.git
+[submodule "internals/miniaudio-cmake"]
+	path = internals/miniaudio-cmake
+	url = https://github.com/oceancx/miniaudio-cmake.git
