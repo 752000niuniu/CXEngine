@@ -84,25 +84,6 @@ function on_avatar_editor_update()
     end
 
     if imgui.CollapsingHeader('MyPal') then
-        local files = vfs_list_files(vfs_get_tablepath('wasee_pal'))
-        local filenames = {}
-        for k,f in pairs(files) do
-            local  name = f:match('wasee_pal/(.+)%.')
-            name = util_gb2312_to_utf8(name)
-            table.insert(filenames,name)
-        end
-
-        
-        imgui.HorizontalLayout(filenames,next,function(k,v)
-            if imgui.Button(v) then
-                select_pal = files[k]
-                COLOR_SCHEMES = decode_mypal(select_pal)
-                update_color_schemes_select_map()
-                cxlog_info('...',cjson.encode(COLOR_SCHEMES))
-                cxlog_info('...',cjson.encode(COLOR_SCHEMES_SELECT_MAP))
-            end
-        end)
-
         if COLOR_SCHEMES then
             for i=1,#COLOR_SCHEMES.segments-1 do
                 imgui.BeginGroup()
@@ -138,6 +119,27 @@ function on_avatar_editor_update()
                 end
             end
         end
+        
+        local files = vfs_list_files(vfs_get_tablepath('wasee_pal'))
+        local filenames = {}
+        for k,f in pairs(files) do
+            local  name = f:match('wasee_pal/(.+)%.')
+            name = util_gb2312_to_utf8(name)
+            table.insert(filenames,name)
+        end
+
+        
+        imgui.HorizontalLayout(filenames,next,function(k,v)
+            if imgui.Button(v) then
+                select_pal = files[k]
+                COLOR_SCHEMES = decode_mypal(select_pal)
+                update_color_schemes_select_map()
+                cxlog_info('...',cjson.encode(COLOR_SCHEMES))
+                cxlog_info('...',cjson.encode(COLOR_SCHEMES_SELECT_MAP))
+            end
+        end)
+
+        
         
 
     end
@@ -214,7 +216,7 @@ function on_avatar_editor_update()
         table.insert(files,1,[[e:\CloudMusic\BIGBANG - La La La.mp3]])
         
         imgui.HorizontalLayout(files,next,function(k,v) 
-            cxlog_info(k,v)
+            -- cxlog_info(k,v)
             if imgui.Button(v) then
                 audio_manager_play(v)
             end
