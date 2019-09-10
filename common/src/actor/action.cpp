@@ -15,6 +15,7 @@
 #include "scene/game_map.h"
 #include "cxrandom.h"
 #include "actor_manager.h"
+#include "scene/scene_manager.h"
 
 std::map<CXString, int> g_AttackKeyFrame = {
 	{"FYN-DBSWORDS" ,5 },
@@ -379,7 +380,6 @@ void BeHitAction::Update()
 
 					anim->Pos.x += MoveVec.x * 10;
 					anim->Pos.y += MoveVec.y * 10;
-
 				});
 
 				anim->AddFrameCallback(anim->GroupFrameCount / 2, [this, anim]() {
@@ -410,8 +410,12 @@ void BeHitAction::Enter()
 
 	auto*targetAvatar = m_pASM->GetAvatar();
 	BeatNumber* beatNumber = new BeatNumber();
-	float bny = (float)(m_Actor->GetY() - targetAvatar->GetFrameKeyY() + targetAvatar->GetFrameHeight() / 2);
-	beatNumber->SetPos((float)m_Actor->GetX(), bny);
+	auto* map = SCENE_MANAGER_INSTANCE->GetCurrentScene()->GetGameMap();
+	int offx = map != nullptr ? map->GetMapOffsetX() : 0 ;
+	int offy = map != nullptr ? map->GetMapOffsetY() : 0;
+	float bny = (float)(m_Actor->GetY() + offy - targetAvatar->GetFrameKeyY() + targetAvatar->GetFrameHeight() / 2);
+	beatNumber->SetPos((float)m_Actor->GetX() + offx, bny);
+
 	std::set<int> randoms;
 	randoms.insert(RANDOM_INSTANCE->NextInt(10, 99));
 	randoms.insert(RANDOM_INSTANCE->NextInt(100, 999));
@@ -487,8 +491,11 @@ void BeCastAction::Enter()
 
 	auto*targetAvatar = m_pASM->GetAvatar();
 	BeatNumber* beatNumber = new BeatNumber();
-	float bny = (float)(m_Actor->GetY() - targetAvatar->GetFrameKeyY() + targetAvatar->GetFrameHeight() / 2);
-	beatNumber->SetPos((float)m_Actor->GetX(), bny);
+	auto* map = SCENE_MANAGER_INSTANCE->GetCurrentScene()->GetGameMap();
+	int offx = map != nullptr ? map->GetMapOffsetX() : 0;
+	int offy = map != nullptr ? map->GetMapOffsetY() : 0;
+	float bny = (float)(m_Actor->GetY() + offy - targetAvatar->GetFrameKeyY() + targetAvatar->GetFrameHeight() / 2);
+	beatNumber->SetPos((float)m_Actor->GetX() + offx, bny);
 	std::set<int> randoms;
 	randoms.insert(RANDOM_INSTANCE->NextInt(10, 99));
 	randoms.insert(RANDOM_INSTANCE->NextInt(100, 999));
