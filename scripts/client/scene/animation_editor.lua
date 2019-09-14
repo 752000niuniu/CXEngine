@@ -59,7 +59,7 @@ function imgui_draw_actor(actor)
         local x ,y  = actor:GetX(), actor:GetY()
         local avatar = actor:GetAvatar()
         if not avatar then return end
-        imgui.SetCursorPos(x-55,y+20)
+        imgui.SetCursorPos(x-55,y+50)
         imgui.BeginGroup()
         
         if imgui.Button('+##Frame'..actor:GetID(),30) then

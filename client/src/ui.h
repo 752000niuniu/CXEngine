@@ -41,9 +41,6 @@ private:
 	int dragY;
 };
 
-
-
-
 class ImageView : public View
 {
 public:

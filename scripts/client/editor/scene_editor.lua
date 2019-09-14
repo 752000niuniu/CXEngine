@@ -266,5 +266,6 @@ function on_scene_editor_update()
             end
         end)
     end
+
     imgui.End()
 end

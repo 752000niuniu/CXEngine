@@ -1,5 +1,6 @@
 local AccountSB = imgui.CreateStrbuf('oceancx',256)
 local PasswordSB = imgui.CreateStrbuf('123456',256)
+local PlayerNameSB = imgui.CreateStrbuf('Ocean藏心',256)
 
 local IPSB = imgui.CreateStrbuf('127.0.0.1',256)
 local PortSB = imgui.CreateStrbuf('45000',256)
@@ -16,7 +17,8 @@ local function format_path(path)
     return string.lower(path)
 end
 
-local DebugButtons = {
+local LoginDebugButtons = {
+
     {
         name  = 'Sigin Up',
         on_click = function()
@@ -56,13 +58,7 @@ local DebugButtons = {
             net_manager_reconnect()
         end
     },
-
-    {
-        name  = 'EnterBattle',
-        on_click = function()
-            scene_manager_switch_scene_by_name('BattleScene')
-        end
-    },
+    
     {
         name  = '监听调试器',
         on_click = function()
@@ -100,49 +96,47 @@ local DebugButtons = {
         end
     },
     {
-        name  = 'Reload',
-        on_click = function()
-            script_system_dofile('editor/enter_editor.lua')
-        end
-    },
-    {
         name  = 'printEnv',
         on_click = function()
             utils_dump_table(_ENV)
         end
     }
 }
+local LocalPlayerDebugButtons = {
+    {
+        name = 'Say',
+        on_click = function()
+            local player = actor_manager_fetch_local_player()
+            if not player then return end
+            player:Say('what the fuck')
+        end
+    },
+    {
+        name = 'SetName',
+        on_click = function()
+            local player = actor_manager_fetch_local_player()
+            player:SetName(PlayerNameSB:str())
+        end
+    },
+    {
+        name = 'ToggleBoundingBox',
+        on_click = function()
+            local player = actor_manager_fetch_local_player()
+            player:SetShowBoundingBox(not player:GetShowBoundingBox())
+        end
+    },
+    {
+        name='生成actor属性',
+        on_click = function()
+            script_system_dofile('generator/actor_template.lua')
+        end
+    }
+}
      
-function on_enter_editor_update()    
-    imgui.Begin('Login')
+function on_actor_editor_update()    
     local res 
-    ret, show_demo = imgui.Checkbox('Demo', show_demo)
-    if show_demo then
-        imgui.ShowDemoWindow(show_demo)
-    end
-    imgui.Text('IP  :')
-    imgui.SameLine()
-    imgui.InputText('##IP', IPSB)
-
-    imgui.Text('Port  :')
-    imgui.SameLine()
-    imgui.InputText('##Port', PortSB)
-
-    if imgui.Button('连接服务器') then
-        local ip = IPSB:str()
-        local port = math.tointeger(PortSB:str())
-        net_manager_deinit()
-        net_manager_init(ip, port)
-    end
-
-    imgui.Text("Account   :");
-	imgui.SameLine();
-    imgui.InputText("##account", AccountSB);
-
-    imgui.Text("Password   :");
-	imgui.SameLine();
-    imgui.InputText("##password", PasswordSB);
-        
+    imgui.Begin('Actor编辑器')
+    
     imgui.Text("Pos :");
     imgui.SameLine()
     imgui.PushItemWidth(80)
@@ -150,14 +144,58 @@ function on_enter_editor_update()
     imgui.SameLine()
     imgui.InputText("##posY", PosY)
     imgui.PopItemWidth()
+
+    imgui.InputText("玩家名字", PlayerNameSB);
+
+
+    if imgui.CollapsingHeader('Login') then 
+        ret, show_demo = imgui.Checkbox('Demo', show_demo)
+        if show_demo then
+            imgui.ShowDemoWindow(show_demo)
+        end
+
+        imgui.Text('IP  :')
+        imgui.SameLine()
+        imgui.InputText('##IP', IPSB)
+
+        imgui.Text('Port  :')
+        imgui.SameLine()
+        imgui.InputText('##Port', PortSB)
+
+        if imgui.Button('连接服务器') then
+            local ip = IPSB:str()
+            local port = math.tointeger(PortSB:str())
+            net_manager_deinit()
+            net_manager_init(ip, port)
+        end
+
+        imgui.Text("Account   :");
+        imgui.SameLine();
+        imgui.InputText("##account", AccountSB);
+
+        imgui.Text("Password   :");
+        imgui.SameLine();
+        imgui.InputText("##password", PasswordSB);
+
+        imgui_std_horizontal_button_layout(LoginDebugButtons,function(t,k) 
+            local nk,v = next(t,k)
+            return nk,v, nk and t[nk].name
+        end,function(k,v)
+            v.on_click()
+        end)
+    end
     
-    imgui_std_horizontal_button_layout(DebugButtons,function(t,k) 
-        local nk,v = next(t,k)
-        return nk,v, nk and t[nk].name
-    end,function(k,v)
-        v.on_click()
-    end)
-   
+    if imgui.CollapsingHeader('LocalPlayer') then
+        imgui_std_horizontal_button_layout(LocalPlayerDebugButtons,function(t,k) 
+            local nk,v = next(t,k)
+            return nk,v, nk and t[nk].name
+        end,function(k,v)
+            v.on_click()
+        end)
+    end
+
+
+
     imgui.End()
 end
 

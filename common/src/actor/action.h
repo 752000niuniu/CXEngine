@@ -171,7 +171,9 @@ private:
 	Action* m_pCurrentAction;
 	std::map<int, Animation*> m_WeaponActions;
 	std::map<int, Animation*> m_AvatarActions;
+	Animation* m_PlayerShadow;
 };
 #endif // !SIMPLE_SERVER
 
 
+void luaopen_action(lua_State* L);

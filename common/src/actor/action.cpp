@@ -104,7 +104,6 @@ bool action_is_battle_action(int action)
 	return false;
 }
 
-
 #ifndef SIMPLE_SERVER
 Action::Action(Actor* _actor) :
 	m_Actor(_actor)
@@ -619,6 +618,7 @@ ActionStateMachine::ActionStateMachine(Actor* _actor)
 		m_AvatarActions.insert({ action,nullptr });
 		m_WeaponActions.insert({ action,nullptr });
 	}
+	m_PlayerShadow = new Animation(SHAPEWDF, 0xDCE4B562);
 	m_WeaponID = m_Actor->GetWeaponID();
 	m_AvatarID = m_Actor->GetRoleID();
 	m_ActionID = ACTION_IDLE;
@@ -635,6 +635,8 @@ ActionStateMachine::~ActionStateMachine()
 		SafeDelete(it.second);
 	}
 	m_WeaponActions.clear();
+
+	SafeDelete(m_PlayerShadow);
 }
 
 void ActionStateMachine::Update()
@@ -708,7 +710,12 @@ void ActionStateMachine::Draw()
 	}
 
 	avatar->Dir = dir;
+
+	m_PlayerShadow->Pos.x = avatar->Pos.x;
+	m_PlayerShadow->Pos.y = avatar->Pos.y;
+	m_PlayerShadow->Draw();
 	avatar->Draw();
+
 	if (HasWeapon() && action_is_show_weapon(m_ActionID)) {
 		auto* weapon = GetWeapon(m_ActionID);
 		weapon->Pos.x = avatar->Pos.x;
@@ -849,3 +856,9 @@ int ActionStateMachine::GetDirCount(int action)
 }
 
 #endif
+
+void luaopen_action(lua_State* L)
+{
+	
+}
+

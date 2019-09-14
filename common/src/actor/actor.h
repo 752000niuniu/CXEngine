@@ -3,7 +3,7 @@
 #include "define_types.h"
 #include "pos.h"
 #include "entity.h"
-
+#include <vector>
 
 class MoveHandle;
 #ifndef SIMPLE_SERVER
@@ -12,6 +12,8 @@ class MoveHandle;
 class ActionStateMachine;
 class TextView;
 #endif
+#include "actor_prop.h"
+
 class GameMap;
 
 class BaseScene;
@@ -134,7 +136,7 @@ public:
 	void SetTurnReady(bool ready) { m_CombatProps.HasReady = ready; };
 	bool IsTurnReady() { return m_CombatProps.HasReady; };
 	BaseScene* GetScene();
-	
+
 	MoveHandle* GetMoveHandle() { return m_MoveHandle; }
 
 	CXString GetAvatarID() { return m_AvatarID; }
@@ -145,10 +147,11 @@ public:
 	uint64_t GetCastID() { return m_CastID; };
 	void SetCastID(uint64_t id) { m_CastID = id; }
 
-	bool IsDead() {return m_bDead;}
+	bool IsDead() { return m_bDead; }
 	void SetDead(bool dead) { m_bDead = dead; }
 
-
+	void SetShowBoundingBox(bool show) { m_ShowBoundingBox = show; }
+	bool GetShowBoundingBox() { return m_ShowBoundingBox; }
 #ifndef SIMPLE_SERVER
 	std::vector<NE::PalSchemePart>& GetPalette() { return m_PatMatrix; }
 	void SetPalette(std::vector<NE::PalSchemePart> patMatrix) { m_PatMatrix = patMatrix; }
@@ -158,7 +161,12 @@ public:
 	void OnDragMove(int x, int y)override;
 	void Say(std::string Text);
 #endif
+
+	ActorProp& GetProperty(int index) { return m_Props[index]; }
+	void SetProperty(int index, ActorProp prop) { m_Props[index] = prop; }
+	void RegProperty(int index, ActorProp prop) { assert(index == m_Props.size()); m_Props.push_back(prop); }
 protected:
+	bool m_ShowBoundingBox;
 	int m_ActorID;
 	bool m_IsAutoRun;
 	bool m_bDead;
@@ -199,6 +207,8 @@ protected:
 	MoveHandle* m_MoveHandle;
 	ActorCombatProps m_CombatProps;
 	std::vector<NE::PalSchemePart> m_PatMatrix;
+	std::vector<ActorProp> m_Props;
+
 #ifndef SIMPLE_SERVER
 	TextView* m_SayWidget;
 	ActionStateMachine* m_ASM;

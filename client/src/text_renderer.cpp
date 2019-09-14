@@ -628,7 +628,7 @@ TextView::TextView()
 	}
 	BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WZIFEWDF, 0x39D3BD99);
 	INPUT_MANAGER_INSTANCE->RegisterView(this);
-
+	RefreshText();
 }
 
 TextView::~TextView()
@@ -746,7 +746,7 @@ void TextView::OnDraw()
 		SPRITE_RENDERER_INSTANCE->DrawFrameSprite(
 			Background,
 			{ X ,Y },
-			{ Width,Height });
+			{ Width, Height });
 
 	// drawText
 	TextRenderer::GetInstance()->DrawTextW(

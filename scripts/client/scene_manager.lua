@@ -82,6 +82,13 @@ function on_scene_manager_draw(name)
     if scene_list[name] then
         scene_list[name].OnSceneDraw()
     end
+
+    local actors = actor_manager_fetch_all_players()
+    for i,actor in ipairs(actors) do
+        if actor:GetShowBoundingBox() then
+            actor:DrawBoundingBox()
+        end
+    end
 end
 
 function scene_manager_reload(name)

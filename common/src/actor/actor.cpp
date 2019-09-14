@@ -15,6 +15,8 @@
 #include "resource_manager.h"
 #endif
 #include "move.h"
+#include "lua.h"
+#include "cxlua.h"
 
 
 #define ACTOR_METATABLE_NAME "mt_actor"
@@ -39,7 +41,8 @@ Actor::Actor(uint64_t pid)
 	m_DirCount(8),
 	m_ActorType(ACTOR_TYPE_PLAYER),
 	m_AvatarID(""),
-	m_WeaponAvatarID("")
+	m_WeaponAvatarID(""),
+	m_ShowBoundingBox(false)
 {
 	m_PatMatrix.clear();
 
@@ -49,18 +52,22 @@ Actor::Actor(uint64_t pid)
 	m_SayWidget->PaddingHorizontal = 4;
 	m_SayWidget->PaddingVertical = 2;
 	m_SayWidget->ShowEmotion = true;
-	m_SayWidget->BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WZIFEWDF, 0xEF073E43); //F3FAAAF2´ó¿ò
-																							   //m_SayWidget->BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WZIFEWDF, 0xA4120EA9);
+	m_SayWidget->BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WZIFEWDF, 0xEF073E43 /* 0xA4120EA9*/);
+
 	m_SayDuration = 0;
 	m_ASM = new ActionStateMachine(this);  
 	INPUT_MANAGER_INSTANCE->RegisterView(this);
-	PathMoveAction*action = new PathMoveAction(this);
+	PathMoveAction* action = new PathMoveAction(this);
 	m_ASM->ChangeAction(action);
 #endif
-
 	
-	
+	lua_State* L = script_system_get_luastate();
+	lua_getglobal(L, "on_actor_reg_props");
+	lua_push_actor(L, this);
+	int res = lua_pcall(L, 1, 0, 0);
+	check_lua_error(L, res);
 }
+
 Actor::~Actor()
 {
 	m_PatMatrix.clear();
@@ -302,7 +309,7 @@ void Actor::OnDragMove(int dx, int dy)
 void Actor::Say(std::string Text)
 {
 	std::wstring wText = utils::StringToWstring(Text);
-	m_SayDuration = 1000 * 60 * 24;
+	m_SayDuration = 1000 * 10;// *24;
 	m_SayWidget->Text = wText;
 	m_SayWidget->TextCache = std::vector<uint32_t>(wText.begin(), wText.end());
 }
@@ -501,19 +508,17 @@ int actor_get_pos(lua_State* L) {
 	return 2;
 }
 
-
 int actor_get_width(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	lua_pushnumber(L, actor->GetWidth());
 	return 1;
 }
+
 int actor_get_height(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	lua_pushnumber(L, actor->GetHeight());
 	return 1;
 }
-
-
 
 int actor_set_scene_id(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
@@ -527,12 +532,14 @@ int actor_get_scene_id(lua_State* L) {
 	lua_pushinteger(L, actor->GetSceneID());
 	return 1;
 }
+
 int actor_set_name(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	const char* name = lua_tostring(L, 2);
 	actor->SetName(name);
 	return 0;
 }
+
 int actor_get_name(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	auto name = actor->GetName();
@@ -554,6 +561,7 @@ int actor_get_role_id(lua_State* L) {
 	lua_pushinteger(L, actor->GetRoleID());
 	return 1;
 }
+
 int actor_set_weapon_id(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	int weaponID = (int)lua_tointeger(L, 2);
@@ -721,6 +729,19 @@ int actor_clear_pal_matrix(lua_State*L) {
 #endif
 }
 
+int actor_get_show_bounding_box(lua_State*L){
+	Actor* actor = lua_check_actor(L, 1);
+	lua_pushboolean(L, actor->GetShowBoundingBox());
+	return 1;
+}
+
+int actor_set_show_bounding_box(lua_State*L){
+	Actor* actor = lua_check_actor(L, 1);
+	bool show = lua_toboolean(L, 2);
+	actor->SetShowBoundingBox(show);
+	return 0;
+}
+
 //{ "__gc",actor_destroy },
 luaL_Reg mt_actor[] = {
 	{ "Destroy",actor_destroy },
@@ -771,7 +792,8 @@ luaL_Reg mt_actor[] = {
 { "ChangePalMatrix", actor_change_pal_matrix},
 { "GetPalMatrix", actor_get_pal_matrix},
 { "ClearPalMatrix", actor_clear_pal_matrix},
-
+{ "GetShowBoundingBox", actor_get_show_bounding_box },
+{ "SetShowBoundingBox", actor_set_show_bounding_box },
 { NULL, NULL }
 };
 
@@ -786,8 +808,6 @@ void lua_push_actor(lua_State*L, Actor* actor)
 	}
 	lua_setmetatable(L, -2);
 }
-
-
 
 int lua_new_actor(lua_State* L)
 {
