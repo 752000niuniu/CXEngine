@@ -24,7 +24,7 @@ void MoveHandle::Update()
 		Pos pos = m_Actor->GetPos();
 		if (moveTo.x != pos.x || moveTo.y != pos.y) {
 			float dt = WINDOW_INSTANCE->GetDeltaTime();
-			float localVelocity = m_Actor->GetVelocity()*dt;
+			float localVelocity = m_Actor->GetProperty(PROP_MOVE_VELOCITY).toFloat()*dt;
 			bool useMoveList = !m_MoveList.empty();
 			Pos dest;
 			if (useMoveList)

@@ -83,7 +83,7 @@ function on_actor_reg_props(actor)
         elseif row.type == 'float' then
             v = tonumber(row.def)
         elseif row.type == 'str' then
-            v = row.def
+            v = row.def 
         elseif row.type == 'vec2' then
             local strx,stry = string.match(row.def,'{(.-),(.-)}')
             v = {}

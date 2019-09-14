@@ -27,7 +27,7 @@ bool actor_manager_is_local_player(Actor* actor) {
 void actor_manager_set_scene(int id)
 {
 	for(auto& it : g_Players){
-		it.second->SetSceneID(id);
+		it.second->SetProperty(PROP_SCENE_ID, id);
 	}
 }
 int lua_actor_manager_fetch_local_player(lua_State*L)

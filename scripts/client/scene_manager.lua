@@ -85,7 +85,7 @@ function on_scene_manager_draw(name)
 
     local actors = actor_manager_fetch_all_players()
     for i,actor in ipairs(actors) do
-        if actor:GetShowBoundingBox() then
+        if actor:GetProperty(PROP_SHOW_BOUNDINGBOX) then
             actor:DrawBoundingBox()
         end
     end

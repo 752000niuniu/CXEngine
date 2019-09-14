@@ -75,7 +75,7 @@ void CombatSystem::Update()
 	else if (m_BattleState == BATTLE_END) {
 		m_TurnCounter = 0;
 		for (auto& it : m_Actors) {
-			it->SetIsCombat(false);
+			it->SetProperty(PROP_IS_COMBAT, false);
 		}
 	}
 	
@@ -136,7 +136,7 @@ void CombatSystem::StartBattle()
 	m_TurnCounter = 0;
 	for (auto& it : m_Actors) {
 		Pos  pos = it->GetPos();
-		it->SetIsCombat(true);
+		it->SetProperty(PROP_IS_COMBAT, true);
 		it->SetPos(pos);
 		it->SetActionID(ACTION_BATIDLE);
 	}

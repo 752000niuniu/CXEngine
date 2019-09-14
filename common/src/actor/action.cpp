@@ -113,7 +113,7 @@ Action::Action(Actor* _actor) :
 
 void Action::Update()
 {
-	int action = m_Actor->GetActionID();
+	int action = m_Actor->GetProperty(PROP_ACTION_ID).toInt();
 	if (action != m_pASM->GetActionID()) {
 		m_pASM->SetAction(action);
 	}
@@ -126,7 +126,7 @@ void Action::Update()
 
 void Action::Enter()
 {
-	int action = m_Actor->GetActionID();
+	int action = m_Actor->GetProperty(PROP_ACTION_ID).toInt();
 	if (action != m_pASM->GetActionID()) {
 		m_pASM->SetAction(action);
 	}
@@ -154,7 +154,7 @@ void AttackAction::Update()
 				float perframe_dist = dist / avatar->GroupFrameCount;
 				float velocity = perframe_dist / perframetime;
 				avatar->FrameInterval = perframetime;
-				m_Actor->SetVelocity(velocity);
+				m_Actor->SetProperty(PROP_MOVE_VELOCITY, velocity);
 			}
 		}
 		else {
@@ -169,7 +169,7 @@ void AttackAction::Update()
 	else if (action == ACTION_ATTACK) {
 		if (avatar->IsGroupEndUpdate()) {
 			m_ComboCount = m_ComboCount - 1;
-			if (m_ComboCount == 0 || m_Target->IsDead()) {
+			if (m_ComboCount == 0 || m_Target->GetProperty(PROP_IS_DEAD).toBool()) {
 				m_pASM->SetAction(ACTION_RUNBACK);
 				m_Actor->ReverseDir();
 				m_Actor->GetMoveHandle()->MoveOnScreen(m_BackupPos.x, m_BackupPos.y);
@@ -180,20 +180,20 @@ void AttackAction::Update()
 				float perframe_dist = dist / avatar->GroupFrameCount;
 				float velocity = perframe_dist / perframetime;
 				avatar->FrameInterval = perframetime;
-				m_Actor->SetVelocity(velocity);
+				m_Actor->SetProperty(PROP_MOVE_VELOCITY, velocity);
 			}
 			else {
 				m_pASM->SetAction(ACTION_ATTACK);
 			}
 		}
 		else if (avatar->IsFrameUpdate()) {
-			int attackKeyframe = g_AttackKeyFrame[m_Actor->GetAvatarID()];
+			int attackKeyframe = g_AttackKeyFrame[m_Actor->GetProperty(PROP_AVATAR_ID).toString()];
 			if (attackKeyframe == 0)attackKeyframe = avatar->GetAttackKeyFrame();
 			if (avatar->CurrentFrame == attackKeyframe) {
 				BeHitAction* behit = new BeHitAction(m_Target, m_Actor);
 				behit->MoveVec = m_AttackVec;
 				m_Target->GetASM()->ChangeAction(behit);
-				if(m_Target->IsDead()){
+				if(m_Target->GetProperty(PROP_IS_DEAD).toBool()){
 					avatar->Pause(500);
 				}else{
 					avatar->Pause(200);
@@ -223,13 +223,13 @@ void AttackAction::AddTarget(Actor* target)
 void AttackAction::Exit()
 {
 	m_Actor->SetPos(m_BackupPos);
-	m_Actor->SetVelocity(m_SavedVelocity);
+	m_Actor->SetProperty(PROP_MOVE_VELOCITY, m_SavedVelocity);
 }
 
 void AttackAction::Enter()
 {
 	m_ComboCount = RANDOM_INSTANCE->NextInt(1, 3);
-	m_BackupActionID = m_Actor->GetActionID();
+	m_BackupActionID = m_Actor->GetProperty(PROP_ACTION_ID).toInt();
 	m_BackupPos = m_Actor->GetPos();
 
 	if (m_Target) {
@@ -248,7 +248,7 @@ void AttackAction::Enter()
 		auto* attackAvatar = m_pASM->GetAvatar(ACTION_ATTACK);
 		auto* targetAvatar = m_Target->GetASM()->GetAvatar(ACTION_BEHIT);
 		if (attackAvatar && targetAvatar) {
-			int attackKeyframe = g_AttackKeyFrame[m_Actor->GetAvatarID()];
+			int attackKeyframe = g_AttackKeyFrame[m_Actor->GetProperty(PROP_AVATAR_ID).toString()];
 			if (attackKeyframe == 0)attackKeyframe = attackAvatar->GetAttackKeyFrame();
 			auto* attackFrame = attackAvatar->GetFrame(dir*attackAvatar->GroupFrameCount + attackKeyframe);
 			auto* targetFrame = targetAvatar->GetFrame(GMath::GetReverseDir(dir) * targetAvatar->GroupFrameCount + targetAvatar->GroupFrameCount-1);
@@ -281,7 +281,7 @@ void AttackAction::Enter()
 	}
 
 	m_pASM->SetAction(ACTION_BATIDLE);
-	m_SavedVelocity = m_Actor->GetVelocity();
+	m_SavedVelocity = m_Actor->GetProperty(PROP_MOVE_VELOCITY).toFloat();
 }
 
 
@@ -345,7 +345,7 @@ void BeHitAction::Update()
 	int action = m_pASM->GetActionID();
 	if (action == ACTION_BEHIT) {
 		if (avatar->IsGroupEndUpdate()) {
-			if(m_Actor->IsDead()){
+			if(m_Actor->GetProperty(PROP_IS_DEAD).toBool()){
 				DeadFlyAction* action = new DeadFlyAction(m_Actor, MoveVec);
 				m_pASM->ChangeAction(action);
 			}else{
@@ -405,7 +405,7 @@ void BeHitAction::Enter()
 	m_pASM->SetAction(ACTION_BEHIT);
 
 	int dead = RANDOM_INSTANCE->NextInt(1, 10);
-	m_Actor->SetDead(dead < 3);
+	m_Actor->SetProperty(PROP_IS_DEAD, dead < 3);
 
 	auto*targetAvatar = m_pASM->GetAvatar();
 	BeatNumber* beatNumber = new BeatNumber();
@@ -444,7 +444,7 @@ void BeCastAction::Update()
 	int action = m_pASM->GetActionID();
 	if (action == ACTION_BEHIT) {
 		if (avatar->IsGroupEndUpdate()) {
-			if(m_Actor->IsDead()){
+			if(m_Actor->GetProperty(PROP_IS_DEAD).toBool()){
 				DeadFlyAction* action = new DeadFlyAction(m_Actor, MoveVec);
 				m_pASM->ChangeAction(action);
 				m_pASM->GetAvatar()->Pause(100);
@@ -458,7 +458,7 @@ void BeCastAction::Update()
 		}
 		else if (avatar->IsFrameUpdate()) {
 			if (avatar->CurrentFrame == 1) {
-				uint64_t id = m_Attacker->GetCastID();
+				uint64_t id = m_Attacker->GetProperty(PROP_CAST_ID).toUInt64();
 				Animation* anim = new Animation(id);
 				anim->SetLoop(1);
 				anim->Pos.x = avatar->Pos.x;
@@ -486,7 +486,7 @@ void BeCastAction::Enter()
 {
 	m_pASM->SetAction(ACTION_BEHIT);
 	int dead = (int)RANDOM_INSTANCE->NextInt(0, 1);
-	m_Actor->SetDead(dead);
+	m_Actor->SetProperty(PROP_IS_DEAD, dead);
 
 	auto*targetAvatar = m_pASM->GetAvatar();
 	BeatNumber* beatNumber = new BeatNumber();
@@ -540,7 +540,7 @@ void PathMoveAction::Exit()
 
 void PathMoveAction::Enter()
 {
-	if (m_Actor->GetActionID() != ACTION_IDLE)
+	if (m_Actor->GetProperty(PROP_ACTION_ID).toInt() != ACTION_IDLE)
 		m_Actor->SetActionID(ACTION_IDLE);
 	m_pASM->SetAction(ACTION_IDLE);
 }
@@ -619,8 +619,8 @@ ActionStateMachine::ActionStateMachine(Actor* _actor)
 		m_WeaponActions.insert({ action,nullptr });
 	}
 	m_PlayerShadow = new Animation(SHAPEWDF, 0xDCE4B562);
-	m_WeaponID = m_Actor->GetWeaponID();
-	m_AvatarID = m_Actor->GetRoleID();
+	m_WeaponID = m_Actor->GetProperty(PROP_WEAPON_AVATAR_ID).toString();
+	m_AvatarID = m_Actor->GetProperty(PROP_AVATAR_ID).toString();
 	m_ActionID = ACTION_IDLE;
 }
 
@@ -641,8 +641,9 @@ ActionStateMachine::~ActionStateMachine()
 
 void ActionStateMachine::Update()
 {
-	if (m_AvatarID != m_Actor->GetAvatarID()) {
-		SetAvatar(m_Actor->GetAvatarID());
+	if (m_AvatarID != m_Actor->GetProperty(PROP_AVATAR_ID).toString())
+	{
+		SetAvatar(m_Actor->GetProperty(PROP_AVATAR_ID).toString());
 	}
 	if (m_HasWeapon != (m_Actor->GetWeaponAvatarID() != "")) {
 		m_HasWeapon = (m_Actor->GetWeaponAvatarID() != "");
@@ -795,7 +796,7 @@ void ActionStateMachine::EnsureLoadAction(int action)
 	if (action < ACTION_IDLE || action >= ACTION_COUNT)return;
 
 	if (m_AvatarActions[action] == nullptr) {
-		auto resid = RESOURCE_MANAGER_INSTANCE->GetActorActionResID(m_Actor->GetType(), m_AvatarID, action);
+		auto resid = RESOURCE_MANAGER_INSTANCE->GetActorActionResID(m_Actor->GetProperty(PROP_ACTOR_TYPE).toInt(), m_AvatarID, action);
 		if (resid == 0)return;
 		if (m_Actor->GetPalette().size() != 0) {
 			m_AvatarActions[action] = new Animation(resid, &m_Actor->GetPalette());
@@ -839,7 +840,7 @@ Animation* ActionStateMachine::GetWeapon(int action)
 
 void ActionStateMachine::Reset()
 {
-	SetAvatar(m_Actor->GetAvatarID());
+	SetAvatar(m_Actor->GetProperty(PROP_AVATAR_ID).toString());
 	SetWeapon(m_Actor->GetWeaponAvatarID());
 
 	PathMoveAction* action = new PathMoveAction(m_Actor);

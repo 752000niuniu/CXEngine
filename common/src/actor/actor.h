@@ -52,16 +52,6 @@ public:
 	void ReverseDir();
 
 	void SetActionID(int state);
-	int GetActionID() { return m_ActionID; }
-
-	void SetSceneID(int id) { m_SceneID = id; };
-	int GetSceneID() { return m_SceneID; };
-
-	void SetRoleID(int id);
-	int GetRoleID() { return m_RoleID; };
-
-	void SetWeaponID(int weapon);
-	int GetWeaponID() { return m_WeaponID; }
 
 
 	void SetPos(float x, float y);
@@ -92,40 +82,11 @@ public:
 	virtual float GetWidth();
 	virtual float GetHeight();
 
-	void SetNickName(std::string name) { m_NickName = name; };
-	std::string GetNickName() { return m_NickName; };
-
-	void SetIsCombat(bool bcombat) { m_bInCombat = bcombat; }
-	bool IsCombat() { return m_bInCombat; }
-
-	void SetVelocity(float velocity) { m_MoveVelocity = velocity; };
-	float GetVelocity() { return  m_MoveVelocity; };
-
-	void SetTargetID(int id) { m_TargetID = id; }
-	int GetTargetID() { return m_TargetID; }
-
-	bool IsAutoRun() { return m_IsAutoRun; };
-	void SetAutoRun(bool autoRun) { m_IsAutoRun = autoRun; };
-
-	void SetActorID(int id) { m_ActorID = id; };
-	int GetActorID() { return m_ActorID; };
-
-	void SetHP(float hp) { m_HP = hp; }
-	float GetHP() { return m_HP; }
-	void AddHP(float hp) { m_HP += hp; }
-
-	void SetMP(float mp) { m_MP = mp; }
-	float GetMP() { return m_MP; }
-	void AddMP(float mp) { m_MP += mp; }
+	bool IsCombat() { return m_Props[PROP_IS_COMBAT].b; }
 
 	void SetLocal(bool local) { m_IsLocalPlayer = local; }
 	bool IsLocal();
 
-	float GetFrameSpeed() { return m_FrameSpeed; };
-	void SetFrameSpeed(float frame_speed) { m_FrameSpeed = frame_speed; };
-
-	void SetType(int type) { m_ActorType = type; }
-	int GetType() { return m_ActorType; }
 	bool IsMove() { return m_IsMove; }
 
 	float GetCombatDistSquare();
@@ -139,19 +100,7 @@ public:
 
 	MoveHandle* GetMoveHandle() { return m_MoveHandle; }
 
-	CXString GetAvatarID() { return m_AvatarID; }
-	void SetAvatarID(CXString id) { m_AvatarID = id; }
 	CXString GetWeaponAvatarID();
-	void SetWeaponAvatarID(CXString id) { m_WeaponAvatarID = id; }
-
-	uint64_t GetCastID() { return m_CastID; };
-	void SetCastID(uint64_t id) { m_CastID = id; }
-
-	bool IsDead() { return m_bDead; }
-	void SetDead(bool dead) { m_bDead = dead; }
-
-	void SetShowBoundingBox(bool show) { m_ShowBoundingBox = show; }
-	bool GetShowBoundingBox() { return m_ShowBoundingBox; }
 #ifndef SIMPLE_SERVER
 	std::vector<NE::PalSchemePart>& GetPalette() { return m_PatMatrix; }
 	void SetPalette(std::vector<NE::PalSchemePart> patMatrix) { m_PatMatrix = patMatrix; }
@@ -161,26 +110,42 @@ public:
 	void OnDragMove(int x, int y)override;
 	void Say(std::string Text);
 #endif
+	
+
+	template<typename T>
+	void CopyProperty(int index,T& out) {
+		ActorProp& prop = m_Props[index];
+		switch (prop.type)
+		{
+		case PROP_TYPE_BOOL:
+			out = prop.b;
+			break;
+		case PROP_TYPE_INT:
+			out = prop.i;
+			break;
+		case PROP_TYPE_UINT64:
+			out = prop.l;
+			break;
+		case PROP_TYPE_FLOAT:
+			out = prop.f;
+			break;
+		case PROP_TYPE_STR:
+			out = prop.s;
+			break;
+		case PROP_TYPE_VEC2:
+			out[0] = prop.v2[0];
+			out[1] = prop.v2[1];
+			break;
+		}
+	}
 
 	ActorProp& GetProperty(int index) { return m_Props[index]; }
 	void SetProperty(int index, ActorProp prop) { m_Props[index] = prop; }
-	void RegProperty(int index, ActorProp prop) { assert(index == m_Props.size()); m_Props.push_back(prop); }
+	void RegProperty(int index, ActorProp& prop) { assert(index == m_Props.size()); m_Props.push_back(prop); }
 protected:
-	bool m_ShowBoundingBox;
-	int m_ActorID;
-	bool m_IsAutoRun;
-	bool m_bDead;
-	float m_FrameSpeed;
-	int m_ActorType;
-	std::string m_NickName;
-
+	
 	CXString m_AvatarID;
 	CXString m_WeaponAvatarID;
-	int m_SceneID;
-	int m_RoleID;			
-	int m_WeaponID;
-	int m_WeaponType;
-	int m_ActionID;			
 	
 	Pos m_Pos;
 	Pos m_MoveToPos;
@@ -189,18 +154,10 @@ protected:
 	int m_DirCount;
 	bool m_IsMove;
 	float m_MoveVelocity;
-	bool m_bInCombat;	
-	int m_TargetID;
-	uint64_t m_CastID;
-
-	bool m_bSkillFrameShow;
 
 	bool m_bCalcMoveList;
-	float m_HP;
-	float m_MP;
 	int m_SayDuration;
 	bool m_IsLocalPlayer;
-
 	std::list<Pos> m_MoveList;
 	std::list<Pos> m_BackupMoveList;
 	

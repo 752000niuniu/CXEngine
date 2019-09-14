@@ -1,17 +1,17 @@
 name	type	def
 prop_id	uint64	0
-prop_dir	int	0
+prop_dir	int	4
 prop_show_boundingbox	bool	false
 prop_is_autorun	bool	false
 prop_is_dead	bool	false
 prop_frame_speed	float	0.080
-prop_actor_type	int	0
-prop_name	str	''
-prop_avatar_id	str	''
-prop_weapon_avatar_id	str	''
+prop_actor_type	int	1
+prop_name	str	
+prop_avatar_id	str	
+prop_weapon_avatar_id	str	
 prop_scene_id	int	0
 prop_role_id	int	0
-prop_weapon_id	int	0
+prop_weapon_id	int	-1
 prop_weapon_type	int	0
 prop_action_id	int	0
 prop_pos	vec2	{0,0}

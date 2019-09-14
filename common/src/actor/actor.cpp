@@ -25,27 +25,22 @@
 
 Actor::Actor(uint64_t pid)
 	:BaseGameEntity(pid),
-	m_RoleID(0),
-	m_NickName(""),
-	m_WeaponID(-1),
-	m_ActionID(ACTION_IDLE),
 	m_Pos(0, 0),
 	m_MoveToPos(0, 0),
 	m_Dir(Direction::S),
 	m_IsMove(false),
 	m_MoveVelocity(150),
-	m_bInCombat(false),
-	m_TargetID(-1),
-	m_bSkillFrameShow(false),
 	m_IsLocalPlayer(false),
-	m_IsAutoRun(false),
-	m_FrameSpeed(0.080f),
 	m_DirCount(8),
-	m_ActorType(ACTOR_TYPE_PLAYER),
 	m_AvatarID(""),
-	m_WeaponAvatarID(""),
-	m_ShowBoundingBox(false)
+	m_WeaponAvatarID("")
 {
+	lua_State* L = script_system_get_luastate();
+	lua_getglobal(L, "on_actor_reg_props");
+	lua_push_actor(L, this);
+	int res = lua_pcall(L, 1, 0, 0);
+	check_lua_error(L, res);
+
 	m_PatMatrix.clear();
 
 	m_MoveHandle = new MoveHandle(this);
@@ -63,11 +58,7 @@ Actor::Actor(uint64_t pid)
 	m_ASM->ChangeAction(action);
 #endif
 	
-	lua_State* L = script_system_get_luastate();
-	lua_getglobal(L, "on_actor_reg_props");
-	lua_push_actor(L, this);
-	int res = lua_pcall(L, 1, 0, 0);
-	check_lua_error(L, res);
+
 }
 
 Actor::~Actor()
@@ -164,24 +155,16 @@ void Actor::ReverseDir()
 
 void Actor::SetActionID(int action)
 {
-	if (m_ActorType == ACTOR_TYPE_PLAYER) {
-		m_ActionID = action;
+	if (m_Props[PROP_ACTOR_TYPE].i == ACTOR_TYPE_PLAYER) {
+		m_Props[PROP_ACTION_ID] = action;
 	}
 	else {
 		if (action_is_emotion_action(action))return;
-		m_ActionID = action;
+		m_Props[PROP_ACTION_ID] = action;
 	}
 }
 
-void Actor::SetRoleID(int id)
-{
-	m_RoleID = id;
-}
 
-void Actor::SetWeaponID(int weapon)
-{
-	m_WeaponID = weapon;
-}
 
 void Actor::SetPos(float x, float y)
 {
@@ -276,14 +259,14 @@ float Actor::GetMoveDestAngle(Pos dest)
 
 BaseScene* Actor::GetScene()
 {
-	return scene_manager_fetch_scene(m_SceneID);
+	return scene_manager_fetch_scene(m_Props[PROP_SCENE_ID].i);
 }
 
 CXString Actor::GetWeaponAvatarID()
 {
-	if (m_ActorType == ACTOR_TYPE_NPC)
+	if (m_Props[PROP_ACTOR_TYPE].i == ACTOR_TYPE_NPC)
 		return "";
-	return m_WeaponAvatarID;
+	return m_Props[PROP_WEAPON_AVATAR_ID].s;
 }
 #ifndef SIMPLE_SERVER
 Bound Actor::GetViewBounds()
@@ -373,20 +356,6 @@ int actor_reverse_dir(lua_State* L) {
 	return 0;
 }
 
-int actor_set_type(lua_State* L)
-{
-	Actor* actor = lua_check_actor(L, 1);
-	int type = (int)lua_tointeger(L, 2);
-	actor->SetType(type);
-	return 0;
-}
-int actor_get_type(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	lua_pushinteger(L, actor->GetType());
-	return 1;
-}
-
-
 int actor_set_local(lua_State* L)
 {
 	Actor* actor = lua_check_actor(L, 1);
@@ -401,19 +370,6 @@ int actor_is_local(lua_State* L) {
 	return 1;
 }
 
-int actor_set_is_combat(lua_State* L)
-{
-	Actor* actor = lua_check_actor(L, 1);
-	bool  is_combat = (bool)lua_toboolean(L, 2);
-	actor->SetIsCombat(is_combat);
-	return 0;
-}
-
-int actor_is_combat(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	lua_pushboolean(L, actor->IsCombat());
-	return 1;
-}
 
 int actor_get_id(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
@@ -434,7 +390,7 @@ int actor_set_action_id(lua_State* L) {
 
 int actor_get_action_id(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
-	lua_pushinteger(L, actor->GetActionID());
+	lua_pushinteger(L, actor->GetProperty(PROP_ACTION_ID).i);
 	return 1;
 }
 
@@ -522,98 +478,47 @@ int actor_get_height(lua_State* L) {
 	return 1;
 }
 
-int actor_set_scene_id(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	int sceneID = (int)lua_tointeger(L, 2);
-	actor->SetSceneID(sceneID);
-	return 0;
-}
-
-int actor_get_scene_id(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	lua_pushinteger(L, actor->GetSceneID());
-	return 1;
-}
-
-int actor_set_name(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	const char* name = lua_tostring(L, 2);
-	actor->SetName(name);
-	return 0;
-}
-
-int actor_get_name(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	auto name = actor->GetName();
-	lua_pushstring(L, name.c_str());
-	return 1;
-}
-
 int actor_set_role_id(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	int roleID = (int)lua_tointeger(L, 2);
-	actor->SetRoleID(roleID);
+	actor->SetProperty(PROP_ROLE_ID, roleID);
 #ifndef SIMPLE_SERVER 
 	actor->GetASM()->Reset();
 #endif // !SIMPLE_SERVER
 	return 0;
 }
-int actor_get_role_id(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	lua_pushinteger(L, actor->GetRoleID());
-	return 1;
-}
 
 int actor_set_weapon_id(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	int weaponID = (int)lua_tointeger(L, 2);
-	actor->SetWeaponID(weaponID);
+	actor->SetProperty( PROP_WEAPON_ID, weaponID);
 #ifndef SIMPLE_SERVER
 	actor->GetASM()->Reset();
 #endif // !SIMPLE_SERVER
 	return 0;
-}
-
-int actor_get_weapon_id(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	lua_pushinteger(L, actor->GetWeaponID());
-	return 1;
 }
 
 int actor_set_avatar_id(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	auto id = lua_tostring(L, 2);
-	actor->SetAvatarID(id);
+	actor->SetProperty(PROP_AVATAR_ID, id);
 #ifndef SIMPLE_SERVER
 	actor->GetASM()->Reset();
 #endif // !SIMPLE_SERVER
 	return 0;
-}
-
-int actor_get_avatar_id(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	lua_pushstring(L, actor->GetAvatarID().c_str());
-	return 1;
 }
 
 int actor_set_weapon_avatar_id(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	auto id = lua_tostring(L, 2);
-	actor->SetWeaponAvatarID(id);
+	actor->SetProperty(PROP_WEAPON_AVATAR_ID, id);
 #ifndef SIMPLE_SERVER
 	actor->GetASM()->Reset();
 #endif // !SIMPLE_SERVER
 	return 0;
 }
 
-int actor_get_weapon_avatar_id(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	lua_pushstring(L, actor->GetWeaponAvatarID().c_str());
-	return 1;
-}
-
 int actor_clear_frames(lua_State* L) {
-
 	return 0;
 }
 
@@ -633,7 +538,7 @@ int actor_play_cast(lua_State*L) {
 	Actor* actor = lua_check_actor(L, 1);
 	Actor* target = lua_check_actor(L, 2);
 	uint64_t skill = (uint64_t)lua_tointeger(L, 3);
-	actor->SetCastID(skill);
+	actor->SetProperty(PROP_CAST_ID, skill);
 	CastAction* action = new CastAction(actor, target, skill);
 	actor->GetASM()->ChangeAction(action);
 #endif
@@ -731,26 +636,11 @@ int actor_clear_pal_matrix(lua_State*L) {
 #endif
 }
 
-int actor_get_show_bounding_box(lua_State*L){
-	Actor* actor = lua_check_actor(L, 1);
-	lua_pushboolean(L, actor->GetShowBoundingBox());
-	return 1;
-}
-
-int actor_set_show_bounding_box(lua_State*L){
-	Actor* actor = lua_check_actor(L, 1);
-	bool show = lua_toboolean(L, 2);
-	actor->SetShowBoundingBox(show);
-	return 0;
-}
-
 //{ "__gc",actor_destroy },
 luaL_Reg mt_actor[] = {
 	{ "Destroy",actor_destroy },
 { "Update",actor_update },
 { "Draw",actor_draw },
-{ "SetType", actor_set_type },
-{ "GetType", actor_get_type },
 { "SetPos",actor_set_pos },
 { "SetX", actor_set_x },
 { "GetX", actor_get_x },
@@ -759,21 +649,11 @@ luaL_Reg mt_actor[] = {
 { "GetPos", actor_get_pos },
 { "GetWidth", actor_get_width },
 { "GetHeight", actor_get_height },
-{ "SetIsCombat", actor_set_is_combat },
-{ "IsCombat", actor_is_combat },
 { "GetID", actor_get_id },
-{ "SetSceneID", actor_set_scene_id },
-{ "GetSceneID", actor_get_scene_id },
-{ "SetName", actor_set_name },
-{ "GetName", actor_get_name },
 { "SetRoleID", actor_set_role_id },
-{ "GetRoleID", actor_get_role_id },
 { "SetWeaponID", actor_set_weapon_id },
-{ "GetWeaponID", actor_get_weapon_id },
 { "SetWeaponAvatarID", actor_set_weapon_avatar_id },
-{ "GetWeaponAvatarID", actor_get_weapon_avatar_id },
 { "SetAvatarID", actor_set_avatar_id },
-{ "GetAvatarID", actor_get_avatar_id },
 { "SetDir", actor_set_dir },
 { "GetDir", actor_get_dir },
 { "ReverseDir", actor_reverse_dir },
@@ -794,8 +674,6 @@ luaL_Reg mt_actor[] = {
 { "ChangePalMatrix", actor_change_pal_matrix},
 { "GetPalMatrix", actor_get_pal_matrix},
 { "ClearPalMatrix", actor_clear_pal_matrix},
-{ "GetShowBoundingBox", actor_get_show_bounding_box },
-{ "SetShowBoundingBox", actor_set_show_bounding_box },
 { "RegProperty", actor_reg_prop},
 { "GetProperty", actor_get_prop},
 { "SetProperty", actor_set_prop},
@@ -814,17 +692,6 @@ void lua_push_actor(lua_State*L, Actor* actor)
 	lua_setmetatable(L, -2);
 }
 
-int lua_new_actor(lua_State* L)
-{
-	int type = (int)luaL_optinteger(L, 1, ACTOR_TYPE_DEFAULT);
-	int rold_id = (int)luaL_optinteger(L, 2, 0);
-	
-	Actor* actor = new Player(rold_id);
-	actor->SetType(type);
-	
-	lua_push_actor(L, actor);
-	return 1;
-}
 
 int actor_get_metatable(lua_State* L){
 	if (luaL_newmetatable(L, ACTOR_METATABLE_NAME)) {
@@ -845,7 +712,6 @@ std::string action_system_get_action_name(int action) {
 
 void luaopen_actor(lua_State* L)
 {
-	script_system_register_luac_function(L, lua_new_actor);
 	script_system_register_luac_function(L, actor_get_metatable);
 
 	script_system_register_function(L, action_system_get_action_size);

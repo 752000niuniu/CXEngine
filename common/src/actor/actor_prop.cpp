@@ -65,6 +65,18 @@ ActorProp& ActorProp::operator=(const CXString& v)
 	return *this;
 }
 
+ActorProp& ActorProp::operator=(const char* v)
+{
+	if (type == PROP_TYPE_STR) {
+		s = v;
+	}
+	else {
+		new(&s) CXString(v);
+	}
+	type = PROP_TYPE_STR;
+	return *this;
+}
+
 
 
 void ActorProp::copyUnion(const ActorProp& prop)
@@ -115,7 +127,7 @@ int actor_set_prop(lua_State* L)
 		prop = (float)lua_tonumber(L, 3);
 		break;
 	case PROP_TYPE_STR:
-		prop = lua_tostring(L, 3);
+		prop = CXString(lua_tostring(L, 3)) ;
 		break;
 	case PROP_TYPE_VEC2:
 		float v[2];
@@ -168,30 +180,32 @@ int actor_reg_prop(lua_State* L)
 	Actor* actor = lua_check_actor(L, 1);
 	int prop_index = (int)lua_tointeger(L, 2);
 	int type = (int)lua_tointeger(L, 3);
+	ActorProp prop;
 	switch (type)
 	{
 	case PROP_TYPE_BOOL:
-		actor->RegProperty(prop_index, (bool)lua_toboolean(L, 4));
+		prop = (bool)lua_toboolean(L, 4);
 		break;
 	case PROP_TYPE_INT:
-		actor->RegProperty(prop_index, (int)lua_tointeger(L, 4));
+		prop = (int)lua_tointeger(L, 4);
 		break;
 	case PROP_TYPE_UINT64:
-		actor->RegProperty(prop_index, (uint64_t)lua_tointeger(L, 4));
+		prop = (uint64_t)lua_tointeger(L, 4);
 		break;
 	case PROP_TYPE_FLOAT:
-		actor->RegProperty(prop_index, (float)lua_tonumber(L, 4));
+		prop = (float)lua_tonumber(L, 4);
 		break;
 	case PROP_TYPE_STR:
-		actor->RegProperty(prop_index, lua_tostring(L, 4));
+		prop = CXString(lua_tostring(L, 4));
 		break;
 	case PROP_TYPE_VEC2:
 		float v[2];
 		v[0] = (float)lua_tonumber(L, 4);
 		v[1] = (float)lua_tonumber(L, 5);
-		actor->RegProperty(prop_index, v);
+		prop = v;
 	default:
 		break;
 	}
+	actor->RegProperty(prop_index, prop);
 	return 0;
 }
