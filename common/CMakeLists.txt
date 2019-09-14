@@ -26,7 +26,9 @@ set(GAME_COMMON_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actor/move.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/astar/astar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actor/action.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/actor/actor_enum.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actor/actor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/actor/actor_prop.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actor/actor_manager.cpp
     PARENT_SCOPE
 )

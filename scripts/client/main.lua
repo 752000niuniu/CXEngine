@@ -12,6 +12,7 @@ script_system_dofile 'scene_manager.lua'
 script_system_dofile 'actor_manager.lua'
 -- script_system_dofile('generator/imgui_binding_generator.lua')
 -- script_system_dofile('generator/table_template.lua')
+-- script_system_dofile('generator/actor_template.lua')
 -- script_system_dofile('parser.lua')
 
 
@@ -45,7 +46,7 @@ function on_script_system_update()
 end
 
 function on_script_system_draw()
-    scene_manager_draw()
+	scene_manager_draw()
 end
 
 function on_script_system_deinit()

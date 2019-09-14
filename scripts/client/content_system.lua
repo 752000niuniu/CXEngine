@@ -64,10 +64,17 @@ function read_npc_table()
     return tbl
 end
 
+function read_actor_template()
+    local path = vfs_get_tsvpath('actor_template')
+    local tbl,col_names = utils_parse_tsv_to_rows(path)
+    return tbl
+end
+
 function content_system_init()
     content_system_set_table('role', read_tsv_index_by_main_key('avatar_role',false,'ID'))
     content_system_set_table('weapon', read_tsv_index_by_main_key('avatar_weapon',false,'ID'))
     content_system_set_table('npc', read_npc_table())
     content_system_set_table('magic', read_magic_table())
     content_system_set_table('maps', read_map_table())
+    content_system_set_table('actor_template', read_actor_template())
 end

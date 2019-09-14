@@ -18,6 +18,7 @@
 #include "lua.h"
 #include "cxlua.h"
 #include "script_system.h"
+#include "actor_enum.h"
 
 
 #define ACTOR_METATABLE_NAME "mt_actor"
@@ -795,6 +796,9 @@ luaL_Reg mt_actor[] = {
 { "ClearPalMatrix", actor_clear_pal_matrix},
 { "GetShowBoundingBox", actor_get_show_bounding_box },
 { "SetShowBoundingBox", actor_set_show_bounding_box },
+{ "RegProperty", actor_reg_prop},
+{ "GetProperty", actor_get_prop},
+{ "SetProperty", actor_set_prop},
 { NULL, NULL }
 };
 
@@ -911,5 +915,5 @@ void luaopen_actor(lua_State* L)
 	REG_ENUM(DIR_SE);
 	REG_ENUM(DIR_SW);
 #undef REG_ENUM
-
+	luaopen_actor_enum(L);
 }
