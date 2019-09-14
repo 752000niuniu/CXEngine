@@ -17,6 +17,7 @@
 #include "move.h"
 #include "lua.h"
 #include "cxlua.h"
+#include "script_system.h"
 
 
 #define ACTOR_METATABLE_NAME "mt_actor"
