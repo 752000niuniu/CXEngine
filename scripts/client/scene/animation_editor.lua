@@ -28,26 +28,25 @@ function OnSceneInit()
     -- MagicAnim:SetVisible(false)
     player = actor_manager_create_actor(os.time())
     actor_manager_set_local_player(player:GetID())
-    player:SetAvatarID('JXK-SWORD')
+    player:SetProperty(PROP_AVATAR_ID,'JXK-SWORD')
     player:SetProperty(PROP_WEAPON_AVATAR_ID,'JXK-SWORD-060-X')
     -- player:SetType(ACTOR_TYPE_PET)
-    -- player:SetAvatarID('龙龟')
-
+    -- player:SetProperty(PROP_AVATAR_ID,'龙龟')
     player:SetDir(0)
-    player:SetX(375.0)
-    player:SetY(170.0)
-
+    player:SetProperty(PROP_POS,375,170)
     player:SetActionID(ACTION_IDLE)
+    player:ResetASM()
+
     enemy  = actor_manager_create_actor(os.time() + 1)
-    enemy:SetAvatarID('JMW-KNIFE')
+    enemy:SetProperty(PROP_AVATAR_ID,'JMW-KNIFE')
     enemy:SetProperty(PROP_WEAPON_AVATAR_ID,'JMW-KNIFE-060-X')
     -- enemy:SetActionID(ACTION_BEHIT)
     enemy:SetDir(player:GetDir())
     enemy:ReverseDir()
-    enemy:SetX(615.0)
-    enemy:SetY(275.0)
+    enemy:SetProperty(PROP_POS,615,275)
+
     enemy:SetActionID(ACTION_IDLE)
-    -- enemy:GetAvatar():Stop()
+    enemy:ResetASM()
 end
 
 local actor_dir = 0
@@ -56,7 +55,7 @@ local actor_frame = 0
 local actor_show_boudingbox={}
 function imgui_draw_actor(actor)
     if actor then
-        local x ,y  = actor:GetX(), actor:GetY()
+        local x ,y  = actor:GetProperty(PROP_POS)
         local avatar = actor:GetAvatar()
         if not avatar then return end
         imgui.SetCursorPos(x-55,y+50)

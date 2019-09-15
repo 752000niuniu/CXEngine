@@ -75,8 +75,9 @@ function on_scene_editor_update()
 
     if imgui.CollapsingHeader('PosInfo') then
         local mapx, mapy = util_screen_pos_to_map_pos(mx,my)
+        local px,py = player:GetProperty(PROP_POS)
         imgui.Text(string.format("[mouse] : x=%.0f,y=%.0f world.x=%.0f,world.y=%.0f",mx,my, mapx,mapy))
-        imgui.Text(string.format("[player] : x=%f,y=%f,dir=%f", player:GetX(), player:GetY(), player:GetDir()))
+        imgui.Text(string.format("[player] : x=%f,y=%f,dir=%f", px,py, player:GetDir()))
     end
 
     if imgui.CollapsingHeader('MapDrawOption') then
@@ -93,18 +94,6 @@ function on_scene_editor_update()
         end)
     end  
 
-    if imgui.CollapsingHeader('Players') then
-        local players = actor_manager_fetch_all_players()
-        imgui.HorizontalLayout(players,next,function(k,v) 
-            if imgui.Button(v:GetProperty(PROP_AVATAR_ID)..'##'..v:GetID()) then
-                actor_manager_set_local_player(v:GetID())
-            end
-        end)
-        if imgui.Button('Clear') then
-            actor_manager_clear_all()
-        end
-    end  
-
     if imgui.CollapsingHeader('NPCTemplate') then
         local npc_tbl = content_system_get_table('npc')
         imgui.HorizontalLayout(npc_tbl,next,function(k,v) 
@@ -113,7 +102,7 @@ function on_scene_editor_update()
                 actor:SetProperty(PROP_ACTOR_TYPE,ACTOR_TYPE_PET)
                 actor:SetProperty(PROP_AVATAR_ID, v.ID)
                 actor:SetProperty(PROP_WEAPON_AVATAR_ID,'')
-                actor:SetPos(player:GetPos())
+                actor:SetProperty(PROP_POS, player:GetProperty(PROP_POS))
                 actor:SetProperty(PROP_SCENE_ID, player:GetProperty(PROP_SCENE_ID))
                 actor:SetDir(player:GetDir())
             end

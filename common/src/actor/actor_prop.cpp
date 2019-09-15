@@ -38,7 +38,7 @@ ActorProp& ActorProp::operator=(float  v)
 
 ActorProp& ActorProp::operator=(float v[2])
 {
-	if (type == PROP_TYPE_VEC2) s.~CXString();
+	if (type == PROP_TYPE_STR) s.~CXString();
 	v2[0] = v[0];
 	v2[1] = v[1];
 	type = PROP_TYPE_VEC2;

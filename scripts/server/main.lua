@@ -47,8 +47,7 @@ function pto_c2s_login(req)
                     pinfo.scene_id = other:GetProperty(PROP_SCENE_ID)
                     pinfo.role_id = other:GetProperty(PROP_ROLE_ID)
                     pinfo.weapon_id = other:GetProperty(PROP_WEAPON_ID) 
-                    pinfo.x = other:GetX()
-                    pinfo.y = other:GetY()
+                    pinfo.x,pinfo.y  = other:GetProperty(PROP_POS)
                     table.insert(pinfos, pinfo)
                 end
             end
@@ -72,8 +71,7 @@ function save_player_database()
         pinfo.scene_id = p:GetProperty(PROP_SCENE_ID)
         pinfo.role_id = p:GetProperty(PROP_ROLE_ID)
         pinfo.weapon_id = p:GetProperty(PROP_WEAPON_ID) 
-        pinfo.x = p:GetX()
-        pinfo.y = p:GetY()
+        pinfo.x,pinfo.y = p:GetProperty(PROP_POS)
         table.insert(pinfos, pinfo)
     end
     table.sort(pinfos, function(a,b) return a.pid < b.pid  end)
@@ -97,8 +95,7 @@ function game_server_dispatch_message(pt)
         
     elseif type == PTO_C2C_MOVE_TO_POS then
         local player = actor_manager_fetch_player_by_id(req.pid)
-        player:SetX(req.x)
-        player:SetY(req.y)
+        player:SetProperty(PROP_POS,req.x,req.y)
         net_send_message_to_all_players(PTO_C2C_MOVE_TO_POS,js)
     elseif type == PTO_C2C_CHAT then
         net_send_message_to_all_players(PTO_C2C_CHAT,js)

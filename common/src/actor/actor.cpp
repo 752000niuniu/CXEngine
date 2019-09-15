@@ -24,16 +24,7 @@
 #define ACTOR_METATABLE_NAME "mt_actor"
 
 Actor::Actor(uint64_t pid)
-	:BaseGameEntity(pid),
-	m_Pos(0, 0),
-	m_MoveToPos(0, 0),
-	m_Dir(Direction::S),
-	m_IsMove(false),
-	m_MoveVelocity(150),
-	m_IsLocalPlayer(false),
-	m_DirCount(8),
-	m_AvatarID(""),
-	m_WeaponAvatarID("")
+	:BaseGameEntity(pid)
 {
 	lua_State* L = script_system_get_luastate();
 	lua_getglobal(L, "on_actor_reg_props");
@@ -125,12 +116,12 @@ void Actor::OnDraw()
 
 void Actor::SetDir(int dir)
 {
-	m_Dir = dir;
+	m_Props[PROP_DIR] = dir;
 #ifndef SIMPLE_SERVER
 	auto* avatar = m_ASM->GetAvatar();
 	if(avatar){
 		if (avatar->GroupCount == 4) {
-			m_Dir = GMath::Dir8toDir4(m_Dir);
+			m_Props[PROP_DIR] = GMath::Dir8toDir4(dir);
 		}
 	}
 #endif
@@ -138,25 +129,27 @@ void Actor::SetDir(int dir)
 
 int Actor::GetDir()
 {
+	int dir = m_Props[PROP_DIR].toInt();
 #ifndef SIMPLE_SERVER
 	auto* avatar = m_ASM->GetAvatar();
 	if (avatar) {
 		if (avatar->GroupCount == 4) {
-			m_Dir = GMath::Dir8toDir4(m_Dir);
+			dir = GMath::Dir8toDir4(dir);
 		}
 	}
 #endif
-	return m_Dir;
+	return dir;
 }
 
 void Actor::ReverseDir()
 {
-	SetDir(GMath::GetReverseDir(m_Dir));
+	int dir = m_Props[PROP_DIR].toInt();
+	SetDir(GMath::GetReverseDir(dir));
 }
 
 void Actor::SetActionID(int action)
 {
-	if (m_Props[PROP_ACTOR_TYPE].i == ACTOR_TYPE_PLAYER) {
+	if (m_Props[PROP_ACTOR_TYPE].toInt() == ACTOR_TYPE_PLAYER) {
 		m_Props[PROP_ACTION_ID] = action;
 	}
 	else {
@@ -170,28 +163,35 @@ void Actor::SetActionID(int action)
 void Actor::SetPos(float x, float y)
 {
 	if (IsCombat()) {
-		m_CombatProps.Pos.x = x;
-		m_CombatProps.Pos.y = y;
+		m_Props[PROP_COMBAT_POS].v2[0] = x;
+		m_Props[PROP_COMBAT_POS].v2[1] = y;
 	}
 	else {
-		m_Pos.x = x; m_Pos.y = y;
+		m_Props[PROP_POS].v2[0] = x;
+		m_Props[PROP_POS].v2[1] = y;
 	}
 }
 
 void Actor::SetPos(Pos p)
 {
-	if (IsCombat()) {
-		m_CombatProps.Pos = p;
-	}
-	else {
-		m_Pos = p;
-	}
+	SetPos(p.x, p.y);
+}
+
+Pos Actor::GetPos()
+{
+	ActorProp& prop = m_Props[IsCombat() ? PROP_COMBAT_POS : PROP_POS];
+	return  Pos(prop.v2[0], prop.v2[1]);
 }
 
 void Actor::SetMoveToPos(Pos dest)
 {
-	m_MoveToPos.x = dest.x;
-	m_MoveToPos.y = dest.y;
+	m_Props[PROP_MOVE_TO_POS].v2[0] = dest.x;
+	m_Props[PROP_MOVE_TO_POS].v2[1] = dest.y;
+}
+
+Pos Actor::GetMoveToPos()
+{
+	return { m_Props[PROP_MOVE_TO_POS].v2[0] ,m_Props[PROP_MOVE_TO_POS].v2[1] };
 }
 
 float Actor::GetWidth()
@@ -231,43 +231,39 @@ int Actor::GetDirByDegree(float degree)
 #endif
 }
 
+void Actor::SetLocal(bool local)
+{
+	actor_manager_set_local_player(this);
+}
+
 bool Actor::IsLocal()
 {
 	return actor_manager_is_local_player(this);
 }
-float Actor::GetCombatDistSquare()
-{
-	Pos& pos = GetPos();
-	Pos& targetPos = GetCombatTargetPos();
-	return ::GMath::Astar_GetDistanceSquare(m_CombatProps.Pos.x, m_CombatProps.Pos.y, m_CombatProps.TargetPos.x, m_CombatProps.TargetPos.y);
-}
+
 
 float Actor::GetMoveDestDistSquare(Pos dest)
 {
-	return ::GMath::Astar_GetDistanceSquare(m_Pos.x, m_Pos.y, dest.x, dest.y);
-}
-float Actor::GetCombatAngle()
-{
 	Pos& pos = GetPos();
-	Pos& targetPos = GetCombatTargetPos();
-	return ::GMath::Astar_GetAngle(m_CombatProps.Pos.x, m_CombatProps.Pos.y, m_CombatProps.TargetPos.x, m_CombatProps.TargetPos.y);
+	return ::GMath::Astar_GetDistanceSquare(pos.x,pos.y, dest.x, dest.y);
 }
 
 float Actor::GetMoveDestAngle(Pos dest)
 {
-	return ::GMath::Astar_GetAngle(m_Pos.x, m_Pos.y, dest.x, dest.y);
+	Pos& pos = GetPos();
+	return ::GMath::Astar_GetAngle(pos.x,pos.y, dest.x, dest.y);
 }
 
 BaseScene* Actor::GetScene()
 {
-	return scene_manager_fetch_scene(m_Props[PROP_SCENE_ID].i);
+	return scene_manager_fetch_scene(m_Props[PROP_SCENE_ID].toInt());
 }
 
 CXString Actor::GetWeaponAvatarID()
 {
-	if (m_Props[PROP_ACTOR_TYPE].i == ACTOR_TYPE_NPC)
+	if (m_Props[PROP_ACTOR_TYPE].toInt() == ACTOR_TYPE_NPC)
 		return "";
-	return m_Props[PROP_WEAPON_AVATAR_ID].s;
+	return m_Props[PROP_WEAPON_AVATAR_ID].toString();
 }
 #ifndef SIMPLE_SERVER
 Bound Actor::GetViewBounds()
@@ -288,8 +284,8 @@ bool Actor::CheckDrag(int dx, int dy)
 
 void Actor::OnDragMove(int dx, int dy)
 {
-	m_Pos.x += (float)dx;
-	m_Pos.y += (float)dy;
+	TranslateX((float)dx);
+	TranslateY((float)dy);
 }
 
 void Actor::Say(std::string Text)
@@ -299,7 +295,6 @@ void Actor::Say(std::string Text)
 	m_SayWidget->Text = wText;
 	m_SayWidget->TextCache = std::vector<uint32_t>(wText.begin(), wText.end());
 }
-
 #endif
 
 Actor* lua_check_actor(lua_State*L, int index)
@@ -325,16 +320,7 @@ int actor_update(lua_State * L) {
 
 int actor_draw(lua_State * L) {
 	Actor* actor = lua_check_actor(L, 1);
-	//Pos pos = actor->GetPos();
 	actor->OnDraw();
-	return 0;
-}
-int actor_set_pos(lua_State* L)
-{
-	Actor* actor = lua_check_actor(L, 1);
-	lua_Number x = lua_tonumber(L, 2);
-	lua_Number y = lua_tonumber(L, 3);
-	actor->SetPos({ (float)x,(float)y });
 	return 0;
 }
 
@@ -434,38 +420,6 @@ int actor_say(lua_State* L) {
 	return 0;
 }
 
-int actor_set_x(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	float x = (float)lua_tonumber(L, 2);
-	actor->SetX(x);
-	return 0;
-}
-int actor_get_x(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	lua_pushnumber(L, actor->GetX());
-	return 1;
-}
-
-int actor_set_y(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	float y = (float)lua_tonumber(L, 2);
-	actor->SetY(y);
-	return 0;
-}
-
-int actor_get_y(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	lua_pushnumber(L, actor->GetY());
-	return 1;
-}
-
-
-int actor_get_pos(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	lua_pushnumber(L, actor->GetX());
-	lua_pushnumber(L, actor->GetY());
-	return 2;
-}
 
 int actor_get_width(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
@@ -477,46 +431,6 @@ int actor_get_height(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 	lua_pushnumber(L, actor->GetHeight());
 	return 1;
-}
-
-int actor_set_role_id(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	int roleID = (int)lua_tointeger(L, 2);
-	actor->SetProperty(PROP_ROLE_ID, roleID);
-#ifndef SIMPLE_SERVER 
-	actor->GetASM()->Reset();
-#endif // !SIMPLE_SERVER
-	return 0;
-}
-
-int actor_set_weapon_id(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	int weaponID = (int)lua_tointeger(L, 2);
-	actor->SetProperty( PROP_WEAPON_ID, weaponID);
-#ifndef SIMPLE_SERVER
-	actor->GetASM()->Reset();
-#endif // !SIMPLE_SERVER
-	return 0;
-}
-
-int actor_set_avatar_id(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	auto id = lua_tostring(L, 2);
-	actor->SetProperty(PROP_AVATAR_ID, id);
-#ifndef SIMPLE_SERVER
-	actor->GetASM()->Reset();
-#endif // !SIMPLE_SERVER
-	return 0;
-}
-
-int actor_set_weapon_avatar_id(lua_State* L) {
-	Actor* actor = lua_check_actor(L, 1);
-	auto id = lua_tostring(L, 2);
-	actor->SetProperty(PROP_WEAPON_AVATAR_ID, id);
-#ifndef SIMPLE_SERVER
-	actor->GetASM()->Reset();
-#endif // !SIMPLE_SERVER
-	return 0;
 }
 
 int actor_clear_frames(lua_State* L) {
@@ -628,6 +542,14 @@ int actor_get_pal_matrix(lua_State*L) {
 #endif
 }
 
+int actor_reset_asm(lua_State*L){
+	Actor* actor = lua_check_actor(L, 1);
+#ifndef SIMPLE_SERVER
+	actor->GetASM()->Reset();
+#endif
+	return 0;
+}
+
 int actor_clear_pal_matrix(lua_State*L) {
 #ifndef SIMPLE_SERVER
 	Actor* actor = lua_check_actor(L, 1);
@@ -642,19 +564,9 @@ luaL_Reg mt_actor[] = {
 	{ "Destroy",actor_destroy },
 { "Update",actor_update },
 { "Draw",actor_draw },
-{ "SetPos",actor_set_pos },
-{ "SetX", actor_set_x },
-{ "GetX", actor_get_x },
-{ "SetY", actor_set_y },
-{ "GetY", actor_get_y },
-{ "GetPos", actor_get_pos },
 { "GetWidth", actor_get_width },
 { "GetHeight", actor_get_height },
 { "GetID", actor_get_id },
-{ "SetRoleID", actor_set_role_id },
-{ "SetWeaponID", actor_set_weapon_id },
-{ "SetWeaponAvatarID", actor_set_weapon_avatar_id },
-{ "SetAvatarID", actor_set_avatar_id },
 { "SetDir", actor_set_dir },
 { "GetDir", actor_get_dir },
 { "ReverseDir", actor_reverse_dir },
@@ -678,6 +590,7 @@ luaL_Reg mt_actor[] = {
 { "RegProperty", actor_reg_prop},
 { "GetProperty", actor_get_prop},
 { "SetProperty", actor_set_prop},
+{ "ResetASM", actor_reset_asm},
 { NULL, NULL }
 };
 

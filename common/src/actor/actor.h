@@ -18,18 +18,6 @@ class GameMap;
 
 class BaseScene;
 
-class ActorCombatProps
-{
-public:
-	using CombatPos = Pos;
-
-	CombatPos  Pos;
-	int GroupType; //self/enemy
-	CombatPos PosBackup;
-	CombatPos TargetPos;
-	bool HasReady;
-};
-
 #ifndef SIMPLE_SERVER
 class Actor : public BaseGameEntity, public View
 #else
@@ -53,19 +41,12 @@ public:
 
 	void SetActionID(int state);
 
-
 	void SetPos(float x, float y);
 	void SetPos(Pos p);
-	Pos GetPos() { return IsCombat() ? m_CombatProps.Pos : m_Pos; };
+	Pos GetPos();
 
 	void SetMoveToPos(Pos dest);
-	Pos GetMoveToPos() { return m_MoveToPos; };
-
-	void SetCombatBackupPos(Pos pos) { m_CombatProps.PosBackup = pos; };
-	Pos GetCombatBackupPos() { return m_CombatProps.PosBackup; };
-
-	void SetCombatTargetPos(Pos pos) { m_CombatProps.TargetPos = pos; };
-	Pos GetCombatTargetPos() { return m_CombatProps.TargetPos; };
+	Pos GetMoveToPos();
 
 	int GetBoxX() { return static_cast<int>(GetPos().x / 20); }
 	int GetBoxY() { return static_cast<int>(GetPos().y / 20); }
@@ -73,29 +54,27 @@ public:
 	int GetX() { return static_cast<int>(GetPos().x); }
 	int GetY() { return static_cast<int>(GetPos().y); }
 
-	void SetX(float x) { (IsCombat() ? m_CombatProps.Pos : m_Pos).x = x; }
-	void SetY(float y) { (IsCombat() ? m_CombatProps.Pos : m_Pos).y = y; }
+	void SetX(float x) { ActorProp& prop= m_Props[IsCombat() ? PROP_COMBAT_POS : PROP_POS]; prop.v2[0] = x; }
+	void SetY(float y) { ActorProp& prop = m_Props[IsCombat() ? PROP_COMBAT_POS : PROP_POS]; prop.v2[1] = y; }
 
-	void TranslateX(float x) { m_Pos.x += x; }
-	void TranslateY(float y) { m_Pos.y += y; }
+	void TranslateX(float x) { ActorProp& prop = m_Props[IsCombat() ? PROP_COMBAT_POS : PROP_POS]; prop.v2[0] += x; }
+	void TranslateY(float y) { ActorProp& prop = m_Props[IsCombat() ? PROP_COMBAT_POS : PROP_POS]; prop.v2[1] += y; }
 
 	virtual float GetWidth();
 	virtual float GetHeight();
 
-	bool IsCombat() { return m_Props[PROP_IS_COMBAT].b; }
+	bool IsCombat() { return m_Props[PROP_IS_COMBAT].toBool(); }
 
-	void SetLocal(bool local) { m_IsLocalPlayer = local; }
+	void SetLocal(bool local);
 	bool IsLocal();
 
-	bool IsMove() { return m_IsMove; }
+	bool IsMove() {  return m_Props[PROP_IS_MOVE].toBool(); }
 
-	float GetCombatDistSquare();
-	float GetCombatAngle();
 	float GetMoveDestDistSquare(Pos dest);
 	float GetMoveDestAngle(Pos dest);
 
-	void SetTurnReady(bool ready) { m_CombatProps.HasReady = ready; };
-	bool IsTurnReady() { return m_CombatProps.HasReady; };
+	void SetTurnReady(bool ready) { m_Props[PROP_TURN_READY] = ready;};
+	bool IsTurnReady() { return m_Props[PROP_TURN_READY].toBool(); };
 	BaseScene* GetScene();
 
 	MoveHandle* GetMoveHandle() { return m_MoveHandle; }
@@ -143,26 +122,13 @@ public:
 	void SetProperty(int index, ActorProp prop) { m_Props[index] = prop; }
 	void RegProperty(int index, ActorProp& prop) { assert(index == m_Props.size()); m_Props.push_back(prop); }
 protected:
-	
-	CXString m_AvatarID;
-	CXString m_WeaponAvatarID;
-	
-	Pos m_Pos;
-	Pos m_MoveToPos;
-
-	int m_Dir;
-	int m_DirCount;
-	bool m_IsMove;
-	float m_MoveVelocity;
-
 	bool m_bCalcMoveList;
 	int m_SayDuration;
-	bool m_IsLocalPlayer;
 	std::list<Pos> m_MoveList;
 	std::list<Pos> m_BackupMoveList;
 	
 	MoveHandle* m_MoveHandle;
-	ActorCombatProps m_CombatProps;
+	
 	std::vector<NE::PalSchemePart> m_PatMatrix;
 	std::vector<ActorProp> m_Props;
 

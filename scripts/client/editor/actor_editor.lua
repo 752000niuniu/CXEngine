@@ -96,9 +96,9 @@ local LoginDebugButtons = {
         end
     },
     {
-        name  = 'printEnv',
+        name  = '重新生成ActorProp',
         on_click = function()
-            utils_dump_table(_ENV)
+            script_system_dofile('generator/actor_template.lua')
         end
     }
 }
@@ -124,12 +124,6 @@ local LocalPlayerDebugButtons = {
             local player = actor_manager_fetch_local_player()
             local show = player:GetProperty(PROP_SHOW_BOUNDINGBOX) 
             player:SetProperty(PROP_SHOW_BOUNDINGBOX , not show)
-        end
-    },
-    {
-        name='生成actor属性',
-        on_click = function()
-            script_system_dofile('generator/actor_template.lua')
         end
     }
 }
@@ -185,6 +179,18 @@ function on_actor_editor_update()
             v.on_click()
         end)
     end
+
+    if imgui.CollapsingHeader('Players') then
+        local players = actor_manager_fetch_all_players()
+        imgui.HorizontalLayout(players,next,function(k,v) 
+            if imgui.Button(v:GetProperty(PROP_AVATAR_ID)..'##'..v:GetID()) then
+                actor_manager_set_local_player(v:GetID())
+            end
+        end)
+        if imgui.Button('Clear') then
+            actor_manager_clear_all()
+        end
+    end  
     
     if imgui.CollapsingHeader('LocalPlayer') then
         imgui_std_horizontal_button_layout(LocalPlayerDebugButtons,function(t,k) 
@@ -194,8 +200,6 @@ function on_actor_editor_update()
             v.on_click()
         end)
     end
-
-
 
     imgui.End()
 end

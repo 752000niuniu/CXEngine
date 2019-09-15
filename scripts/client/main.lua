@@ -82,10 +82,10 @@ function game_dispatch_message(pt)
 			local player = actor_manager_create_actor(pinfo.pid)
 			player:SetProperty(PROP_NAME,pinfo.name)
 			player:SetProperty(PROP_SCENE_ID,pinfo.scene_id)
-			player:SetAvatarID('JXK-KNIFE')
+			player:SetProperty(PROP_AVATAR_ID,'JXK-KNIFE')
 			player:SetProperty(PROP_WEAPON_AVATAR_ID,'JXK-KNIFE-120-晓风残月')
 	
-			-- player:SetAvatarID('JXK-KNIFE')
+			-- player:SetProperty(PROP_AVATAR_ID,'JXK-KNIFE')
    			-- player:SetProperty(PROP_WEAPON_AVATAR_ID,'JXK-KNIFE-120-晓风残月')
 
 			player:SetX(pinfo.x)

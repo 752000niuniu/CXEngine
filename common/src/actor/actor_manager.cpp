@@ -20,6 +20,11 @@ int actor_manager_set_local_player(lua_State*L) {
 	return 0;
 }
 
+void actor_manager_set_local_player(Actor* actor)
+{
+	g_LocalPid = actor->GetID();
+}
+
 bool actor_manager_is_local_player(Actor* actor) {
 	return actor->GetID() == g_LocalPid;
 }
