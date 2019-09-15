@@ -2,9 +2,12 @@
 
 script_system_dofile('../share/vfs.lua')
 script_system_dofile('../share/utils.lua')
+script_system_dofile('../share/content_system.lua')
+script_system_dofile('../share/actor_metatable.lua')
 
 
 function on_script_system_init()
+    content_system_init()
     game_server_start(45000)
 end
 
@@ -21,10 +24,10 @@ end
 function pto_c2s_login(req)
     print('pto_c2s_login req', cjson.encode(req))
     local req_player = actor_manager_create_actor(req.pid)
-    req_player:SetName(req.name)
-    req_player:SetSceneID(req.scene_id)
-    req_player:SetRoleID(req.role_id)
-    req_player:SetWeaponID(req.weapon_id)
+    req_player:SetProperty(PROP_NAME, req.name)
+    req_player:SetProperty(PROP_SCENE_ID,req.scene_id)
+    req_player:SetProperty(PROP_ROLE_ID,req.role_id)
+    req_player:SetProperty(PROP_WEAPON_ID,req.weapon_id)
     req_player:SetX(req.x)
     req_player:SetY(req.y)
     local players = actor_manager_fetch_all_players()    
@@ -40,10 +43,10 @@ function pto_c2s_login(req)
                 if other:GetID() ~= pid then
                     local pinfo = {}
                     pinfo.pid = other:GetID()
-                    pinfo.name = other:GetName()
-                    pinfo.scene_id = other:GetSceneID()
-                    pinfo.role_id = other:GetRoleID()
-                    pinfo.weapon_id = other:GetWeaponID()
+                    pinfo.name = other:GetProperty(PROP_NAME)
+                    pinfo.scene_id = other:GetProperty(PROP_SCENE_ID)
+                    pinfo.role_id = other:GetProperty(PROP_ROLE_ID)
+                    pinfo.weapon_id = other:GetProperty(PROP_WEAPON_ID) 
                     pinfo.x = other:GetX()
                     pinfo.y = other:GetY()
                     table.insert(pinfos, pinfo)
@@ -65,10 +68,10 @@ function save_player_database()
     for pid, p in pairs(players) do
         local pinfo = {}
         pinfo.pid = p:GetID()
-        pinfo.name = p:GetName()
-        pinfo.scene_id = p:GetSceneID()
-        pinfo.role_id = p:GetRoleID()
-        pinfo.weapon_id = p:GetWeaponID()
+        pinfo.name = p:GetProperty(PROP_NAME)
+        pinfo.scene_id = p:GetProperty(PROP_SCENE_ID)
+        pinfo.role_id = p:GetProperty(PROP_ROLE_ID)
+        pinfo.weapon_id = p:GetProperty(PROP_WEAPON_ID) 
         pinfo.x = p:GetX()
         pinfo.y = p:GetY()
         table.insert(pinfos, pinfo)

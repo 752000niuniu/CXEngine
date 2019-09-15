@@ -115,7 +115,7 @@ local LocalPlayerDebugButtons = {
         name = 'SetName',
         on_click = function()
             local player = actor_manager_fetch_local_player()
-            player:SetName(PlayerNameSB:str())
+            player:SetProperty(PROP_NAME,PlayerNameSB:str())
         end
     },
     {

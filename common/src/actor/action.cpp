@@ -485,7 +485,7 @@ void BeCastAction::Exit()
 void BeCastAction::Enter()
 {
 	m_pASM->SetAction(ACTION_BEHIT);
-	int dead = (int)RANDOM_INSTANCE->NextInt(0, 1);
+	bool dead = RANDOM_INSTANCE->NextInt(0, 1) == 0;
 	m_Actor->SetProperty(PROP_IS_DEAD, dead);
 
 	auto*targetAvatar = m_pASM->GetAvatar();

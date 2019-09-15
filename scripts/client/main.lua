@@ -5,8 +5,9 @@ DefaultMapID = 1001
 
 script_system_dofile('../share/vfs.lua')
 script_system_dofile('../share/utils.lua')
+script_system_dofile('../share/content_system.lua')
+script_system_dofile('../share/actor_metatable.lua')
 
-script_system_dofile 'content_system.lua'
 script_system_dofile 'actor_metatable.lua'
 script_system_dofile 'scene_manager.lua'
 script_system_dofile 'actor_manager.lua'
@@ -79,13 +80,13 @@ function game_dispatch_message(pt)
 		local pinfos = req 
 		for k,pinfo in ipairs(pinfos) do
 			local player = actor_manager_create_actor(pinfo.pid)
-			player:SetName(pinfo.name)
-			player:SetSceneID(pinfo.scene_id)
+			player:SetProperty(PROP_NAME,pinfo.name)
+			player:SetProperty(PROP_SCENE_ID,pinfo.scene_id)
 			player:SetAvatarID('JXK-KNIFE')
-			player:SetWeaponAvatarID('JXK-KNIFE-120-晓风残月')
+			player:SetProperty(PROP_WEAPON_AVATAR_ID,'JXK-KNIFE-120-晓风残月')
 	
 			-- player:SetAvatarID('JXK-KNIFE')
-   			-- player:SetWeaponAvatarID('JXK-KNIFE-120-晓风残月')
+   			-- player:SetProperty(PROP_WEAPON_AVATAR_ID,'JXK-KNIFE-120-晓风残月')
 
 			player:SetX(pinfo.x)
 			player:SetY(pinfo.y)

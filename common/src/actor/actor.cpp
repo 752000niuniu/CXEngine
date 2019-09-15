@@ -91,12 +91,13 @@ void Actor::OnDraw()
 {
 #ifndef SIMPLE_SERVER
 	m_ASM->Draw();
-	if (!m_Name.empty())
+	ActorProp& name = GetProperty(PROP_NAME);
+	if (!name.toString().empty())
 	{
 		auto* avatar = m_ASM->GetAvatar();
 		if (avatar) {
 			auto green = glm::vec3(115 / 255.0f, 1.0f, 137 / 255.0f);
-			TextRenderer::GetInstance()->DrawTextC(m_Name.c_str(),
+			TextRenderer::GetInstance()->DrawTextC(name.toString().c_str(),
 				((int)avatar->Pos.x),
 				((int)avatar->Pos.y + 20),
 				TextRenderer::CENTER

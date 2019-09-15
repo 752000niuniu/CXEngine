@@ -96,7 +96,7 @@ function on_scene_editor_update()
     if imgui.CollapsingHeader('Players') then
         local players = actor_manager_fetch_all_players()
         imgui.HorizontalLayout(players,next,function(k,v) 
-            if imgui.Button(v:GetAvatarID()..'##'..v:GetID()) then
+            if imgui.Button(v:GetProperty(PROP_AVATAR_ID)..'##'..v:GetID()) then
                 actor_manager_set_local_player(v:GetID())
             end
         end)
@@ -110,11 +110,11 @@ function on_scene_editor_update()
         imgui.HorizontalLayout(npc_tbl,next,function(k,v) 
             if imgui.Button(v.ID) then
                 local actor = actor_manager_create_player(os.time())
-                actor:SetType(ACTOR_TYPE_PET)
-                actor:SetAvatarID(v.ID)
-                actor:SetWeaponAvatarID('')
+                actor:SetProperty(PROP_ACTOR_TYPE,ACTOR_TYPE_PET)
+                actor:SetProperty(PROP_AVATAR_ID, v.ID)
+                actor:SetProperty(PROP_WEAPON_AVATAR_ID,'')
                 actor:SetPos(player:GetPos())
-                actor:SetSceneID(player:GetSceneID())
+                actor:SetProperty(PROP_SCENE_ID, player:GetProperty(PROP_SCENE_ID))
                 actor:SetDir(player:GetDir())
             end
         end)
@@ -125,9 +125,9 @@ function on_scene_editor_update()
         local avatar_role_tbl = content_system_get_table('role')    
         local role_keys = fetch_role_keys(avatar_role_tbl)
         imgui_std_horizontal_button_layout(avatar_role_tbl,gen_next_sortk_fn(avatar_role_tbl), function(k,v)
-            player:SetType(ACTOR_TYPE_PLAYER)
-            player:SetAvatarID(k)
-            player:SetWeaponAvatarID('')
+            player:SetProperty(PROP_ACTOR_TYPE,ACTOR_TYPE_PLAYER)
+            player:SetProperty(PROP_AVATAR_ID, k) 
+            player:SetProperty(PROP_WEAPON_AVATAR_ID,'')
         end)
     end
 
@@ -190,14 +190,14 @@ function on_scene_editor_update()
     
     if imgui.CollapsingHeader('AvatarWeapon') then
         local avatar_weapon_tbl =  content_system_get_table('weapon')    
-        local avatar_key = player:GetAvatarID()
+        local avatar_key = player:GetProperty(PROP_AVATAR_ID)
         local keys = fetch_weapon_keys(avatar_weapon_tbl,avatar_key)
         imgui_std_horizontal_button_layout(avatar_weapon_tbl,custom_gen_next_sortk_fn(avatar_weapon_tbl,keys), function(k,v)
-            player:SetWeaponAvatarID(k)
+            player:SetProperty(PROP_WEAPON_AVATAR_ID,k)
         end)
 
         if imgui.Button('DropWeapon') then
-            player:SetWeaponAvatarID('')
+            player:SetProperty(PROP_WEAPON_AVATAR_ID,'')
         end
     end
 
