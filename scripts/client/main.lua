@@ -11,11 +11,11 @@ script_system_dofile('../share/actor_metatable.lua')
 script_system_dofile 'actor_metatable.lua'
 script_system_dofile 'scene_manager.lua'
 script_system_dofile 'actor_manager.lua'
+script_system_dofile('action/action.lua')
 -- script_system_dofile('generator/imgui_binding_generator.lua')
 -- script_system_dofile('generator/table_template.lua')
 -- script_system_dofile('generator/actor_template.lua')
 -- script_system_dofile('parser.lua')
-
 
 -- luadbg_listen(9527)
 IsCombat = false
@@ -84,17 +84,12 @@ function game_dispatch_message(pt)
 			player:SetProperty(PROP_SCENE_ID,pinfo.scene_id)
 			player:SetProperty(PROP_AVATAR_ID,'JXK-KNIFE')
 			player:SetProperty(PROP_WEAPON_AVATAR_ID,'JXK-KNIFE-120-晓风残月')
-	
-			-- player:SetProperty(PROP_AVATAR_ID,'JXK-KNIFE')
-   			-- player:SetProperty(PROP_WEAPON_AVATAR_ID,'JXK-KNIFE-120-晓风残月')
 
 			player:SetX(pinfo.x)
 			player:SetY(pinfo.y)
 			if pinfo.is_local then
 				local_pinfo = pinfo
 			end
-
-
 		end
 		if local_pinfo then
 			actor_manager_set_local_player(local_pinfo.pid)

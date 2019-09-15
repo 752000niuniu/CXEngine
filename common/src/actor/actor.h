@@ -75,6 +75,10 @@ public:
 
 	void SetTurnReady(bool ready) { m_Props[PROP_TURN_READY] = ready;};
 	bool IsTurnReady() { return m_Props[PROP_TURN_READY].toBool(); };
+
+	void SetTarget(Actor* target) { m_Target = target; };
+	Actor* GetTarget() { return m_Target; };
+
 	BaseScene* GetScene();
 
 	MoveHandle* GetMoveHandle() { return m_MoveHandle; }
@@ -131,7 +135,7 @@ protected:
 	
 	std::vector<NE::PalSchemePart> m_PatMatrix;
 	std::vector<ActorProp> m_Props;
-
+	Actor* m_Target;
 #ifndef SIMPLE_SERVER
 	TextView* m_SayWidget;
 	ActionStateMachine* m_ASM;

@@ -7,7 +7,6 @@ DefaultSceneName = "门派_方寸山全景"
 scene_list_name = {}
 
 script_system_dofile('editor/imgui_editor.lua')
-
 local scene_lua_files = 
 {
     {name='AnimationEditor' ,  file= 'scene/animation_editor.lua'},
@@ -82,12 +81,9 @@ function on_scene_manager_draw(name)
     if scene_list[name] then
         scene_list[name].OnSceneDraw()
     end
-
-   
 end
 
 function scene_manager_reload(name)
-
     for i,v in ipairs(scene_lua_files) do
         if v.name == name then
             local path = lua_file_path(v.file)
@@ -115,9 +111,6 @@ function scene_manager_reload(name)
 end
 
 local KEY_RELEASE_MOVE_AMOUT = 30
-local roleID = 0 
-local weaponID = 0 
-
 function fix_input_manager_mouse_pos()
     local wx,wy = imgui.GetWindowPos()
     local vid,x,y  = imgui.GetMainViewport()
@@ -126,9 +119,7 @@ end
 
 function on_game_imgui_update(name)
     fix_input_manager_mouse_pos()
-
-  
-
+    
     imgui.Dummy(600)
     imgui.SameLine()
     imgui.Text('FPS:'.. math.floor(window_system_get_fps()*1000))
@@ -166,31 +157,6 @@ function on_game_imgui_update(name)
             player:TranslateX(KEY_RELEASE_MOVE_AMOUT)
         end
 
-        if imgui.IsKeyReleased(string.byte('F')) then
-            player:TranslateX(KEY_RELEASE_MOVE_AMOUT)
-        end
-
-
-        if imgui.IsKeyReleased(string.byte('1')) then
-            player:ChangeAction(0)
-        end
-
-
-        if imgui.IsKeyReleased(string.byte('2')) then
-            player:ChangeRole(roleID)
-            roleID = roleID + 1
-            if roleID == 12 then
-                roleID = 1
-            end
-        end
-
-        if imgui.IsKeyReleased(string.byte('3')) then
-            player:ChangeWeapon(weaponID)
-            weaponID = weaponID + 1
-            if weaponID == 10 then
-                weaponID =0
-            end
-        end
         
         if imgui.IsWindowFocused() then
             if imgui.IsMouseClicked(0) then

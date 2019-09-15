@@ -3,6 +3,7 @@
 #include <string>
 #include "pos.h"
 #include <list>
+#include "define_types.h"
 
 std::string action_get_name(int i);
 size_t action_get_size();
@@ -10,6 +11,7 @@ std::string action_system_get_action(int i);
 bool action_is_show_weapon(int action);
 bool action_is_emotion_action(int action);
 bool action_is_battle_action(int action);
+
 
 #ifndef SIMPLE_SERVER
 class Actor;
@@ -25,7 +27,12 @@ public:
 	virtual void Exit() {};
 	virtual  void Update();
 	virtual  void Draw() {};
+
+	void OnEnter();
+	void OnExit();
+	EASMActionType GetType() { return m_Type; }
 protected:
+	EASMActionType m_Type;
 	ActionStateMachine *  m_pASM;
 	Actor* m_Actor;
 };
@@ -44,16 +51,14 @@ Defender:   behit effect           behitback          clps|behit fly
 class AttackAction : public Action
 {
 public:
-	AttackAction(Actor* actor) :Action(actor) {};
+	AttackAction(Actor* actor) :Action(actor) { m_Type = ASM_ATTACK_ACTION; };
 	virtual ~AttackAction() {};
 	virtual  void Update();
 	virtual  void Draw() ;
-	void AddTarget(Actor* target);
 	virtual void Exit();
 	virtual void Enter();
-	
 private:
-	Actor * m_Target;
+	
 	Pos m_BackupPos;
 	int m_BackupActionID;
 	float m_SavedVelocity;
@@ -61,28 +66,29 @@ private:
 	Pos m_Runto;
 	Pos m_AttackVec;
 	int m_ComboCount;
+	Actor* m_Target;
 };
 
 
 class CastAction :public Action
 {
 public:
-	CastAction(Actor* actor, Actor* target, uint64_t skill) :Action(actor), m_Target(target), m_Skill(skill) {};
+	CastAction(Actor* actor,uint64_t skill) :Action(actor), m_Skill(skill) { m_Type = ASM_CAST_ACTION; };
 	virtual ~CastAction() {};
 	virtual  void Update();
 	virtual void Exit();
 	virtual void Enter();
 private:
 	Pos m_AttackVec;
-	Actor* m_Target;
 	uint64_t m_Skill;
+	Actor* m_Target;
 };
 
 
 class BeHitAction : public Action
 {
 public:
-	BeHitAction(Actor* actor, Actor* attacker) :Action(actor), m_Attacker(attacker) {};
+	BeHitAction(Actor* actor, Actor* attacker) :Action(actor), m_Attacker(attacker) { m_Type = ASM_BEHIT_ACTION; };
 	virtual ~BeHitAction() {};
 	virtual  void Update();
 	virtual void Exit();
@@ -97,7 +103,7 @@ private:
 class BeCastAction : public Action
 {
 public:
-	BeCastAction(Actor* actor, Actor* attacker) :Action(actor), m_Attacker(attacker) {};
+	BeCastAction(Actor* actor, Actor* attacker) :Action(actor), m_Attacker(attacker) { m_Type = ASM_BECAST_ACTION; };
 	virtual ~BeCastAction() {};
 	virtual  void Update();
 	virtual void Exit();
@@ -111,7 +117,7 @@ private:
 class DeadFlyAction : public Action
 {
 public:
-	DeadFlyAction(Actor* actor, Pos dir) :Action(actor), m_Dir(dir) {};
+	DeadFlyAction(Actor* actor, Pos dir) :Action(actor), m_Dir(dir) { m_Type = ASM_DEAD_FLY_ACTION; };
 	virtual ~DeadFlyAction() {};
 	virtual  void Update();
 	virtual void Enter();
@@ -126,7 +132,7 @@ private:
 class PathMoveAction : public Action
 {
 public:
-	PathMoveAction(Actor* actor) :Action(actor){};
+	PathMoveAction(Actor* actor) :Action(actor) { m_Type = ASM_PATH_MOVE_ACTION; };
 	virtual ~PathMoveAction() {};
 	virtual  void Update();
 	virtual void Exit();
@@ -160,6 +166,10 @@ public:
 	int GetDirCount(int action = -1);
 
 	int GetActionID() { return m_ActionID; };
+
+	void SetBuffAnim(uint64_t id);
+	Animation* GetBuffAnim() { return m_BuffAnim; }
+	
 private:
 	Actor * m_Actor;
 	float m_TimeInterval;
@@ -172,6 +182,7 @@ private:
 	std::map<int, Animation*> m_WeaponActions;
 	std::map<int, Animation*> m_AvatarActions;
 	Animation* m_PlayerShadow;
+	Animation* m_BuffAnim;
 };
 #endif // !SIMPLE_SERVER
 

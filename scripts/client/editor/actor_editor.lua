@@ -18,7 +18,6 @@ local function format_path(path)
 end
 
 local LoginDebugButtons = {
-
     {
         name  = 'Sigin Up',
         on_click = function()
@@ -58,7 +57,6 @@ local LoginDebugButtons = {
             net_manager_reconnect()
         end
     },
-    
     {
         name  = '监听调试器',
         on_click = function()
@@ -129,12 +127,45 @@ local LocalPlayerDebugButtons = {
     {
         name = 'AvatarInfo',
         on_click = function()
-
             local player = actor_manager_fetch_local_player()
             local show = player:GetProperty(PROP_SHOW_AVATAR_INFO) 
             player:SetProperty(PROP_SHOW_AVATAR_INFO , not show)
         end
-    }
+    },
+    {
+        name = 'NormalAttack',
+        on_click  = function()
+            local player = actor_manager_fetch_local_player()
+            local players = actor_manager_fetch_all_players()
+            player:GetTarget():SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF,0x1D3FF13C ))
+            player:PlayAttack()
+
+        end
+    },
+    {
+        name = 'CritAttack',
+        on_click  = function()
+            local player = actor_manager_fetch_local_player()
+            local players = actor_manager_fetch_all_players()
+            player:GetTarget():SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF, 0xECD0E003))
+            player:SetProperty(PROP_ASM_BUFF_ANIM, 0)
+            player:PlayAttack()
+        end
+    },
+
+    {
+        name = '横扫千军',
+        on_click  = function()
+            local player = actor_manager_fetch_local_player()
+            local players = actor_manager_fetch_all_players()
+            player:GetTarget():SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(MAGICWDF, 0xACA4A54A))            
+            player:SetProperty(PROP_ASM_ATK_COMBO, 3)
+            player:SetProperty(PROP_ASM_BUFF_ANIM, res_encode(WADDONWDF,0xD9463A0C))
+            player:PlayAttack()
+        end
+    },
+
+
 }
      
 function on_actor_editor_update()    
@@ -201,6 +232,16 @@ function on_actor_editor_update()
         end
     end  
     
+    if imgui.CollapsingHeader('Targets') then
+        local players = actor_manager_fetch_all_players()
+        imgui.HorizontalLayout(players,next,function(k,v) 
+            if imgui.Button(v:GetProperty(PROP_AVATAR_ID)..'##Targets'..v:GetID()) then
+                local player = actor_manager_fetch_local_player()
+                player:SetTarget(v)
+            end
+        end)
+    end  
+
     if imgui.CollapsingHeader('LocalPlayer') then
         imgui_std_horizontal_button_layout(LocalPlayerDebugButtons,function(t,k) 
             local nk,v = next(t,k)

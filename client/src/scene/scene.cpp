@@ -159,7 +159,7 @@ void Scene::Update()
 
 void Scene::Draw()
 {
-	if (m_Map== NULL)return;
+	
 	
 	Actor* localPlayer = actor_manager_fetch_local_player();
 	//先画一遍地图
@@ -171,7 +171,7 @@ void Scene::Draw()
 			m_Map->Draw(localPlayer->GetX(), localPlayer->GetY());
 	}
 
-	if (SCENE_MANAGER_INSTANCE->IsDrawCell()&&m_Map)
+	if (SCENE_MANAGER_INSTANCE->IsDrawCell() && m_Map)
 		m_Map->DrawCell();
 
 	for (auto& it : s_TranportCircles)
@@ -216,14 +216,14 @@ void Scene::Draw()
 
 	actor_manager_draw();
 
-	if (m_Map&&localPlayer) {
+	if (m_Map && localPlayer) {
 		m_Map->DrawMask(localPlayer->GetX(), localPlayer->GetY(), localPlayer->GetY());
 	}
 
-	if(s_Chat)
-	  s_Chat->OnDraw();
-	
-	if (SCENE_MANAGER_INSTANCE->IsDrawAnnounce()&& s_Announcement)
+	if (s_Chat)
+		s_Chat->OnDraw();
+
+	if (SCENE_MANAGER_INSTANCE->IsDrawAnnounce() && s_Announcement)
 		s_Announcement->OnDraw();
 
 	if (m_ShowSmap && m_SmapTv)

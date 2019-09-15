@@ -158,8 +158,6 @@ void Actor::SetActionID(int action)
 	}
 }
 
-
-
 void Actor::SetPos(float x, float y)
 {
 	if (IsCombat()) {
@@ -440,9 +438,7 @@ int actor_clear_frames(lua_State* L) {
 int actor_play_attack(lua_State*L){
 #ifndef SIMPLE_SERVER 
 	Actor* actor = lua_check_actor(L, 1);
-	Actor* target = lua_check_actor(L, 2);
 	AttackAction* action = new AttackAction(actor);
-	action->AddTarget(target);
 	actor->GetASM()->ChangeAction(action);
 #endif
 	return 0;
@@ -451,10 +447,9 @@ int actor_play_attack(lua_State*L){
 int actor_play_cast(lua_State*L) {
 #ifndef SIMPLE_SERVER 
 	Actor* actor = lua_check_actor(L, 1);
-	Actor* target = lua_check_actor(L, 2);
 	uint64_t skill = (uint64_t)lua_tointeger(L, 3);
 	actor->SetProperty(PROP_CAST_ID, skill);
-	CastAction* action = new CastAction(actor, target, skill);
+	CastAction* action = new CastAction(actor, skill);
 	actor->GetASM()->ChangeAction(action);
 #endif
 	return 0;
@@ -559,6 +554,19 @@ int actor_clear_pal_matrix(lua_State*L) {
 #endif
 }
 
+int actor_set_target(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	Actor* target = lua_check_actor(L, 2);
+	actor->SetTarget(target);
+	return 0;
+}
+
+int actor_get_target(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	lua_push_actor(L, actor->GetTarget());
+	return 1;
+}
+
 //{ "__gc",actor_destroy },
 luaL_Reg mt_actor[] = {
 	{ "Destroy",actor_destroy },
@@ -579,6 +587,8 @@ luaL_Reg mt_actor[] = {
 { "MoveTo", actor_move_to },
 { "Say", actor_say },
 { "ClearFrames", actor_clear_frames },
+{ "SetTarget", actor_set_target},
+{ "GetTarget", actor_get_target},
 { "PlayAttack", actor_play_attack },
 { "PlayCast", actor_play_cast },
 { "SetTimeInterval", actor_set_time_interval },
@@ -656,6 +666,14 @@ void luaopen_actor(lua_State* L)
 	REG_ENUM(ACTION_DEFEND);
 
 
+	REG_ENUM(ASM_ACTION);
+	REG_ENUM(ASM_ATTACK_ACTION);
+	REG_ENUM(ASM_CAST_ACTION);
+	REG_ENUM(ASM_BEHIT_ACTION);
+	REG_ENUM(ASM_BECAST_ACTION);
+	REG_ENUM(ASM_DEAD_FLY_ACTION);
+	REG_ENUM(ASM_PATH_MOVE_ACTION);
+		
 	REG_ENUM(WEAPON_SPEAR);
 	REG_ENUM(WEAPON_AXE);
 	REG_ENUM(WEAPON_SWORD);

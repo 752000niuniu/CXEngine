@@ -9,8 +9,7 @@ function parse_magic_wdf(path)
         table.insert(lines,line)
     end
     table.remove(lines,1)
-    
-    
+
     local new_lines = {}
     for i,v in ipairs(lines) do
         local strs = utils_string_split(v,'=')
@@ -32,9 +31,6 @@ function parse_magic_wdf(path)
     end
     f_magic_tsv:close()
 end
-
-
-
 
 function solve()
     -- local files = vfs_list_files(vfs_get_tablepath('wasee_pal') )

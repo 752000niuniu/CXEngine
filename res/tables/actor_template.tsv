@@ -32,3 +32,8 @@ prop_combat_pos	vec2	{0,0}
 prop_combat_backup_pos	vec2	{0,0}
 prop_combat_target_pos	vec2	{0,0}
 prop_turn_ready	bool	false
+prop_asm_atk_combo	int	1
+prop_asm_behit_anim	uint64	0
+prop_asm_damage	int	0
+prop_asm_heal	int	0
+prop_asm_buff_anim	uint64	0

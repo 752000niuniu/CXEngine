@@ -13,7 +13,6 @@
 #include "window.h"
 #include "scene/base_scene.h"
 #include "scene/game_map.h"
-#include "cxrandom.h"
 #include "actor_manager.h"
 #include "scene/scene_manager.h"
 
@@ -106,7 +105,8 @@ bool action_is_battle_action(int action)
 
 #ifndef SIMPLE_SERVER
 Action::Action(Actor* _actor) :
-	m_Actor(_actor)
+	m_Actor(_actor),
+	m_Type(ASM_ACTION)
 {
 	m_pASM = m_Actor->GetASM();
 }
@@ -123,6 +123,32 @@ void Action::Update()
 	avatar->Update();
 } 
 
+
+void Action::OnEnter()
+{
+#ifndef SIMPLE_SERVER
+	lua_State* L = script_system_get_luastate();
+	lua_getglobal(L, "asm_action_on_enter");
+	lua_push_actor(L, m_Actor);
+	lua_pushinteger(L, m_Type);
+	int res = lua_pcall(L, 2, 0, 0);
+	check_lua_error(L, res);
+#endif	
+	Enter();
+}
+
+void Action::OnExit()
+{
+#ifndef SIMPLE_SERVER
+	lua_State* L = script_system_get_luastate();
+	lua_getglobal(L, "asm_action_on_exit");
+	lua_push_actor(L, m_Actor);
+	lua_pushinteger(L, m_Type);
+	int res = lua_pcall(L, 2, 0, 0);
+	check_lua_error(L, res);
+#endif
+	Exit();
+}
 
 void Action::Enter()
 {
@@ -198,6 +224,10 @@ void AttackAction::Update()
 				}else{
 					avatar->Pause(200);
 				}
+				if (m_ComboCount == 1) {
+					uint64_t resid = m_Actor->GetProperty(PROP_ASM_BUFF_ANIM).toUInt64();
+					m_pASM->SetBuffAnim(resid);
+				}
 			}
 		}
 	}
@@ -215,10 +245,6 @@ void AttackAction::Draw()
 {
 }
 
-void AttackAction::AddTarget(Actor* target)
-{
-	m_Target = target;
-}
 
 void AttackAction::Exit()
 {
@@ -228,10 +254,12 @@ void AttackAction::Exit()
 
 void AttackAction::Enter()
 {
-	m_ComboCount = RANDOM_INSTANCE->NextInt(1, 3);
+	m_ComboCount = m_Actor->GetProperty(PROP_ASM_ATK_COMBO).toInt();
+
 	m_BackupActionID = m_Actor->GetProperty(PROP_ACTION_ID).toInt();
 	m_BackupPos = m_Actor->GetPos();
 
+	m_Target = m_Actor->GetTarget();
 	if (m_Target) {
 		glm::vec2  v(m_Target->GetPos().x - m_Actor->GetPos().x, m_Target->GetPos().y - m_Actor->GetPos().y);
 		v = glm::normalize(v);
@@ -319,6 +347,7 @@ void CastAction::Exit()
 
 void CastAction::Enter()
 {
+	m_Target = m_Actor->GetTarget();
 	if(m_Target){
 		glm::vec2  v(m_Target->GetPos().x - m_Actor->GetPos().x, m_Target->GetPos().y - m_Actor->GetPos().y);
 		v = glm::normalize(v);
@@ -358,16 +387,7 @@ void BeHitAction::Update()
 		}
 		else if (avatar->IsFrameUpdate()) {
 			if (avatar->CurrentFrame == 1) {
-				std::set<uint32_t>  wasids;
-				wasids.insert(0xECD0E003);//±¬»÷
-				wasids.insert(0x1D3FF13C);//±»»÷ÖÐ
-				wasids.insert(0x3622636F);//·ÀÓù
-				int cnt = (int)RANDOM_INSTANCE->NextInt(0, (int)wasids.size() - 1);
-				auto it = wasids.begin();
-				while (cnt--) {
-					it++;
-				}
-				Animation* anim = new Animation(ADDONWDF, *it);
+				Animation* anim = new Animation(m_Actor->GetProperty(PROP_ASM_BEHIT_ANIM).toUInt64());
 				anim->SetLoop(1);
 				anim->Pos.x = avatar->Pos.x;
 				anim->Pos.y = avatar->Pos.y - avatar->GetFrameKeyY() + avatar->GetFrameHeight() / 2.0f;
@@ -397,15 +417,12 @@ void BeHitAction::Update()
 
 void BeHitAction::Exit()
 {
-
+	
 }
 
 void BeHitAction::Enter()
 {
 	m_pASM->SetAction(ACTION_BEHIT);
-
-	int dead = RANDOM_INSTANCE->NextInt(1, 10);
-	m_Actor->SetProperty(PROP_IS_DEAD, dead < 3);
 
 	auto*targetAvatar = m_pASM->GetAvatar();
 	BeatNumber* beatNumber = new BeatNumber();
@@ -415,18 +432,7 @@ void BeHitAction::Enter()
 	float bny = (float)(m_Actor->GetY() + offy - targetAvatar->GetFrameKeyY() + targetAvatar->GetFrameHeight() / 2);
 	beatNumber->SetPos((float)m_Actor->GetX() + offx, bny);
 
-	std::set<int> randoms;
-	randoms.insert(RANDOM_INSTANCE->NextInt(10, 99));
-	randoms.insert(RANDOM_INSTANCE->NextInt(100, 999));
-	randoms.insert(RANDOM_INSTANCE->NextInt(1000, 9999));
-	randoms.insert(RANDOM_INSTANCE->NextInt(10000, 99999));
-	randoms.insert(RANDOM_INSTANCE->NextInt(100000, 999999));
-	int cnt = (int)RANDOM_INSTANCE->NextInt(0, (int)randoms.size() - 1);
-	auto it = randoms.begin();
-	while (cnt--) {
-		it++;
-	} 
-	beatNumber->SetNumber(*it);
+	beatNumber->SetNumber(m_Actor->GetProperty(PROP_ASM_DAMAGE).toInt());
 	beatNumber->Beat();
 	AnimationManager::GetInstance()->AddBeatNumber(beatNumber);
 }
@@ -485,8 +491,7 @@ void BeCastAction::Exit()
 void BeCastAction::Enter()
 {
 	m_pASM->SetAction(ACTION_BEHIT);
-	bool dead = RANDOM_INSTANCE->NextInt(0, 1) == 0;
-	m_Actor->SetProperty(PROP_IS_DEAD, dead);
+	
 
 	auto*targetAvatar = m_pASM->GetAvatar();
 	BeatNumber* beatNumber = new BeatNumber();
@@ -495,18 +500,8 @@ void BeCastAction::Enter()
 	int offy = map != nullptr ? map->GetMapOffsetY() : 0;
 	float bny = (float)(m_Actor->GetY() + offy - targetAvatar->GetFrameKeyY() + targetAvatar->GetFrameHeight() / 2);
 	beatNumber->SetPos((float)m_Actor->GetX() + offx, bny);
-	std::set<int> randoms;
-	randoms.insert(RANDOM_INSTANCE->NextInt(10, 99));
-	randoms.insert(RANDOM_INSTANCE->NextInt(100, 999));
-	randoms.insert(RANDOM_INSTANCE->NextInt(1000, 9999));
-	randoms.insert(RANDOM_INSTANCE->NextInt(10000, 99999));
-	randoms.insert(RANDOM_INSTANCE->NextInt(100000, 999999));
-	int cnt = (int)RANDOM_INSTANCE->NextInt(0, (int)randoms.size() - 1);
-	auto it = randoms.begin();
-	while (cnt--) {
-		it++;
-	}
-	beatNumber->SetNumber(*it);
+	
+	beatNumber->SetNumber(m_Actor->GetProperty(PROP_ASM_DAMAGE).toInt());
 	beatNumber->Beat();
 	AnimationManager::GetInstance()->AddBeatNumber(beatNumber);
 }
@@ -611,6 +606,7 @@ void DeadFlyAction::Enter()
 ActionStateMachine::ActionStateMachine(Actor* _actor)
 	:m_Actor(_actor)
 {
+	m_BuffAnim = nullptr;
 	m_TimeInterval = 0.016f * 5;
 	m_pCurrentAction = nullptr;
 	m_pPreviousAction = nullptr;
@@ -637,6 +633,7 @@ ActionStateMachine::~ActionStateMachine()
 	m_WeaponActions.clear();
 
 	SafeDelete(m_PlayerShadow);
+	SafeDelete(m_BuffAnim);
 }
 
 void ActionStateMachine::Update()
@@ -664,6 +661,10 @@ void ActionStateMachine::Update()
 	if (HasWeapon() && action_is_show_weapon(m_ActionID)) {
 		auto* weapon = GetWeapon(m_ActionID);
 		weapon->CurrentFrame = avatar->CurrentFrame;
+	}
+	
+	if (m_BuffAnim) {
+		m_BuffAnim->Update();
 	}
 }
 
@@ -715,6 +716,13 @@ void ActionStateMachine::Draw()
 	m_PlayerShadow->Pos.x = avatar->Pos.x;
 	m_PlayerShadow->Pos.y = avatar->Pos.y;
 	m_PlayerShadow->Draw();
+
+	if (m_BuffAnim) {
+		m_BuffAnim->Pos.x = avatar->Pos.x;
+		m_BuffAnim->Pos.y = avatar->Pos.y;// -avatar->KeyY + avatar->Height / 2;
+		m_BuffAnim->Draw();
+	}
+
 	avatar->Draw();
 
 	if (HasWeapon() && action_is_show_weapon(m_ActionID)) {
@@ -728,6 +736,8 @@ void ActionStateMachine::Draw()
 	if (m_pCurrentAction) {
 		m_pCurrentAction->Draw();
 	}
+
+	
 }
 
 void ActionStateMachine::SetWeapon(CXString id)
@@ -776,7 +786,7 @@ void ActionStateMachine::RestoreAction()
 void ActionStateMachine::ChangeAction(Action* action)
 {
 	if (m_pCurrentAction) {
-		m_pCurrentAction->Exit();
+		m_pCurrentAction->OnExit();
 	}
 	if (m_pPreviousAction) {
 		delete m_pPreviousAction;
@@ -785,7 +795,7 @@ void ActionStateMachine::ChangeAction(Action* action)
 	m_pPreviousAction = m_pCurrentAction;
 	m_pCurrentAction = action;
 	if (m_pCurrentAction) {
-		m_pCurrentAction->Enter();
+		m_pCurrentAction->OnEnter();
 	}
 }
 
@@ -854,6 +864,15 @@ int ActionStateMachine::GetDirCount(int action)
 		return m_AvatarActions[action]->GroupCount;
 	}
 	return 4;
+}
+
+void ActionStateMachine::SetBuffAnim(uint64_t id)
+{
+	SafeDelete(m_BuffAnim);
+	if(id!=0){
+		m_BuffAnim = new Animation(id);
+		m_BuffAnim->SetLoop(0);
+	}
 }
 
 #endif

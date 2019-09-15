@@ -218,6 +218,7 @@ function on_scene_editor_update()
             local players = actor_manager_fetch_all_players()
             for i,v in ipairs(players) do
                 if not v:IsLocal() then
+                    player:SetTarget(players[2])
                     player:PlayAttack(v)
                     break
                 end
