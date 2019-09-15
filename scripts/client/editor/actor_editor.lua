@@ -119,11 +119,20 @@ local LocalPlayerDebugButtons = {
         end
     },
     {
-        name = 'ToggleBoundingBox',
+        name = 'BoundingBox',
         on_click = function()
             local player = actor_manager_fetch_local_player()
             local show = player:GetProperty(PROP_SHOW_BOUNDINGBOX) 
             player:SetProperty(PROP_SHOW_BOUNDINGBOX , not show)
+        end
+    },
+    {
+        name = 'AvatarInfo',
+        on_click = function()
+
+            local player = actor_manager_fetch_local_player()
+            local show = player:GetProperty(PROP_SHOW_AVATAR_INFO) 
+            player:SetProperty(PROP_SHOW_AVATAR_INFO , not show)
         end
     }
 }

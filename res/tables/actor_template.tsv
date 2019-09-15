@@ -2,6 +2,7 @@ name	type	def
 prop_id	uint64	0
 prop_dir	int	4
 prop_show_boundingbox	bool	false
+prop_show_avatar_info	bool	false
 prop_is_autorun	bool	false
 prop_is_dead	bool	false
 prop_frame_speed	float	0.080

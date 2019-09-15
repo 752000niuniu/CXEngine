@@ -41,9 +41,37 @@ function draw_avatar_boundingbox(avatar)
     imgui.AddRect(cx,cy,brx,bry,0xff00ff00)
 end
 
+local actor_frame = 1
 function ActorMT:DrawAvatarInfo()
-    local sprite = self:GetAvatar()
-    draw_avatar_info(sprite)
+    local actor = self
+    local avatar = self:GetAvatar()
+
+    if imgui.Button('+##Frame'..actor:GetID(),30) then
+        actor_frame = actor_frame+1
+        if actor_frame >= avatar:GetGroupFrameCount() then actor_frame  = 0 end
+        avatar:LockFrame(actor_frame)    
+    end
+    imgui.SameLine();imgui.Text('Frame');imgui.SameLine()
+    if imgui.Button('-##Frame'..actor:GetID(),30) then
+        actor_frame = actor_frame-1
+        if actor_frame <= 0 then actor_frame  = avatar:GetGroupFrameCount() end
+        avatar:LockFrame(actor_frame)    
+    end
+
+    if imgui.Button('Play##'..actor:GetID()) then
+        avatar:UnLockFrame()
+    end
+    imgui.SameLine()
+    if imgui.Button('Stop##'..actor:GetID()) then
+        avatar:Stop()
+    end
+
+    if imgui.Button('ExportWas##'..actor:GetID()) then
+        local path = vfs_makepath('a.was')
+        avatar:ExportWas(path)
+    end
+
+    draw_avatar_info(avatar)
 end
 
 function ActorMT:DrawBoundingBox()

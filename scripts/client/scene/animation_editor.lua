@@ -53,49 +53,6 @@ local actor_dir = 0
 local actor_action = 0
 local actor_frame = 0
 local actor_show_boudingbox={}
-function imgui_draw_actor(actor)
-    if actor then
-        local x ,y  = actor:GetProperty(PROP_POS)
-        local avatar = actor:GetAvatar()
-        if not avatar then return end
-        imgui.SetCursorPos(x-55,y+50)
-        imgui.BeginGroup()
-        
-        if imgui.Button('+##Frame'..actor:GetID(),30) then
-            actor_frame = actor_frame+1
-            if actor_frame >= avatar:GetGroupFrameCount() then actor_frame  = 0 end
-            avatar:LockFrame(actor_frame)    
-        end
-        imgui.SameLine();imgui.Text('Frame');imgui.SameLine()
-        if imgui.Button('-##Frame'..actor:GetID(),30) then
-            actor_frame = actor_frame-1
-            if actor_frame <= 0 then actor_frame  = avatar:GetGroupFrameCount() end
-            avatar:LockFrame(actor_frame)    
-        end
-
-        if imgui.Button('Play##'..actor:GetID()) then
-            avatar:UnLockFrame()
-        end
-        imgui.SameLine()
-        if imgui.Button('Stop##'..actor:GetID()) then
-            avatar:Stop()
-        end
-
-        if imgui.Button('ExportWas##'..actor:GetID()) then
-            local path = vfs_makepath('a.was')
-            avatar:ExportWas(path)
-        end
-
-        res, actor_show_boudingbox[actor:GetID()] = imgui.Checkbox('BoudingBox###bb'..actor:GetID(),actor_show_boudingbox[actor:GetID()] or false)
-        local curframe = avatar:GetCurrentFrame()
-        actor:DrawAvatarInfo()
-        if  actor_show_boudingbox[actor:GetID()] then
-            actor:DrawBoundingBox()
-        end
-        
-        imgui.EndGroup()
-    end
-end
 
 function OnSceneImGuiUpdate()
     imgui.SetCursorPos(50,100)
@@ -110,7 +67,6 @@ function OnSceneImGuiUpdate()
         -- MagicAnim:Pause(200)
         MagicAnim:LockFrame(1)
     end
-
 
     if imgui.Button('EnemyAttack') then
         enemy:PlayAttack(player)
@@ -134,8 +90,6 @@ function OnSceneImGuiUpdate()
     end
     
     imgui.EndGroup()
-    imgui_draw_actor(player)
-    imgui_draw_actor(enemy)   
     MagicAnim:DrawBoundingBox()
 end
 

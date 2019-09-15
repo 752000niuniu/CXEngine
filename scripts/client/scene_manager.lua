@@ -83,12 +83,7 @@ function on_scene_manager_draw(name)
         scene_list[name].OnSceneDraw()
     end
 
-    local actors = actor_manager_fetch_all_players()
-    for i,actor in ipairs(actors) do
-        if actor:GetProperty(PROP_SHOW_BOUNDINGBOX) then
-            actor:DrawBoundingBox()
-        end
-    end
+   
 end
 
 function scene_manager_reload(name)
@@ -131,6 +126,8 @@ end
 
 function on_game_imgui_update(name)
     fix_input_manager_mouse_pos()
+
+  
 
     imgui.Dummy(600)
     imgui.SameLine()
@@ -210,6 +207,22 @@ function on_game_imgui_update(name)
                 msg.y = dest_y
                 net_send_message(PTO_C2C_MOVE_TO_POS, cjson.encode(msg))
             end
+        end
+    end
+
+    local actors = actor_manager_fetch_all_players()
+    for i,actor in ipairs(actors) do
+        if actor:GetProperty(PROP_SHOW_BOUNDINGBOX) then
+            actor:DrawBoundingBox()
+        end
+        if actor:GetProperty(PROP_SHOW_AVATAR_INFO) then
+            local x ,y  = actor:GetProperty(PROP_POS)
+            local avatar = actor:GetAvatar()
+            if not avatar then return end
+            imgui.SetCursorPos(x-55,y+50)
+            imgui.BeginGroup()
+            actor:DrawAvatarInfo()
+            imgui.EndGroup()
         end
     end
 end
