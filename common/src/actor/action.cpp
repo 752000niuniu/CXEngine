@@ -332,10 +332,27 @@ void CastAction::Update()
 			m_pASM->ChangeAction(new_action);
 		}
 		else if (avatar->IsFrameUpdate()) {
-			if (avatar->CurrentFrame == avatar->GroupFrameCount / 2) {
-				BeCastAction* action = new BeCastAction(m_Target, m_Actor);
-				action->MoveVec = m_AttackVec;
-				m_Target->GetASM()->ChangeAction(action);
+			if (m_Actor->GetProperty(PROP_ASM_PLAY_BEHIT).toBool()) {
+				if (avatar->CurrentFrame == avatar->GroupFrameCount / 2) {
+					BeCastAction* action = new BeCastAction(m_Target, m_Actor);
+					action->MoveVec = m_AttackVec;
+					m_Target->GetASM()->ChangeAction(action);
+				}
+			}
+			else {
+				if (avatar->CurrentFrame == avatar->GroupFrameCount /2) {
+					uint64_t id = m_Actor->GetProperty(PROP_CAST_ID).toUInt64();
+					Animation* anim = new Animation(id);
+					anim->SetLoop(1);
+					auto* targetAvatar = m_Target->GetASM()->GetAvatar();
+					anim->Pos.x = targetAvatar->Pos.x;
+					anim->Pos.y = targetAvatar->Pos.y - targetAvatar->GetFrameKeyY() + targetAvatar->GetFrameHeight() / 2;
+					anim->AddFrameCallback(anim->GroupFrameCount/6*5, [this, anim]() {
+						uint64_t resid = m_Actor->GetProperty(PROP_ASM_BUFF_ANIM).toUInt64();
+						m_Target->GetASM()->SetBuffAnim(resid);
+						});
+					AnimationManager::GetInstance()->AddAnimation(anim);
+				}
 			}
 		}
 	}
@@ -360,6 +377,7 @@ void CastAction::Enter()
 		m_Actor->SetDir(dir);
 		m_Target->SetDir(dir);
 		m_Target->ReverseDir();
+		m_Target->GetASM()->SetAction(ACTION_BATIDLE);
 	}
 	
 	m_pASM->SetAction(ACTION_BATIDLE);

@@ -64,6 +64,7 @@ function on_scene_manager_init()
 end
 
 function on_scene_manager_init_scene(name)
+    current_scene_name = name
     actor_manager_set_scene(scene_manager_get_current_scene_id())
     if scene_list[name] then
         scene_list[name].OnSceneInit() 
@@ -84,6 +85,7 @@ function on_scene_manager_draw(name)
 end
 
 function scene_manager_reload(name)
+    name = name or current_scene_name
     for i,v in ipairs(scene_lua_files) do
         if v.name == name then
             local path = lua_file_path(v.file)
@@ -120,18 +122,9 @@ end
 function on_game_imgui_update(name)
     fix_input_manager_mouse_pos()
     
-    imgui.Dummy(600)
-    imgui.SameLine()
     imgui.Text('FPS:'.. math.floor(window_system_get_fps()*1000))
-    imgui.SameLine()
-    if imgui.Button('RELOAD') then
-        actor_manager_clear_all()
-        scene_manager_reload(name)
-        script_system_dofile('../share/utils.lua')
-        script_system_dofile('editor/imgui_editor.lua')
-        collectgarbage()
-        return
-    end
+    
+    
 
     if scene_list[name] then
         if scene_list[name].OnSceneImGuiUpdate then

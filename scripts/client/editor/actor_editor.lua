@@ -152,7 +152,6 @@ local LocalPlayerDebugButtons = {
             player:PlayAttack()
         end
     },
-
     {
         name = '横扫千军',
         on_click  = function()
@@ -164,7 +163,25 @@ local LocalPlayerDebugButtons = {
             player:PlayAttack()
         end
     },
-
+    {
+        name = '催眠符',
+        on_click  = function()
+            local player = actor_manager_fetch_local_player()
+            player:SetProperty(PROP_ASM_PLAY_BEHIT , false)
+            player:SetProperty(PROP_CAST_ID, res_encode(MAGICWDF, 0x9EC0624E))
+            player:SetProperty(PROP_ASM_BUFF_ANIM, res_encode(WADDONWDF,0xCA8FDEAD))
+            player:PlayCast()
+        end
+    },
+    {
+        name = '善恶有报',
+        on_click  = function()
+            local player = actor_manager_fetch_local_player()
+            player:GetTarget():SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF, 0x8D8A818D))
+            player:SetProperty(PROP_ASM_BUFF_ANIM, 0)
+            player:PlayAttack()
+        end
+    },
 
 }
      
@@ -172,6 +189,14 @@ function on_actor_editor_update()
     local res 
     imgui.Begin('Actor编辑器')
     
+    if imgui.Button('Reload') then
+        actor_manager_clear_all()
+        scene_manager_reload()
+        script_system_dofile('../share/utils.lua')
+        script_system_dofile('editor/imgui_editor.lua')
+        collectgarbage()
+    end
+
     imgui.Text("Pos :");
     imgui.SameLine()
     imgui.PushItemWidth(80)

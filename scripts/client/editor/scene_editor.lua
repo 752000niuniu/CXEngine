@@ -233,7 +233,10 @@ function on_scene_editor_update()
             local players = actor_manager_fetch_all_players()
             for i,v in ipairs(players) do
                 if not v:IsLocal() then
-                    player:PlayCast(v,id)
+                    player:SetProperty(PROP_ASM_PLAY_BEHIT , true)
+                    player:SetProperty(PROP_CAST_ID, res_encode(MAGICWDF, id))
+                    player:SetProperty(PROP_ASM_BUFF_ANIM,0)
+                    player:PlayCast()
                     break
                 end
             end
