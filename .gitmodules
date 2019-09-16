@@ -67,3 +67,6 @@
 [submodule "internals/miniaudio-cmake"]
 	path = internals/miniaudio-cmake
 	url = https://github.com/oceancx/miniaudio-cmake.git
+[submodule "internals/nanovg"]
+	path = internals/nanovg
+	url = https://github.com/oceancx/nanovg
