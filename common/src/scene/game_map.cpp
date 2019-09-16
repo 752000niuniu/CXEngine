@@ -15,6 +15,7 @@
 #endif
 #include "logger.h"
 
+// unsigned char*SOIL_load_image_from_memory(const unsigned char* const buffer,int buffer_length,int* width, int* height, int* channels,int force_channels) {return 0;}
 
 GameMap::GameMap(uint32 mapID)
 	:m_XyqMap(nullptr)
@@ -324,7 +325,7 @@ void GameMap::Draw(int playerX, int playerY)
 					if (m_MapTiles.find(unit) == m_MapTiles.end())
 					{
 						int width = 0, height = 0;
-						uint8_t* imgBuffer = SOIL_load_image_from_memory(m_XyqMap->GetUnitBitmap(unit), (int)m_XyqMap->GetUnitBitmapSize(unit),
+						uint8_t* imgBuffer =  SOIL_load_image_from_memory(m_XyqMap->GetUnitBitmap(unit), (int)m_XyqMap->GetUnitBitmapSize(unit),
 							&width, &height, 0, SOIL_LOAD_RGB);
 
 						m_MapTiles[unit] = new Texture(m_MapTileWidth, m_MapTileHeight, false, imgBuffer);

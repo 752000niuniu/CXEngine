@@ -16,5 +16,3 @@ int main(int argc, char const *argv[])
 	script_system_call_function(script_system_get_luastate(),"main");
 	return 0;
 }
-
-

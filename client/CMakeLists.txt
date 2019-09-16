@@ -10,6 +10,7 @@ find_package(IMGui)
 find_package(luadbg)
 find_package(gsm)
 find_package(miniaudio)
+# find_package(nanovg)
 
 file(GLOB_RECURSE  SOURCES_CPP "src/*.cpp" )
 file(GLOB_RECURSE  SOURCES_HEADER_PRI "src/*.h"  "src/*.hpp" "src/*.inl")
@@ -118,6 +119,7 @@ target_link_libraries(SimpleEngine
     luadbg_static
     gsm
     miniaudio
+    # nanovg
 )
 
 # add_custom_command(TARGET SimpleEngine

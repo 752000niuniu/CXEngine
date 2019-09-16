@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(SimpleServer)
 
 find_package(CXBase)
-find_package(SOIL)
+# find_package(SOIL)
 find_package(GLEW CONFIG)
 find_package(glfw3)
 find_package(IMGui)
@@ -61,7 +61,7 @@ target_link_libraries(SimpleServer
 PRIVATE
   glfw
   GLEW
-  SOIL
+  # SOIL
   CXBase::CXBase
   IMGui::IMGui
   luadbg

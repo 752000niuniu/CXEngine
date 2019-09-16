@@ -4,6 +4,8 @@
 #include "graphics/bitmap.h"
 #include "logger.h"
 
+// unsigned char*SOIL_load_image(const char* filename,int* width, int* height, int* channels,int force_channels){return 0;}
+
 Texture::Texture(CreationType type, const uint8* buff,int left,int top, int width, int height)
 	:m_TextureID(0),m_Left(left),m_Top(top), m_Width(width), m_Height(height)
 {

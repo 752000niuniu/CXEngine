@@ -14,7 +14,9 @@
 		"map": "cpp",
 		"deque": "cpp",
 		"xstring": "cpp",
-		"stb_vorbis.c": "cpp"
+		"stb_vorbis.c": "cpp",
+		"demo.h": "c",
+		"nanovg.h": "c"
 	},
 	"C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
 	"C_Cpp.configurationWarnings": "Disabled"

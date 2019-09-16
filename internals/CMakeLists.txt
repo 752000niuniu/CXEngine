@@ -14,4 +14,5 @@ add_subdirectory(imgui)
 add_subdirectory(cxbase)
 add_subdirectory(gsm-cmake)
 add_subdirectory(miniaudio-cmake)
+add_subdirectory(nanovg)
 
