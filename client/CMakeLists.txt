@@ -2,7 +2,6 @@ cmake_minimum_required (VERSION 3.10)
 project (SimpleEngine)
 
 find_package(CXBase)
-find_package(SOIL)
 find_package(GLEW CONFIG)
 find_package(glfw3)
 find_package(freetype CONFIG)
@@ -10,7 +9,7 @@ find_package(IMGui)
 find_package(luadbg)
 find_package(gsm)
 find_package(miniaudio)
-# find_package(nanovg)
+find_package(nanovg)
 
 file(GLOB_RECURSE  SOURCES_CPP "src/*.cpp" )
 file(GLOB_RECURSE  SOURCES_HEADER_PRI "src/*.h"  "src/*.hpp" "src/*.inl")
@@ -35,6 +34,7 @@ add_executable(SimpleEngine
     src/graphics/texture.cpp
     src/graphics/transform.cpp
     src/graphics/bitmap.cpp
+    src/graphics/ui_renderer.cpp
     src/cube_batch.cpp
     src/engine.cpp
     src/game.cpp
@@ -112,14 +112,13 @@ target_link_libraries(SimpleEngine
   PRIVATE 
     glfw
     GLEW
-    SOIL
     freetype
     CXBase::CXBase
     IMGui::IMGui
     luadbg_static
     gsm
     miniaudio
-    # nanovg
+    nanovg
 )
 
 # add_custom_command(TARGET SimpleEngine

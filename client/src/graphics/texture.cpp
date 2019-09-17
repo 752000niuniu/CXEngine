@@ -1,10 +1,9 @@
 #include "texture.h"
-#include <SOIL.h>
 #include "graphics/image.h"
 #include "graphics/bitmap.h"
 #include "logger.h"
+#include <stb_image.h>
 
-// unsigned char*SOIL_load_image(const char* filename,int* width, int* height, int* channels,int force_channels){return 0;}
 
 Texture::Texture(CreationType type, const uint8* buff,int left,int top, int width, int height)
 	:m_TextureID(0),m_Left(left),m_Top(top), m_Width(width), m_Height(height)
@@ -85,7 +84,9 @@ m_Path(filePath)
 	else
 	{
 		int  channel = 0;
-		lImageBuffer = SOIL_load_image(m_Path.c_str(), &m_Width, &m_Height, &channel, SOIL_LOAD_AUTO);
+		stbi_set_unpremultiply_on_load(1);
+		stbi_convert_iphone_png_to_rgb(1);
+		lImageBuffer = stbi_load(m_Path.c_str(), &m_Width, &m_Height, &channel, 0);
 		if (lImageBuffer == NULL)
 		{
 			cxlog_err("ReadSOIL FAILED - NO IMAGE BUFFER\n");
@@ -124,9 +125,9 @@ m_Path(filePath)
 		}
 		else
 		{
+			stbi_image_free(lImageBuffer);
 			free(lImageBuffer);
 		}
-		
 		lImageBuffer = nullptr;
 	}
 }

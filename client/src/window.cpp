@@ -12,8 +12,8 @@
 #include "file_loading.h"
 #include "scene/scene_manager.h"
 #include "logger.h"
-static const float MS_PER_UPDATE = 1000 / 60.f / 1000;
 
+static const float MS_PER_UPDATE = 1000 / 60.f / 1000;
 #define GAME_SCREEN_WIDTH 800
 #define GAME_SCREEN_HEIGHT 600
 static void glfw_framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -50,9 +50,8 @@ static void glfw_character_callback(GLFWwindow* window, unsigned int charcode)
 }
 
 static void glfw_error_callback(int error, const char* description) {
-	printf("Error: %s\n", description);
+	cxlog_err("Error: %d %s\n", error, description);
 }
-
 
 Window::Window()
 	:m_Width(GAME_SCREEN_WIDTH), m_Height(GAME_SCREEN_HEIGHT), m_FPS(MS_PER_UPDATE), m_pWindow(nullptr){
@@ -110,6 +109,9 @@ void Window::Init(int w,int h)
 		cxlog_err("glewInit error! %s\n", glewGetErrorString(err));
 		return;
 	}
+	// GLEW generates GL error because it calls glGetString(GL_EXTENSIONS), we'll consume it here.
+	glGetError();
+
 	glfwSwapInterval(1);
 
 	ImGui::CreateContext();

@@ -101,15 +101,17 @@ void SpriteRenderer::DrawSprite(Texture* texture, glm::vec2 position, glm::vec2 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture->GetTextureID());
     
+	glEnable(GL_STENCIL_TEST);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
     glStencilFunc(GL_ALWAYS, 1, 0xFF);
     glStencilMask(0);
-
 
     glBindVertexArray(this->quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
 	m_pShader->Unbind();
-    
+
+
 }
 void SpriteRenderer::DrawFrameSprite(Texture* texture, glm::vec2 position, glm::vec2 size, GLfloat rotate, glm::vec3 color)
 {
@@ -267,7 +269,6 @@ void SpriteRenderer::DrawMapSprite(Texture* texture, glm::vec2 position, glm::ve
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBlendEquation(GL_FUNC_ADD);
 	m_pShader->Unbind();
-    
 }
 
 
@@ -334,5 +335,4 @@ void sprite_renderer_init()
 void luaopen_sprite_renderer(lua_State* L)
 {
 	script_system_register_function(L, sprite_renderer_init);
-
 }

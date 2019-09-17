@@ -10,12 +10,11 @@
 #include "cxmath.h"
 
 #ifndef SIMPLE_SERVER
-#include "SOIL.h"
 #include "sprite_renderer.h"
 #endif
 #include "logger.h"
+#include <stb_image.h>
 
-// unsigned char*SOIL_load_image_from_memory(const unsigned char* const buffer,int buffer_length,int* width, int* height, int* channels,int force_channels) {return 0;}
 
 GameMap::GameMap(uint32 mapID)
 	:m_XyqMap(nullptr)
@@ -325,12 +324,14 @@ void GameMap::Draw(int playerX, int playerY)
 					if (m_MapTiles.find(unit) == m_MapTiles.end())
 					{
 						int width = 0, height = 0;
-						uint8_t* imgBuffer =  SOIL_load_image_from_memory(m_XyqMap->GetUnitBitmap(unit), (int)m_XyqMap->GetUnitBitmapSize(unit),
-							&width, &height, 0, SOIL_LOAD_RGB);
-
+						uint8_t* imgBuffer = stbi_load_from_memory(m_XyqMap->GetUnitBitmap(unit), (int)m_XyqMap->GetUnitBitmapSize(unit),
+							&width, &height, 0, 3);
+						if (imgBuffer == NULL) {
+							printf("Failed to load %s\n", stbi_failure_reason());
+							return ;
+						}
 						m_MapTiles[unit] = new Texture(m_MapTileWidth, m_MapTileHeight, false, imgBuffer);
-						delete imgBuffer;
-						imgBuffer = nullptr;
+						stbi_image_free(imgBuffer);
 					}
 
 				}
@@ -493,11 +494,14 @@ void GameMap::DrawMask(int playerX, int playerY, int drawY)
 					if (m_MapTiles.find(unit) == m_MapTiles.end())
 					{
 						int width = 0, height = 0;
-						uint8_t* imgBuffer = SOIL_load_image_from_memory(m_XyqMap->GetUnitBitmap(unit), (int)m_XyqMap->GetUnitBitmapSize(unit),
-							&width, &height, 0, SOIL_LOAD_RGB);
+						uint8_t* imgBuffer = stbi_load_from_memory(m_XyqMap->GetUnitBitmap(unit), (int)m_XyqMap->GetUnitBitmapSize(unit),
+							&width, &height, 0, 3);
+						if (imgBuffer == NULL) {
+							printf("Failed to load %s\n", stbi_failure_reason());
+							return;
+						}
 						m_MapTiles[unit] = new Texture(m_MapTileWidth, m_MapTileHeight, false, imgBuffer);
-						delete imgBuffer;
-						imgBuffer = nullptr;
+						stbi_image_free(imgBuffer);
 					}
 				}
 				else

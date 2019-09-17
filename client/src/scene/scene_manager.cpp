@@ -15,6 +15,7 @@
 #include "actor/actor_manager.h"
 #include "animation/sprite.h"
 #include "cxlua.h"
+#include "graphics/ui_renderer.h"
 
 
 static bool s_DrawMask, s_DrawStrider, s_DrawCell, s_DrawMap, s_DrawAnnouncement, s_AutoRun;
@@ -45,6 +46,7 @@ m_SwitchingScene(false)
 		station.was = std::stoul(row.at("was"), 0, 16);
 		m_TransportStations.insert({ station.uuid, station });
 	}
+
 }
 
 SceneManager::~SceneManager()
@@ -55,6 +57,7 @@ SceneManager::~SceneManager()
 		scene.second = nullptr;
 	}
 	m_Scenes.clear();
+	UIRenderer::GetInstance()->DeleteSingleton();
 }
 
 void SceneManager::Init() 
@@ -81,6 +84,8 @@ void SceneManager::Init()
 		cxlog_err("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	
+	UIRenderer::GetInstance();
 };
 
 void SceneManager::SwitchScene(String name)
@@ -238,6 +243,7 @@ void SceneManager::Draw()
 		glViewport(0, 0, gameWidth, gameHeight);
 		m_pCurrentScene->Draw();
 		script_system_call_function(script_system_get_luastate(), "on_scene_manager_draw", m_pCurrentScene->GetName());
+		UIRenderer::GetInstance()->Draw();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		ImVec2 cursorPos = ImGui::GetCursorPos();
@@ -247,14 +253,11 @@ void SceneManager::Draw()
 		ImGui::Image((void*)(uint64_t)m_TextureColor, ImVec2((float)gameWidth, (float)gameHeight), ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::GetWindowDrawList()->AddCallback(function_to_restore_shader_or_blend_state , nullptr);
 		ImGui::SetCursorPos(cursorPos);
-		
+
 		script_system_call_function(script_system_get_luastate(), "on_game_imgui_update", m_pCurrentScene->GetName());
 				
-
 		ImGui::EndChild();
 		ImGui::End();
-
-
 	}
 };
 
@@ -269,12 +272,9 @@ Player* scene_find_player(const char* player_name)
 	return actor_manager_find_player_by_name(player_name);
 }
 
-
-
 void scene_manager_init()
 {
 	SCENE_MANAGER_INSTANCE->Init();
-	
 }
 
 void scene_manager_update()
