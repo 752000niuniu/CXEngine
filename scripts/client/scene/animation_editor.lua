@@ -36,10 +36,13 @@ function OnSceneInit()
 
     BattleBG  = animation_create(ADDONWDF, 0xE3B87E0F)
     magic_tsv = content_system_get_table('magic')
+    
+    
+    -- MagicAnim = animation_create(WZIFEWDF,0xA393A808)
     MagicAnim = animation_create(6,0x29D819DF)
-    MagicAnim:EnableDrag(true)
-    MagicAnim:SetLoop(0)
-    MagicAnim:SetFrameInterval(0.016*8)
+    -- MagicAnim:EnableDrag(true)
+    -- MagicAnim:SetLoop(0)
+    -- MagicAnim:SetFrameInterval(0.016*8)
     MagicAnim:SetVisible(false)
 
     local ostime = os.time()
@@ -133,8 +136,9 @@ end
 function OnSceneUpdate()
    	actor_manager_update()
     MagicAnim:Update()
-    
 end
+
+
 
 function OnSceneDraw()
     BattleBG:Draw()

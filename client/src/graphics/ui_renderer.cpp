@@ -5,6 +5,7 @@
 #include "window.h"
 #include "file_system.h"
 #include "input_manager.h"
+#include "script_system.h"
 
 
 void drawParagraph(NVGcontext* vg, float x, float y, float width, float height, float mx, float my)
@@ -177,6 +178,7 @@ void drawLines(NVGcontext* vg, float x, float y, float w, float h, float t)
 }
 
 
+
 NVGcontext* vg = NULL;
 UIRenderer::UIRenderer()
 {
@@ -186,9 +188,10 @@ UIRenderer::UIRenderer()
 		return;
 	}
 
-	nvgCreateFont(vg, "MSYH", FileSystem::GetFontPath("msyh.ttf").c_str());
-	
-
+	int res = 0;
+	res =nvgCreateFont(vg, "MSYH", FileSystem::GetFontPath("msyh.ttf").c_str());
+	res =nvgCreateFont(vg, "MSHT", FileSystem::GetFontPath("msht.ttf").c_str());
+	res= nvgCreateFont(vg, "SIMSUN", FileSystem::GetFontPath("simsun.ttc").c_str());
 }
 
 UIRenderer::~UIRenderer()
@@ -201,6 +204,7 @@ void UIRenderer::Update()
 
 }
 
+void nano_render_text(int x, int y, int width, int size, int textcolor, int textbgcolor, const char* font, const char* text);
 void UIRenderer::Draw()
 {
 	int width = WINDOW_INSTANCE->GetWidth();
@@ -208,13 +212,63 @@ void UIRenderer::Draw()
 	Pos mpos = INPUT_MANAGER_INSTANCE->GetMousePos();
 	int mx = mpos.x;
 	int my = mpos.y;
-	nvgBeginFrame(vg, width, height, width* 1.0f / height);
+	glClear(GL_STENCIL_BUFFER_BIT);
+	nvgBeginFrame(vg, width, height, width * 1.0f / height);
 
 //	drawParagraph(vg, width - 450, 50, 150, 100, mx, my);
+//	nano_render_text(0, 0, 50, 24,0xffffffff,0xff00ffff,  "MSHT", u8"I need a girl!");
+	
+	script_system_call_function(script_system_get_luastate(), "on_ui_renderer_draw");
+
 
 	drawLines(vg, 120, height - 50, 600, 50, glfwGetTime());
 	nvgEndFrame(vg);
-
-	
 }
 
+void nano_render_text(int x, int y, int width, int size, int textcolor, int textbgcolor, const char* font, const char* text)
+{
+#define break_color_rgba(c)  nvgRGBA((c& 0xff), (c& 0xff00) >> 8, (c& 0xff0000) >> 16, (c& 0xff000000) >> 24)
+	nvgSave(vg);
+	float lineh;
+	uint32_t color = (uint32_t)textcolor;
+	uint32_t bgcolor = (uint32_t)textbgcolor;
+
+	nvgFontSize(vg, size);
+	nvgFontFace(vg, font);
+	nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
+	nvgTextMetrics(vg, NULL, NULL, &lineh);
+
+	const char* start;
+	const char* end;
+	start = text;
+	end = text + strlen(text);
+
+	NVGtextRow rows[3];
+	int nrows, lnum = 0;
+	while ((nrows = nvgTextBreakLines(vg, start, end, width, rows, 3))) {
+		for (int i = 0; i < nrows; i++) {
+			NVGtextRow* row = &rows[i];
+
+			nvgBeginPath(vg);
+			nvgFillColor(vg, break_color_rgba(bgcolor));
+			nvgRect(vg, x, y, row->width, lineh);
+			nvgFill(vg);
+
+
+			nvgFillColor(vg, break_color_rgba(color));
+			nvgText(vg, x, y, row->start, row->end);
+
+			lnum++;
+			y += lineh;
+		}
+		start = rows[nrows - 1].next;
+	}
+
+	nvgRestore(vg);
+#undef break_color_rgba
+}
+
+void luaopen_ui_renderer(lua_State* L)
+{
+	script_system_register_function(L, nano_render_text);
+}
