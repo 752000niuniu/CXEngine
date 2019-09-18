@@ -93,11 +93,11 @@ m_Path(filePath)
 			return;
 		}
 
-		if (channel == SOIL_LOAD_RGB)
+		if (channel == 3 ) // RGB
 		{
 			m_Format = GL_RGB;
 		}
-		else if (channel == SOIL_LOAD_RGBA)
+		else if (channel == 4) //RGBA
 		{
 			m_Format = GL_RGBA;
 		}

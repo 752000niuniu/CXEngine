@@ -208,6 +208,8 @@ void UIRenderer::Draw()
 	Pos mpos = INPUT_MANAGER_INSTANCE->GetMousePos();
 	int mx = mpos.x;
 	int my = mpos.y;
+	
+	glClear(GL_STENCIL_BUFFER_BIT);
 	nvgBeginFrame(vg, width, height, width* 1.0f / height);
 
 //	drawParagraph(vg, width - 450, 50, 150, 100, mx, my);
