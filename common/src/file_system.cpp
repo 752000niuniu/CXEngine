@@ -85,7 +85,7 @@ std::string FileSystem::GetFontPath(std::string path)
 
 std::string FileSystem::GetGameFontPath()
 {
-	return FileSystem::GetFontPath("msyh.ttf");
+	return FileSystem::GetFontPath("simsun.ttc");
 }
 
 std::string FileSystem::GetIconPath(std::string path)

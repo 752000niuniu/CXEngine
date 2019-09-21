@@ -185,10 +185,17 @@ local LocalPlayerDebugButtons = {
 
 }
      
+
 function on_actor_editor_update()    
     local res 
     imgui.Begin('Actor编辑器')
-    
+
+
+    ret, show_demo = imgui.Checkbox('Demo', show_demo)
+    if show_demo then
+        imgui.ShowDemoWindow(show_demo)
+    end
+    imgui.SameLine()
     if imgui.Button('Reload') then
         actor_manager_clear_all()
         scene_manager_reload()
@@ -209,10 +216,7 @@ function on_actor_editor_update()
 
 
     if imgui.CollapsingHeader('Login') then 
-        ret, show_demo = imgui.Checkbox('Demo', show_demo)
-        if show_demo then
-            imgui.ShowDemoWindow(show_demo)
-        end
+        
 
         imgui.Text('IP  :')
         imgui.SameLine()
