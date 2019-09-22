@@ -8,6 +8,7 @@
 #include "logger.h"
 #include "cxmath.h"
 #include "actor/actor_manager.h"
+#include "graphics/ui_renderer.h"
 
 String UtilsGetFramePath(Sprite* m_pSprite, int index)
 {
@@ -487,51 +488,244 @@ void AnimationManager::Draw()
 	}
 }
 
+BaseSprite* lua_check_base_sprite(lua_State* L, int index)
+{
+	return lua_check_pointer<BaseSprite>(L, index);
+}
+
+
 Animation* lua_check_animation(lua_State*L, int index)
 {
 	return lua_check_pointer<Animation>(L, index);
 }
 
-int animation_update(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	animation->Update();
+int base_sprite_update(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	sp->Update();
 	return 0;
 }
 
-int animation_draw(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	animation->Draw();
+int base_sprite_draw(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	sp->Draw();
 	return 0;
 }
 
-int animation_set_pos(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
+int base_sprite_set_pos(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
 	auto x = (float)lua_tonumber(L, 2);
 	auto y = (float)lua_tonumber(L, 3);
-	animation->Pos.x = x;
-	animation->Pos.y = y;
+	sp->Pos.x = x;
+	sp->Pos.y = y;
 	return 0;
 }
 
-int animation_get_pos(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	lua_pushnumber(L, animation->Pos.x);
-	lua_pushnumber(L, animation->Pos.y);
+int base_sprite_get_pos(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	lua_pushnumber(L, sp->Pos.x);
+	lua_pushnumber(L, sp->Pos.y);
 	return 2;
 }
 
-int animation_set_dir(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
+int base_sprite_set_dir(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
 	auto dir = (int)lua_tointeger(L, 2);
-	animation->Dir = dir;
+	sp->Dir = dir;
 	return 0;
 }
 
-int animation_get_dir(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	lua_pushinteger(L, animation->Dir);
+int base_sprite_get_dir(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, sp->Dir);
 	return 1;
 }
+
+
+int base_sprite_set_frame_interval(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	auto interval = (float)lua_tonumber(L, 2);
+	sp->FrameInterval = interval;
+	sp->CurrentFrame = 0;
+	sp->PlayTime = 0.f;
+	return 0;
+}
+
+int base_sprite_get_frame_interval(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	lua_pushnumber(L, sp->FrameInterval);
+	return 1;
+}
+
+int base_sprite_get_width(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, sp->Width);
+	return 1;
+}
+
+int base_sprite_get_height(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, sp->Height);
+	return 1;
+}
+
+
+int base_sprite_set_width(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	float w = (float)lua_tonumber(L, 2);
+	sp->Width = w;
+	return 0;
+}
+
+int base_sprite_set_height(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	float h = (float)lua_tonumber(L, 2);
+	sp->Height = h;
+	return 0;
+}
+
+int base_sprite_get_KeyX(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, sp->KeyX);
+	return 1;
+}
+int base_sprite_get_KeyY(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, sp->KeyY);
+	return 1;
+}
+int base_sprite_get_frame_KeyX(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	int index = (int)luaL_optinteger(L, 2, -1);
+	lua_pushinteger(L, sp->GetFrameKeyX(index));
+	return 1;
+}
+int base_sprite_get_frame_KeyY(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	int index = (int)luaL_optinteger(L, 2, -1);
+	lua_pushinteger(L, sp->GetFrameKeyY(index));
+	return 1;
+}
+int base_sprite_get_frame_width(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	int index = (int)luaL_optinteger(L, 2, -1);
+	lua_pushinteger(L, sp->GetFrameWidth(index));
+	return 1;
+}
+int base_sprite_get_frame_height(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	int index = (int)luaL_optinteger(L, 2, -1);
+	lua_pushinteger(L, sp->GetFrameHeight(index));
+	return 1;
+}
+
+int base_sprite_get_play_time(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	lua_pushnumber(L, sp->PlayTime);
+	return 1;
+}
+
+int base_sprite_get_dir_cnt(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, sp->GroupCount);
+	return 1;
+}
+int base_sprite_get_total_frames(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, sp->TotalFrames);
+	return 1;
+}
+int base_sprite_get_current_frame(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, sp->CurrentFrame);
+	return 1;
+}
+int base_sprite_set_current_frame(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	int frame = (int)lua_tointeger(L, 2);
+	sp->CurrentFrame = frame;
+	return 0;
+}
+
+int base_sprite_get_group_frame_count(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, sp->GroupFrameCount);
+	return 1;
+}
+int base_sprite_get_group_count(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	lua_pushinteger(L, sp->GroupCount);
+	return 1;
+}
+
+int base_sprite_enable_drag(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	bool enable = lua_toboolean(L, 2);
+	sp->EnableDrag(enable);
+	return 0;
+}
+
+int base_sprite_export(lua_State* L) {
+	auto* animation = lua_check_animation(L, 1);
+	const char* dir = lua_tostring(L, 2);
+	const char* prefix = lua_tostring(L, 3);
+	int start = animation->CurrentFrame / animation->GroupFrameCount;
+	for (int i = start; i < start + animation->GroupFrameCount; i++) {
+		std::string filename(dir);
+		filename = filename + prefix + std::to_string(i) + ".tga";
+		animation->m_pSprite->SaveImage(filename.c_str(), i);
+	}
+
+	return 0;
+}
+
+
+int base_sprite_export_was(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	const char* path = lua_tostring(L, 2);
+	RESOURCE_MANAGER_INSTANCE->ExportWas(sp->ResID, path);
+	return 0;
+}
+
+
+int base_sprite_destroy(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	delete sp;
+	return 0;
+}
+
+luaL_Reg MT_BASE_SPRITE[] = {
+	{ "Update",base_sprite_update },
+{ "Draw",base_sprite_draw },
+{ "SetPos", base_sprite_set_pos },
+{ "GetPos", base_sprite_get_pos },
+{ "SetDir",base_sprite_set_dir },
+{ "GetDir",base_sprite_get_dir },
+{ "SetFrameInterval",base_sprite_set_frame_interval },
+{ "GetFrameInterval",base_sprite_get_frame_interval },
+{ "GetWidth", base_sprite_get_width },
+{ "GetHeight", base_sprite_get_height },
+{ "SetWidth", base_sprite_set_width },
+{ "SetHeight", base_sprite_set_height },
+{ "GetKeyX", base_sprite_get_KeyX },
+{ "GetKeyY", base_sprite_get_KeyY },
+{ "GetFrameKeyX", base_sprite_get_frame_KeyX },
+{ "GetFrameKeyY", base_sprite_get_frame_KeyY },
+{ "GetFrameHeight", base_sprite_get_frame_height },
+{ "GetFrameWidth", base_sprite_get_frame_width },
+{ "GetPlayTime", base_sprite_get_play_time },
+{ "GetDirCnt", base_sprite_get_dir_cnt },
+{ "GetTotalFrames", base_sprite_get_total_frames },
+{ "GetCurrentFrame", base_sprite_get_current_frame },
+{ "SetCurrentFrame", base_sprite_set_current_frame },
+{ "GetGroupFrameCount", base_sprite_get_group_frame_count },
+{ "GetGroupCount", base_sprite_get_group_count },
+{ "EnableDrag", base_sprite_enable_drag },
+{ "Export", base_sprite_export },
+{ "ExportWas", base_sprite_export_was },
+{ "Destroy", base_sprite_destroy },
+{ NULL, NULL }
+};
+
 
 int animation_pause(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
@@ -572,97 +766,6 @@ int animation_set_loop(lua_State* L) {
 	return 0;
 }
 
-int animation_set_frame_interval(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	auto interval = (float)lua_tonumber(L, 2);
-	animation->FrameInterval = interval;
-	animation->CurrentFrame = 0;
-	animation->PlayTime = 0.f;
-	return 0;
-}
-
-int animation_get_frame_interval(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	lua_pushnumber(L, animation->FrameInterval);
-	return 1;
-}
-
-int animation_get_width(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	lua_pushinteger(L, animation->Width);
-	return 1;
-}
-
-int animation_get_height(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	lua_pushinteger(L, animation->Height);
-	return 1;
-}
-
-int animation_get_KeyX(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	lua_pushinteger(L, animation->KeyX);
-	return 1;
-}
-int animation_get_KeyY(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	lua_pushinteger(L, animation->KeyY);
-	return 1;
-}
-int animation_get_frame_KeyX(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	int index = (int)luaL_optinteger(L, 2, -1);
-	lua_pushinteger(L, animation->GetFrameKeyX(index));
-	return 1;
-}
-int animation_get_frame_KeyY(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	int index = (int)luaL_optinteger(L, 2, -1);
-	lua_pushinteger(L, animation->GetFrameKeyY(index));
-	return 1;
-}
-int animation_get_frame_width(lua_State*L) {
-	auto* animation = lua_check_animation(L, 1);
-	int index = (int)luaL_optinteger(L, 2, -1);
-	lua_pushinteger(L, animation->GetFrameWidth(index));
-	return 1;
-}
-int animation_get_frame_height(lua_State*L) {
-	auto* animation = lua_check_animation(L, 1);
-	int index = (int)luaL_optinteger(L, 2, -1);
-	lua_pushinteger(L, animation->GetFrameHeight(index));
-	return 1;
-}
-
-
-int animation_get_play_time(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	lua_pushnumber(L, animation->PlayTime);
-	return 1;
-}
-
-int animation_get_dir_cnt(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	lua_pushinteger(L, animation->GroupCount);
-	return 1;
-}
-int animation_get_total_frames(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	lua_pushinteger(L, animation->TotalFrames);
-	return 1;
-}
-int animation_get_current_frame(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	lua_pushinteger(L, animation->CurrentFrame);
-	return 1;
-}
-int animation_set_current_frame(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	int frame = (int)lua_tointeger(L, 2);
-	animation->CurrentFrame = frame;
-	return 0;
-}
-
 int animation_get_visible(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	lua_pushinteger(L, animation->GetVisible());
@@ -676,24 +779,6 @@ int animation_set_visible(lua_State* L) {
 	return 0;
 }
 
-int animation_get_group_frame_count(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	lua_pushinteger(L, animation->GroupFrameCount);
-	return 1;
-}
-int animation_get_group_count(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	lua_pushinteger(L, animation->GroupCount);
-	return 1;
-}
-
-int animation_enable_drag(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	bool enable = lua_toboolean(L, 2);
-	animation->EnableDrag(enable);
-	return 0;
-}
-
 int animation_translate(lua_State*L) {
 	auto* animation = lua_check_animation(L, 1);
 	float x = (float)lua_tonumber(L, 2);
@@ -704,78 +789,25 @@ int animation_translate(lua_State*L) {
 	return 0;
 }
 
-int animation_export(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	const char* dir = lua_tostring(L, 2);
-	const char* prefix = lua_tostring(L, 3);
-	int start = animation->CurrentFrame / animation->GroupFrameCount;
-	for (int i = start; i < start + animation->GroupFrameCount; i++) {
-		std::string filename(dir);
-		filename = filename + prefix + std::to_string(i) + ".tga";
-		animation->m_pSprite->SaveImage(filename.c_str(), i);
-	}
-
-	return 0;
-}
-
-
-int animation_export_was(lua_State* L) {
-	auto* animation = lua_check_animation(L, 1);
-	const char* path = lua_tostring(L, 2);
-	RESOURCE_MANAGER_INSTANCE->ExportWas(animation->ResID, path);
-	return 0;
-}
-
-
-
-int animation_destroy(lua_State* L) {
-	Animation** ptr = (Animation**)lua_touserdata(L, 1);
-	delete *ptr;
-	*ptr = nullptr;
-	return 0;
-}
-
-luaL_Reg MT_BASE_SPRITE[] = {
-	{ "Update",animation_update },
-{ "Draw",animation_draw },
-{ "SetPos", animation_set_pos },
-{ "GetPos", animation_get_pos },
-{ "SetDir",animation_set_dir },
-{ "GetDir",animation_get_dir },
+luaL_Reg MT_ANIMATION[] = {
 { "Pause",animation_pause },
-{ "Stop",animation_stop },
+{ "Stop",animation_stop},
 { "Play",animation_start },
 { "LockFrame",animation_lock_frame },
 { "UnLockFrame",animation_unlock_frame },
 { "SetLoop",animation_set_loop },
-{ "SetFrameInterval",animation_set_frame_interval },
-{ "GetFrameInterval",animation_get_frame_interval },
-{ "GetWidth", animation_get_width },
-{ "GetHeight", animation_get_height },
-{ "GetKeyX", animation_get_KeyX },
-{ "GetKeyY", animation_get_KeyY },
-{ "GetFrameKeyX", animation_get_frame_KeyX },
-{ "GetFrameKeyY", animation_get_frame_KeyY },
-{ "GetFrameHeight", animation_get_frame_height },
-{ "GetFrameWidth", animation_get_frame_width },
-{ "GetPlayTime", animation_get_play_time },
-{ "GetDirCnt", animation_get_dir_cnt },
-{ "GetTotalFrames", animation_get_total_frames },
-{ "GetCurrentFrame", animation_get_current_frame },
-{ "SetCurrentFrame", animation_set_current_frame },
 { "GetVisible", animation_get_visible },
 { "SetVisible", animation_set_visible },
-{ "GetGroupFrameCount", animation_get_group_frame_count },
-{ "GetGroupCount", animation_get_group_count },
-{ "EnableDrag", animation_enable_drag },
 { "Translate", animation_translate },
-{ "Export", animation_export },
-{ "ExportWas", animation_export_was },
-{ "Destroy", animation_destroy },
 { NULL, NULL }
 };
 
-void lua_push_animation(lua_State*L, Animation* sprite)
+
+luaL_Reg MT_NE_IAMGEVIEW[] = {
+	{NULL,NULL}
+};
+
+void lua_push_base_sprite(lua_State* L, BaseSprite* sprite)
 {
 	lua_push_pointer(L, sprite);
 	if (luaL_newmetatable(L, "MT_BASE_SPRITE")) {
@@ -786,14 +818,28 @@ void lua_push_animation(lua_State*L, Animation* sprite)
 	lua_setmetatable(L, -2);
 }
 
-int animation_create(lua_State*L)
+void lua_push_animation(lua_State*L, Animation* sprite)
+{
+	lua_push_pointer(L, sprite);
+	if (luaL_newmetatable(L, "MT_BASE_SPRITE")) {
+		luaL_setfuncs(L, MT_BASE_SPRITE, 0);
+		luaL_setfuncs(L, MT_ANIMATION, 0);
+		lua_pushvalue(L, -1);
+		lua_setfield(L, -2, "__index");
+	}
+	lua_setmetatable(L, -2);
+}
+
+int animation_create(lua_State* L)
 {
 	uint32_t pack = (uint32_t)lua_tointeger(L, 1);
 	uint32_t wasid = (uint32_t)lua_tointeger(L, 2);
-	Animation** ptr = (Animation**)lua_newuserdata(L, sizeof(Animation));
+
+	Animation** ptr = (Animation * *)lua_newuserdata(L, sizeof(Animation));
 	*ptr = new Animation(pack, wasid);
-	if (luaL_newmetatable(L, "MT_BASE_SPRITE")) {
+	if (luaL_newmetatable(L, "MT_ANIMATION")) {
 		luaL_setfuncs(L, MT_BASE_SPRITE, 0);
+		luaL_setfuncs(L, MT_ANIMATION, 0);
 		lua_pushvalue(L, -1);
 		lua_setfield(L, -2, "__index");
 	}
@@ -801,7 +847,9 @@ int animation_create(lua_State*L)
 	return 1;
 }
 
-int animation_get_metatable(lua_State* L) {
+
+
+int base_sprite_get_metatable(lua_State* L) {
 	if (luaL_newmetatable(L, "MT_BASE_SPRITE")) {
 		luaL_setfuncs(L, MT_BASE_SPRITE, 0);
 		lua_pushvalue(L, -1);
@@ -850,7 +898,6 @@ luaL_Reg MT_BEAT_NUMBER[] = {
 	{ "Beat",beat_number_beat },
 	{ "SetPos",beat_number_set_pos},
 	{ "SetNumber",beat_number_set_number },
-
 };
 
 int beat_number_create(lua_State*L)
@@ -865,10 +912,14 @@ int beat_number_create(lua_State*L)
 	return 1;
 }
 
+
+
+
 void luaopen_sprite(lua_State* L)
 {
 	script_system_register_luac_function(L, animation_create);
-	script_system_register_luac_function(L, animation_get_metatable);
+	script_system_register_luac_function(L, base_sprite_get_metatable);
 	script_system_register_luac_function(L, beat_number_create);
 	
 }
+

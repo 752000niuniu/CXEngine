@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.10)
-project (SimpleEngine)
+project (SimpleEngine LANGUAGES C CXX)
 
 find_package(CXBase)
 find_package(GLEW CONFIG)

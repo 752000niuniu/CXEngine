@@ -84,9 +84,7 @@ function game_dispatch_message(pt)
 			player:SetProperty(PROP_SCENE_ID,pinfo.scene_id)
 			player:SetProperty(PROP_AVATAR_ID,'JXK-KNIFE')
 			player:SetProperty(PROP_WEAPON_AVATAR_ID,'JXK-KNIFE-120-晓风残月')
-
-			player:SetX(pinfo.x)
-			player:SetY(pinfo.y)
+			player:SetProperty(PROP_POS,pinfo.x,pinfo.y)
 			if pinfo.is_local then
 				local_pinfo = pinfo
 			end

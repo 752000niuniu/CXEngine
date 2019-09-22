@@ -429,6 +429,13 @@ int res_get_was(lua_State* L) {
 	return 1;
 }
 
+uint64_t res_encode_was(uint32_t pack, uint32_t wasID) {
+	uint64_t resID = pack; return (resID << 32) | wasID;
+}
+
+void res_decode_was(uint64_t resID, uint32_t& pack, uint32_t& wasID) {
+	pack = resID >> 32; wasID = (resID & 4294967295);
+}
 
 int res_encode(lua_State* L) {
 	uint32_t pack = (uint32_t)lua_tointeger(L, 1);
@@ -436,8 +443,6 @@ int res_encode(lua_State* L) {
 	lua_pushinteger(L, RESOURCE_MANAGER_INSTANCE->EncodeWAS(pack, wasid));
 	return 1;
 }
-
-
 
 int res_decode(lua_State* L) {
 	uint64_t res = (uint64_t)lua_tointeger(L, 1);

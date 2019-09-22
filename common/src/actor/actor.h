@@ -11,6 +11,7 @@ class MoveHandle;
 #include <NESupport.h>
 class ActionStateMachine;
 class TextView;
+class UITextView;
 #endif
 #include "actor_prop.h"
 
@@ -138,6 +139,7 @@ protected:
 	Actor* m_Target;
 #ifndef SIMPLE_SERVER
 	TextView* m_SayWidget;
+	UITextView* m_NameTV;
 	ActionStateMachine* m_ASM;
 #endif
 };
