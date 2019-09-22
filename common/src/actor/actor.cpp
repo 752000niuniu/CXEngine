@@ -51,6 +51,8 @@ Actor::Actor(uint64_t pid)
 	m_ASM->ChangeAction(action);
 	m_NameTV = new UITextView();
 	m_NameTV->Size = 14.f;
+	m_NameTV->Align = NVG_ALIGN_CENTER;
+	m_NameTV->Color = nvgRGBA(86, 223, 109, 255);
 	UIRenderer::GetInstance()->AddToDraw(m_NameTV);
 #endif
 	
@@ -65,6 +67,7 @@ Actor::~Actor()
 	INPUT_MANAGER_INSTANCE->UnRegisterView(this);
 	SafeDelete(m_ASM);
 	SafeDelete(m_SayWidget);
+	SafeDelete(m_NameTV);
 #endif
 }
 
@@ -99,10 +102,8 @@ void Actor::OnDraw()
 			//	((int)avatar->Pos.y + 20),
 			//	TextRenderer::CENTER
 			//);
-			m_NameTV->Align = NVG_ALIGN_CENTER;
 			m_NameTV->X = avatar->Pos.x;
 			m_NameTV->Y = avatar->Pos.y+24;
-			m_NameTV->Color = nvgRGBA(115, 255, 137, 255);
 		}
 	}
 
