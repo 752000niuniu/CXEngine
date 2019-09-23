@@ -34,7 +34,7 @@ void BaseScene::Update()
 		actor_manager_update();
 	}
 }
-
+#ifndef SIMPLE_SERVER
 void BaseScene::Draw()
 {
 	if (m_IsCombat) {
@@ -59,7 +59,7 @@ void BaseScene::Draw()
 		}
 	}
 }
-
+#endif
 void BaseScene::SetMapID(int id)
 {
 	if (m_MapID != id) {

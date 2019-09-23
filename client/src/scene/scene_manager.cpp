@@ -83,6 +83,7 @@ void SceneManager::Init()
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
 		cxlog_err("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
 	}
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	
 	UIRenderer::GetInstance();
@@ -234,9 +235,8 @@ void SceneManager::Draw()
 	{
 		int gameWidth = WINDOW_INSTANCE->GetWidth();
 		int gameHeight = WINDOW_INSTANCE->GetHeight();
-		
-		ImGui::Begin("Game");
-		ImGui::BeginChild("##main", ImVec2((float)gameWidth, (float)gameHeight));
+		ImGui::Begin("Game",0, ImGuiWindowFlags_NoBackground);
+		ImGui::BeginChild("##main", ImVec2((float)gameWidth, (float)gameHeight), false, ImGuiWindowFlags_NoBackground);
 		glBindFramebuffer(GL_FRAMEBUFFER, SCENE_MANAGER_INSTANCE->GetFboID());
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -255,7 +255,7 @@ void SceneManager::Draw()
 		ImGui::SetCursorPos(cursorPos);
 
 		script_system_call_function(script_system_get_luastate(), "on_game_imgui_update", m_pCurrentScene->GetName());
-				
+
 		ImGui::EndChild();
 		ImGui::End();
 	}

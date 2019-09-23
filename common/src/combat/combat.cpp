@@ -7,6 +7,7 @@
 #endif
 #include "actor/action.h"
 #include "scene/scene_manager.h"
+#include "script_system.h"
 
 TurnCommand::TurnCommand()
 {

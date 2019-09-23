@@ -178,6 +178,8 @@ UIRenderer::UIRenderer()
 	res =nvgCreateFont(vg, "MSYH", FileSystem::GetFontPath("msyh.ttf").c_str());
 	res =nvgCreateFont(vg, "MSHT", FileSystem::GetFontPath("msht.ttf").c_str());
 	res= nvgCreateFont(vg, "SIMSUN", FileSystem::GetFontPath("simsun.ttc").c_str());
+
+	nvgGlobalAlpha(vg, 1.0f);
 }
 
 UIRenderer::~UIRenderer()
@@ -202,7 +204,7 @@ void UIRenderer::Draw()
 	glClear(GL_STENCIL_BUFFER_BIT);
 	nvgBeginFrame(vg, width, height, width* 1.0f / height);
 
-//	drawParagraph(vg, width - 450, 50, 150, 100, mx, my);
+	//drawParagraph(vg, width - 450, 50, 150, 100, mx, my);
 //	nano_render_text(0, 0, 50, 24,0xffffffff,0xff00ffff,  "MSHT", u8"I need a girl!");
 	
 	//script_system_call_function(script_system_get_luastate(), "on_ui_renderer_draw");
@@ -237,6 +239,15 @@ void UIRenderer::AddToDraw(UIObject* obj)
 void UIRenderer::RemoveToDraw(UIObject* obj)
 {
 	obj->MarkRemove = true;
+}
+
+void UIRenderer::Clear()
+{
+	for(auto*& obj : m_Objects){
+		delete obj;
+		obj = nullptr;
+	}
+	m_Objects.clear();
 }
 
 void nano_render_text(int x, int y, int width, int size, int textcolor, int textbgcolor, const char* font, const char* text)
@@ -303,7 +314,7 @@ void NEImageView::Draw()
 	auto it = s_ImageCache.find(id);
 	int imageid = 0;
 	if (it == s_ImageCache.end()) {
-		imageid = nvgCreateImageRGBA(vg, frame.Width, frame.Height, NVG_IMAGE_NEAREST, (unsigned char*)frame.Src.data());
+		imageid = nvgCreateImageRGBA(vg, frame.Width, frame.Height, 0, (unsigned char*)frame.Src.data());
 		s_ImageCache.insert({ id,imageid });
 	}
 	else {
@@ -424,10 +435,83 @@ int ne_imageview_create(lua_State* L)
 	return 1;
 }
 
+int ui_textview_set_text(lua_State* L)
+{
+	UITextView* tv = lua_check_pointer<UITextView>(L, 1);
+	const char* txt = lua_tostring(L, 2);
+	tv->Text = txt;
+	return 0;
+}
+
+int ui_textview_set_pos(lua_State* L)
+{
+	UITextView* tv = lua_check_pointer<UITextView>(L, 1);
+	float x = (float) lua_tonumber(L, 2);
+	float y = (float)lua_tonumber(L, 3);
+	tv->X = x;
+	tv->Y = y;
+	return 0;
+}
+
+
+int ui_textview_set_color(lua_State* L)
+{
+#define break_color_rgba(c)  nvgRGBA((c>>24)& 0xff,(c& 0xff0000) >> 16,  (c& 0xff00) >> 8, (c& 0xff))
+	UITextView* tv = lua_check_pointer<UITextView>(L, 1);
+	uint32_t color = (uint32_t)lua_tointeger(L, 2);
+	tv->Color = break_color_rgba(color);
+#undef break_color_rgba
+	return 0;
+}
+
+int ui_textview_set_bg_color(lua_State* L)
+{
+#define break_color_rgba(c)  nvgRGBA((c>>24)& 0xff,(c& 0xff0000) >> 16,  (c& 0xff00) >> 8, (c& 0xff))
+	UITextView* tv = lua_check_pointer<UITextView>(L, 1);
+	uint32_t color = (uint32_t)lua_tointeger(L, 2);
+	tv->BGColor = break_color_rgba(color);
+#undef break_color_rgba
+	return 0;
+}
+
+int ui_textview_set_text_size(lua_State* L)
+{
+	UITextView* tv = lua_check_pointer<UITextView>(L, 1);
+	float size = (float)lua_tonumber(L, 2);
+	tv->Size = size;
+	return 0;
+}
+
+luaL_Reg MT_UI_TEXTVIEW[] = {
+	{ "SetText",ui_textview_set_text},
+	{ "SetPos",ui_textview_set_pos},
+	{ "SetColor",ui_textview_set_color},
+	{ "SetBGColor",ui_textview_set_bg_color},
+	{ "SetTextSize",ui_textview_set_text_size},
+	{NULL,NULL}
+};
+
+int ui_textview_create(lua_State* L)
+{
+	lua_push_pointer(L, new UITextView());
+	if (luaL_newmetatable(L, "MT_UI_TEXTVIEW")) {
+		luaL_setfuncs(L, MT_UI_TEXTVIEW, 0);
+		lua_pushvalue(L, -1);
+		lua_setfield(L, -2, "__index");
+	}
+	lua_setmetatable(L, -2);
+	return 1;
+}
+void ui_renderer_clear(){
+	UIRenderer::GetInstance()->Clear();
+}
 
 void luaopen_ui_renderer(lua_State* L)
 {
 	script_system_register_luac_function(L, ne_imageview_create);
+	script_system_register_luac_function(L, ui_textview_create);
+	
 	script_system_register_function(L, nano_render_text);
 	script_system_register_luac_function(L, ui_renderer_add_to_draw);
+	script_system_register_function(L, ui_renderer_clear);
 }

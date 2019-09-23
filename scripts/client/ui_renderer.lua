@@ -1,6 +1,6 @@
 
 function actor_on_click(actor, button, x, y)
-	-- cxlog_info('actor_on_click',actor:GetProperty(PROP_NAME),button, x,y)
+	cxlog_info('actor_on_click',actor:GetProperty(PROP_NAME),button, x,y)
 	if not actor:IsLocal() then
 		local player = actor_manager_fetch_local_player()
 		if player then

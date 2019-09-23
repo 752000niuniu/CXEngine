@@ -20,7 +20,6 @@ end
 
 function OnSceneInit()
     scene_set_map(1506)
-
     magic_tsv = content_system_get_table('magic')
     
     -- MagicAnim = animation_create(WZIFEWDF,0xA393A808)
@@ -65,7 +64,7 @@ function OnSceneInit()
     -- -- playerBB:ChangePalMatrix(get_pal_from_json('{"1":{"to":256,"mat":[115,115,110,163,256,239,196,91,292],"from":0},"segments":[0,256]}'))
     -- playerBB:SetActionID(ACTION_BATIDLE)
 
-    ostime= ostime + 1
+    ostime = ostime + 1
     player = actor_manager_create_actor(ostime)
     player:SetProperties({
         [PROP_AVATAR_ID] = 'JXK-SWORD',
@@ -168,7 +167,25 @@ function OnSceneImGuiUpdate()
         player:GetTarget():SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF,0x1D3FF13C ))
         player:PlayAttack()
     end
+end
 
+function check_dest_hit_actor(dest_x, dest_y)
+    local hit_actor = false
+    local actors = actor_manager_fetch_all_players()
+    for i,actor in ipairs(actors) do
+        local avatar = actor:GetAvatar()
+        local avx, avy = actor:GetProperty(PROP_POS)
+        local cx =  avx - avatar:GetFrameKeyX()
+        local cy =  avy - avatar:GetFrameKeyY()
+        local brx = avatar:GetFrameWidth()
+        local bry =  avatar:GetFrameHeight()
+        if dest_x >= cx and dest_x <= cx+brx and dest_y >= cy and dest_y <=cy+bry then
+            hit_actor = true
+            break
+        end
+        -- cxlog_info(mx, my, cx,cy ,brx,bry) 
+    end
+    return hit_actor
 end
 
 function OnSceneUpdate()
@@ -176,32 +193,9 @@ function OnSceneUpdate()
         
     else
         if imgui.IsMouseClicked(0) then
-            local mx,my = imgui.GetMousePos()
-            local wx,wy = imgui.GetWindowPos()
-            mx = mx - wx
-            my = my - wy
+            local mx,my = input_manager_get_mouse_pos()
             local dest_x, dest_y = util_screen_pos_to_map_pos(mx, my)
-
-            local orix , oriy = scene_manager_get_imgui_cursor_pos()
-            imgui.AddRect(cx,cy,brx,bry,0xff00ff00)
-
-            local hit_actor = false
-            local actors = actor_manager_fetch_all_players()
-
-            for i,actor in ipairs(actors) do
-                local avatar = actor:GetAvatar()
-                local avx, avy = actor:GetProperty(PROP_POS)
-                local cx =  avx - avatar:GetFrameKeyX()
-                local cy =  avy - avatar:GetFrameKeyY()
-                local brx = avatar:GetFrameWidth()
-                local bry =  avatar:GetFrameHeight()
-                if dest_x >= cx and dest_x <= cx+brx and dest_y >= cy and dest_y <=cy+bry then
-                    hit_actor = true
-                    break
-                end
-                cxlog_info(mx, my, cx,cy ,brx,bry) 
-            end
-
+            local hit_actor = check_dest_hit_actor(dest_x,dest_y)
             if not hit_actor then
                 player:MoveTo(dest_x,dest_y)
                 local msg = {}

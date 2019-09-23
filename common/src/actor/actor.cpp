@@ -13,14 +13,14 @@
 #include "animation/sprite.h"
 #include "text_renderer.h"
 #include "resource_manager.h"
+#include "graphics/ui_renderer.h"
+#include "nanovg.h"
 #endif
 #include "move.h"
 #include "lua.h"
 #include "cxlua.h"
 #include "script_system.h"
 #include "actor_enum.h"
-#include "graphics/ui_renderer.h"
-#include "nanovg.h"
 
 
 #define ACTOR_METATABLE_NAME "mt_actor"
@@ -52,14 +52,16 @@ Actor::Actor(uint64_t pid)
 	m_NameTV = new UITextView();
 	m_NameTV->Size = 16.f;
 	m_NameTV->Align = NVG_ALIGN_CENTER;
-	m_NameTV->Color = nvgRGBA(86, 223, 109, 255);
+	m_NameTV->Color = nvgRGBA(118, 253, 140, 255);
 	UIRenderer::GetInstance()->AddToDraw(m_NameTV);
 
 	m_SayTV = new UITextView();
 	m_SayTV->Size = 14.f;
 	m_SayTV->Align = NVG_ALIGN_LEFT | NVG_ALIGN_TOP;
-	m_SayTV->Color = nvgRGBA(214, 216, 230, 255);
-	m_SayTV->BGColor = nvgRGBA(15, 21, 41, 128);
+	m_SayTV->Color = nvgRGBA(255, 255, 255, 255); // text color
+	//m_SayTV->Color = nvgRGBA(255, 0, 0, 255); // npc name in text color
+	//m_SayTV->Color = nvgRGBA(0, 255, 0, 255); // quest name in text color
+	m_SayTV->BGColor = nvgRGBA(103, 98, 90, 255);
 	m_SayTV->Width = 128;
 	UIRenderer::GetInstance()->AddToDraw(m_SayTV);
 #endif

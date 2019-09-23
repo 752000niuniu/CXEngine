@@ -160,7 +160,7 @@ void Window::Show()
 		ImGui::SetNextWindowSize(mainViewport->Size);
 		ImGui::SetNextWindowViewport(mainViewport->ID);
 
-		ImGui::Begin("MainDock", NULL,  ImGuiWindowFlags_NoDocking
+		ImGui::Begin("MainDock", NULL,  ImGuiWindowFlags_NoDocking 
 			| ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
 			| ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus);
 		int dockspace_id = ImGui::GetID("MainDockSpace");

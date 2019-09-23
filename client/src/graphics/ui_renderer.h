@@ -29,7 +29,7 @@ private:
 	BaseSprite* m_pBS;
 };
 
-class UITextView : public UIObject
+class UITextView : public UIObject 
 {
 public:
 	UITextView() ;
@@ -58,6 +58,7 @@ public:
 	
 	void AddToDraw(UIObject* obj);
 	void RemoveToDraw(UIObject* obj);
+	void Clear();
 private:
 	vector<UIObject*> m_Objects;
 };
