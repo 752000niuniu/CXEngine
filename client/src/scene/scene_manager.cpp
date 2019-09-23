@@ -231,34 +231,33 @@ void function_to_restore_shader_or_blend_state(const ImDrawList* parent_list, co
 void SceneManager::Draw() 
 {
 	if (m_SwitchingScene)return;
-	if(m_pCurrentScene)
-	{
-		int gameWidth = WINDOW_INSTANCE->GetWidth();
-		int gameHeight = WINDOW_INSTANCE->GetHeight();
-		ImGui::Begin("Game",0, ImGuiWindowFlags_NoBackground);
-		ImGui::BeginChild("##main", ImVec2((float)gameWidth, (float)gameHeight), false, ImGuiWindowFlags_NoBackground);
-		glBindFramebuffer(GL_FRAMEBUFFER, SCENE_MANAGER_INSTANCE->GetFboID());
-		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		glViewport(0, 0, gameWidth, gameHeight);
+	int gameWidth = WINDOW_INSTANCE->GetWidth();
+	int gameHeight = WINDOW_INSTANCE->GetHeight();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, SCENE_MANAGER_INSTANCE->GetFboID());
+	glViewport(0, 0, gameWidth, gameHeight);
+	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	if (m_pCurrentScene) {
 		m_pCurrentScene->Draw();
 		script_system_call_function(script_system_get_luastate(), "on_scene_manager_draw", m_pCurrentScene->GetName());
-		UIRenderer::GetInstance()->Draw();
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		ImVec2 cursorPos = ImGui::GetCursorPos();
-		auto cspos = ImGui::GetCursorScreenPos();
-		m_ImGuiCursorPos = Pos(cspos.x, cspos.y);
-		ImGui::GetWindowDrawList()->AddCallback(function_to_select_shader_or_blend_state, nullptr);
-		ImGui::Image((void*)(uint64_t)m_TextureColor, ImVec2((float)gameWidth, (float)gameHeight), ImVec2(0, 1), ImVec2(1, 0));
-		ImGui::GetWindowDrawList()->AddCallback(function_to_restore_shader_or_blend_state , nullptr);
-		ImGui::SetCursorPos(cursorPos);
-
-		script_system_call_function(script_system_get_luastate(), "on_game_imgui_update", m_pCurrentScene->GetName());
-
-		ImGui::EndChild();
-		ImGui::End();
 	}
+	UIRenderer::GetInstance()->Draw();
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	ImGui::Begin("Game");
+	ImGui::BeginChild("##main", ImVec2((float)gameWidth, (float)gameHeight));
+	ImVec2 cursorPos = ImGui::GetCursorPos();
+	auto cspos = ImGui::GetCursorScreenPos();
+	m_ImGuiCursorPos = Pos(cspos.x, cspos.y);
+	ImGui::GetWindowDrawList()->AddCallback(function_to_select_shader_or_blend_state, nullptr);
+	ImGui::GetWindowDrawList()->AddImage((ImTextureID)m_TextureColor, cspos, ImVec2(cspos.x+gameWidth,cspos.y+gameHeight), ImVec2(0, 1), ImVec2(1, 0));
+	//ImGui::Image((void*)(uint64_t)m_TextureColor, ImVec2((float)gameWidth, (float)gameHeight), ImVec2(0, 1), ImVec2(1, 0));
+	ImGui::GetWindowDrawList()->AddCallback(function_to_restore_shader_or_blend_state , nullptr);
+	ImGui::SetCursorPos(cursorPos);
+	script_system_call_function(script_system_get_luastate(), "on_game_imgui_update", m_pCurrentScene->GetName());
+	ImGui::EndChild();
+	ImGui::End();
 };
 
 BaseScene* SceneManager::GetCurrentScene()
