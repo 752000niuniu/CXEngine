@@ -56,9 +56,6 @@ void Scene::ApplyTemplate(const std::map<String, String>& templ)
 
 void Scene::OnLoad()
 {
-	
-
-
 	//m_LocalPlayer = nullptr;
 	m_Switching = true;
 	m_NpcDialogBG = new FrameAnimation(WZIFEWDF, 0x1732c1ef);
@@ -94,7 +91,6 @@ void Scene::OnLoad()
 
 	INPUT_MANAGER_INSTANCE->RegisterOnKeyClickEvent(GLFW_KEY_F, [this]()
 	{
-		
 		s_IsCombat = !s_IsCombat;
 	});
 
@@ -159,10 +155,7 @@ void Scene::Update()
 
 void Scene::Draw()
 {
-	
-	
 	Actor* localPlayer = actor_manager_fetch_local_player();
-	//先画一遍地图
 	if (SCENE_MANAGER_INSTANCE->IsDrawMap()&& m_Map)
 	{
 		if(localPlayer == nullptr)

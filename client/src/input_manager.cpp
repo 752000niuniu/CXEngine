@@ -275,9 +275,11 @@ void InputManager::MouseCallbackFunc(GLFWwindow* window, float xpos, float ypos)
 			{
 				it->OnHover(m_MousePos.x, m_MousePos.y);
 			}
-			
 		}
 	}
+	
+	lua_State* L = script_system_get_luastate();
+	script_system_call_function(L, "input_manager_on_mouse_move", m_MousePos.x, m_MousePos.y);
 	//std::cout << "MouseX:" << xpos << "\tMouseY:" << ypos << std::endl;
 }
 void InputManager::CharacterInputCallback(GLFWwindow* window, unsigned int charcode)

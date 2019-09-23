@@ -13,6 +13,9 @@ script_system_dofile 'scene_manager.lua'
 script_system_dofile 'actor_manager.lua'
 script_system_dofile('action/action.lua')
 script_system_dofile('ui_renderer.lua')
+script_system_dofile('combat_system.lua')
+script_system_dofile('input_manager.lua')
+
 -- script_system_dofile('generator/imgui_binding_generator.lua')
 -- script_system_dofile('generator/table_template.lua')
 -- script_system_dofile('generator/actor_template.lua')

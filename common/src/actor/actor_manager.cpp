@@ -80,15 +80,7 @@ void actor_manager_draw()
 	for (auto& it : g_Players)
 	{
 		Actor* player = it.second;
-		if (player->IsLocal())
-		{
-			if (SCENE_MANAGER_INSTANCE->IsDrawStrider()) {
-				player->OnDraw();
-			}
-		}
-		else {
-			player->OnDraw();
-		}
+		player->OnDraw();
 	}
 	AnimationManager::GetInstance()->Draw();
 #endif // !SIMPLE_SERVER

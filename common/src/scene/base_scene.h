@@ -16,18 +16,19 @@ public:
 
 	virtual ~BaseScene();
 
-	virtual void Update() {};
+	virtual void Update();
 
 #ifndef SIMPLE_SERVER
-	virtual void Draw() {};
+	virtual void Draw();
 #endif
-	
-
 
 	void SetSceneID(int id) { m_SceneID = id; };
 
 	int GetSceneID() { return m_SceneID; };
-	
+
+	void SetMapID(int id) ;
+	int GetMapID() { return m_MapID; };
+
 	bool IsLoading() { return m_IsLoading; }
 
 	void SetLoading(bool load) { m_IsLoading = load; }
@@ -53,6 +54,8 @@ public:
 
 	void UnLoad();
 
+	void SetCombat(bool combat);
+	bool IsCombat() { return m_IsCombat; };
 protected:
 	virtual void OnLoad() {} ;
 
@@ -61,6 +64,8 @@ protected:
 	std::string m_Name;
 
 	int m_SceneID;
+
+	int m_MapID;
 	
 	int m_Width;
 
@@ -80,6 +85,7 @@ protected:
 
 	GameMap* m_Map;
 
+	bool m_IsCombat;
 
 };
 

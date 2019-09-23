@@ -96,6 +96,8 @@ void Actor::OnUpdate()
 void Actor::OnDraw()
 {
 #ifndef SIMPLE_SERVER
+	if (IsLocal() && !SCENE_MANAGER_INSTANCE->IsDrawStrider())return;
+
 	m_ASM->Draw();
 	ActorProp& name = GetProperty(PROP_NAME);
 	if (!name.toString().empty())
@@ -115,8 +117,8 @@ void Actor::OnDraw()
 		int bgWidth = m_SayWidget->Width;
 		int bgHeight = m_SayWidget->Height;
 		auto* avatar = m_ASM->GetAvatar();
-		m_SayTV->X = (int)avatar->Pos.x - bgWidth / 2;
-		m_SayTV->Y = (int)avatar->Pos.y - avatar->KeyY - bgHeight;
+		m_SayTV->X = avatar->Pos.x - bgWidth / 2;
+		m_SayTV->Y = avatar->Pos.y - avatar->KeyY - bgHeight;
 		m_SayTV->Text =  utils::GB2312ToUtf8(utils::WstringToString(m_SayWidget->Text).c_str());
 	}
 #endif

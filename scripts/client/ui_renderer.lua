@@ -11,5 +11,8 @@ end
 
 function actor_on_hover(actor, x, y)
 	-- cxlog_info('actor_on_hover',actor:GetProperty(PROP_NAME),x,y)
+end
 
+function input_manager_on_mouse_move(mx, my)
+	-- cxlog_info('input_manager_on_mouse_move', mx, my)
 end

@@ -9,7 +9,6 @@ local TimeInterval = 0.016 * 4
 local MagicAnim 
 local BeHitAnim 
 local magic_tsv 
-local BattleBG
 
 --剑侠客 攻击
 ---待战-> Runto-> Attack-> Runback -> 待战
@@ -20,7 +19,8 @@ function OnAttackActionCapter(actor, avatar)
 end
 
 function OnSceneInit()
-    BattleBG  = animation_create(ADDONWDF, 0xE3B87E0F)
+    scene_set_map(1506)
+
     magic_tsv = content_system_get_table('magic')
     
     -- MagicAnim = animation_create(WZIFEWDF,0xA393A808)
@@ -31,15 +31,15 @@ function OnSceneInit()
     MagicAnim:SetVisible(false)
 
     local ostime = os.time()
-    enemy =  actor_manager_create_actor(ostime)
-    enemy:SetProperties({
-        [PROP_AVATAR_ID] = 'JMW-AXE',
-        [PROP_WEAPON_AVATAR_ID] = 'JMW-AXE-060-X',
-        [PROP_NAME] ='巨魔王',
-        [PROP_POS] = {206 ,190}
-    })
-    -- enemy:ChangePalMatrix(get_pal_from_json('{"1":{"to":40,"mat":[105,273,0,512,0,359,459,412,464],"from":0},"2":{"to":60,"mat":[86,96,134,244,301,144,273,14,330],"from":40},"3":{"to":120,"mat":[24,234,340,325,421,483,345,340,330],"from":60},"4":{"to":256,"mat":[255,0,0,0,255,0,0,0,255],"from":120},"segments":[0,40,60,120,256]}'))
-    enemy:SetActionID(ACTION_BATIDLE)
+    -- enemy =  actor_manager_create_actor(ostime)
+    -- enemy:SetProperties({
+    --     [PROP_AVATAR_ID] = 'JMW-AXE',
+    --     [PROP_WEAPON_AVATAR_ID] = 'JMW-AXE-060-X',
+    --     [PROP_NAME] ='巨魔王',
+    --     [PROP_POS] = {206 ,190}
+    -- })
+    -- -- enemy:ChangePalMatrix(get_pal_from_json('{"1":{"to":40,"mat":[105,273,0,512,0,359,459,412,464],"from":0},"2":{"to":60,"mat":[86,96,134,244,301,144,273,14,330],"from":40},"3":{"to":120,"mat":[24,234,340,325,421,483,345,340,330],"from":60},"4":{"to":256,"mat":[255,0,0,0,255,0,0,0,255],"from":120},"segments":[0,40,60,120,256]}'))
+    -- enemy:SetActionID(ACTION_BATIDLE)
 
     ostime = ostime + 1
     enemyBB  = actor_manager_create_actor(ostime)
@@ -54,16 +54,16 @@ function OnSceneInit()
     enemyBB:SetActionID(ACTION_BATIDLE)
     
     ostime = ostime + 1
-    playerBB  = actor_manager_create_actor(ostime)
-    playerBB:SetProperties({
-        [PROP_ACTOR_TYPE] = ACTOR_TYPE_PET,
-        [PROP_AVATAR_ID] = '鬼将',
-        [PROP_WEAPON_AVATAR_ID] = '',
-        [PROP_NAME] ='鬼将',
-        [PROP_POS] = {563,376}
-    })
-    -- playerBB:ChangePalMatrix(get_pal_from_json('{"1":{"to":256,"mat":[115,115,110,163,256,239,196,91,292],"from":0},"segments":[0,256]}'))
-    playerBB:SetActionID(ACTION_BATIDLE)
+    -- playerBB  = actor_manager_create_actor(ostime)
+    -- playerBB:SetProperties({
+    --     [PROP_ACTOR_TYPE] = ACTOR_TYPE_PET,
+    --     [PROP_AVATAR_ID] = '鬼将',
+    --     [PROP_WEAPON_AVATAR_ID] = '',
+    --     [PROP_NAME] ='鬼将',
+    --     [PROP_POS] = {563,376}
+    -- })
+    -- -- playerBB:ChangePalMatrix(get_pal_from_json('{"1":{"to":256,"mat":[115,115,110,163,256,239,196,91,292],"from":0},"segments":[0,256]}'))
+    -- playerBB:SetActionID(ACTION_BATIDLE)
 
     ostime= ostime + 1
     player = actor_manager_create_actor(ostime)
@@ -81,17 +81,22 @@ function OnSceneInit()
     player:SetDir(0)
     player:ReverseDir()
 
-    playerBB:SetDir(player:GetDir())
-    enemy:SetDir(player:GetDir())
-    enemy:ReverseDir()
+    -- playerBB:SetDir(player:GetDir())
+    -- enemy:SetDir(player:GetDir())
+    -- enemy:ReverseDir()
 
-    enemyBB:SetDir(enemy:GetDir())
+    -- enemyBB:SetDir(enemy:GetDir())
     
-    player:SetTarget(enemy)
-    enemy:SetTarget(player)
+    -- player:SetTarget(enemy)
+    -- enemy:SetTarget(player)
 
-    playerBB:SetTarget(enemyBB)
-    enemyBB:SetTarget(playerBB)
+    -- playerBB:SetTarget(enemyBB)
+    -- enemyBB:SetTarget(playerBB)
+
+    local actors = actor_manager_fetch_all_players()
+    for i,actor in ipairs(actors) do
+        actor:SetProperty(PROP_SCENE_ID,-105)
+    end
 end
 
 local actor_dir = 0
@@ -167,13 +172,57 @@ function OnSceneImGuiUpdate()
 end
 
 function OnSceneUpdate()
-   	actor_manager_update()
-    MagicAnim:Update()
+    if scene_is_combat() then
+        
+    else
+        if imgui.IsMouseClicked(0) then
+            local mx,my = imgui.GetMousePos()
+            local wx,wy = imgui.GetWindowPos()
+            mx = mx - wx
+            my = my - wy
+            local dest_x, dest_y = util_screen_pos_to_map_pos(mx, my)
+
+            local orix , oriy = scene_manager_get_imgui_cursor_pos()
+            imgui.AddRect(cx,cy,brx,bry,0xff00ff00)
+
+            local hit_actor = false
+            local actors = actor_manager_fetch_all_players()
+
+            for i,actor in ipairs(actors) do
+                local avatar = actor:GetAvatar()
+                local avx, avy = actor:GetProperty(PROP_POS)
+                local cx =  avx - avatar:GetFrameKeyX()
+                local cy =  avy - avatar:GetFrameKeyY()
+                local brx = avatar:GetFrameWidth()
+                local bry =  avatar:GetFrameHeight()
+                if dest_x >= cx and dest_x <= cx+brx and dest_y >= cy and dest_y <=cy+bry then
+                    hit_actor = true
+                    break
+                end
+                cxlog_info(mx, my, cx,cy ,brx,bry) 
+            end
+
+            if not hit_actor then
+                player:MoveTo(dest_x,dest_y)
+                local msg = {}
+                msg.pid = player:GetID()
+                msg.x = dest_x
+                msg.y = dest_y
+                net_send_message(PTO_C2C_MOVE_TO_POS, cjson.encode(msg))
+            end
+        end
+    end
+    -- MagicAnim:Update()
 end
 
 function OnSceneDraw()
-    BattleBG:Draw()
-    actor_manager_draw()
-    MagicAnim:Draw()
+    if scene_is_combat() then
+    else    
+    end
+    
+
+
+    -- MagicAnim:Draw()
 end
+
 

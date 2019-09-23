@@ -100,6 +100,7 @@ local LoginDebugButtons = {
         end
     }
 }
+
 local LocalPlayerDebugButtons = {
     {
         name = 'Say',
@@ -182,15 +183,11 @@ local LocalPlayerDebugButtons = {
             player:PlayAttack()
         end
     },
-
 }
      
-
 function on_actor_editor_update()    
     local res 
     imgui.Begin('Actor编辑器')
-
-
     ret, show_demo = imgui.Checkbox('Demo', show_demo)
     if show_demo then
         imgui.ShowDemoWindow(show_demo)
@@ -202,6 +199,8 @@ function on_actor_editor_update()
         script_system_dofile('../share/utils.lua')
         script_system_dofile('editor/imgui_editor.lua')
         script_system_dofile('ui_renderer.lua')
+        script_system_dofile('combat_system.lua')
+        script_system_dofile('input_manager.lua')
         collectgarbage()
     end
 

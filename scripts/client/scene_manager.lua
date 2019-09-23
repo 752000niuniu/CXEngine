@@ -127,21 +127,7 @@ function on_game_imgui_update(name)
     local player = actor_manager_fetch_local_player()
     if player then
         if imgui.IsWindowFocused() then
-            if imgui.IsMouseClicked(0) then
-                
-                local mx,my = imgui.GetMousePos()
-                local wx,wy = imgui.GetWindowPos()
-                mx = mx - wx
-                my = my - wy
-                local dest_x, dest_y = util_screen_pos_to_map_pos(mx, my)
-                player:MoveTo(dest_x,dest_y)
-
-                local msg = {}
-                msg.pid = player:GetID()
-                msg.x = dest_x
-                msg.y = dest_y
-                net_send_message(PTO_C2C_MOVE_TO_POS, cjson.encode(msg))
-            end
+           
         end
     end
 
