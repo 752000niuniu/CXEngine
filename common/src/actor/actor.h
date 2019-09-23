@@ -140,6 +140,7 @@ protected:
 #ifndef SIMPLE_SERVER
 	TextView* m_SayWidget;
 	UITextView* m_NameTV;
+	UITextView* m_SayTV;
 	ActionStateMachine* m_ASM;
 #endif
 };

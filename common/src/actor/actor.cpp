@@ -50,10 +50,19 @@ Actor::Actor(uint64_t pid)
 	PathMoveAction* action = new PathMoveAction(this);
 	m_ASM->ChangeAction(action);
 	m_NameTV = new UITextView();
-	m_NameTV->Size = 14.f;
+	m_NameTV->Size = 18.f;
 	m_NameTV->Align = NVG_ALIGN_CENTER;
 	m_NameTV->Color = nvgRGBA(86, 223, 109, 255);
 	UIRenderer::GetInstance()->AddToDraw(m_NameTV);
+
+	m_SayTV = new UITextView();
+	m_SayTV->Size = 14.f;
+	m_SayTV->Align = NVG_ALIGN_LEFT | NVG_ALIGN_TOP;
+	m_SayTV->Color = nvgRGBA(214, 216, 230, 255);
+	m_SayTV->BGColor = nvgRGBA(15, 21, 41, 128);
+	m_SayTV->Width = 128;
+	UIRenderer::GetInstance()->AddToDraw(m_SayTV);
+
 #endif
 	
 
@@ -68,6 +77,8 @@ Actor::~Actor()
 	SafeDelete(m_ASM);
 	SafeDelete(m_SayWidget);
 	SafeDelete(m_NameTV);
+	SafeDelete(m_SayTV);
+
 #endif
 }
 
@@ -103,7 +114,7 @@ void Actor::OnDraw()
 			//	TextRenderer::CENTER
 			//);
 			m_NameTV->X = avatar->Pos.x;
-			m_NameTV->Y = avatar->Pos.y+24;
+			m_NameTV->Y = avatar->Pos.y+30;
 		}
 	}
 
@@ -112,7 +123,7 @@ void Actor::OnDraw()
 		int past = (int)WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
 		m_SayDuration -= past;
 
-		if (m_SayWidget->Background != nullptr)
+		/*if (m_SayWidget->Background != nullptr)
 		{
 			int bgWidth = m_SayWidget->Width;
 			int bgHeight = m_SayWidget->Height;
@@ -120,7 +131,13 @@ void Actor::OnDraw()
 			m_SayWidget->X = (int)avatar->Pos.x - bgWidth / 2;
 			m_SayWidget->Y = (int)avatar->Pos.y - avatar->KeyY - bgHeight;
 		}
-		m_SayWidget->OnDraw();
+		m_SayWidget->OnDraw();*/
+		int bgWidth = m_SayWidget->Width;
+		int bgHeight = m_SayWidget->Height;
+		auto* avatar = m_ASM->GetAvatar();
+		m_SayTV->X = (int)avatar->Pos.x - bgWidth / 2;
+		m_SayTV->Y = (int)avatar->Pos.y - avatar->KeyY - bgHeight;
+		m_SayTV->Text =  utils::GB2312ToUtf8(utils::WstringToString(m_SayWidget->Text).c_str());
 	}
 #endif
 }

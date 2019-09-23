@@ -404,7 +404,7 @@ void UITextView::Draw()
 
 				nvgBeginPath(vg);
 				nvgFillColor(vg, BGColor);
-				nvgRect(vg, X, Y, row->width, lineh);
+				nvgRect(vg, X, Y, Width, lineh);
 				nvgFill(vg);
 
 
