@@ -179,7 +179,6 @@ UIRenderer::UIRenderer()
 	res =nvgCreateFont(vg, "MSHT", FileSystem::GetFontPath("msht.ttf").c_str());
 	res= nvgCreateFont(vg, "SIMSUN", FileSystem::GetFontPath("simsun.ttc").c_str());
 
-	nvgGlobalAlpha(vg, 1.0f);
 }
 
 UIRenderer::~UIRenderer()
@@ -201,7 +200,8 @@ void UIRenderer::Draw()
 	int mx = mpos.x;
 	int my = mpos.y;
 	
-	glClear(GL_STENCIL_BUFFER_BIT);
+	
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	nvgBeginFrame(vg, width, height, width* 1.0f / height);
 
 	//drawParagraph(vg, width - 450, 50, 150, 100, mx, my);
@@ -459,7 +459,9 @@ int ui_textview_set_color(lua_State* L)
 #define break_color_rgba(c)  nvgRGBA((c>>24)& 0xff,(c& 0xff0000) >> 16,  (c& 0xff00) >> 8, (c& 0xff))
 	UITextView* tv = lua_check_pointer<UITextView>(L, 1);
 	uint32_t color = (uint32_t)lua_tointeger(L, 2);
-	tv->Color = break_color_rgba(color);
+	//tv->Color = break_color_rgba(color);
+
+	tv->Color = nvgRGBA(255,255,255,255);
 #undef break_color_rgba
 	return 0;
 }
@@ -469,7 +471,8 @@ int ui_textview_set_bg_color(lua_State* L)
 #define break_color_rgba(c)  nvgRGBA((c>>24)& 0xff,(c& 0xff0000) >> 16,  (c& 0xff00) >> 8, (c& 0xff))
 	UITextView* tv = lua_check_pointer<UITextView>(L, 1);
 	uint32_t color = (uint32_t)lua_tointeger(L, 2);
-	tv->BGColor = break_color_rgba(color);
+	//tv->BGColor = break_color_rgba(color);
+	tv->BGColor = nvgRGBA(255, 255, 255, 255);
 #undef break_color_rgba
 	return 0;
 }

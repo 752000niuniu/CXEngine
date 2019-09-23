@@ -135,6 +135,7 @@ void Window::Init(int w,int h)
 	glfwSetScrollCallback(m_pWindow, glfw_scroll_callback);
 	glfwSetCharCallback(m_pWindow, glfw_character_callback);
 	glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	glfwSetWindowOpacity(m_pWindow, 1.0f);
 }
 
 void Window::Show()
