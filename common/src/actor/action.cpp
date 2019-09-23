@@ -435,13 +435,13 @@ void BeHitAction::Update()
 
 void BeHitAction::Exit()
 {
-	
+	m_Actor->SetPos(m_SavedPos);
 }
 
 void BeHitAction::Enter()
 {
 	m_pASM->SetAction(ACTION_BEHIT);
-
+	m_SavedPos = m_Actor->GetPos();
 	auto*targetAvatar = m_pASM->GetAvatar();
 	BeatNumber* beatNumber = new BeatNumber();
 	auto* map = SCENE_MANAGER_INSTANCE->GetCurrentScene()->GetGameMap();
@@ -575,13 +575,11 @@ void DeadFlyAction::Update()
 		m_Dir.y = -m_Dir.y;
 	}
 
-
 	if (avatar->IsFrameUpdate()) {
 		pos.x += m_Dir.x * 49;
 		pos.y += m_Dir.y * 49;
 		m_Actor->SetPos(pos);
 	}
-
 	
 	if (m_Dir.x < 0) {
 		if (pos.x - avatar->GetFrameKeyX() < 0 ) {
@@ -620,6 +618,11 @@ void DeadFlyAction::Enter()
 	avatar->SetLoop(0);
 }
 
+
+void DeadFlyAction::Exit()
+{
+	m_Actor->SetPos(m_SavedPos);
+}
 
 ActionStateMachine::ActionStateMachine(Actor* _actor)
 	:m_Actor(_actor)

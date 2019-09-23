@@ -1,9 +1,3 @@
--- script_system_dofile 'scene/scene.lua'
--- script_system_dofile('scene/test_net_scene.lua')
--- script_system_dofile('scene/animation_editor.lua')
-DefaultSceneName = "门派_方寸山全景"
--- DefaultSceneName = "UIScene"
--- DefaultSceneName = "WASViewer"
 scene_list_name = {}
 
 script_system_dofile('editor/imgui_editor.lua')
@@ -12,20 +6,20 @@ local scene_lua_files =
     {name='AnimationEditor' ,  file= 'scene/animation_editor.lua'},
     {name='PackageUnpacker' ,  file= 'scene/package_unpacker.lua'},
     {name='BattleScene' ,            file= 'scene/battle_scene.lua'},
-    {name='门派_方寸山全景' ,       file= 'scene/fangcunshan_scene.lua'},
+    {name='东海湾全景' ,       file= 'scene/fangcunshan_scene.lua'},
     {name='Splash' ,            file= 'scene/splash_scene.lua'},
     {name='TestScene' ,          file= 'scene/test_scene.lua'}
 }
 
 local scene_list = {}
-local current_scene_name = 'Splash'
+local current_scene_name = 'AnimationEditor'
 function on_scene_manager_init()
     local parsed_tsv = utils_parse_tsv_file_as_table(fs_get_tsv_path('map'),false)
     for i,row in ipairs(parsed_tsv) do
         scene_manager_add_scene(tonumber(row.ID), row.name)
     end
 
-    scene_manager_add_scene(-1, '门派_方寸山全景')
+    scene_manager_add_scene(-1, '东海湾全景')
     scene_manager_add_custom_scene(-2, "BattleScene");
 	scene_manager_add_custom_scene(-100, "Splash");
 	scene_manager_add_custom_scene(-101, "WASViewer");
@@ -123,8 +117,6 @@ function on_game_imgui_update(name)
     fix_input_manager_mouse_pos()
     
     imgui.Text('FPS:'.. math.floor(window_system_get_fps()*1000))
-    
-    
 
     if scene_list[name] then
         if scene_list[name].OnSceneImGuiUpdate then
@@ -134,25 +126,9 @@ function on_game_imgui_update(name)
 
     local player = actor_manager_fetch_local_player()
     if player then
-        if imgui.IsKeyReleased(string.byte('W') ) then
-            player:TranslateY(-KEY_RELEASE_MOVE_AMOUT)
-        end
-
-        if imgui.IsKeyReleased(string.byte('A')) then
-            player:TranslateX(-KEY_RELEASE_MOVE_AMOUT)
-        end
-
-        if imgui.IsKeyReleased(string.byte('S')) then
-            player:TranslateY(KEY_RELEASE_MOVE_AMOUT)
-        end
-
-        if imgui.IsKeyReleased(string.byte('D')) then
-            player:TranslateX(KEY_RELEASE_MOVE_AMOUT)
-        end
-
-        
         if imgui.IsWindowFocused() then
             if imgui.IsMouseClicked(0) then
+                
                 local mx,my = imgui.GetMousePos()
                 local wx,wy = imgui.GetWindowPos()
                 mx = mx - wx

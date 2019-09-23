@@ -125,60 +125,6 @@ void drawParagraph(NVGcontext* vg, float x, float y, float width, float height, 
 	nvgRestore(vg);
 }
 
-
-void drawLines(NVGcontext* vg, float x, float y, float w, float h, float t)
-{
-	int i, j;
-	float pad = 5.0f, s = w / 9.0f - pad * 2;
-	float pts[4 * 2], fx, fy;
-	int joins[3] = { NVG_MITER, NVG_ROUND, NVG_BEVEL };
-	int caps[3] = { NVG_BUTT, NVG_ROUND, NVG_SQUARE };
-	NVG_NOTUSED(h);
-
-	nvgSave(vg);
-	pts[0] = -s * 0.25f + cosf(t * 0.3f) * s * 0.5f;
-	pts[1] = sinf(t * 0.3f) * s * 0.5f;
-	pts[2] = -s * 0.25;
-	pts[3] = 0;
-	pts[4] = s * 0.25f;
-	pts[5] = 0;
-	pts[6] = s * 0.25f + cosf(-t * 0.3f) * s * 0.5f;
-	pts[7] = sinf(-t * 0.3f) * s * 0.5f;
-
-	for (i = 0; i < 3; i++) {
-		for (j = 0; j < 3; j++) {
-			fx = x + s * 0.5f + (i * 3 + j) / 9.0f * w + pad;
-			fy = y - s * 0.5f + pad;
-
-			nvgLineCap(vg, caps[i]);
-			nvgLineJoin(vg, joins[j]);
-
-			nvgStrokeWidth(vg, s * 0.3f);
-			nvgStrokeColor(vg, nvgRGBA(0, 0, 0, 160));
-			nvgBeginPath(vg);
-			nvgMoveTo(vg, fx + pts[0], fy + pts[1]);
-			nvgLineTo(vg, fx + pts[2], fy + pts[3]);
-			nvgLineTo(vg, fx + pts[4], fy + pts[5]);
-			nvgLineTo(vg, fx + pts[6], fy + pts[7]);
-			nvgStroke(vg);
-
-			nvgLineCap(vg, NVG_BUTT);
-			nvgLineJoin(vg, NVG_BEVEL);
-
-			nvgStrokeWidth(vg, 1.0f);
-			nvgStrokeColor(vg, nvgRGBA(0, 192, 255, 255));
-			nvgBeginPath(vg);
-			nvgMoveTo(vg, fx + pts[0], fy + pts[1]);
-			nvgLineTo(vg, fx + pts[2], fy + pts[3]);
-			nvgLineTo(vg, fx + pts[4], fy + pts[5]);
-			nvgLineTo(vg, fx + pts[6], fy + pts[7]);
-			nvgStroke(vg);
-		}
-	}
-	nvgRestore(vg);
-}
-
-
 static unordered_map<uint64_t, int> s_ImageCache;
 
 uint64_t encode_image_cache_id(uint64_t resid, int index) 
@@ -259,10 +205,24 @@ void UIRenderer::Draw()
 //	drawParagraph(vg, width - 450, 50, 150, 100, mx, my);
 //	nano_render_text(0, 0, 50, 24,0xffffffff,0xff00ffff,  "MSHT", u8"I need a girl!");
 	
-	
 	//script_system_call_function(script_system_get_luastate(), "on_ui_renderer_draw");
-	for (auto* obj : m_Objects){
-		obj->Draw();
+	for (UIObject*& obj:m_Objects){
+		if (obj&&!obj->MarkRemove) {
+			obj->Draw();
+		}
+		else {
+			delete obj;
+			obj = nullptr;
+		}
+	}
+	if (m_Objects.size() > 50) {
+		vector<UIObject*> tmp;
+		for (UIObject*& obj : m_Objects) {
+			if (obj&&!obj->MarkRemove) {
+				tmp.push_back(obj);
+			}
+		}
+		m_Objects.swap(tmp);
 	}
 
 	//drawLines(vg, 120, height - 50, 600, 50, glfwGetTime());
@@ -272,6 +232,11 @@ void UIRenderer::Draw()
 void UIRenderer::AddToDraw(UIObject* obj)
 {
 	m_Objects.push_back(obj);
+}
+
+void UIRenderer::RemoveToDraw(UIObject* obj)
+{
+	obj->MarkRemove = true;
 }
 
 void nano_render_text(int x, int y, int width, int size, int textcolor, int textbgcolor, const char* font, const char* text)
@@ -462,7 +427,6 @@ int ne_imageview_create(lua_State* L)
 
 void luaopen_ui_renderer(lua_State* L)
 {
-	
 	script_system_register_luac_function(L, ne_imageview_create);
 	script_system_register_function(L, nano_render_text);
 	script_system_register_luac_function(L, ui_renderer_add_to_draw);

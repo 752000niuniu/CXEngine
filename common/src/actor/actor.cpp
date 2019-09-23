@@ -29,7 +29,7 @@ Actor::Actor(uint64_t pid)
 	:BaseGameEntity(pid)
 {
 	lua_State* L = script_system_get_luastate();
-	lua_getglobal(L, "on_actor_reg_props");
+	lua_getglobal(L, "actor_on_reg_props");
 	lua_push_actor(L, this);
 	int res = lua_pcall(L, 1, 0, 0);
 	check_lua_error(L, res);
@@ -50,7 +50,7 @@ Actor::Actor(uint64_t pid)
 	PathMoveAction* action = new PathMoveAction(this);
 	m_ASM->ChangeAction(action);
 	m_NameTV = new UITextView();
-	m_NameTV->Size = 18.f;
+	m_NameTV->Size = 16.f;
 	m_NameTV->Align = NVG_ALIGN_CENTER;
 	m_NameTV->Color = nvgRGBA(86, 223, 109, 255);
 	UIRenderer::GetInstance()->AddToDraw(m_NameTV);
@@ -62,10 +62,7 @@ Actor::Actor(uint64_t pid)
 	m_SayTV->BGColor = nvgRGBA(15, 21, 41, 128);
 	m_SayTV->Width = 128;
 	UIRenderer::GetInstance()->AddToDraw(m_SayTV);
-
 #endif
-	
-
 }
 
 Actor::~Actor()
@@ -76,9 +73,8 @@ Actor::~Actor()
 	INPUT_MANAGER_INSTANCE->UnRegisterView(this);
 	SafeDelete(m_ASM);
 	SafeDelete(m_SayWidget);
-	SafeDelete(m_NameTV);
-	SafeDelete(m_SayTV);
-
+	UIRenderer::GetInstance()->RemoveToDraw(m_NameTV);
+	UIRenderer::GetInstance()->RemoveToDraw(m_SayTV);
 #endif
 }
 
@@ -107,14 +103,8 @@ void Actor::OnDraw()
 		m_NameTV->Text = name.toString();
 		auto* avatar = m_ASM->GetAvatar();
 		if (avatar) {
-			//auto green = glm::vec3(115 / 255.0f, 1.0f, 137 / 255.0f);
-			//TextRenderer::GetInstance()->DrawTextC(name.toString().c_str(),
-			//	((int)avatar->Pos.x),
-			//	((int)avatar->Pos.y + 20),
-			//	TextRenderer::CENTER
-			//);
 			m_NameTV->X = avatar->Pos.x;
-			m_NameTV->Y = avatar->Pos.y+30;
+			m_NameTV->Y = avatar->Pos.y + 36;
 		}
 	}
 
@@ -122,16 +112,6 @@ void Actor::OnDraw()
 	{
 		int past = (int)WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
 		m_SayDuration -= past;
-
-		/*if (m_SayWidget->Background != nullptr)
-		{
-			int bgWidth = m_SayWidget->Width;
-			int bgHeight = m_SayWidget->Height;
-			auto* avatar = m_ASM->GetAvatar();
-			m_SayWidget->X = (int)avatar->Pos.x - bgWidth / 2;
-			m_SayWidget->Y = (int)avatar->Pos.y - avatar->KeyY - bgHeight;
-		}
-		m_SayWidget->OnDraw();*/
 		int bgWidth = m_SayWidget->Width;
 		int bgHeight = m_SayWidget->Height;
 		auto* avatar = m_ASM->GetAvatar();
@@ -297,10 +277,10 @@ Bound Actor::GetViewBounds()
 	auto* avatar = m_ASM->GetAvatar();
 	if (avatar == nullptr) return { 0,0,0,0 };
 	Pos pos = avatar->Pos;
-	pos.x -= avatar->KeyX;
-	pos.y -= avatar->KeyY;
-	return Bound{ pos.x, (pos.x + avatar->Width),
-		pos.y,(pos.y + avatar->Height) };
+	pos.x -= avatar->GetFrameKeyX();
+	pos.y -= avatar->GetFrameKeyY();
+	return Bound{ pos.x, (pos.x + avatar->GetFrameWidth()),
+		pos.y,(pos.y + avatar->GetFrameHeight()) };
 }
 
 bool Actor::CheckDrag(int dx, int dy)
@@ -312,6 +292,30 @@ void Actor::OnDragMove(int dx, int dy)
 {
 	TranslateX((float)dx);
 	TranslateY((float)dy);
+}
+
+void Actor::OnHover(float x, float y)
+{
+	lua_State* L = script_system_get_luastate();
+	lua_getglobal(L, "actor_on_hover");
+	lua_push_actor(L, this);
+	lua_pushnumber(L, x);
+	lua_pushnumber(L, y);
+	int res = lua_pcall(L, 3, 0, 0);
+	check_lua_error(L, res);
+
+}
+
+void Actor::OnClick(int button, int x, int y)
+{
+	lua_State* L = script_system_get_luastate();
+	lua_getglobal(L, "actor_on_click");
+	lua_push_actor(L, this);
+	lua_pushinteger(L, button);
+	lua_pushnumber(L, x);
+	lua_pushnumber(L, y);
+	int res = lua_pcall(L, 4, 0, 0);
+	check_lua_error(L, res);
 }
 
 void Actor::Say(std::string Text)
@@ -546,6 +550,8 @@ int actor_change_pal_matrix(lua_State*L) {
 		lua_pop(L, 1);
 		patMatrix.push_back(seg_matrix);
 	}
+	actor->GetASM()->Reset();
+	actor->SetActionID(ACTION_BATIDLE);
 	actor->SetPalette(patMatrix);
 	actor->GetASM()->Reset();
 	return 0;

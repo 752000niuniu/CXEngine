@@ -572,14 +572,14 @@ int base_sprite_get_height(lua_State* L) {
 int base_sprite_set_width(lua_State* L) {
 	auto* sp = lua_check_base_sprite(L, 1);
 	float w = (float)lua_tonumber(L, 2);
-	sp->Width = w;
+	sp->Width = (int)w;
 	return 0;
 }
 
 int base_sprite_set_height(lua_State* L) {
 	auto* sp = lua_check_base_sprite(L, 1);
 	float h = (float)lua_tonumber(L, 2);
-	sp->Height = h;
+	sp->Height = (int)h;
 	return 0;
 }
 

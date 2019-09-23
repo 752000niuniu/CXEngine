@@ -1,6 +1,5 @@
 local ActorMT = actor_get_metatable()
 
-
 function draw_avatar_info(sprite)
     local x,y = sprite:GetPos()
     imgui.Text('X '.. math.floor(x) ..' Y'.. math.floor(y))
@@ -20,6 +19,7 @@ function draw_avatar_info(sprite)
 end
 
 function draw_avatar_boundingbox(avatar)
+    if not avatar then return end
     local orix , oriy = scene_manager_get_imgui_cursor_pos()
     local avx, avy = avatar:GetPos()
     avx = orix + avx
@@ -75,6 +75,19 @@ function ActorMT:DrawAvatarInfo()
 end
 
 function ActorMT:DrawBoundingBox()
+    local avatar = self:GetAvatar()
+    if not avatar then return end
+    draw_avatar_boundingbox(avatar)
+end
+
+function ActorMT:SetProperties(props)
+    for k,v in pairs(props) do
+        if type(v) ~='table' then
+            self:SetProperty(k,v)
+        else
+            self:SetProperty(k, table.unpack(v))
+        end
+    end
     local avatar = self:GetAvatar()
     draw_avatar_boundingbox(avatar)
 end

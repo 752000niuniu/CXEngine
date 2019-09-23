@@ -201,6 +201,7 @@ function on_actor_editor_update()
         scene_manager_reload()
         script_system_dofile('../share/utils.lua')
         script_system_dofile('editor/imgui_editor.lua')
+        script_system_dofile('ui_renderer.lua')
         collectgarbage()
     end
 
@@ -213,11 +214,8 @@ function on_actor_editor_update()
     imgui.PopItemWidth()
 
     imgui.InputText("玩家名字", PlayerNameSB);
-
-
     if imgui.CollapsingHeader('Login') then 
         
-
         imgui.Text('IP  :')
         imgui.SameLine()
         imgui.InputText('##IP', IPSB)

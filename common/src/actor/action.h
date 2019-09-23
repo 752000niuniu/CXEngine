@@ -97,6 +97,7 @@ public:
 private:
 	Actor* m_Attacker;
 	int m_State;
+	Pos m_SavedPos;
 };
 
 class BeCastAction : public Action
@@ -120,6 +121,7 @@ public:
 	virtual ~DeadFlyAction() {};
 	virtual  void Update();
 	virtual void Enter();
+	virtual void Exit();
 private:
 	int m_SavedDir;
 	Pos m_Dir;

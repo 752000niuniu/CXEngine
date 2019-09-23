@@ -10,8 +10,7 @@ local actor_enum_typename_to_type ={
     vec2 = PROP_TYPE_VEC2
 }
 
-
-function on_actor_reg_props(actor)
+function actor_on_reg_props(actor)
     local tbl = content_system_get_table('actor_template')
     for i,row in ipairs(tbl) do
         local reg_type = actor_enum_typename_to_type[row.type]

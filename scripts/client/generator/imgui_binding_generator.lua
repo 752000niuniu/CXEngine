@@ -869,6 +869,24 @@ int cximgui_clipper_list(lua_State*L)
 	return 0;
 }
 
+int cximgui_keys_mod(lua_State*L)
+{
+	const char* which = lua_tostring(L, 1);
+	ImGuiIO& io = ImGui::GetIO();
+	if (strcmp(which, "Ctrl") == 0) {
+		lua_pushboolean(L, io.KeyCtrl);
+	}
+	else if (strcmp(which, "Shift") == 0) {
+		lua_pushboolean(L, io.KeyShift);
+	}
+	else if (strcmp(which, "ALT") == 0) {
+		lua_pushboolean(L, io.KeyAlt);
+	}
+	else if (strcmp(which, "Super") == 0) {
+		lua_pushboolean(L, io.KeySuper);
+	}
+	return 1;
+}
 
 luaL_Reg cximgui_extra_methods[] = {
 	{ "CreateStrbuf", cximgui_strbuf_create },
@@ -879,6 +897,7 @@ luaL_Reg cximgui_extra_methods[] = {
 { "GetMainViewport", cximgui_GetMainViewport },
 { "ListBox", cximgui_ListBox_5_spipsii },
 { "ClipperList", cximgui_clipper_list },
+{ "KeysMod", cximgui_keys_mod},
 { NULL,NULL }
 };
 

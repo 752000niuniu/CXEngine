@@ -12,6 +12,7 @@ class UIObject
 {
 public:
 	virtual void Draw() {};
+	bool MarkRemove = false;
 };
 
 class NEImageView : public UIObject
@@ -56,6 +57,7 @@ public:
 	void Draw();
 	
 	void AddToDraw(UIObject* obj);
+	void RemoveToDraw(UIObject* obj);
 private:
 	vector<UIObject*> m_Objects;
 };
