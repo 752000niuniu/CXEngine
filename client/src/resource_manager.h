@@ -101,5 +101,7 @@ private:
 };
 #define  RESOURCE_MANAGER_INSTANCE ResourceManager::GetInstance()
 
+uint64_t res_encode_was(uint32_t pack, uint32_t wasID);
+void res_decode_was(uint64_t resID, uint32_t& pack, uint32_t& wasID);
 
 void luaopen_resource_manager(lua_State* L);

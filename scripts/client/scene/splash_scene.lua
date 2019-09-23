@@ -1,21 +1,18 @@
-local cjson = require("cjson")
 
+local DialogAnim 
 function OnSceneInit()
-    -- local files = vfs_list_files('scripts/server')
-    -- for i,f in ipairs(files) do
-    --     local fh = io.open(f,'r')
-    --     for c in fh:lines() do
-    --         print(c)
-    --     end
-    --     fh:close()
-    -- end
+    -- WZIFEWDF, 0x792EA858
+    DialogAnim = ne_imageview_create(WZIFEWDF, 0xEF073E43 )
+    local bs = DialogAnim:GetBaseSprite()
+    bs:EnableDrag(true)
+    ui_renderer_add_to_draw(DialogAnim)
 end
 
 function OnSceneUpdate()    
-  
+ 
 end
 
 function OnSceneDraw()
-
+ 
 end
 

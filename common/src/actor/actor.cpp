@@ -19,6 +19,8 @@
 #include "cxlua.h"
 #include "script_system.h"
 #include "actor_enum.h"
+#include "graphics/ui_renderer.h"
+#include "nanovg.h"
 
 
 #define ACTOR_METATABLE_NAME "mt_actor"
@@ -47,6 +49,11 @@ Actor::Actor(uint64_t pid)
 	INPUT_MANAGER_INSTANCE->RegisterView(this);
 	PathMoveAction* action = new PathMoveAction(this);
 	m_ASM->ChangeAction(action);
+	m_NameTV = new UITextView();
+	m_NameTV->Size = 14.f;
+	m_NameTV->Align = NVG_ALIGN_CENTER;
+	m_NameTV->Color = nvgRGBA(86, 223, 109, 255);
+	UIRenderer::GetInstance()->AddToDraw(m_NameTV);
 #endif
 	
 
@@ -60,6 +67,7 @@ Actor::~Actor()
 	INPUT_MANAGER_INSTANCE->UnRegisterView(this);
 	SafeDelete(m_ASM);
 	SafeDelete(m_SayWidget);
+	SafeDelete(m_NameTV);
 #endif
 }
 
@@ -85,14 +93,17 @@ void Actor::OnDraw()
 	ActorProp& name = GetProperty(PROP_NAME);
 	if (!name.toString().empty())
 	{
+		m_NameTV->Text = name.toString();
 		auto* avatar = m_ASM->GetAvatar();
 		if (avatar) {
-			auto green = glm::vec3(115 / 255.0f, 1.0f, 137 / 255.0f);
-			TextRenderer::GetInstance()->DrawTextC(name.toString().c_str(),
-				((int)avatar->Pos.x),
-				((int)avatar->Pos.y + 20),
-				TextRenderer::CENTER
-			);
+			//auto green = glm::vec3(115 / 255.0f, 1.0f, 137 / 255.0f);
+			//TextRenderer::GetInstance()->DrawTextC(name.toString().c_str(),
+			//	((int)avatar->Pos.x),
+			//	((int)avatar->Pos.y + 20),
+			//	TextRenderer::CENTER
+			//);
+			m_NameTV->X = avatar->Pos.x;
+			m_NameTV->Y = avatar->Pos.y+24;
 		}
 	}
 

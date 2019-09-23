@@ -49,7 +49,7 @@ class Bitmap
 public:
 	Bitmap();
 	~Bitmap();
-	
+	static bool CreateBitmap(std::string path, int w, int h, char* pixels, int colorBitCount);
 	static bool CreateBitmapFile(std::string path, int w, int h, uint32 color, int colorBitCount);
 
 	static bool Load(std::string path, BitmapFile& bitmapFile);

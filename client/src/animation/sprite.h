@@ -47,6 +47,8 @@ public:
 
 };
 
+
+
 enum EAnimationState
 {
 	ANIMATION_PLAY = 0,
@@ -59,7 +61,7 @@ class Animation : public BaseSprite
 public:
 	Animation(uint64_t resoureID = 0, std::vector<PalSchemePart>* patMatrix = nullptr);
 	Animation(uint32_t pkg, uint32_t wasID, std::vector<PalSchemePart>* patMatrix = nullptr);
-	virtual ~Animation() {};
+	virtual ~Animation() override {};
 	void Update() override;
 	void Draw() override;
 	void SetVisible(bool visible) { m_Visible = visible; };
@@ -156,5 +158,6 @@ private:
 	
 };
 
+void lua_push_base_sprite(lua_State* L, BaseSprite* sprite);
 void lua_push_animation(lua_State*L, Animation* sprite);
 void luaopen_sprite(lua_State* L);

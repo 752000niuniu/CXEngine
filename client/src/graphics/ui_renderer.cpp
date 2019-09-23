@@ -6,6 +6,7 @@
 #include "file_system.h"
 #include "input_manager.h"
 #include "script_system.h"
+#include "animation/sprite.h"
 
 
 void drawParagraph(NVGcontext* vg, float x, float y, float width, float height, float mx, float my)
@@ -178,6 +179,45 @@ void drawLines(NVGcontext* vg, float x, float y, float w, float h, float t)
 }
 
 
+static unordered_map<uint64_t, int> s_ImageCache;
+
+uint64_t encode_image_cache_id(uint64_t resid, int index) 
+{
+	uint64_t index64 = index;
+	uint64_t id = resid | index64 << 48;
+	return id;
+}
+
+void decode_image_cache_id(uint64_t id, uint64_t& resid, int& index)
+{
+	resid = id & 0x00ffffff;
+	index = id >> 48;
+}
+
+
+void decode_image_cache_id(uint64_t id, uint32_t& pack, uint32_t& wasid, int& index)
+{
+	uint64_t resid;
+	decode_image_cache_id(id, resid, index);
+	res_decode_was(resid, pack, wasid);
+}
+
+
+class UINEImageView  : public UIObject
+{
+public:
+	UINEImageView(BaseSprite* sp) :m_BaseSprite(sp) {};
+	~UINEImageView() {};
+	void Draw() override;
+private:
+	BaseSprite* m_BaseSprite;
+};
+
+void UINEImageView::Draw()
+{
+	m_BaseSprite->Draw();
+}
+
 
 NVGcontext* vg = NULL;
 UIRenderer::UIRenderer()
@@ -219,11 +259,19 @@ void UIRenderer::Draw()
 //	drawParagraph(vg, width - 450, 50, 150, 100, mx, my);
 //	nano_render_text(0, 0, 50, 24,0xffffffff,0xff00ffff,  "MSHT", u8"I need a girl!");
 	
-	script_system_call_function(script_system_get_luastate(), "on_ui_renderer_draw");
+	
+	//script_system_call_function(script_system_get_luastate(), "on_ui_renderer_draw");
+	for (auto* obj : m_Objects){
+		obj->Draw();
+	}
 
-
-	drawLines(vg, 120, height - 50, 600, 50, glfwGetTime());
+	//drawLines(vg, 120, height - 50, 600, 50, glfwGetTime());
 	nvgEndFrame(vg);
+}
+
+void UIRenderer::AddToDraw(UIObject* obj)
+{
+	m_Objects.push_back(obj);
 }
 
 void nano_render_text(int x, int y, int width, int size, int textcolor, int textbgcolor, const char* font, const char* text)
@@ -269,7 +317,153 @@ void nano_render_text(int x, int y, int width, int size, int textcolor, int text
 #undef break_color_rgba
 }
 
+
+
+NEImageView::NEImageView(uint64_t resoureID /*= 0*/, std::vector<PalSchemePart>* patMatrix /*= nullptr*/)
+{
+	m_pBS = new BaseSprite(resoureID, patMatrix);
+}
+
+NEImageView::~NEImageView()
+{
+	delete m_pBS;
+}
+
+void NEImageView::Draw()
+{
+	int index = m_pBS->Dir * m_pBS->GroupFrameCount + m_pBS->CurrentFrame;
+	auto& frame = m_pBS->m_pSprite->Frames[index];
+
+	uint64_t id = encode_image_cache_id(m_pBS->ResID, index);
+	auto it = s_ImageCache.find(id);
+	int imageid = 0;
+	if (it == s_ImageCache.end()) {
+		imageid = nvgCreateImageRGBA(vg, frame.Width, frame.Height, NVG_IMAGE_NEAREST, (unsigned char*)frame.Src.data());
+		s_ImageCache.insert({ id,imageid });
+	}
+	else {
+		imageid = it->second;
+	}
+	nvgSave(vg);
+	float left = m_pBS->Pos.x - frame.KeyX;
+	float top = m_pBS->Pos.y - frame.KeyY;
+	float w = m_pBS->Width;
+	float h = m_pBS->Height;
+	float rot = 0.0f / 180.0f * NVG_PI;
+	float pad = 10;
+
+	NVGpaint imgPaint = nvgImagePattern(vg, left, top, w, h, rot, imageid, 1);
+	nvgBeginPath(vg);
+	/*left += pad;
+	top += pad;
+	w -= pad * 2;
+	h -= pad * 2;*/
+	nvgRect(vg, left, top, w, h);
+	nvgFillPaint(vg, imgPaint);
+	nvgFill(vg);
+	nvgRestore(vg);
+}
+
+
+UITextView::UITextView()
+	:Text(""),
+	Font("SIMSUN"),
+	Size(14.f),
+	X(0),
+	Y(0),
+	Color(nvgRGBA(255, 255, 255, 255)),
+	BGColor(nvgRGBA(0, 0, 0, 0)),
+	Width(0),
+	Align(NVG_ALIGN_LEFT | NVG_ALIGN_TOP)
+{
+
+}
+
+void UITextView::Draw()
+{
+	if (Text.size() == 0)return;
+	nvgSave(vg);
+	float lineh;
+	
+	nvgFontSize(vg, Size);
+	nvgFontFace(vg, Font.c_str());
+	nvgTextAlign(vg, Align);
+	nvgTextMetrics(vg, NULL, NULL, &lineh);
+
+	const char* start;
+	const char* end;
+	start = Text.data();
+	end = Text.data() + Text.size();
+
+	if(Width!=0){
+		NVGtextRow rows[3];
+		int nrows, lnum = 0;
+		while ((nrows = nvgTextBreakLines(vg, start, end, Width, rows, 3))) {
+			for (int i = 0; i < nrows; i++) {
+				NVGtextRow* row = &rows[i];
+
+				nvgBeginPath(vg);
+				nvgFillColor(vg, BGColor);
+				nvgRect(vg, X, Y, row->width, lineh);
+				nvgFill(vg);
+
+
+				nvgFillColor(vg, Color);
+				nvgText(vg, X, Y, row->start, row->end);
+
+				lnum++;
+				Y += lineh;
+			}
+			start = rows[nrows - 1].next;
+		}
+
+	}else{
+		nvgFillColor(vg, Color);
+		nvgText(vg, X, Y, Text.c_str(), NULL);
+	}
+	
+	nvgRestore(vg);
+}
+
+
+int ui_renderer_add_to_draw(lua_State*L){
+	NEImageView* ptr = lua_check_pointer<NEImageView>(L, 1);
+	UIRenderer::GetInstance()->AddToDraw(ptr);
+	return 0;
+}
+
+int ne_imageview_get_base_sprite(lua_State*L){
+	NEImageView* ptr = lua_check_pointer<NEImageView>(L, 1);
+	BaseSprite* bs = ptr->GetBaseSprite();
+	lua_push_base_sprite(L, bs);
+	return 1;
+}
+luaL_Reg MT_NE_IMAGEVIEW[] = {
+	{ "GetBaseSprite",ne_imageview_get_base_sprite},
+	{NULL,NULL}
+};
+
+int ne_imageview_create(lua_State* L)
+{
+	uint32_t pack = (uint32_t)lua_tointeger(L, 1);
+	uint32_t wasid = (uint32_t)lua_tointeger(L, 2);
+
+	NEImageView** ptr = (NEImageView * *)lua_newuserdata(L, sizeof(NEImageView));
+	*ptr = new NEImageView(pack, wasid);
+	if (luaL_newmetatable(L, "MT_NE_IMAGEVIEW")) {
+		luaL_setfuncs(L, MT_NE_IMAGEVIEW, 0);
+		lua_pushvalue(L, -1);
+		lua_setfield(L, -2, "__index");
+	}
+	lua_setmetatable(L, -2); 
+	return 1;
+}
+
+
 void luaopen_ui_renderer(lua_State* L)
 {
+	
+	script_system_register_luac_function(L, ne_imageview_create);
 	script_system_register_function(L, nano_render_text);
+	script_system_register_luac_function(L, ui_renderer_add_to_draw);
 }

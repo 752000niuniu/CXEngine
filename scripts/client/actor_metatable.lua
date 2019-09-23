@@ -80,7 +80,7 @@ function ActorMT:DrawBoundingBox()
 end
 
 
-local AnimationMT = animation_get_metatable()
+local AnimationMT = base_sprite_get_metatable()
 function AnimationMT:DrawAvatarInfo()
     draw_avatar_info(self)
 end
