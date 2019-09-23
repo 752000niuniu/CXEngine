@@ -176,3 +176,16 @@ function decode_mypal(path)
 
     return color_schemes
 end
+
+function get_pal_from_json(str)
+    local pal = cjson.decode(str)
+    local new_pal = {}
+    for k,v in pairs(pal) do
+        if k~='segments' then
+            table.insert(new_pal,v)
+        else
+            new_pal.segments = v
+        end
+    end
+    return new_pal
+end

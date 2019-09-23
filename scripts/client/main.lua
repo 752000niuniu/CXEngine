@@ -84,9 +84,10 @@ function game_dispatch_message(pt)
 			player:SetProperty(PROP_SCENE_ID,pinfo.scene_id)
 			player:SetProperty(PROP_AVATAR_ID,'JXK-KNIFE')
 			player:SetProperty(PROP_WEAPON_AVATAR_ID,'JXK-KNIFE-120-晓风残月')
+			player:SetProperty(PROP_POS, pinfo.x, pinfo.y)
+			local new_pal = get_pal_from_json('{"1":{"mat":[220,220,512,512,512,510,512,510,512],"to":40,"from":0},"2":{"mat":[211,211,230,445,292,445,306,306,206],"to":80,"from":40},"3":{"mat":[0,0,0,24,24,24,19,19,19],"to":120,"from":80},"4":{"mat":[255,0,0,0,255,0,0,0,255],"to":256,"from":120},"segments":[0,40,80,120,256]}')  
+ 		   	player:ChangePalMatrix(new_pal)
 
-			player:SetX(pinfo.x)
-			player:SetY(pinfo.y)
 			if pinfo.is_local then
 				local_pinfo = pinfo
 			end
@@ -111,9 +112,8 @@ end
 
 
 function on_ui_renderer_draw()
-	nano_render_text(50, 0, 200, 18,0xffffffff,0,  "MSHT", "该怎么去形容你最贴切");
-	nano_render_text(50, 80, 200, 18,0xffffffff,0,  "MSYH", "拿什么跟你作比较才算特别");
-
-	nano_render_text(50, 160, 200, 12,0xffffffff,0,  "SIMSUN", "对你的感觉 强烈");
-	nano_render_text(50, 240, 200, 14,0xffffffff,0,  "SIMSUN", "却又不太了解 只凭直觉");
+	-- nano_render_text(50, 0, 200, 18,0xffffffff,0,  "MSHT", "该怎么去形容你最贴切");
+	-- nano_render_text(50, 80, 200, 18,0xffffffff,0,  "MSYH", "拿什么跟你作比较才算特别");
+	-- nano_render_text(50, 160, 200, 12,0xffffffff,0,  "SIMSUN", "对你的感觉 强烈");
+	-- nano_render_text(50, 240, 200, 14,0xffffffff,0,  "SIMSUN", "却又不太了解 只凭直觉");
 end

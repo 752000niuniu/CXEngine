@@ -11,9 +11,9 @@
 
 #ifndef SIMPLE_SERVER
 #include "sprite_renderer.h"
+#include <stb_image.h>
 #endif
 #include "logger.h"
-#include <stb_image.h>
 
 
 GameMap::GameMap(uint32 mapID)

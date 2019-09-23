@@ -27,13 +27,14 @@
 #include "sprite_renderer.h"
 #include "animation/frame_animation.h"
 #include "audio/audio_manager.h"
+#include "graphics/ui_renderer.h"
 #else
 #include "server.h"
 #endif // !SIMPLE_SERVER
 #include "protocol.h"
 #include "combat/combat.h"
 #include "cxlua.h"
-#include "graphics/ui_renderer.h"
+
 
 
 
