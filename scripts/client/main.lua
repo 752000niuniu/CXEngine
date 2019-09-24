@@ -78,7 +78,7 @@ function game_dispatch_message(pt)
 	local type = pt:ReadAsInt()
 	local js = pt:ReadAllAsString()
 	local req = cjson.decode(js)
-	print('game_dispatch_message', type, js)
+	cxlog_info('game_dispatch_message', type, js)
 	local local_pinfo 
 	if  type == PTO_C2C_PLAYER_ENTER then
 		local pinfos = req 
@@ -112,11 +112,3 @@ function game_dispatch_message(pt)
 		end
     end
 end
-
-function on_ui_renderer_draw()
-	nano_render_text(50, 0, 200, 18,0xffffffff,0,  "MSHT", "该怎么去形容你最贴切");
-	nano_render_text(50, 80, 200, 18,0xffffffff,0,  "MSYH", "拿什么跟你作比较才算特别");
-	nano_render_text(50, 160, 200, 12,0xffffffff,0,  "SIMSUN", "对你的感觉 强烈");
-	nano_render_text(50, 240, 200, 14,0xffffffff,0,  "SIMSUN", "却又不太了解 只凭直觉");
-end
-

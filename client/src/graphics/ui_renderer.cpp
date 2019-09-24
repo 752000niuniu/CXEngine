@@ -7,123 +7,8 @@
 #include "input_manager.h"
 #include "script_system.h"
 #include "animation/sprite.h"
+#include "logger.h"
 
-
-void drawParagraph(NVGcontext* vg, float x, float y, float width, float height, float mx, float my)
-{
-	NVGtextRow rows[3];
-	NVGglyphPosition glyphs[100];
-	const char* text = u8"往事蒙尘在我眉睫之间，\n方今重回到江南旧院。\n残朽了，岁月刻的牌匾，\n叩开回忆之门一问尘缘。\n我乘乌篷船翩然过桥亭，\n与清明桥上嫣然那个你，\n不经意，相看成了风景。\n我蘸酒写诗而你误入诗句。\n我轻弹古筝歌遍，\n方知断了的琴弦，再也唱不出思念。\n你刺绣化梦的蝶，\n后觉断了的红线，再也绣不出情缘。\n执手昨日疏影西窗前，灯花落尽檐外月一剪，\n棋局与人生，哪个更多劫？\n孑然今宵微雨断桥边，往事焚灰你香冢长眠，\n从此处处烟波，都似你眉眼。\n多年后我又乘船过江南，\n可清明桥上再无你倩影，\n未留意，眷顾成了曾经。\n一道古镇清风长叹了半声。\n玉笛余音向天阙，流年也沉默封缄，\n为你静敛岁月吊唁。\n黛瓦青砖雨不绝，我蒙霜冷彻心间，\n为你倾尽悼念。\n或许怨天命旁观冷眼，或许问天命总妒良缘，\n说莫失莫忘，无常总上演。\n天涯一隔两端有多远，怎敌一隔阴阳两相望，\n从此处处苍翠，都似你裙边。\n忆江南山悠然水悠然，你眸凝万水眉黛千山，\n待百年与你，共长眠江南。\n忆江南船依然桥依然，与你将前缘再续编撰：\n若有三生一世，再遇你江南。";
-	const char* start;
-	const char* end;
-	int nrows, i, nglyphs, j, lnum = 0;
-	float lineh;
-	float caretx, px;
-	float bounds[4];
-	float a;
-	float gx, gy;
-	int gutter = 0;
-	NVG_NOTUSED(height);
-
-	nvgSave(vg);
-
-	nvgFontSize(vg, 18.f);
-	nvgFontFace(vg, "MSYH");
-	nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
-	nvgTextMetrics(vg, NULL, NULL, &lineh);
-
-	// The text break API can be used to fill a large buffer of rows,
-	// or to iterate over the text just few lines (or just one) at a time.
-	// The "next" variable of the last returned item tells where to continue.
-	start = text;
-	end = text + strlen(text);
-	while ((nrows = nvgTextBreakLines(vg, start, end, width, rows, 3))) {
-		for (i = 0; i < nrows; i++) {
-			NVGtextRow* row = &rows[i];
-			int hit = mx > x && mx < (x + width) && my >= y && my < (y + lineh);
-
-			nvgBeginPath(vg);
-			nvgFillColor(vg, nvgRGBA(255, 255, 255, hit ? 64 : 16));
-			nvgRect(vg, x, y, row->width, lineh);
-			nvgFill(vg);
-
-			nvgFillColor(vg, nvgRGBA(255, 255, 255, 255));
-			nvgText(vg, x, y, row->start, row->end);
-
-			if (hit) {
-				caretx = (mx < x + row->width / 2) ? x : x + row->width;
-				px = x;
-				nglyphs = nvgTextGlyphPositions(vg, x, y, row->start, row->end, glyphs, 100);
-				for (j = 0; j < nglyphs; j++) {
-					float x0 = glyphs[j].x;
-					float x1 = (j + 1 < nglyphs) ? glyphs[j + 1].x : x + row->width;
-					float gx = x0 * 0.3f + x1 * 0.7f;
-					if (mx >= px && mx < gx)
-						caretx = glyphs[j].x;
-					px = gx;
-				}
-				nvgBeginPath(vg);
-				nvgFillColor(vg, nvgRGBA(255, 192, 0, 255));
-				nvgRect(vg, caretx, y, 1, lineh);
-				nvgFill(vg);
-
-				gutter = lnum + 1;
-				gx = x - 10;
-				gy = y + lineh / 2;
-			}
-			lnum++;
-			y += lineh;
-		}
-		// Keep going...
-		start = rows[nrows - 1].next;
-	}
-
-	if (gutter) {
-		char txt[16];
-		snprintf(txt, sizeof(txt), "%d", gutter);
-		nvgFontSize(vg, 13.0f);
-		nvgTextAlign(vg, NVG_ALIGN_RIGHT | NVG_ALIGN_MIDDLE);
-
-		nvgTextBounds(vg, gx, gy, txt, NULL, bounds);
-
-		nvgBeginPath(vg);
-		nvgFillColor(vg, nvgRGBA(255, 192, 0, 255));
-		nvgRoundedRect(vg, (int)bounds[0] - 4, (int)bounds[1] - 2, (int)(bounds[2] - bounds[0]) + 8, (int)(bounds[3] - bounds[1]) + 4, ((int)(bounds[3] - bounds[1]) + 4) / 2 - 1);
-		nvgFill(vg);
-
-		nvgFillColor(vg, nvgRGBA(32, 32, 32, 255));
-		nvgText(vg, gx, gy, txt, NULL);
-	}
-
-	y += 20.0f;
-
-	nvgFontSize(vg, 13.0f);
-	nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
-	nvgTextLineHeight(vg, 1.2f);
-
-	nvgTextBoxBounds(vg, x, y, 150, "Hover your mouse over the text to see calculated caret position.", NULL, bounds);
-
-	// Fade the tooltip out when close to it.
-	gx = fabsf((mx - (bounds[0] + bounds[2]) * 0.5f) / (bounds[0] - bounds[2]));
-	gy = fabsf((my - (bounds[1] + bounds[3]) * 0.5f) / (bounds[1] - bounds[3]));
-	a = std::max(gx, gy) - 0.5f;
-	a = glm::clamp(a, 0.0f, 1.0f);
-	nvgGlobalAlpha(vg, a);
-
-	nvgBeginPath(vg);
-	nvgFillColor(vg, nvgRGBA(220, 220, 220, 255));
-	nvgRoundedRect(vg, bounds[0] - 2, bounds[1] - 2, (int)(bounds[2] - bounds[0]) + 4, (int)(bounds[3] - bounds[1]) + 4, 3);
-	px = (int)((bounds[2] + bounds[0]) / 2);
-	nvgMoveTo(vg, px, bounds[1] - 10);
-	nvgLineTo(vg, px + 7, bounds[1] + 1);
-	nvgLineTo(vg, px - 7, bounds[1] + 1);
-	nvgFill(vg);
-
-	nvgFillColor(vg, nvgRGBA(0, 0, 0, 220));
-	nvgTextBox(vg, x, y, 150, "Hover your mouse over the text to see calculated caret position.", NULL);
-
-	nvgRestore(vg);
-}
 
 static unordered_map<uint64_t, int> s_ImageCache;
 
@@ -140,14 +25,12 @@ void decode_image_cache_id(uint64_t id, uint64_t& resid, int& index)
 	index = id >> 48;
 }
 
-
 void decode_image_cache_id(uint64_t id, uint32_t& pack, uint32_t& wasid, int& index)
 {
 	uint64_t resid;
 	decode_image_cache_id(id, resid, index);
 	res_decode_was(resid, pack, wasid);
 }
-
 
 class UINEImageView  : public UIObject
 {
@@ -170,15 +53,17 @@ UIRenderer::UIRenderer()
 {
 	vg = nvgCreateGL3(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
 	if (vg == NULL) {
-		printf("Could not init nanovg.\n");
+		cxlog_info("Could not init nanovg.\n");
 		return;
 	}
 
 	int res = 0;
-	res =nvgCreateFont(vg, "MSYH", FileSystem::GetFontPath("msyh.ttf").c_str());
-	res =nvgCreateFont(vg, "MSHT", FileSystem::GetFontPath("msht.ttf").c_str());
-	res= nvgCreateFont(vg, "SIMSUN", FileSystem::GetFontPath("simsun.ttc").c_str());
-
+	res = nvgCreateFont(vg, "MSYH", FileSystem::GetFontPath("msyh.ttf").c_str());
+	assert(res >= 0);
+	res = nvgCreateFont(vg, "MSHT", FileSystem::GetFontPath("msht.ttf").c_str());
+	assert(res >= 0);
+	res = nvgCreateFont(vg, "SIMSUN", FileSystem::GetFontPath("simsun.ttc").c_str());
+	assert(res >= 0);
 }
 
 UIRenderer::~UIRenderer()
@@ -191,22 +76,12 @@ void UIRenderer::Update()
 
 }
 
-void nano_render_text(int x, int y, int width, int size, int textcolor, int textbgcolor, const char* font, const char* text);
 void UIRenderer::Draw()
 {
-	int width = WINDOW_INSTANCE->GetWidth();
-	int height = WINDOW_INSTANCE->GetHeight();
-	Pos mpos = INPUT_MANAGER_INSTANCE->GetMousePos();
-	int mx = mpos.x;
-	int my = mpos.y;
+	float width = (float)WINDOW_INSTANCE->GetWidth();
+	float height = (float)WINDOW_INSTANCE->GetHeight();
 	
-	
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	nvgBeginFrame(vg, width, height, width* 1.0f / height);
-
-	//drawParagraph(vg, width - 450, 50, 150, 100, mx, my);
-//	nano_render_text(0, 0, 50, 24,0xffffffff,0xff00ffff,  "MSHT", u8"I need a girl!");
-	
 	//script_system_call_function(script_system_get_luastate(), "on_ui_renderer_draw");
 	for (UIObject*& obj:m_Objects){
 		if (obj&&!obj->MarkRemove) {
@@ -226,8 +101,6 @@ void UIRenderer::Draw()
 		}
 		m_Objects.swap(tmp);
 	}
-
-	//drawLines(vg, 120, height - 50, 600, 50, glfwGetTime());
 	nvgEndFrame(vg);
 }
 
@@ -249,51 +122,6 @@ void UIRenderer::Clear()
 	}
 	m_Objects.clear();
 }
-
-void nano_render_text(int x, int y, int width, int size, int textcolor, int textbgcolor, const char* font, const char* text)
-{
-#define break_color_rgba(c)  nvgRGBA((c& 0xff), (c& 0xff00) >> 8, (c& 0xff0000) >> 16, (c& 0xff000000) >> 24)
-	nvgSave(vg);
-	float lineh;
-	uint32_t color = (uint32_t)textcolor;
-	uint32_t bgcolor = (uint32_t)textbgcolor;
-
-	nvgFontSize(vg, size);
-	nvgFontFace(vg, font);
-	nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
-	nvgTextMetrics(vg, NULL, NULL, &lineh);
-
-	const char* start;
-	const char* end;
-	start = text;
-	end = text + strlen(text);
-
-	NVGtextRow rows[3];
-	int nrows, lnum = 0;
-	while ((nrows = nvgTextBreakLines(vg, start, end, width, rows, 3))) {
-		for (int i = 0; i < nrows; i++) {
-			NVGtextRow* row = &rows[i];
-
-			nvgBeginPath(vg);
-			nvgFillColor(vg, break_color_rgba(bgcolor));
-			nvgRect(vg, x, y, row->width, lineh);
-			nvgFill(vg);
-
-
-			nvgFillColor(vg, break_color_rgba(color));
-			nvgText(vg, x, y, row->start, row->end);
-
-			lnum++;
-			y += lineh;
-		}
-		start = rows[nrows - 1].next;
-	}
-
-	nvgRestore(vg);
-#undef break_color_rgba
-}
-
-
 
 NEImageView::NEImageView(uint64_t resoureID /*= 0*/, std::vector<PalSchemePart>* patMatrix /*= nullptr*/)
 {
@@ -323,8 +151,8 @@ void NEImageView::Draw()
 	nvgSave(vg);
 	float left = m_pBS->Pos.x - frame.KeyX;
 	float top = m_pBS->Pos.y - frame.KeyY;
-	float w = m_pBS->Width;
-	float h = m_pBS->Height;
+	float w = (float)m_pBS->Width;
+	float h = (float)m_pBS->Height;
 	float rot = 0.0f / 180.0f * NVG_PI;
 	float pad = 10;
 
@@ -343,7 +171,7 @@ void NEImageView::Draw()
 
 UITextView::UITextView()
 	:Text(""),
-	Font("SIMSUN"),
+	Font("MSYH"),
 	Size(14.f),
 	X(0),
 	Y(0),
@@ -362,7 +190,7 @@ void UITextView::Draw()
 	float lineh;
 	
 	nvgFontSize(vg, Size);
-	nvgFontFace(vg, Font.c_str());
+	nvgFontFace(vg, Font.c_str()); 
 	nvgTextAlign(vg, Align);
 	nvgTextMetrics(vg, NULL, NULL, &lineh);
 
@@ -370,7 +198,8 @@ void UITextView::Draw()
 	const char* end;
 	start = Text.data();
 	end = Text.data() + Text.size();
-
+	float y = Y;
+	float x = X;
 	if(Width!=0){
 		NVGtextRow rows[3];
 		int nrows, lnum = 0;
@@ -380,20 +209,26 @@ void UITextView::Draw()
 
 				nvgBeginPath(vg);
 				nvgFillColor(vg, BGColor);
-				nvgRect(vg, X, Y, Width, lineh);
+				nvgRect(vg, x, y, Width, lineh);
 				nvgFill(vg);
 
 
 				nvgFillColor(vg, Color);
-				nvgText(vg, X, Y, row->start, row->end);
+				nvgText(vg, x, y, row->start, row->end);
+
+				nvgFillColor(vg, Color);
+				nvgText(vg, x, y, row->start, row->end);
 
 				lnum++;
-				Y += lineh;
+				y += lineh + 2;
 			}
 			start = rows[nrows - 1].next;
 		}
 
 	}else{
+		nvgFillColor(vg, Color);
+		nvgText(vg, X, Y, Text.c_str(), NULL);
+
 		nvgFillColor(vg, Color);
 		nvgText(vg, X, Y, Text.c_str(), NULL);
 	}
@@ -459,9 +294,7 @@ int ui_textview_set_color(lua_State* L)
 #define break_color_rgba(c)  nvgRGBA((c>>24)& 0xff,(c& 0xff0000) >> 16,  (c& 0xff00) >> 8, (c& 0xff))
 	UITextView* tv = lua_check_pointer<UITextView>(L, 1);
 	uint32_t color = (uint32_t)lua_tointeger(L, 2);
-	//tv->Color = break_color_rgba(color);
-
-	tv->Color = nvgRGBA(255,255,255,255);
+	tv->Color = break_color_rgba(color);
 #undef break_color_rgba
 	return 0;
 }
@@ -471,8 +304,7 @@ int ui_textview_set_bg_color(lua_State* L)
 #define break_color_rgba(c)  nvgRGBA((c>>24)& 0xff,(c& 0xff0000) >> 16,  (c& 0xff00) >> 8, (c& 0xff))
 	UITextView* tv = lua_check_pointer<UITextView>(L, 1);
 	uint32_t color = (uint32_t)lua_tointeger(L, 2);
-	//tv->BGColor = break_color_rgba(color);
-	tv->BGColor = nvgRGBA(255, 255, 255, 255);
+	tv->BGColor = break_color_rgba(color);
 #undef break_color_rgba
 	return 0;
 }
@@ -485,7 +317,15 @@ int ui_textview_set_text_size(lua_State* L)
 	return 0;
 }
 
+int ui_textview_set_width(lua_State*L){
+	UITextView* tv = lua_check_pointer<UITextView>(L, 1);
+	float width = (float)lua_tonumber(L, 2);
+	tv->Width = width;
+	return 0;
+}
+
 luaL_Reg MT_UI_TEXTVIEW[] = {
+	{ "SetWidth", ui_textview_set_width},
 	{ "SetText",ui_textview_set_text},
 	{ "SetPos",ui_textview_set_pos},
 	{ "SetColor",ui_textview_set_color},
@@ -513,8 +353,6 @@ void luaopen_ui_renderer(lua_State* L)
 {
 	script_system_register_luac_function(L, ne_imageview_create);
 	script_system_register_luac_function(L, ui_textview_create);
-	
-	script_system_register_function(L, nano_render_text);
 	script_system_register_luac_function(L, ui_renderer_add_to_draw);
 	script_system_register_function(L, ui_renderer_clear);
 }

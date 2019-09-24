@@ -50,12 +50,14 @@ Actor::Actor(uint64_t pid)
 	PathMoveAction* action = new PathMoveAction(this);
 	m_ASM->ChangeAction(action);
 	m_NameTV = new UITextView();
+	m_NameTV->Font = "SIMSUN";
 	m_NameTV->Size = 16.f;
 	m_NameTV->Align = NVG_ALIGN_CENTER;
 	m_NameTV->Color = nvgRGBA(118, 253, 140, 255);
 	UIRenderer::GetInstance()->AddToDraw(m_NameTV);
 
 	m_SayTV = new UITextView();
+	m_SayTV->Font = "SIMSUN";
 	m_SayTV->Size = 14.f;
 	m_SayTV->Align = NVG_ALIGN_LEFT | NVG_ALIGN_TOP;
 	m_SayTV->Color = nvgRGBA(255, 255, 255, 255); // text color

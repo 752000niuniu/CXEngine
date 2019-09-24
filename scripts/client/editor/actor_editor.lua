@@ -183,6 +183,12 @@ local LocalPlayerDebugButtons = {
             player:PlayAttack()
         end
     },
+    {
+        name = '战斗', 
+        on_click = function()
+            combat_system_switch_battle(true)
+        end
+    }
 }
      
 function on_actor_editor_update()    

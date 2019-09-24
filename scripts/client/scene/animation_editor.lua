@@ -22,23 +22,16 @@ function OnSceneInit()
     scene_set_map(1506)
     magic_tsv = content_system_get_table('magic')
     
-    -- MagicAnim = animation_create(WZIFEWDF,0xA393A808)
-    MagicAnim = animation_create(6,0x29D819DF)
-    -- MagicAnim:EnableDrag(true)
-    -- MagicAnim:SetLoop(0)
-    -- MagicAnim:SetFrameInterval(0.016*8)
-    MagicAnim:SetVisible(false)
-
     local ostime = os.time()
-    -- enemy =  actor_manager_create_actor(ostime)
-    -- enemy:SetProperties({
-    --     [PROP_AVATAR_ID] = 'JMW-AXE',
-    --     [PROP_WEAPON_AVATAR_ID] = 'JMW-AXE-060-X',
-    --     [PROP_NAME] ='巨魔王',
-    --     [PROP_POS] = {206 ,190}
-    -- })
-    -- -- enemy:ChangePalMatrix(get_pal_from_json('{"1":{"to":40,"mat":[105,273,0,512,0,359,459,412,464],"from":0},"2":{"to":60,"mat":[86,96,134,244,301,144,273,14,330],"from":40},"3":{"to":120,"mat":[24,234,340,325,421,483,345,340,330],"from":60},"4":{"to":256,"mat":[255,0,0,0,255,0,0,0,255],"from":120},"segments":[0,40,60,120,256]}'))
-    -- enemy:SetActionID(ACTION_BATIDLE)
+    enemy =  actor_manager_create_actor(ostime)
+    enemy:SetProperties({
+        [PROP_AVATAR_ID] = 'JMW-AXE',
+        [PROP_WEAPON_AVATAR_ID] = 'JMW-AXE-060-X',
+        [PROP_NAME] ='巨魔王',
+        [PROP_POS] = {206 ,190}
+    })
+    -- enemy:ChangePalMatrix(get_pal_from_json('{"1":{"to":40,"mat":[105,273,0,512,0,359,459,412,464],"from":0},"2":{"to":60,"mat":[86,96,134,244,301,144,273,14,330],"from":40},"3":{"to":120,"mat":[24,234,340,325,421,483,345,340,330],"from":60},"4":{"to":256,"mat":[255,0,0,0,255,0,0,0,255],"from":120},"segments":[0,40,60,120,256]}'))
+    enemy:SetActionID(ACTION_BATIDLE)
 
     ostime = ostime + 1
     enemyBB  = actor_manager_create_actor(ostime)
@@ -53,16 +46,16 @@ function OnSceneInit()
     enemyBB:SetActionID(ACTION_BATIDLE)
     
     ostime = ostime + 1
-    -- playerBB  = actor_manager_create_actor(ostime)
-    -- playerBB:SetProperties({
-    --     [PROP_ACTOR_TYPE] = ACTOR_TYPE_PET,
-    --     [PROP_AVATAR_ID] = '鬼将',
-    --     [PROP_WEAPON_AVATAR_ID] = '',
-    --     [PROP_NAME] ='鬼将',
-    --     [PROP_POS] = {563,376}
-    -- })
-    -- -- playerBB:ChangePalMatrix(get_pal_from_json('{"1":{"to":256,"mat":[115,115,110,163,256,239,196,91,292],"from":0},"segments":[0,256]}'))
-    -- playerBB:SetActionID(ACTION_BATIDLE)
+    playerBB  = actor_manager_create_actor(ostime)
+    playerBB:SetProperties({
+        [PROP_ACTOR_TYPE] = ACTOR_TYPE_PET,
+        [PROP_AVATAR_ID] = '鬼将',
+        [PROP_WEAPON_AVATAR_ID] = '',
+        [PROP_NAME] ='鬼将',
+        [PROP_POS] = {563,376}
+    })
+    -- playerBB:ChangePalMatrix(get_pal_from_json('{"1":{"to":256,"mat":[115,115,110,163,256,239,196,91,292],"from":0},"segments":[0,256]}'))
+    playerBB:SetActionID(ACTION_BATIDLE)
 
     ostime = ostime + 1
     player = actor_manager_create_actor(ostime)
@@ -107,81 +100,24 @@ local bb_menu_show = true
 local magic_menu_show = false
 
 function OnSceneImGuiUpdate()
-
-    imgui.Begin('Menu',menu_show)
-
-    if imgui.Button('法术##player') then
-
-    end
-
-    if imgui.Button('特技##player') then
-
-    end
-
-    if imgui.Button('道具##player') then
-
-    end
-
-    if imgui.Button('防御##player') then
-
-    end
-
-    if imgui.Button('召唤##player') then
-
-    end
-
-    if imgui.Button('召还##player') then
-
-    end
-
-    if imgui.Button('捕捉##player') then
-
-    end
-
-    if imgui.Button('逃跑##player') then
-
-    end
-
-    imgui.End()
-
-    imgui.Begin('BBMenu',bb_menu_show)
-    if imgui.Button('法术##bb') then
-
-    end
-
-    if imgui.Button('道具##bb') then
-
-    end
-
-    if imgui.Button('防御##bb') then
-
-    end
-
-    if imgui.Button('逃跑##bb') then
-
-    end
-    imgui.End()
-
-    if  imgui.KeysMod('ALT') and imgui.IsKeyReleased(string.byte('A'))  then
-        local player = actor_manager_fetch_local_player()
-        player:GetTarget():SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF,0x1D3FF13C ))
-        player:PlayAttack()
-    end
+ 
 end
 
 function check_dest_hit_actor(dest_x, dest_y)
-    local hit_actor = false
+    local hit_actor = nil
     local actors = actor_manager_fetch_all_players()
     for i,actor in ipairs(actors) do
-        local avatar = actor:GetAvatar()
-        local avx, avy = actor:GetProperty(PROP_POS)
-        local cx =  avx - avatar:GetFrameKeyX()
-        local cy =  avy - avatar:GetFrameKeyY()
-        local brx = avatar:GetFrameWidth()
-        local bry =  avatar:GetFrameHeight()
-        if dest_x >= cx and dest_x <= cx+brx and dest_y >= cy and dest_y <=cy+bry then
-            hit_actor = true
-            break
+        if not actor:IsLocal() then
+            local avatar = actor:GetAvatar()
+            local avx, avy = actor:GetProperty(PROP_POS)
+            local cx =  avx - avatar:GetFrameKeyX()
+            local cy =  avy - avatar:GetFrameKeyY()
+            local brx = avatar:GetFrameWidth()
+            local bry =  avatar:GetFrameHeight()
+            if dest_x >= cx and dest_x <= cx+brx and dest_y >= cy and dest_y <=cy+bry  then
+                hit_actor = actor
+                break
+            end
         end
         -- cxlog_info(mx, my, cx,cy ,brx,bry) 
     end
@@ -203,20 +139,19 @@ function OnSceneUpdate()
                 msg.x = dest_x
                 msg.y = dest_y
                 net_send_message(PTO_C2C_MOVE_TO_POS, cjson.encode(msg))
+            else
+                hit_actor:Say('hello ')
             end
         end
     end
-    -- MagicAnim:Update()
 end
 
 function OnSceneDraw()
     if scene_is_combat() then
+
     else    
+
     end
-    
-
-
-    -- MagicAnim:Draw()
 end
 
 

@@ -12,7 +12,7 @@ local scene_lua_files =
 }
 
 local scene_list = {}
-local current_scene_name = 'Splash'
+local current_scene_name = 'AnimationEditor'
 function on_scene_manager_init()
     local parsed_tsv = utils_parse_tsv_file_as_table(fs_get_tsv_path('map'),false)
     for i,row in ipairs(parsed_tsv) do
@@ -121,6 +121,9 @@ function on_game_imgui_update(name)
     if scene_list[name] then
         if scene_list[name].OnSceneImGuiUpdate then
             scene_list[name].OnSceneImGuiUpdate()
+        end
+        if scene_is_combat() then
+            combat_system_imgui_update()
         end
     end
 

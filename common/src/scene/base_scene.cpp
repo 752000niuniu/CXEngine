@@ -11,7 +11,8 @@ BaseScene::BaseScene(int id, String name)
 m_SceneID(id),
 m_Map(nullptr),
 m_Loaded(false),
-m_IsCombat(false)
+m_IsCombat(false),
+m_MapID(0)
 {
 	
 }
@@ -73,14 +74,20 @@ void BaseScene::Load()
 {
 	if (m_Loaded)return;
 
-	if (m_MapID > 0)
-	{
-		m_Map = new GameMap(m_MapID);
+	if (m_SceneID > 0) {
+		m_Map = new GameMap(m_SceneID);
 	}
-	else
-	{
-		m_Map = nullptr;
+	else {
+		if (m_MapID > 0)
+		{
+			m_Map = new GameMap(m_MapID);
+		}
+		else
+		{
+			m_Map = nullptr;
+		}
 	}
+	
 	OnLoad();
 
 	m_Loaded = true;
