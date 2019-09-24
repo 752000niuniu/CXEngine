@@ -455,6 +455,18 @@ int actor_say(lua_State* L) {
 	return 0;
 }
 
+int actor_show_dialog(lua_State*L){
+#ifndef SIMPLE_SERVER
+	Actor* actor = lua_check_actor(L, 1);
+	bool show = (bool)lua_toboolean(L, 2);
+	const char* msg = luaL_optstring(L, 3,"");
+	auto* dlg = UIRenderer::GetInstance()->GetDialog();
+	dlg->SetText(msg);
+	dlg->SetVisible(show);
+#endif
+	return 0;
+}
+
 
 int actor_get_width(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
@@ -623,6 +635,7 @@ luaL_Reg mt_actor[] = {
 { "TranslateY", actor_translate_y },
 { "MoveTo", actor_move_to },
 { "Say", actor_say },
+{ "ShowDialog", actor_show_dialog},
 { "ClearFrames", actor_clear_frames },
 { "SetTarget", actor_set_target},
 { "GetTarget", actor_get_target},

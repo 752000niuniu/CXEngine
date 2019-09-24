@@ -100,7 +100,13 @@ local bb_menu_show = true
 local magic_menu_show = false
 
 function OnSceneImGuiUpdate()
- 
+    if imgui.Button('Addy') then
+        npc_dialog_set_xy(0,-100)
+    end
+
+    if imgui.Button('Close') then
+        npc_dialog_show(false,'')
+    end
 end
 
 function check_dest_hit_actor(dest_x, dest_y)
@@ -140,7 +146,7 @@ function OnSceneUpdate()
                 msg.y = dest_y
                 net_send_message(PTO_C2C_MOVE_TO_POS, cjson.encode(msg))
             else
-                hit_actor:Say('神州上下祸劫频生，灵石是否重补苍天裂痕，蚩尤的阴谋能否被挫败，三界将继续下去还是回归混沌，将由玩家英雄亲手创造。')
+                hit_actor:ShowDialog(true,'神州上下祸劫频生，灵石是否重补苍天裂痕，蚩尤的阴谋能否被挫败，三界将继续下去还是回归混沌，将由玩家英雄亲手创造。神州上下祸劫频生，灵石是否重补苍天裂痕，蚩尤的阴谋能否被挫败，三界将继续下去还是回归混沌，将由玩家英雄亲手创造。神州上下祸劫频生，灵石是否重补苍天裂痕，蚩尤的阴谋能否被挫败，三界将继续下去还是回归混沌，将由玩家英雄亲手创造。神州上下祸劫频生，灵石是否重补苍天裂痕，蚩尤的阴谋能否被挫败，三界将继续下去还是回归混沌，将由玩家英雄亲手创造。')
             end
         end
     end

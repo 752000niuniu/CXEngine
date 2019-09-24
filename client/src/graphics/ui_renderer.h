@@ -45,7 +45,7 @@ public:
 	float Width;
 	int Align;
 };
-
+class NPCDialog;
 
 class UIRenderer : public Singleton<UIRenderer>
 {
@@ -60,11 +60,31 @@ public:
 	void RemoveToDraw(UIObject* obj);
 	void Clear();
 	NVGcontext* GetContext();
-private:
-	vector<UIObject*> m_Objects;
-public:
 	void Begin();
 	void End();
+	NPCDialog* GetDialog() { return m_Dialog; }
+private:
+	NPCDialog* m_Dialog;
+	vector<UIObject*> m_Objects;
+};
+
+class NPCDialog :public UIObject
+{
+public:
+	NPCDialog();
+	~NPCDialog();
+	void Draw() override;
+	void SetText(const char* txt);
+	void SetVisible(bool visible) { m_Visible = visible; };
+	bool GetVisible() { return m_Visible; };
+	float X;
+	float Y;
+private:
+	
+	bool m_Visible;
+	NEImageView* m_FaceImg;
+	NEImageView* m_TvBG;
+	UITextView* m_Tv;
 };
 
 void luaopen_ui_renderer(lua_State* L);

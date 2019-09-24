@@ -64,10 +64,12 @@ UIRenderer::UIRenderer()
 	assert(res >= 0);
 	res = nvgCreateFont(vg, "SIMSUN", FileSystem::GetFontPath("simsun.ttc").c_str());
 	assert(res >= 0);
+	m_Dialog = new NPCDialog();
 }
 
 UIRenderer::~UIRenderer()
 {
+	SafeDelete(m_Dialog);
 	nvgDeleteGL3(vg);
 }
 
@@ -98,6 +100,7 @@ void UIRenderer::Draw()
 		}
 		m_Objects.swap(tmp);
 	}
+	m_Dialog->Draw();
 	
 }
 
@@ -252,18 +255,66 @@ void UITextView::Draw()
 			}
 			start = rows[nrows - 1].next;
 		}
-
-	}else{
+	}
+	else {
 		nvgFillColor(vg, Color);
 		nvgText(vg, X, Y, Text.c_str(), NULL);
 
 		nvgFillColor(vg, Color);
 		nvgText(vg, X, Y, Text.c_str(), NULL);
 	}
-	
 	nvgRestore(vg);
 }
 
+NPCDialog::NPCDialog()
+{
+	m_Visible = false;
+	X = Y = 0;
+	
+	m_TvBG = new NEImageView(WZIFEWDF, 0x73D983B7);
+	m_FaceImg = new NEImageView(WZIFEWDF, 0x7F84C945);
+	m_Tv = new UITextView();
+	
+	m_Tv->Color = nvgRGB(255, 255, 255);
+	m_Tv->Size = 17.f;
+	m_Tv->Width = m_TvBG->GetBaseSprite()->Width - 32.f;
+
+}
+
+NPCDialog::~NPCDialog()
+{
+	SafeDelete(m_TvBG);
+	SafeDelete(m_Tv);
+	SafeDelete(m_FaceImg);
+}
+
+void NPCDialog::Draw()
+{
+	if (m_Visible) {
+		float w = (float)WINDOW_INSTANCE->GetWidth();
+		float h = (float)WINDOW_INSTANCE->GetHeight();
+
+		auto* tvBGsp = m_TvBG->GetBaseSprite();
+		tvBGsp->Pos.x = X + (w - tvBGsp->Width) / 2;
+		tvBGsp->Pos.y = Y + 290;
+
+		auto* facesp = m_FaceImg->GetBaseSprite();
+		facesp->Pos.x = tvBGsp->Pos.x;
+		facesp->Pos.y = tvBGsp->Pos.y - facesp->Height;
+
+		m_Tv->X = tvBGsp->Pos.x + 16;
+		m_Tv->Y = tvBGsp->Pos.y + 24;
+
+		m_FaceImg->Draw();
+		m_TvBG->Draw();
+		m_Tv->Draw();
+	}
+}
+
+void NPCDialog::SetText(const char* txt)
+{
+	m_Tv->Text = txt;
+}
 
 int ui_renderer_add_to_draw(lua_State*L){
 	NEImageView* ptr = lua_check_pointer<NEImageView>(L, 1);
@@ -277,7 +328,9 @@ int ne_imageview_get_base_sprite(lua_State*L){
 	lua_push_base_sprite(L, bs);
 	return 1;
 }
-luaL_Reg MT_NE_IMAGEVIEW[] = {
+
+luaL_Reg MT_NE_IMAGEVIEW[] =
+{
 	{ "GetBaseSprite",ne_imageview_get_base_sprite},
 	{NULL,NULL}
 };
@@ -377,10 +430,24 @@ void ui_renderer_clear(){
 	UIRenderer::GetInstance()->Clear();
 }
 
+void npc_dialog_show(bool show,const char* txt){
+	auto* dlg = UIRenderer::GetInstance()->GetDialog();
+	dlg->SetText(txt);
+	dlg->SetVisible(show);
+}
+
+void npc_dialog_set_xy(int x, int y) {
+	auto* dlg = UIRenderer::GetInstance()->GetDialog();
+	dlg->X = (float)x;
+	dlg->Y = (float)y;
+}
+
 void luaopen_ui_renderer(lua_State* L)
 {
 	script_system_register_luac_function(L, ne_imageview_create);
 	script_system_register_luac_function(L, ui_textview_create);
 	script_system_register_luac_function(L, ui_renderer_add_to_draw);
 	script_system_register_function(L, ui_renderer_clear);
+	script_system_register_function(L, npc_dialog_show);
+	script_system_register_function(L, npc_dialog_set_xy);
 }
