@@ -41,15 +41,16 @@ function combat_system_init()
 end
 
 function combat_system_update()
-	
+	actor_manager_update()
 end
 
 function combat_system_draw()
 	BattleBG:Draw()
+	actor_manager_draw()
 end
 
 function combat_system_on_start()
-	
+	ui_renderer_clear()
 end
 
 function combat_system_on_end()

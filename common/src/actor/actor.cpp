@@ -52,7 +52,7 @@ Actor::Actor(uint64_t pid)
 	m_NameTV->Size = 16.f;
 	m_NameTV->Align = NVG_ALIGN_CENTER;
 	m_NameTV->Color = nvgRGBA(118, 253, 140, 255);
-	UIRenderer::GetInstance()->AddToDraw(m_NameTV);
+	//UIRenderer::GetInstance()->AddToDraw(m_NameTV);
 
 	m_SayTV = new UITextView();
 	m_SayTV->Font = "SIMSUN";
@@ -61,7 +61,7 @@ Actor::Actor(uint64_t pid)
 	m_SayTV->Color = nvgRGBA(255, 255, 255, 255); // text color
 	m_SayTV->BGColor = nvgRGBA(30, 30, 30, 128);
 	m_SayTV->Width = 100;
-	UIRenderer::GetInstance()->AddToDraw(m_SayTV);
+	//UIRenderer::GetInstance()->AddToDraw(m_SayTV);
 #endif
 }
 
@@ -73,8 +73,8 @@ Actor::~Actor()
 	INPUT_MANAGER_INSTANCE->UnRegisterView(this);
 	SafeDelete(m_ASM);
 	SafeDelete(m_SayWidget);
-	UIRenderer::GetInstance()->RemoveToDraw(m_NameTV);
-	UIRenderer::GetInstance()->RemoveToDraw(m_SayTV);
+	//UIRenderer::GetInstance()->RemoveToDraw(m_NameTV);
+	//UIRenderer::GetInstance()->RemoveToDraw(m_SayTV);
 #endif
 }
 
@@ -107,6 +107,7 @@ void Actor::OnDraw()
 		if (avatar) {
 			m_NameTV->X = avatar->Pos.x;
 			m_NameTV->Y = avatar->Pos.y + 36;
+			m_NameTV->Draw();
 		}
 	}
 
@@ -115,10 +116,11 @@ void Actor::OnDraw()
 		int past = (int)WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
 		m_SayDuration -= past;
 		auto* avatar = m_ASM->GetAvatar();
-		if(avatar){
+		if (avatar) {
 			m_SayTV->X = avatar->Pos.x - avatar->KeyX + avatar->Width / 2;
 			m_SayTV->Y = avatar->Pos.y - avatar->KeyY;
 			m_SayTV->Text = m_SayText;
+			m_SayTV->Draw();
 		}
 	}
 #endif

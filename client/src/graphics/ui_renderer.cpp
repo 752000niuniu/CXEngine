@@ -78,10 +78,7 @@ void UIRenderer::Update()
 
 void UIRenderer::Draw()
 {
-	float width = (float)WINDOW_INSTANCE->GetWidth();
-	float height = (float)WINDOW_INSTANCE->GetHeight();
 	
-	nvgBeginFrame(vg, width, height, width* 1.0f / height);
 	//script_system_call_function(script_system_get_luastate(), "on_ui_renderer_draw");
 	for (UIObject*& obj:m_Objects){
 		if (obj&&!obj->MarkRemove) {
@@ -101,7 +98,7 @@ void UIRenderer::Draw()
 		}
 		m_Objects.swap(tmp);
 	}
-	nvgEndFrame(vg);
+	
 }
 
 void UIRenderer::AddToDraw(UIObject* obj)
@@ -123,6 +120,20 @@ void UIRenderer::Clear()
 	m_Objects.clear();
 }
 
+NVGcontext* UIRenderer::GetContext()
+{
+	return vg;
+}
+void UIRenderer::Begin()
+{
+	float width = (float)WINDOW_INSTANCE->GetWidth();
+	float height = (float)WINDOW_INSTANCE->GetHeight();
+	nvgBeginFrame(vg, width, height, width* 1.0f / height);
+}
+void UIRenderer::End()
+{
+	nvgEndFrame(vg);
+}
 NEImageView::NEImageView(uint64_t resoureID /*= 0*/, std::vector<PalSchemePart>* patMatrix /*= nullptr*/)
 {
 	m_pBS = new BaseSprite(resoureID, patMatrix);

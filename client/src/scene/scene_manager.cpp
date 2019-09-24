@@ -238,11 +238,14 @@ void SceneManager::Draw()
 	glViewport(0, 0, gameWidth, gameHeight);
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	UIRenderer::GetInstance()->Begin();
 	if (m_pCurrentScene) {
 		m_pCurrentScene->Draw();
 		script_system_call_function(script_system_get_luastate(), "on_scene_manager_draw", m_pCurrentScene->GetName());
 	}
 	UIRenderer::GetInstance()->Draw();
+
+	UIRenderer::GetInstance()->End();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	ImGui::Begin("Game");

@@ -59,8 +59,12 @@ public:
 	void AddToDraw(UIObject* obj);
 	void RemoveToDraw(UIObject* obj);
 	void Clear();
+	NVGcontext* GetContext();
 private:
 	vector<UIObject*> m_Objects;
+public:
+	void Begin();
+	void End();
 };
 
 void luaopen_ui_renderer(lua_State* L);
