@@ -10,7 +10,7 @@ public:
 	friend InputManager;
 
 	virtual bool OnClick(int button, int x, int y) { return false; };
-	virtual Bound GetViewBounds() { return Bound({ X,Y,X + Width,Y + Height }); }
+	virtual Bound GetViewBounds() { return Bound({ X,X + Width,Y,Y + Height }); }
 	virtual int GetViewLayer()const { return Layer; };
 
 	virtual bool CheckDrag(int dx, int dy) {

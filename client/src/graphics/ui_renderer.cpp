@@ -198,6 +198,7 @@ UITextView::UITextView()
 void UITextView::Draw()
 {
 	if (Text.size() == 0)return;
+	if (!Visible)return;
 	nvgSave(vg);
 	
 	nvgFontSize(vg, Size);
@@ -340,10 +341,21 @@ void NPCDialog::SetText(const char* txt)
 
 bool NPCDialog::OnClick(int button, int x, int y)
 {
-	if (Visible) {
-		Visible = false;
+	if (m_ShowMode == SHOW_OPTIONS) {
+		for (int i = 0; i < m_OptionTvs.size(); i++) {
+			Pos ps((float)x, (float)y);
+			auto& bd = m_OptionTvs[i]->GetViewBounds();
+			if (utils::BoundHitTest(bd, ps)) {
+				m_OptionTvs[i]->Visible = false;
+			}
+		}
+		return true;
+	}else{
+		if (Visible) {
+			Visible = false;
+		}
+		return true;
 	}
-	return true;
 }
 
 void NPCDialog::SetOptions(vector<string> options)
