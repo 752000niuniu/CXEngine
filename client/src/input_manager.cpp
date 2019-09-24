@@ -59,7 +59,7 @@ void InputManager::MouseButtonCallback(GLFWwindow* window, int button, int actio
 
 		for (auto* it : m_RegisterViews)
 		{
-			if (it)
+			if (it && it->Visible)
 			{
 				Bound bound = it->GetViewBounds();
 
@@ -77,7 +77,7 @@ void InputManager::MouseButtonCallback(GLFWwindow* window, int button, int actio
 	{
 		for (auto* it : m_RegisterViews)
 		{
-			if (it)
+			if (it && it->Visible)
 			{
 				Bound bound = it->GetViewBounds();
 				Pos pos = GetMousePos();
@@ -92,15 +92,18 @@ void InputManager::MouseButtonCallback(GLFWwindow* window, int button, int actio
 				else if (it->IsPressed())
 				{
 					it->SetPressed(false, -1);
+					bool should_break = false;
 					if (utils::BoundHitTest(bound, pos))
 					{
-						it->OnClick(button, (int)pos.x, (int)pos.y);
-
-						m_Keys[button] = false;
-						return;
+						bool consume = it->OnClick(button, (int)pos.x, (int)pos.y);
+						if (consume) {
+							m_Keys[button] = false;
+							should_break = true;
+						}
 					}
-
-					break;
+					if (should_break) {
+						break;
+					}
 				}
 			}
 		}
@@ -108,7 +111,7 @@ void InputManager::MouseButtonCallback(GLFWwindow* window, int button, int actio
 		{
 			for (auto* it : m_RegisterViews)
 			{
-				if (it)
+				if (it && it->Visible)
 				{
 					IntPos pos = GetMouseIntPos();
 					it->OnGlobleClick(pos.x, pos.y);
@@ -148,7 +151,7 @@ void InputManager::KeyCallbackFunc(GLFWwindow* window, int key, int scancode, in
 		m_Keys[key] = true;
 		for (auto* it : m_RegisterViews)
 		{
-			if (it)
+			if (it && it->Visible)
 			{
 				it->OnKeyDownEvent(key);
 			}
@@ -158,7 +161,7 @@ void InputManager::KeyCallbackFunc(GLFWwindow* window, int key, int scancode, in
 	{
 		for (auto* it : m_RegisterViews)
 		{
-			if (it)
+			if (it && it->Visible)
 			{
 				it->OnKeyRepeatEvent(key);
 			}
@@ -178,7 +181,7 @@ void InputManager::KeyCallbackFunc(GLFWwindow* window, int key, int scancode, in
 
 		for (auto* it : m_RegisterViews)
 		{
-			if (it)
+			if (it && it->Visible)
 			{
 				it->OnKeyUpEvent(key);
 			}
@@ -239,7 +242,7 @@ void InputManager::MouseCallbackFunc(GLFWwindow* window, float xpos, float ypos)
 	int iypos = static_cast<int>(ypos);
 	for (auto* it : m_RegisterViews)
 	{
-		if (it)
+		if (it && it->Visible)
 		{
 			if (it->IsPressed() && it->GetPressedButton() == GLFW_MOUSE_BUTTON_LEFT)
 			{
@@ -286,7 +289,7 @@ void InputManager::CharacterInputCallback(GLFWwindow* window, unsigned int charc
 {
 	for (auto* it : m_RegisterViews)
 	{
-		if (it)
+		if (it && it->Visible)
 		{
 			if (it == m_FocusView)
 			{

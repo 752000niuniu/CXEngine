@@ -31,10 +31,10 @@ void ImageView::OnUpdate()
 	{
 		auto& frame = backgroud->Frames[0];
 		Background = new Texture(frame.Width, frame.Height, true, (uint8*)frame.Src.data());
-		Width = frame.Width;
-		Height = frame.Height;
-		X = (int) WINDOW_INSTANCE->GetCenterX() - Width / 2;
-		Y = (int)WINDOW_INSTANCE->GetCenterY() - Height/ 2;;
+		Width = (float)frame.Width;
+		Height = (float)frame.Height;
+		X = (float)(WINDOW_INSTANCE->GetCenterX() - frame.Width / 2);
+		Y = (float)(WINDOW_INSTANCE->GetCenterY() - frame.Height / 2);
 	}
 }
 
@@ -48,31 +48,11 @@ void ImageView::OnDraw()
 			{ Width,Height });
 }
 
-void ImageView::OnClick(int button, int x, int y)
+bool ImageView::OnClick(int button, int x, int y)
 {
 	dynamic_cast<Scene*>(SCENE_MANAGER_INSTANCE->GetCurrentScene())->
 		OnSmapClick(m_HoverX, m_HoverY, (float)Width - 18.f * 2,( float)Height - 15.f * 2);
-}
-
-Bound ImageView::GetViewBounds()
-{
-	return { (float)X,(float)X + (float)Width,(float)Y,(float)Y + (float)Height };
-}
-
-int ImageView::GetViewLayer() const
-{
-	return 1;
-}
-
-bool ImageView::CheckDrag(int dx, int dy)
-{
-	return pow(dx, 2) + pow(dy, 2) >= 16;
-}
-
-void ImageView::OnDragMove(int dx, int dy)
-{
-	X += dx;
-	Y += dy;
+	return true;
 }
 
 

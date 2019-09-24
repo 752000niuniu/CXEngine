@@ -64,9 +64,10 @@ struct UIButton : public View
 		INPUT_MANAGER_INSTANCE->UnRegisterView(this);
 	}
 
-	void OnClick(int button, int x, int y)
+	bool OnClick(int button, int x, int y)
 	{
 		std::cout << "clicked" << std::endl;
+		return true;
 	}; 
 
 	Bound GetViewBounds() const
@@ -232,7 +233,7 @@ public:
 	void DoCollision(const Bubble& bubble);
 
 
-	void OnClick(int button, int x, int y) override;
+	bool OnClick(int button, int x, int y) override;
 	Bound GetViewBounds()  override;
 	int GetViewLayer() const override;
 	void OnKeyUpEvent(int keyCode) override;
@@ -354,9 +355,10 @@ void Bubble::DoCollision(const Bubble& bubble)
 
 }
 
-void Bubble::OnClick(int button, int x, int y)
+bool Bubble::OnClick(int button, int x, int y)
 {
 	Visible = false;
+	return true;
 }
 
 Bound Bubble::GetViewBounds()

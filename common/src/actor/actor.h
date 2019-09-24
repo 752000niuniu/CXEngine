@@ -93,7 +93,7 @@ public:
 	bool CheckDrag(int x, int y) override;
 	void OnDragMove(int x, int y)override;
 	void OnHover(float x, float y) override;
-	void OnClick(int button, int x, int y) override;
+	bool OnClick(int button, int x, int y) override;
 	void Say(std::string Text);
 #endif
 	

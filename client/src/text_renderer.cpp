@@ -571,9 +571,10 @@ void TextView::OnCharacterInput(uint32_t charcode)
 	TextCache.push_back(charcode);
 }
 
-void TextView::OnClick(int button, int x, int y)
+bool TextView::OnClick(int button, int x, int y)
 {
 	INPUT_MANAGER_INSTANCE->RequestFocus(this);
+	return true;
 };
 
 Bound TextView::GetViewBounds()

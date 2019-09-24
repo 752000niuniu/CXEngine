@@ -22,8 +22,7 @@ function OnSceneInit()
 
     bs = DialogNPC:GetBaseSprite()
     bs:EnableDrag(true)
-
-
+    
     local tv = ui_textview_create()
     tv:SetText('神州上下祸劫频生，灵石是否重补苍天裂痕，蚩尤的阴谋能否被挫败，三界将继续下去还是回归混沌，将由玩家英雄亲手创造。')
     tv:SetPos(300,400)

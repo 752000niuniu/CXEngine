@@ -13,7 +13,6 @@ struct MousePos
 };
 
 
-
 struct ViewCompare
 {
 	bool operator()(View* lhs, View* rhs)  const

@@ -8,6 +8,7 @@
 #include "script_system.h"
 #include "animation/sprite.h"
 #include "logger.h"
+#include "cxmath.h"
 
 
 static unordered_map<uint64_t, int> s_ImageCache;
@@ -187,8 +188,6 @@ UITextView::UITextView()
 	:Text(""),
 	Font("MSYH"),
 	Size(14.f),
-	X(0),
-	Y(0),
 	Color(nvgRGBA(255, 255, 255, 255)),
 	BGColor(nvgRGBA(0, 0, 0, 0)),
 	Width(0),
@@ -268,7 +267,7 @@ void UITextView::Draw()
 
 NPCDialog::NPCDialog()
 {
-	m_Visible = false;
+	Visible = false;
 	X = Y = 0;
 	
 	m_TvBG = new NEImageView(WZIFEWDF, 0x73D983B7);
@@ -278,11 +277,12 @@ NPCDialog::NPCDialog()
 	m_Tv->Color = nvgRGB(255, 255, 255);
 	m_Tv->Size = 17.f;
 	m_Tv->Width = m_TvBG->GetBaseSprite()->Width - 32.f;
-
+	INPUT_MANAGER_INSTANCE->RegisterView(this);
 }
 
 NPCDialog::~NPCDialog()
 {
+	INPUT_MANAGER_INSTANCE->UnRegisterView(this);
 	SafeDelete(m_TvBG);
 	SafeDelete(m_Tv);
 	SafeDelete(m_FaceImg);
@@ -290,7 +290,7 @@ NPCDialog::~NPCDialog()
 
 void NPCDialog::Draw()
 {
-	if (m_Visible) {
+	if (Visible) {
 		float w = (float)WINDOW_INSTANCE->GetWidth();
 		float h = (float)WINDOW_INSTANCE->GetHeight();
 
@@ -314,6 +314,27 @@ void NPCDialog::Draw()
 void NPCDialog::SetText(const char* txt)
 {
 	m_Tv->Text = txt;
+}
+
+bool NPCDialog::OnClick(int button, int x, int y)
+{
+	if (Visible) {
+		Visible=false;
+	}
+	return true;
+}
+
+Bound NPCDialog::GetViewBounds()
+{
+	auto* tvBGsp = m_TvBG->GetBaseSprite();
+	if (tvBGsp == nullptr)return Bound({ 0,0,0,0 });
+
+	Bound bound;
+	bound.left = tvBGsp->Pos.x;
+	bound.top = tvBGsp->Pos.y;
+	bound.right = tvBGsp->Pos.x + tvBGsp->GetFrameWidth();
+	bound.bottom = tvBGsp->Pos.y + tvBGsp->GetFrameHeight();
+	return bound;
 }
 
 int ui_renderer_add_to_draw(lua_State*L){
@@ -433,7 +454,7 @@ void ui_renderer_clear(){
 void npc_dialog_show(bool show,const char* txt){
 	auto* dlg = UIRenderer::GetInstance()->GetDialog();
 	dlg->SetText(txt);
-	dlg->SetVisible(show);
+	dlg->Visible = show;
 }
 
 void npc_dialog_set_xy(int x, int y) {

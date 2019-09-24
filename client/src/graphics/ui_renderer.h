@@ -5,10 +5,12 @@
 #include "resource_manager.h"
 #include "utils.h"
 #include "nanovg.h"
+#include "pos.h"
+#include "ui.h"
 
 class BaseSprite;
 
-class UIObject
+class UIObject : public View
 {
 public:
 	virtual void Draw() {};
@@ -18,7 +20,7 @@ public:
 class NEImageView : public UIObject
 {
 public:
-	NEImageView(uint64_t resoureID = 0, std::vector<PalSchemePart> * patMatrix = nullptr) ;
+	NEImageView(uint64_t resoureID = 0, std::vector<PalSchemePart> * patMatrix = nullptr);
 	NEImageView(uint32_t pkg, uint32_t wasID, std::vector<PalSchemePart>* patMatrix = nullptr) : NEImageView(RESOURCE_MANAGER_INSTANCE->EncodeWAS(pkg, wasID), patMatrix) {};
 	~NEImageView();
 
@@ -38,8 +40,6 @@ public:
 	CXString Text;
 	CXString Font;
 	float Size;
-	float X;
-	float Y;
 	NVGcolor Color;
 	NVGcolor BGColor;
 	float Width;
@@ -71,17 +71,14 @@ private:
 class NPCDialog :public UIObject
 {
 public:
+
 	NPCDialog();
 	~NPCDialog();
 	void Draw() override;
 	void SetText(const char* txt);
-	void SetVisible(bool visible) { m_Visible = visible; };
-	bool GetVisible() { return m_Visible; };
-	float X;
-	float Y;
+	virtual Bound GetViewBounds() override;
+	virtual bool OnClick(int button, int x, int y) ;
 private:
-	
-	bool m_Visible;
 	NEImageView* m_FaceImg;
 	NEImageView* m_TvBG;
 	UITextView* m_Tv;

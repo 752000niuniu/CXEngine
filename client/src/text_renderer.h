@@ -142,7 +142,7 @@ public:
 	std::vector<uint32_t> TextCache;
 
 	void OnCharacterInput(uint32_t charcode) override;
-	void OnClick(int button, int x, int y) override;
+	bool OnClick(int button, int x, int y) override;
 
 	Bound GetViewBounds()  override;
 	int GetViewLayer()const override;

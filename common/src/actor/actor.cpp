@@ -310,7 +310,7 @@ void Actor::OnHover(float x, float y)
 
 }
 
-void Actor::OnClick(int button, int x, int y)
+bool Actor::OnClick(int button, int x, int y)
 {
 	lua_State* L = script_system_get_luastate();
 	lua_getglobal(L, "actor_on_click");
@@ -318,8 +318,10 @@ void Actor::OnClick(int button, int x, int y)
 	lua_pushinteger(L, button);
 	lua_pushnumber(L, x);
 	lua_pushnumber(L, y);
-	int res = lua_pcall(L, 4, 0, 0);
+	int res = lua_pcall(L, 4, 1, 0);
 	check_lua_error(L, res);
+	bool clicked = (bool)lua_toboolean(L, 1);
+	return clicked;
 }
 
 void Actor::Say(std::string Text)
@@ -462,7 +464,7 @@ int actor_show_dialog(lua_State*L){
 	const char* msg = luaL_optstring(L, 3,"");
 	auto* dlg = UIRenderer::GetInstance()->GetDialog();
 	dlg->SetText(msg);
-	dlg->SetVisible(show);
+	dlg->Visible = show;
 #endif
 	return 0;
 }
