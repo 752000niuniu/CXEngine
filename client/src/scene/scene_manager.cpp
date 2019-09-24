@@ -251,7 +251,7 @@ void SceneManager::Draw()
 	auto cspos = ImGui::GetCursorScreenPos();
 	m_ImGuiCursorPos = Pos(cspos.x, cspos.y);
 	ImGui::GetWindowDrawList()->AddCallback(function_to_select_shader_or_blend_state, nullptr);
-	ImGui::GetWindowDrawList()->AddImage((ImTextureID)m_TextureColor, cspos, ImVec2(cspos.x+gameWidth,cspos.y+gameHeight), ImVec2(0, 1), ImVec2(1, 0));
+	ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_TextureColor, cspos, ImVec2(cspos.x+gameWidth,cspos.y+gameHeight), ImVec2(0, 1), ImVec2(1, 0));
 	//ImGui::Image((void*)(uint64_t)m_TextureColor, ImVec2((float)gameWidth, (float)gameHeight), ImVec2(0, 1), ImVec2(1, 0));
 	ImGui::GetWindowDrawList()->AddCallback(function_to_restore_shader_or_blend_state , nullptr);
 	ImGui::SetCursorPos(cursorPos);

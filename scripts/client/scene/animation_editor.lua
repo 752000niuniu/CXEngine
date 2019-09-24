@@ -140,7 +140,7 @@ function OnSceneUpdate()
                 msg.y = dest_y
                 net_send_message(PTO_C2C_MOVE_TO_POS, cjson.encode(msg))
             else
-                hit_actor:Say('hello ')
+                hit_actor:Say('神州上下祸劫频生，灵石是否重补苍天裂痕，蚩尤的阴谋能否被挫败，三界将继续下去还是回归混沌，将由玩家英雄亲手创造。')
             end
         end
     end

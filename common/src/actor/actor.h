@@ -139,6 +139,7 @@ protected:
 	std::vector<NE::PalSchemePart> m_PatMatrix;
 	std::vector<ActorProp> m_Props;
 	Actor* m_Target;
+	CXString m_SayText;
 #ifndef SIMPLE_SERVER
 	TextView* m_SayWidget;
 	UITextView* m_NameTV;

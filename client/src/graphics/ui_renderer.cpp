@@ -92,7 +92,7 @@ void UIRenderer::Draw()
 			obj = nullptr;
 		}
 	}
-	if (m_Objects.size() > 50) {
+	if (m_Objects.size() > 0) {
 		vector<UIObject*> tmp;
 		for (UIObject*& obj : m_Objects) {
 			if (obj&&!obj->MarkRemove) {
@@ -199,28 +199,45 @@ void UITextView::Draw()
 	start = Text.data();
 	end = Text.data() + Text.size();
 	float y = Y;
+	if (Align & NVG_ALIGN_BOTTOM) {
+		float bounds[4];
+		nvgTextBoxBounds(vg, 0, 0, Width, Text.c_str(), 0, bounds);
+		y = y - bounds[3];
+	}
+
 	float x = X;
-	if(Width!=0){
+	
+	if (Width != 0) {
+		nvgBeginPath(vg);
+
+		if (BGColor.a != 0) {
+			float bgx = x;
+			if (Align&NVG_ALIGN_CENTER) {
+				bgx = bgx - Width / 2;
+			}
+			float bgy = y - 8;
+			float bounds[4];
+			nvgTextBoxBounds(vg, bgx, bgy, Width, Text.c_str(), 0, bounds);
+
+			nvgFillColor(vg, BGColor);
+			nvgRoundedRect(vg, bounds[0], bounds[1], bounds[2] - bounds[0], bounds[3] - bounds[1] + 8 * 2, 8.f);
+			nvgFill(vg);
+		}
+		
+
 		NVGtextRow rows[3];
 		int nrows, lnum = 0;
 		while ((nrows = nvgTextBreakLines(vg, start, end, Width, rows, 3))) {
 			for (int i = 0; i < nrows; i++) {
 				NVGtextRow* row = &rows[i];
 
-				nvgBeginPath(vg);
-				nvgFillColor(vg, BGColor);
-				nvgRect(vg, x, y, Width, lineh);
-				nvgFill(vg);
-
-
 				nvgFillColor(vg, Color);
 				nvgText(vg, x, y, row->start, row->end);
-
 				nvgFillColor(vg, Color);
 				nvgText(vg, x, y, row->start, row->end);
 
 				lnum++;
-				y += lineh + 2;
+				y += lineh;
 			}
 			start = rows[nrows - 1].next;
 		}

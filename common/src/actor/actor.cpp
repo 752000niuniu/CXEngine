@@ -22,9 +22,7 @@
 #include "script_system.h"
 #include "actor_enum.h"
 
-
 #define ACTOR_METATABLE_NAME "mt_actor"
-
 Actor::Actor(uint64_t pid)
 	:BaseGameEntity(pid)
 {
@@ -59,12 +57,10 @@ Actor::Actor(uint64_t pid)
 	m_SayTV = new UITextView();
 	m_SayTV->Font = "SIMSUN";
 	m_SayTV->Size = 14.f;
-	m_SayTV->Align = NVG_ALIGN_LEFT | NVG_ALIGN_TOP;
+	m_SayTV->Align = NVG_ALIGN_BOTTOM | NVG_ALIGN_CENTER;
 	m_SayTV->Color = nvgRGBA(255, 255, 255, 255); // text color
-	//m_SayTV->Color = nvgRGBA(255, 0, 0, 255); // npc name in text color
-	//m_SayTV->Color = nvgRGBA(0, 255, 0, 255); // quest name in text color
-	m_SayTV->BGColor = nvgRGBA(103, 98, 90, 255);
-	m_SayTV->Width = 128;
+	m_SayTV->BGColor = nvgRGBA(30, 30, 30, 128);
+	m_SayTV->Width = 100;
 	UIRenderer::GetInstance()->AddToDraw(m_SayTV);
 #endif
 }
@@ -118,12 +114,12 @@ void Actor::OnDraw()
 	{
 		int past = (int)WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
 		m_SayDuration -= past;
-		int bgWidth = m_SayWidget->Width;
-		int bgHeight = m_SayWidget->Height;
 		auto* avatar = m_ASM->GetAvatar();
-		m_SayTV->X = avatar->Pos.x - bgWidth / 2;
-		m_SayTV->Y = avatar->Pos.y - avatar->KeyY - bgHeight;
-		m_SayTV->Text =  utils::GB2312ToUtf8(utils::WstringToString(m_SayWidget->Text).c_str());
+		if(avatar){
+			m_SayTV->X = avatar->Pos.x - avatar->KeyX + avatar->Width / 2;
+			m_SayTV->Y = avatar->Pos.y - avatar->KeyY;
+			m_SayTV->Text = m_SayText;
+		}
 	}
 #endif
 }
@@ -326,6 +322,7 @@ void Actor::OnClick(int button, int x, int y)
 
 void Actor::Say(std::string Text)
 {
+	m_SayText = Text;
 	std::wstring wText = utils::StringToWstring(Text);
 	m_SayDuration = 1000 * 10;// *24;
 	m_SayWidget->Text = wText;
