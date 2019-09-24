@@ -190,56 +190,34 @@ UITextView::UITextView()
 	Size(14.f),
 	Color(nvgRGBA(255, 255, 255, 255)),
 	BGColor(nvgRGBA(0, 0, 0, 0)),
-	Width(0),
 	Align(NVG_ALIGN_LEFT | NVG_ALIGN_TOP)
 {
-
+	nvgTextMetrics(vg, 0, 0, &Height);
 }
 
 void UITextView::Draw()
 {
 	if (Text.size() == 0)return;
 	nvgSave(vg);
-	float lineh;
 	
 	nvgFontSize(vg, Size);
 	nvgFontFace(vg, Font.c_str()); 
 	nvgTextAlign(vg, Align);
-	nvgTextMetrics(vg, NULL, NULL, &lineh);
 
-	const char* start;
-	const char* end;
-	start = Text.data();
-	end = Text.data() + Text.size();
-	float y = Y;
-	if (Align & NVG_ALIGN_BOTTOM) {
-		float bounds[4];
-		nvgTextBoxBounds(vg, 0, 0, Width, Text.c_str(), 0, bounds);
-		y = y - bounds[3];
-	}
-
-	float x = X;
-	
-	if (Width != 0) {
+	const char* start = Text.data();
+	const char* end = Text.data() + Text.size();
+	if (WrapWidth!= 0) {
 		nvgBeginPath(vg);
 
-		if (BGColor.a != 0) {
-			float bgx = x;
-			if (Align&NVG_ALIGN_CENTER) {
-				bgx = bgx - Width / 2;
-			}
-			float bgy = y - 8;
-			float bounds[4];
-			nvgTextBoxBounds(vg, bgx, bgy, Width, Text.c_str(), 0, bounds);
-
-			nvgFillColor(vg, BGColor);
-			nvgRoundedRect(vg, bounds[0], bounds[1], bounds[2] - bounds[0], bounds[3] - bounds[1] + 8 * 2, 8.f);
-			nvgFill(vg);
-		}
-		
+		nvgFillColor(vg, BGColor);
+		nvgRoundedRect(vg, X - 8, Y - 8, Width + 16, Height + 16, 8.f);
+		nvgFill(vg);
 
 		NVGtextRow rows[3];
 		int nrows, lnum = 0;
+		float x, y;
+		x = X;
+		y = Y;
 		while ((nrows = nvgTextBreakLines(vg, start, end, Width, rows, 3))) {
 			for (int i = 0; i < nrows; i++) {
 				NVGtextRow* row = &rows[i];
@@ -250,7 +228,7 @@ void UITextView::Draw()
 				nvgText(vg, x, y, row->start, row->end);
 
 				lnum++;
-				y += lineh;
+				y += LineHeight;
 			}
 			start = rows[nrows - 1].next;
 		}
@@ -265,10 +243,34 @@ void UITextView::Draw()
 	nvgRestore(vg);
 }
 
+void UITextView::SetText(const char* txt, float x, float y,int align,float wrapWidth)
+{
+	Text = txt;
+	X = x;
+	Y = y;
+	Align = align;
+	WrapWidth = wrapWidth;
+	nvgTextMetrics(vg, NULL, NULL, &LineHeight);
+	
+	float bounds[4];
+	nvgTextBoxBounds(vg, X, Y, WrapWidth, Text.c_str(), 0, bounds);
+	Width = bounds[2] - bounds[0];
+	Height = bounds[3] - bounds[1];
+
+	if (Align & NVG_ALIGN_BOTTOM) {
+		Y = Y - Height;
+	}
+
+	if (Align & NVG_ALIGN_CENTER) {
+		X = X - Width / 2;
+	}
+
+}
+
 NPCDialog::NPCDialog()
 {
+	m_ShowMode = SHOW_PLOT_TEXT;
 	Visible = false;
-	X = Y = 0;
 	
 	m_TvBG = new NEImageView(WZIFEWDF, 0x73D983B7);
 	m_FaceImg = new NEImageView(WZIFEWDF, 0x7F84C945);
@@ -276,7 +278,14 @@ NPCDialog::NPCDialog()
 	
 	m_Tv->Color = nvgRGB(255, 255, 255);
 	m_Tv->Size = 17.f;
-	m_Tv->Width = m_TvBG->GetBaseSprite()->Width - 32.f;
+	 
+	float w = (float)WINDOW_INSTANCE->GetWidth();
+	auto* tvBGsp = m_TvBG->GetBaseSprite();
+	X = (w - tvBGsp->Width) / 2;
+	Y = 290;
+	Width = (float)tvBGsp->Width;
+	Height = (float)tvBGsp->Height;
+
 	INPUT_MANAGER_INSTANCE->RegisterView(this);
 }
 
@@ -286,6 +295,10 @@ NPCDialog::~NPCDialog()
 	SafeDelete(m_TvBG);
 	SafeDelete(m_Tv);
 	SafeDelete(m_FaceImg);
+	for (auto* op : m_OptionTvs) {
+		delete op;
+	}
+	m_OptionTvs.clear();
 }
 
 void NPCDialog::Draw()
@@ -295,33 +308,69 @@ void NPCDialog::Draw()
 		float h = (float)WINDOW_INSTANCE->GetHeight();
 
 		auto* tvBGsp = m_TvBG->GetBaseSprite();
-		tvBGsp->Pos.x = X + (w - tvBGsp->Width) / 2;
-		tvBGsp->Pos.y = Y + 290;
+		tvBGsp->Pos.x = X;
+		tvBGsp->Pos.y = Y;
 
 		auto* facesp = m_FaceImg->GetBaseSprite();
-		facesp->Pos.x = tvBGsp->Pos.x;
-		facesp->Pos.y = tvBGsp->Pos.y - facesp->Height;
-
-		m_Tv->X = tvBGsp->Pos.x + 16;
-		m_Tv->Y = tvBGsp->Pos.y + 24;
+		facesp->Pos.x = X;
+		facesp->Pos.y = Y - facesp->Height;
 
 		m_FaceImg->Draw();
 		m_TvBG->Draw();
-		m_Tv->Draw();
+		if (m_ShowMode == SHOW_PLOT_TEXT) {	
+			m_Tv->Draw();
+		}
+		else if (m_ShowMode == SHOW_OPTIONS) {
+			for (int i = 0; i < m_OptionTvs.size(); i++) {
+				m_OptionTvs[i]->Draw();
+			}
+		}
 	}
 }
 
 void NPCDialog::SetText(const char* txt)
 {
-	m_Tv->Text = txt;
+	m_ShowMode = SHOW_PLOT_TEXT;
+	auto* tvBGsp = m_TvBG->GetBaseSprite();
+	float x = X + 16;
+	float y = Y + 24;
+	float wrapWidth = Width - 32.f;
+	m_Tv->SetText(txt, x, y, NVG_ALIGN_TOP | NVG_ALIGN_LEFT, wrapWidth);
 }
 
 bool NPCDialog::OnClick(int button, int x, int y)
 {
 	if (Visible) {
-		Visible=false;
+		Visible = false;
 	}
 	return true;
+}
+
+void NPCDialog::SetOptions(vector<string> options)
+{
+	m_ShowMode = SHOW_OPTIONS;
+	for(auto* op: m_OptionTvs){
+		delete op;
+	}
+	m_OptionTvs.clear();
+
+	auto* tvBGsp = m_TvBG->GetBaseSprite();
+	float sx = X + 16;
+	float sy = Y + 24;
+	for (int i = 0; i < (int)options.size(); i++){
+		auto* op = new UITextView();
+		op->Text = options[i];
+		op->Size = 17.f;
+		op->Color = nvgRGB(255, 0, 0);
+		float bd[4];
+		nvgTextBounds(vg, sx, sy, op->Text.c_str(), 0, bd);
+		op->X = sx;
+		op->Y = sy;
+		op->Width = bd[2] - bd[0];
+		op->Height = bd[3] - bd[1];
+		m_OptionTvs.push_back(op);
+		sy = sy + op->Height + 4;
+	}
 }
 
 Bound NPCDialog::GetViewBounds()
@@ -451,7 +500,7 @@ void ui_renderer_clear(){
 	UIRenderer::GetInstance()->Clear();
 }
 
-void npc_dialog_show(bool show,const char* txt){
+void npc_dialog_show(bool show, const char* txt) {
 	auto* dlg = UIRenderer::GetInstance()->GetDialog();
 	dlg->SetText(txt);
 	dlg->Visible = show;
@@ -463,6 +512,16 @@ void npc_dialog_set_xy(int x, int y) {
 	dlg->Y = (float)y;
 }
 
+void npc_dialog_show_options(const char* op1, const char* op2, const char* op3) {
+	auto* dlg = UIRenderer::GetInstance()->GetDialog();
+	vector<string> options;
+	options.push_back(op1);
+	options.push_back(op2);
+	options.push_back(op3);
+	dlg->SetOptions(options);
+	dlg->Visible = true;
+}
+
 void luaopen_ui_renderer(lua_State* L)
 {
 	script_system_register_luac_function(L, ne_imageview_create);
@@ -470,5 +529,6 @@ void luaopen_ui_renderer(lua_State* L)
 	script_system_register_luac_function(L, ui_renderer_add_to_draw);
 	script_system_register_function(L, ui_renderer_clear);
 	script_system_register_function(L, npc_dialog_show);
+	script_system_register_function(L, npc_dialog_show_options);
 	script_system_register_function(L, npc_dialog_set_xy);
 }

@@ -60,7 +60,7 @@ Actor::Actor(uint64_t pid)
 	m_SayTV->Align = NVG_ALIGN_BOTTOM | NVG_ALIGN_CENTER;
 	m_SayTV->Color = nvgRGBA(255, 255, 255, 255); // text color
 	m_SayTV->BGColor = nvgRGBA(30, 30, 30, 128);
-	m_SayTV->Width = 100;
+	m_SayTV->WrapWidth = 100;
 	//UIRenderer::GetInstance()->AddToDraw(m_SayTV);
 #endif
 }

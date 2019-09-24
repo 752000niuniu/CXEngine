@@ -37,13 +37,15 @@ public:
 	UITextView() ;
 	~UITextView() {};
 	virtual void Draw() override;
+	void SetText(const char* txt, float x, float y, int align, float wrapWidth);
 	CXString Text;
 	CXString Font;
 	float Size;
 	NVGcolor Color;
 	NVGcolor BGColor;
-	float Width;
 	int Align;
+	float WrapWidth = 0;
+	float LineHeight = 0;
 };
 class NPCDialog;
 
@@ -71,17 +73,24 @@ private:
 class NPCDialog :public UIObject
 {
 public:
-
+	enum EShowMode{
+		SHOW_PLOT_TEXT,
+		SHOW_OPTIONS
+	};
 	NPCDialog();
 	~NPCDialog();
 	void Draw() override;
 	void SetText(const char* txt);
 	virtual Bound GetViewBounds() override;
-	virtual bool OnClick(int button, int x, int y) ;
+	virtual bool OnClick(int button, int x, int y);
+	void SetOptions(vector<string> options);
 private:
+	EShowMode m_ShowMode;
 	NEImageView* m_FaceImg;
 	NEImageView* m_TvBG;
 	UITextView* m_Tv;
+
+	vector<UITextView*> m_OptionTvs;
 };
 
 void luaopen_ui_renderer(lua_State* L);
