@@ -105,6 +105,8 @@ void script_system_prepare_init()
 #else
 	luaopen_game_server(L);
 #endif // !SIMPLE_SERVER
+
+
 }
 
 void script_system_dofile(const char* file)

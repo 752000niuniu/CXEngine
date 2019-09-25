@@ -77,20 +77,29 @@ public:
 		SHOW_PLOT_TEXT,
 		SHOW_OPTIONS
 	};
+
+	struct Option
+	{
+		shared_ptr<UITextView>  tv;
+		int funcRef;
+	};
+
 	NPCDialog();
 	~NPCDialog();
 	void Draw() override;
 	void SetText(const char* txt);
 	virtual Bound GetViewBounds() override;
 	virtual bool OnClick(int button, int x, int y);
-	void SetOptions(vector<string> options);
+	void AddOption(string txt, int func);
+	void UpdateOptionsLayout();
+	void ClearOptions();
 private:
 	EShowMode m_ShowMode;
 	NEImageView* m_FaceImg;
 	NEImageView* m_TvBG;
 	UITextView* m_Tv;
 
-	vector<UITextView*> m_OptionTvs;
+	vector<Option> m_Options;
 };
 
 void luaopen_ui_renderer(lua_State* L);

@@ -6,8 +6,27 @@ function actor_on_click(actor, button, x, y)
 		if player then
 			player:SetTarget(actor)
 		end
-		npc_dialog_show_options('我是找你打架的','相信你是冤枉的','告辞')
-		-- npc_dialog_show(true,'神州上下祸劫频生，灵石是否重补苍天裂痕，蚩尤的阴谋能否被挫败，三界将继续下去还是回归混沌，将由玩家英雄亲手创造。神州上下祸劫频生，灵石是否重补苍天裂痕，蚩尤的阴谋能否被挫败，三界将继续下去还是回归混沌，将由玩家英雄亲手创造。神州上下祸劫频生，灵石是否重补苍天裂痕，蚩尤的阴谋能否被挫败，三界将继续下去还是回归混沌，将由玩家英雄亲手创造。神州上下祸劫频生，灵石是否重补苍天裂痕，蚩尤的阴谋能否被挫败，三界将继续下去还是回归混沌，将由玩家英雄亲手创造。')
+		npc_dialog_show(true,'神州上下祸劫频生，灵石是否重补苍天裂痕，', {
+				{ 
+					txt = '我是找你打架的',
+					func = function()
+						combat_system_switch_battle(true)
+						cxlog_info('我是找你打架的')
+					end
+				},
+				{ 
+					txt ='相信你是冤枉的',
+					func=function()
+						cxlog_info('相信你是冤枉的')
+					end
+				},
+				{ 
+					txt='告辞',
+					func=function()
+						cxlog_info('告辞')
+					end
+				}
+			})
 	end
 end
 

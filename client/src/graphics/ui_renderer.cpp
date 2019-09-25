@@ -219,7 +219,7 @@ void UITextView::Draw()
 		float x, y;
 		x = X;
 		y = Y;
-		while ((nrows = nvgTextBreakLines(vg, start, end, Width, rows, 3))) {
+		while ((nrows = nvgTextBreakLines(vg, start, end, WrapWidth, rows, 3))) {
 			for (int i = 0; i < nrows; i++) {
 				NVGtextRow* row = &rows[i];
 
@@ -255,6 +255,7 @@ void UITextView::SetText(const char* txt, float x, float y,int align,float wrapW
 	
 	float bounds[4];
 	nvgTextBoxBounds(vg, X, Y, WrapWidth, Text.c_str(), 0, bounds);
+	
 	Width = bounds[2] - bounds[0];
 	Height = bounds[3] - bounds[1];
 
@@ -278,7 +279,7 @@ NPCDialog::NPCDialog()
 	m_Tv = new UITextView();
 	
 	m_Tv->Color = nvgRGB(255, 255, 255);
-	m_Tv->Size = 17.f;
+	m_Tv->Size = 20.f;
 	 
 	float w = (float)WINDOW_INSTANCE->GetWidth();
 	auto* tvBGsp = m_TvBG->GetBaseSprite();
@@ -296,10 +297,7 @@ NPCDialog::~NPCDialog()
 	SafeDelete(m_TvBG);
 	SafeDelete(m_Tv);
 	SafeDelete(m_FaceImg);
-	for (auto* op : m_OptionTvs) {
-		delete op;
-	}
-	m_OptionTvs.clear();
+	m_Options.clear();
 }
 
 void NPCDialog::Draw()
@@ -318,20 +316,15 @@ void NPCDialog::Draw()
 
 		m_FaceImg->Draw();
 		m_TvBG->Draw();
-		if (m_ShowMode == SHOW_PLOT_TEXT) {	
-			m_Tv->Draw();
-		}
-		else if (m_ShowMode == SHOW_OPTIONS) {
-			for (int i = 0; i < m_OptionTvs.size(); i++) {
-				m_OptionTvs[i]->Draw();
-			}
+		m_Tv->Draw();
+		for (int i = 0; i < m_Options.size(); i++) {
+			m_Options[i].tv->Draw();
 		}
 	}
 }
 
 void NPCDialog::SetText(const char* txt)
 {
-	m_ShowMode = SHOW_PLOT_TEXT;
 	auto* tvBGsp = m_TvBG->GetBaseSprite();
 	float x = X + 16;
 	float y = Y + 24;
@@ -341,12 +334,17 @@ void NPCDialog::SetText(const char* txt)
 
 bool NPCDialog::OnClick(int button, int x, int y)
 {
-	if (m_ShowMode == SHOW_OPTIONS) {
-		for (int i = 0; i < m_OptionTvs.size(); i++) {
+	if (m_Options.size() > 0) {
+		for (int i = 0; i < m_Options.size(); i++) {
 			Pos ps((float)x, (float)y);
-			auto& bd = m_OptionTvs[i]->GetViewBounds();
+			auto& bd = m_Options[i].tv->GetViewBounds();
 			if (utils::BoundHitTest(bd, ps)) {
-				m_OptionTvs[i]->Visible = false;
+				lua_State*L = script_system_get_luastate();
+				lua_rawgeti(L, LUA_REGISTRYINDEX, m_Options[i].funcRef);
+				int res = lua_pcall(L, 0, 0, 0);
+				check_lua_error(L, res);
+				Visible = false;
+				break;
 			}
 		}
 		return true;
@@ -358,31 +356,40 @@ bool NPCDialog::OnClick(int button, int x, int y)
 	}
 }
 
-void NPCDialog::SetOptions(vector<string> options)
+void NPCDialog::AddOption(string txt, int func)
 {
-	m_ShowMode = SHOW_OPTIONS;
-	for(auto* op: m_OptionTvs){
-		delete op;
-	}
-	m_OptionTvs.clear();
+	Option op;
+	op.funcRef = func;
+	op.tv = make_shared<UITextView>();
+	op.tv->Text = txt;
+	op.tv->Size = 20.f;
+	op.tv->Color = nvgRGB(198, 22, 24);
+	m_Options.push_back(op);
+}
 
-	auto* tvBGsp = m_TvBG->GetBaseSprite();
-	float sx = X + 16;
-	float sy = Y + 24;
-	for (int i = 0; i < (int)options.size(); i++){
-		auto* op = new UITextView();
-		op->Text = options[i];
-		op->Size = 17.f;
-		op->Color = nvgRGB(255, 0, 0);
+void NPCDialog::UpdateOptionsLayout()
+{
+	float sx = X + 28;
+	float sy = m_Tv->Y + m_Tv->Height + 9;
+	for (int i = 0; i < (int)m_Options.size(); i++) {
+		auto& op = m_Options[i];
 		float bd[4];
-		nvgTextBounds(vg, sx, sy, op->Text.c_str(), 0, bd);
-		op->X = sx;
-		op->Y = sy;
-		op->Width = bd[2] - bd[0];
-		op->Height = bd[3] - bd[1];
-		m_OptionTvs.push_back(op);
-		sy = sy + op->Height + 4;
+		nvgTextBounds(vg, sx, sy, op.tv->Text.c_str(), 0, bd);
+		op.tv->X = sx;
+		op.tv->Y = sy;
+		op.tv->Width = bd[2] - bd[0];
+		op.tv->Height = bd[3] - bd[1];
+		sy = sy + op.tv->Height + 4;
 	}
+}
+
+void NPCDialog::ClearOptions()
+{
+	lua_State*L = script_system_get_luastate();
+	for (auto& op : m_Options) {
+		luaL_unref(L, LUA_REGISTRYINDEX, op.funcRef);
+	}
+	m_Options.clear();
 }
 
 Bound NPCDialog::GetViewBounds()
@@ -512,10 +519,30 @@ void ui_renderer_clear(){
 	UIRenderer::GetInstance()->Clear();
 }
 
-void npc_dialog_show(bool show, const char* txt) {
+int npc_dialog_show(lua_State*L) {
+	int argi = 1;
 	auto* dlg = UIRenderer::GetInstance()->GetDialog();
-	dlg->SetText(txt);
+	bool show = (bool)lua_toboolean(L, argi++);
+	string txt = luaL_optstring(L, argi, "");
+	if (txt != "") {
+		argi++;
+	}
+	dlg->SetText(txt.c_str());
+	dlg->ClearOptions();
+	int n = (int)luaL_len(L, argi);
+	for (int i = 1; i <= n; i++) {
+		lua_geti(L, argi, i);
+			lua_getfield(L, -1, "txt");
+			const char* txt = lua_tostring(L, -1);
+			lua_pop(L, 1);
+			lua_getfield(L, -1, "func");
+			int funcRef = luaL_ref(L, LUA_REGISTRYINDEX);
+		lua_pop(L, 1);
+		dlg->AddOption(txt, funcRef);
+	}
+	dlg->UpdateOptionsLayout();
 	dlg->Visible = show;
+	return 0;
 }
 
 void npc_dialog_set_xy(int x, int y) {
@@ -524,23 +551,13 @@ void npc_dialog_set_xy(int x, int y) {
 	dlg->Y = (float)y;
 }
 
-void npc_dialog_show_options(const char* op1, const char* op2, const char* op3) {
-	auto* dlg = UIRenderer::GetInstance()->GetDialog();
-	vector<string> options;
-	options.push_back(op1);
-	options.push_back(op2);
-	options.push_back(op3);
-	dlg->SetOptions(options);
-	dlg->Visible = true;
-}
-
 void luaopen_ui_renderer(lua_State* L)
 {
 	script_system_register_luac_function(L, ne_imageview_create);
 	script_system_register_luac_function(L, ui_textview_create);
 	script_system_register_luac_function(L, ui_renderer_add_to_draw);
 	script_system_register_function(L, ui_renderer_clear);
-	script_system_register_function(L, npc_dialog_show);
-	script_system_register_function(L, npc_dialog_show_options);
+	script_system_register_luac_function(L, npc_dialog_show);
 	script_system_register_function(L, npc_dialog_set_xy);
 }
+;
