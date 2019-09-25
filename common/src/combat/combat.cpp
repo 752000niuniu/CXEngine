@@ -169,15 +169,6 @@ void combat_system_end_battle()
 	COMBAT_SYSTEM_INSTANCE->EndBattle();
 }
 
-void combat_system_update()
-{
-	COMBAT_SYSTEM_INSTANCE->Update();
-}
-
-void combat_system_draw()
-{
-	COMBAT_SYSTEM_INSTANCE->Draw();
-}
 
 void combat_system_switch_battle(bool enter)
 {
@@ -199,8 +190,6 @@ void luaopen_combat_system(lua_State* L)
 	script_system_register_luac_function(L, combat_system_add_actor);
 	script_system_register_function(L, combat_system_start_battle);
 	script_system_register_function(L, combat_system_end_battle);
-	script_system_register_function(L, combat_system_update);
-	script_system_register_function(L, combat_system_draw);
 	script_system_register_function(L, combat_system_switch_battle);
 	
 }

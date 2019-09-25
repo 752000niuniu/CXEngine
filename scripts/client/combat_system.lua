@@ -1,11 +1,23 @@
-BattleBG = BattleBG or nil
 
+
+local BATTLE_DEFAULT = 0
+local BATTLE_PREPARE = 1
+local BATTLE_START = 2
+local BATTLE_TURN_STAND_BY = 3
+local BTTALE_TURN_EXECUTE = 4
+local BTTALE_TURN_NEXT = 5
+local BATTLE_END = 6
+
+local CurrentTurn = 1
+local Commands = {}
+local BattleState = BATTLE_DEFAULT
 local tAttackers = {}
 local tDefenders = {}
 
+
+BattleBG = BattleBG or nil
 combat_self_pos = combat_self_pos or {}
 combat_enemy_pos = combat_enemy_pos or {}
-
 function calc_combat_self_pos(ratio_x, ratio_y)
 	return {
 		{ x = 415.0 * ratio_x, y = 275.0 * ratio_y },
@@ -36,6 +48,8 @@ function calc_combat_enemy_pos(ratio_x, ratio_y)
 	}
 end
 
+
+
 function combat_system_init()
     BattleBG = animation_create(ADDONWDF, 0xE3B87E0F)
     local ratio_x = game_get_width()/ 640 
@@ -45,6 +59,51 @@ function combat_system_init()
 end
 
 function combat_system_update()
+    if BattleState == BATTLE_DEFAULT then
+        return
+    elseif BattleState == BATTLE_START then
+        ui_renderer_clear()
+        local init_actor = function(actor, pos, dir)
+            actor:SetProperty(PROP_IS_COMBAT,true)
+            actor:SetProperty(PROP_TURN_READY,false)
+            actor:SetProperty(PROP_COMBAT_POS,pos.x,pos.y)
+            actor:MoveTo(pos.x,pos.y)
+            actor:SetActionID(ACTION_BATIDLE)
+            actor:SetDir(dir)
+        end
+        
+        for i,actor in ipairs(tDefenders) do
+            local pos =  combat_enemy_pos[i]
+            init_actor(actor, pos, DIR_SE)
+        end
+    
+        for i,actor in ipairs(tAttackers) do
+            local pos =  combat_self_pos[i]
+            init_actor(actor, pos, DIR_NW)
+        end
+        BattleState = BATTLE_TURN_STAND_BY
+    elseif BattleState == BATTLE_TURN_STAND_BY then
+        local ready = true
+        for i,actor in ipairs(tDefenders) do
+            if not actor:GetProperty(PROP_TURN_READY) then
+                ready = false
+            end
+        end
+
+        for i,actor in ipairs(tAttackers) do
+            if not actor:GetProperty(PROP_TURN_READY) then
+                ready = false
+            end
+        end
+        if ready then
+            BattleState = BTTALE_TURN_EXECUTE
+        end
+    elseif BattleState == BTTALE_TURN_EXECUTE then
+
+
+    elseif BattleState == BTTALE_TURN_NEXT then
+
+    end
 	for i,actor in ipairs(tDefenders) do
         actor:Update()
     end
@@ -57,7 +116,6 @@ end
 
 function combat_system_draw()
     BattleBG:Draw()
-    
     for i,actor in ipairs(tDefenders) do
         actor:Draw()
     end
@@ -68,44 +126,19 @@ function combat_system_draw()
     animation_manager_draw()
 end
 
-function combat_system_clear_actors()
-    tAttackers = {}
-    tDefenders = {}
+
+function combat_system_start_battle(atk_actors, dfd_actors)
+    scene_set_combat(true)
+    tAttackers = atk_actors
+    tDefenders = dfd_actors
+    BattleState = BATTLE_START
 end
+
 
 function combat_system_on_acting_end(actor)
     combat_system_switch_battle(false)
 end
 
-function combat_system_add_attacker(actor)
-    table.insert(tAttackers,actor)
-end
-
-function combat_system_add_defender(actor)
-    table.insert(tDefenders,actor)
-end
-
-function combat_system_on_start()
-    ui_renderer_clear()
-    
-    for i,actor in ipairs(tDefenders) do
-        actor:SetProperty(PROP_IS_COMBAT,true)
-        local pos =  combat_enemy_pos[i]
-        actor:SetProperty(PROP_COMBAT_POS,pos.x,pos.y)
-        actor:MoveTo(pos.x,pos.y)
-        actor:SetActionID(ACTION_BATIDLE)
-        actor:SetDir(DIR_SE)
-    end
-
-    for i,actor in ipairs(tAttackers) do
-        actor:SetProperty(PROP_IS_COMBAT,true)
-        local pos =  combat_self_pos[i]
-        actor:SetProperty(PROP_COMBAT_POS,pos.x,pos.y)
-        actor:MoveTo(pos.x,pos.y)
-        actor:SetActionID(ACTION_BATIDLE)
-        actor:SetDir(DIR_NW)
-    end
-end
 
 function combat_system_on_end()
     for i,actor in ipairs(tDefenders) do
@@ -158,7 +191,8 @@ function combat_system_imgui_update()
     end
 
     if imgui.Button('逃跑##player') then
-        combat_system_switch_battle(false)
+        combat_system_on_end()
+        scene_set_combat(false)
     end
     imgui.End()
 

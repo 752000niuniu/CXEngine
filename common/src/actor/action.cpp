@@ -15,6 +15,7 @@
 #include "scene/game_map.h"
 #include "actor_manager.h"
 #include "scene/scene_manager.h"
+#include "script_system.h"
 
 std::map<CXString, int> g_AttackKeyFrame = {
 	{"FYN-DBSWORDS" ,5 },

@@ -5,6 +5,7 @@
 #include "actor/actor_manager.h"
 #include "scene/scene_manager.h"
 #include "combat/combat.h"
+#include "script_system.h"
 
 BaseScene::BaseScene(int id, String name)
 :m_Name(name),
@@ -29,7 +30,7 @@ BaseScene::~BaseScene()
 void BaseScene::Update()
 {
 	if (m_IsCombat) {
-		COMBAT_SYSTEM_INSTANCE->Update();
+		script_system_call_function(script_system_get_luastate(), "combat_system_update");
 	}
 	else {
 		actor_manager_update();
@@ -39,7 +40,7 @@ void BaseScene::Update()
 void BaseScene::Draw()
 {
 	if (m_IsCombat) {
-		COMBAT_SYSTEM_INSTANCE->Draw();
+		script_system_call_function(script_system_get_luastate(), "combat_system_draw");
 	}
 	else {
 		Actor* localPlayer = actor_manager_fetch_local_player();
@@ -109,3 +110,4 @@ void BaseScene::SetCombat(bool combat)
 {
 	m_IsCombat = combat;
 }
+

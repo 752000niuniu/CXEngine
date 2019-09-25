@@ -39,7 +39,8 @@ function on_script_system_init()
     sprite_renderer_init()
     imgui_init()
     scene_manager_init()
-    actor_manager_init()
+	actor_manager_init()
+	combat_system_init()
 end
 
 function on_script_system_update()

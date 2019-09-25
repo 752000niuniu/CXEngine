@@ -56,6 +56,7 @@ public:
 
 	void SetCombat(bool combat);
 	bool IsCombat() { return m_IsCombat; };
+
 protected:
 	virtual void OnLoad() {} ;
 
