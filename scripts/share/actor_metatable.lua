@@ -39,3 +39,16 @@ function actor_on_reg_props(actor)
     --     cxlog_info(actor:GetProperty(i-1))
     -- end 
 end
+
+function ActorMT:GetPos()
+    if self:GetProperty(PROP_IS_COMBAT) then
+        return self:GetProperty(PROP_COMBAT_POS)
+    else
+        return self:GetProperty(PROP_POS)
+    end
+end
+
+function ActorMT:StopMove()
+    local x,y = self:GetPos()
+    self:MoveTo(x,y)
+end

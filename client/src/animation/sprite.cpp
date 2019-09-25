@@ -488,6 +488,12 @@ void AnimationManager::Draw()
 	}
 }
 
+void AnimationManager::Clear()
+{
+	m_Animations.clear();
+	m_BeatNumbers.clear();
+}
+
 BaseSprite* lua_check_base_sprite(lua_State* L, int index)
 {
 	return lua_check_pointer<BaseSprite>(L, index);
@@ -912,14 +918,30 @@ int beat_number_create(lua_State*L)
 	return 1;
 }
 
+void animation_manager_update()
+{
+	AnimationManager::GetInstance()->Update();
+}
 
+void animation_manager_draw()
+{
+	AnimationManager::GetInstance()->Draw();
+}
 
+void animation_manager_clear()
+{
+	AnimationManager::GetInstance()->Clear();
+}
 
 void luaopen_sprite(lua_State* L)
 {
 	script_system_register_luac_function(L, animation_create);
 	script_system_register_luac_function(L, base_sprite_get_metatable);
 	script_system_register_luac_function(L, beat_number_create);
+
+	script_system_register_function(L, animation_manager_update);
+	script_system_register_function(L, animation_manager_draw);
+	script_system_register_function(L, animation_manager_clear);
 	
 }
 

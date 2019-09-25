@@ -10,8 +10,13 @@ function actor_on_click(actor, button, x, y)
 				{ 
 					txt = '我是找你打架的',
 					func = function()
+						local player = actor_manager_fetch_local_player()
+						player:StopMove()
+						combat_system_clear_actors()
+						combat_system_add_attacker(player)
+						combat_system_add_defender(player:GetTarget())
 						combat_system_switch_battle(true)
-						cxlog_info('我是找你打架的')
+						cxlog_info(player:GetProperty(PROP_NAME), player:GetTarget():GetProperty(PROP_NAME))
 					end
 				},
 				{ 

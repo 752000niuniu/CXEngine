@@ -168,7 +168,7 @@ local LocalPlayerDebugButtons = {
         name = '催眠符',
         on_click  = function()
             local player = actor_manager_fetch_local_player()
-            player:SetProperty(PROP_ASM_PLAY_BEHIT , false)
+            player:SetProperty(PROP_ASM_PLAY_BEHIT, false)
             player:SetProperty(PROP_CAST_ID, res_encode(MAGICWDF, 0x9EC0624E))
             player:SetProperty(PROP_ASM_BUFF_ANIM, res_encode(WADDONWDF,0xCA8FDEAD))
             player:PlayCast()
@@ -181,12 +181,6 @@ local LocalPlayerDebugButtons = {
             player:GetTarget():SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF, 0x8D8A818D))
             player:SetProperty(PROP_ASM_BUFF_ANIM, 0)
             player:PlayAttack()
-        end
-    },
-    {
-        name = '战斗', 
-        on_click = function()
-            combat_system_switch_battle(true)
         end
     }
 }

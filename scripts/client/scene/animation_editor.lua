@@ -138,7 +138,7 @@ function OnSceneUpdate()
             local mx,my = input_manager_get_mouse_pos()
             local dest_x, dest_y = util_screen_pos_to_map_pos(mx, my)
             local hit_actor = check_dest_hit_actor(dest_x,dest_y)
-            if not hit_actor then
+            if not hit_actor and not npc_dialog_is_show()  then
                 player:MoveTo(dest_x,dest_y)
                 local msg = {}
                 msg.pid = player:GetID()

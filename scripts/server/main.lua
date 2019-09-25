@@ -4,7 +4,7 @@ script_system_dofile('../share/vfs.lua')
 script_system_dofile('../share/utils.lua')
 script_system_dofile('../share/content_system.lua')
 script_system_dofile('../share/actor_metatable.lua')
-
+script_system_dofile('../generator/actor_template.lua')
 
 function on_script_system_init()
     content_system_init()

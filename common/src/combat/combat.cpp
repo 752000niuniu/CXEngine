@@ -4,6 +4,7 @@
 #ifndef SIMPLE_SERVER
 #include "input_manager.h"
 #include "animation/frame_animation.h"
+#include "animation/sprite.h"
 #endif
 #include "actor/action.h"
 #include "scene/scene_manager.h"
@@ -114,7 +115,7 @@ void CombatSystem::Update()
 void CombatSystem::Draw()
 {
 	script_system_call_function(script_system_get_luastate(), "combat_system_draw");
-//#ifndef SIMPLE_SERVER
+//#ifndef SIMPLE_SERVER6
 //	if (m_BattleState != BATTLE_DEFAULT && m_BattleState != BATTLE_DEFAULT) {
 //		for (auto& it : m_Actors) {
 //			it->OnDraw(it->GetX(),it->GetY());

@@ -128,12 +128,22 @@ void Actor::OnDraw()
 
 void Actor::SetDir(int dir)
 {
-	m_Props[PROP_DIR] = dir;
+	if(IsCombat()){
+		m_Props[PROP_COMBAT_DIR] = dir;
+	}else{
+		m_Props[PROP_DIR] = dir;
+	}
+	
 #ifndef SIMPLE_SERVER
 	auto* avatar = m_ASM->GetAvatar();
 	if(avatar){
 		if (avatar->GroupCount == 4) {
-			m_Props[PROP_DIR] = GMath::Dir8toDir4(dir);
+			if (IsCombat()) {
+				m_Props[PROP_COMBAT_DIR] = GMath::Dir8toDir4(dir);
+			}
+			else {
+				m_Props[PROP_DIR] = GMath::Dir8toDir4(dir);
+			}
 		}
 	}
 #endif
@@ -141,7 +151,13 @@ void Actor::SetDir(int dir)
 
 int Actor::GetDir()
 {
-	int dir = m_Props[PROP_DIR].toInt();
+	int dir = 0;
+	if(IsCombat()){
+		dir = m_Props[PROP_COMBAT_DIR].toInt();
+	}else{
+		dir = m_Props[PROP_DIR].toInt();
+	}
+	
 #ifndef SIMPLE_SERVER
 	auto* avatar = m_ASM->GetAvatar();
 	if (avatar) {
@@ -155,7 +171,13 @@ int Actor::GetDir()
 
 void Actor::ReverseDir()
 {
-	int dir = m_Props[PROP_DIR].toInt();
+	int dir = 0;
+	if (IsCombat()) {
+		dir = m_Props[PROP_COMBAT_DIR].toInt();
+	}
+	else {
+		dir = m_Props[PROP_DIR].toInt();
+	}
 	SetDir(GMath::GetReverseDir(dir));
 }
 
@@ -617,6 +639,13 @@ int actor_get_target(lua_State* L) {
 	lua_push_actor(L, actor->GetTarget());
 	return 1;
 }
+int actor_clear_buff_anim(lua_State*L){
+	Actor* actor = lua_check_actor(L, 1);
+#ifndef SIMPLE_SERVER
+	actor->GetASM()->SetBuffAnim(0);
+#endif
+	return 0;
+}
 
 //{ "__gc",actor_destroy },
 luaL_Reg mt_actor[] = {
@@ -631,6 +660,7 @@ luaL_Reg mt_actor[] = {
 { "ReverseDir", actor_reverse_dir },
 { "SetLocal", actor_set_local },
 { "IsLocal", actor_is_local },
+{ "ClearBuffAnim", actor_clear_buff_anim},
 { "SetActionID", actor_set_action_id },
 { "GetActionID", actor_get_action_id },
 { "TranslateX", actor_translate_x },

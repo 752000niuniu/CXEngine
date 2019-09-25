@@ -16,6 +16,7 @@
 #include "animation/sprite.h"
 #include "cxlua.h"
 #include "graphics/ui_renderer.h"
+#include "combat/combat.h"
 
 
 static bool s_DrawMask, s_DrawStrider, s_DrawCell, s_DrawMap, s_DrawAnnouncement, s_AutoRun;
@@ -87,6 +88,7 @@ void SceneManager::Init()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	
 	UIRenderer::GetInstance();
+	CombatSystem::GetInstance();
 };
 
 void SceneManager::SwitchScene(String name)

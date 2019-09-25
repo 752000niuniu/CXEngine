@@ -19,6 +19,7 @@ MoveHandle::~MoveHandle()
 
 void MoveHandle::Update()
 {
+	if (!m_Actor->GetProperty(PROP_CAN_MOVE).toBool())return;
 	if(m_bMove){
 		Pos moveTo = m_Actor->GetMoveToPos();
 		Pos pos = m_Actor->GetPos();
@@ -78,14 +79,22 @@ void MoveHandle::MoveOnScreen(float x, float y)
 void MoveHandle::MoveTo(float x, float y)
 {
 	if (!m_Actor->GetScene())return;
+	if (!m_Actor->GetProperty(PROP_CAN_MOVE).toBool())return;
 	GameMap* map = m_Actor->GetScene()->GetGameMap();
 	if (!map)return;
-	m_BackupMoveList.clear();
-	m_BackupMoveList = map->Move(m_Actor->GetBoxX(), m_Actor->GetBoxY(), (int)(x / 20), (int)(y / 20));
-	if (m_BackupMoveList.size() < 2)return;
-	m_BackupMoveList.pop_front();
-	m_BackupMoveList.pop_back();
-	m_MoveList = m_BackupMoveList;
+	if(m_Actor->GetScene()->IsCombat()){
+		m_BackupMoveList.clear();
+		m_MoveList.clear();
+	}
+	else {
+		m_BackupMoveList.clear();
+		m_BackupMoveList = map->Move(m_Actor->GetBoxX(), m_Actor->GetBoxY(), (int)(x / 20), (int)(y / 20));
+		if (m_BackupMoveList.size() < 2)return;
+		m_BackupMoveList.pop_front();
+		m_BackupMoveList.pop_back();
+		m_MoveList = m_BackupMoveList;
+	}
+	
 
 	m_Actor->SetMoveToPos({ x,y });
 	m_bMove = true;

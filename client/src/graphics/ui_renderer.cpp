@@ -266,7 +266,6 @@ void UITextView::SetText(const char* txt, float x, float y,int align,float wrapW
 	if (Align & NVG_ALIGN_CENTER) {
 		X = X - Width / 2;
 	}
-
 }
 
 NPCDialog::NPCDialog()
@@ -490,7 +489,7 @@ int ui_textview_set_text_size(lua_State* L)
 int ui_textview_set_width(lua_State*L){
 	UITextView* tv = lua_check_pointer<UITextView>(L, 1);
 	float width = (float)lua_tonumber(L, 2);
-	tv->Width = width;
+	tv->WrapWidth = width;
 	return 0;
 }
 
@@ -551,6 +550,11 @@ void npc_dialog_set_xy(int x, int y) {
 	dlg->Y = (float)y;
 }
 
+bool npc_dialog_is_show(){
+	auto* dlg = UIRenderer::GetInstance()->GetDialog();
+	return dlg->Visible;
+}
+
 void luaopen_ui_renderer(lua_State* L)
 {
 	script_system_register_luac_function(L, ne_imageview_create);
@@ -558,6 +562,6 @@ void luaopen_ui_renderer(lua_State* L)
 	script_system_register_luac_function(L, ui_renderer_add_to_draw);
 	script_system_register_function(L, ui_renderer_clear);
 	script_system_register_luac_function(L, npc_dialog_show);
+	script_system_register_function(L, npc_dialog_is_show);
 	script_system_register_function(L, npc_dialog_set_xy);
-}
-;
+};

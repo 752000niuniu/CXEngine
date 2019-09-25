@@ -1,10 +1,10 @@
-local BattleBG
+BattleBG = BattleBG or nil
 
 local tAttackers = {}
 local tDefenders = {}
 
-local combat_self_pos = {}
-local combat_enemy_pos = {}
+combat_self_pos = combat_self_pos or {}
+combat_enemy_pos = combat_enemy_pos or {}
 
 function calc_combat_self_pos(ratio_x, ratio_y)
 	return {
@@ -37,24 +37,89 @@ function calc_combat_enemy_pos(ratio_x, ratio_y)
 end
 
 function combat_system_init()
-   	BattleBG = animation_create(ADDONWDF, 0xE3B87E0F)
+    BattleBG = animation_create(ADDONWDF, 0xE3B87E0F)
+    local ratio_x = game_get_width()/ 640 
+	local ratio_y = game_get_height()/ 480
+    combat_self_pos =  calc_combat_self_pos(ratio_x, ratio_y)
+	combat_enemy_pos =  calc_combat_enemy_pos(ratio_x, ratio_y)
 end
 
 function combat_system_update()
-	actor_manager_update()
+	for i,actor in ipairs(tDefenders) do
+        actor:Update()
+    end
+
+    for i,actor in ipairs(tAttackers) do
+        actor:Update()
+    end
+    animation_manager_update()
 end
 
 function combat_system_draw()
-	BattleBG:Draw()
-	actor_manager_draw()
+    BattleBG:Draw()
+    
+    for i,actor in ipairs(tDefenders) do
+        actor:Draw()
+    end
+
+    for i,actor in ipairs(tAttackers) do
+        actor:Draw()
+    end
+    animation_manager_draw()
+end
+
+function combat_system_clear_actors()
+    tAttackers = {}
+    tDefenders = {}
+end
+
+function combat_system_add_attacker(actor)
+    table.insert(tAttackers,actor)
+end
+
+function combat_system_add_defender(actor)
+    table.insert(tDefenders,actor)
 end
 
 function combat_system_on_start()
-	ui_renderer_clear()
+    ui_renderer_clear()
+    
+    for i,actor in ipairs(tDefenders) do
+        actor:SetProperty(PROP_IS_COMBAT,true)
+        local pos =  combat_enemy_pos[i]
+        actor:SetProperty(PROP_COMBAT_POS,pos.x,pos.y)
+        actor:MoveTo(pos.x,pos.y)
+        actor:SetActionID(ACTION_BATIDLE)
+        actor:SetDir(DIR_SE)
+    end
+
+    for i,actor in ipairs(tAttackers) do
+        actor:SetProperty(PROP_IS_COMBAT,true)
+        local pos =  combat_self_pos[i]
+        actor:SetProperty(PROP_COMBAT_POS,pos.x,pos.y)
+        actor:MoveTo(pos.x,pos.y)
+        actor:SetActionID(ACTION_BATIDLE)
+        actor:SetDir(DIR_NW)
+    end
 end
 
 function combat_system_on_end()
+    for i,actor in ipairs(tDefenders) do
+        actor:SetProperty(PROP_ASM_BUFF_ANIM, 0)
+        actor:ClearBuffAnim()
+        actor:SetActionID(ACTION_IDLE)
+        actor:SetProperty(PROP_IS_COMBAT,false)
+        actor:SetProperty(PROP_CAN_MOVE,true)
+    end
 
+    for i,actor in ipairs(tAttackers) do
+        actor:SetProperty(PROP_ASM_BUFF_ANIM, 0)
+        actor:ClearBuffAnim()
+        actor:SetActionID(ACTION_IDLE)
+        actor:SetProperty(PROP_IS_COMBAT,false)
+        actor:SetProperty(PROP_CAN_MOVE,true)
+    end
+    animation_manager_clear()
 end
 
 function combat_system_imgui_update()
@@ -91,11 +156,6 @@ function combat_system_imgui_update()
     if imgui.Button('逃跑##player') then
         combat_system_switch_battle(false)
     end
-
-    if imgui.Button('进入战斗') then
-        combat_system_switch_battle(true)
-    end
-
     imgui.End()
 
     imgui.Begin('BBMenu',bb_menu_show)

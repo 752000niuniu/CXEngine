@@ -447,6 +447,9 @@ void BeHitAction::Enter()
 	auto* map = SCENE_MANAGER_INSTANCE->GetCurrentScene()->GetGameMap();
 	int offx = map != nullptr ? map->GetMapOffsetX() : 0 ;
 	int offy = map != nullptr ? map->GetMapOffsetY() : 0;
+	if(m_Actor->IsCombat()){
+		offx = offy = 0;
+	}
 	float bny = (float)(m_Actor->GetY() + offy - targetAvatar->GetFrameKeyY() + targetAvatar->GetFrameHeight() / 2);
 	beatNumber->SetPos((float)m_Actor->GetX() + offx, bny);
 
@@ -509,13 +512,15 @@ void BeCastAction::Exit()
 void BeCastAction::Enter()
 {
 	m_pASM->SetAction(ACTION_BEHIT);
-	
 
 	auto*targetAvatar = m_pASM->GetAvatar();
 	BeatNumber* beatNumber = new BeatNumber();
 	auto* map = SCENE_MANAGER_INSTANCE->GetCurrentScene()->GetGameMap();
 	int offx = map != nullptr ? map->GetMapOffsetX() : 0;
 	int offy = map != nullptr ? map->GetMapOffsetY() : 0;
+	if (m_Actor->IsCombat()) {
+		offx = offy = 0;
+	}
 	float bny = (float)(m_Actor->GetY() + offy - targetAvatar->GetFrameKeyY() + targetAvatar->GetFrameHeight() / 2);
 	beatNumber->SetPos((float)m_Actor->GetX() + offx, bny);
 	
@@ -701,34 +706,39 @@ void ActionStateMachine::Draw()
 
 	Pos pos = m_Actor->GetPos();
 	int dir = m_Actor->GetDir();
-	if (m_Actor->IsLocal() && m_Actor->GetScene() != nullptr&&m_Actor->GetScene()->GetGameMap() != nullptr) {
-		int mapWidth = m_Actor->GetScene()->GetGameMap()->GetWidth();
-		int mapHeight = m_Actor->GetScene()->GetGameMap()->GetHeight();
-		int px = m_Actor->GetX();
-		int py = m_Actor->GetY();
-		int maxMapOffsetX = mapWidth - halfScreenWidth;
-		int maxMapOffsetY = mapHeight - halfScreenHeight;
+	if (m_Actor->IsCombat()) {
+		avatar->Pos.x = pos.x;
+		avatar->Pos.y = pos.y;
+	}else{
+		if (m_Actor->IsLocal() && m_Actor->GetScene() != nullptr&&m_Actor->GetScene()->GetGameMap() != nullptr) {
+			int mapWidth = m_Actor->GetScene()->GetGameMap()->GetWidth();
+			int mapHeight = m_Actor->GetScene()->GetGameMap()->GetHeight();
+			int px = m_Actor->GetX();
+			int py = m_Actor->GetY();
+			int maxMapOffsetX = mapWidth - halfScreenWidth;
+			int maxMapOffsetY = mapHeight - halfScreenHeight;
 
-		px = px < halfScreenWidth ? px :
-			(px > maxMapOffsetX ?
-			(screenWidth - (mapWidth - px)) : halfScreenWidth);
-		py = py < halfScreenHeight ? py :
-			(py > maxMapOffsetY ?
-			(screenHeight - (mapHeight - py)) : halfScreenHeight);
+			px = px < halfScreenWidth ? px :
+				(px > maxMapOffsetX ?
+				(screenWidth - (mapWidth - px)) : halfScreenWidth);
+			py = py < halfScreenHeight ? py :
+				(py > maxMapOffsetY ?
+				(screenHeight - (mapHeight - py)) : halfScreenHeight);
 
-		avatar->Pos.x = (float)px;
-		avatar->Pos.y = (float)py;
-	}
-	else {
-		if (m_Actor->GetScene() != nullptr&&m_Actor->GetScene()->GetGameMap() != nullptr) {
-			int offx = m_Actor->GetScene()->GetGameMap()->GetMapOffsetX();
-			int offy = m_Actor->GetScene()->GetGameMap()->GetMapOffsetY();
-			avatar->Pos.x = (float)(m_Actor->GetX() + offx);
-			avatar->Pos.y = (float)(m_Actor->GetY() + offy);
+			avatar->Pos.x = (float)px;
+			avatar->Pos.y = (float)py;
 		}
 		else {
-			avatar->Pos.x = pos.x;
-			avatar->Pos.y = pos.y;
+			if (m_Actor->GetScene() != nullptr&&m_Actor->GetScene()->GetGameMap() != nullptr) {
+				int offx = m_Actor->GetScene()->GetGameMap()->GetMapOffsetX();
+				int offy = m_Actor->GetScene()->GetGameMap()->GetMapOffsetY();
+				avatar->Pos.x = (float)(m_Actor->GetX() + offx);
+				avatar->Pos.y = (float)(m_Actor->GetY() + offy);
+			}
+			else {
+				avatar->Pos.x = pos.x;
+				avatar->Pos.y = pos.y;
+			}
 		}
 	}
 

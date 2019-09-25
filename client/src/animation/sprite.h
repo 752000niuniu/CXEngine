@@ -152,6 +152,7 @@ public:
 	void AddBeatNumber(BeatNumber* bn);
 	void Update();
 	void Draw();
+	void Clear();
 private:
 	std::vector<Animation*> m_Animations;
 	std::vector<BeatNumber*> m_BeatNumbers;
