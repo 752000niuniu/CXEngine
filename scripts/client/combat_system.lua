@@ -73,6 +73,10 @@ function combat_system_clear_actors()
     tDefenders = {}
 end
 
+function combat_system_on_acting_end(actor)
+    combat_system_switch_battle(false)
+end
+
 function combat_system_add_attacker(actor)
     table.insert(tAttackers,actor)
 end

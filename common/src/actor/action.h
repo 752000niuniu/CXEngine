@@ -117,7 +117,7 @@ private:
 class DeadFlyAction : public Action
 {
 public:
-	DeadFlyAction(Actor* actor, Pos dir) :Action(actor), m_Dir(dir) { m_Type = ASM_DEAD_FLY_ACTION; };
+	DeadFlyAction(Actor* actor, Actor* attacker, Pos dir) :Action(actor), m_Attacker(attacker), m_Dir(dir) { m_Type = ASM_DEAD_FLY_ACTION; };
 	virtual ~DeadFlyAction() {};
 	virtual  void Update();
 	virtual void Enter();
@@ -127,6 +127,7 @@ private:
 	Pos m_Dir;
 	Pos m_FlyPos;
 	Pos m_SavedPos;
+	Actor* m_Attacker;
 };
 
 
@@ -145,6 +146,12 @@ private:
 class ActionStateMachine
 {
 public:
+	struct TimerFuncWrap
+	{
+		int ms;
+		function<void()> func;
+	};
+
 	ActionStateMachine(Actor* actor);
 	~ActionStateMachine();
 	void Update();
@@ -170,7 +177,7 @@ public:
 
 	void SetBuffAnim(uint64_t id);
 	Animation* GetBuffAnim() { return m_BuffAnim; }
-	
+	void AddDelayCallback(int ms, function<void()> func);
 private:
 	Actor * m_Actor;
 	float m_TimeInterval;
@@ -184,6 +191,7 @@ private:
 	std::map<int, Animation*> m_AvatarActions;
 	Animation* m_PlayerShadow;
 	Animation* m_BuffAnim;
+	deque<TimerFuncWrap> m_TimerFuncs;
 };
 #endif // !SIMPLE_SERVER
 

@@ -103,6 +103,15 @@ bool action_is_battle_action(int action)
 	return false;
 }
 
+void call_combat_system_on_acting_end(Actor* actor)
+{
+	lua_State* L = script_system_get_luastate();
+	lua_getglobal(L, "combat_system_on_acting_end");
+	lua_push_actor(L, actor);
+	int res = lua_pcall(L, 1, 0, 0);
+	check_lua_error(L, res);
+}
+
 #ifndef SIMPLE_SERVER
 Action::Action(Actor* _actor) :
 	m_Actor(_actor),
@@ -237,6 +246,11 @@ void AttackAction::Update()
 			m_Actor->SetActionID(ACTION_BATIDLE);
 			auto* new_action = new Action(m_Actor);
 			m_pASM->ChangeAction(new_action);
+
+			m_pASM->AddDelayCallback(500, [this]() {
+				m_Actor->SetProperty(PROP_COMBAT_ACTING, false);
+				call_combat_system_on_acting_end(m_Actor);
+			});
 		}
 	}
 }
@@ -304,12 +318,11 @@ void AttackAction::Enter()
 			m_Runto.y = y;
 			
 			m_Target->SetActionID(ACTION_BATIDLE);
-
 		}
 	}
-
 	m_pASM->SetAction(ACTION_BATIDLE);
 	m_SavedVelocity = m_Actor->GetProperty(PROP_MOVE_VELOCITY).toFloat();
+	m_Actor->SetProperty(PROP_COMBAT_ACTING, true);
 }
 
 
@@ -330,6 +343,10 @@ void CastAction::Update()
 			m_Actor->SetActionID(ACTION_BATIDLE);
 			auto* new_action = new Action(m_Actor);
 			m_pASM->ChangeAction(new_action);
+			m_pASM->AddDelayCallback(1000, [this]() {
+				m_Actor->SetProperty(PROP_COMBAT_ACTING, false);
+				call_combat_system_on_acting_end(m_Actor);
+			});
 		}
 		else if (avatar->IsFrameUpdate()) {
 			if (m_Actor->GetProperty(PROP_ASM_PLAY_BEHIT).toBool()) {
@@ -381,6 +398,7 @@ void CastAction::Enter()
 	}
 	
 	m_pASM->SetAction(ACTION_BATIDLE);
+	m_Actor->SetProperty(PROP_COMBAT_ACTING, true);
 }
 
 void BeHitAction::Update()
@@ -393,7 +411,7 @@ void BeHitAction::Update()
 	if (action == ACTION_BEHIT) {
 		if (avatar->IsGroupEndUpdate()) {
 			if(m_Actor->GetProperty(PROP_IS_DEAD).toBool()){
-				DeadFlyAction* action = new DeadFlyAction(m_Actor, MoveVec);
+				DeadFlyAction* action = new DeadFlyAction(m_Actor,m_Attacker, MoveVec);
 				m_pASM->ChangeAction(action);
 			}else{
 				Pos pos = m_Actor->GetPos();
@@ -472,7 +490,7 @@ void BeCastAction::Update()
 	if (action == ACTION_BEHIT) {
 		if (avatar->IsGroupEndUpdate()) {
 			if(m_Actor->GetProperty(PROP_IS_DEAD).toBool()){
-				DeadFlyAction* action = new DeadFlyAction(m_Actor, MoveVec);
+				DeadFlyAction* action = new DeadFlyAction(m_Actor, m_Attacker, MoveVec);
 				m_pASM->ChangeAction(action);
 				m_pASM->GetAvatar()->Pause(100);
 			}else{
@@ -664,6 +682,18 @@ ActionStateMachine::~ActionStateMachine()
 
 void ActionStateMachine::Update()
 {
+	int msdt = (int)WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
+	for (auto it = m_TimerFuncs.begin(); it != m_TimerFuncs.end();) {
+		auto& wrap = *it;
+		wrap.ms -= msdt;
+		if (wrap.ms <= 0) {
+			wrap.func();
+			it = m_TimerFuncs.erase(it);
+		}else{
+			it++;
+		}
+	}
+
 	if (m_AvatarID != m_Actor->GetProperty(PROP_AVATAR_ID).toString())
 	{
 		SetAvatar(m_Actor->GetProperty(PROP_AVATAR_ID).toString());
@@ -906,6 +936,13 @@ void ActionStateMachine::SetBuffAnim(uint64_t id)
 	}
 }
 
+void ActionStateMachine::AddDelayCallback(int ms, function<void()> func)
+{
+	TimerFuncWrap wrap;
+	wrap.ms = ms;
+	wrap.func = func;
+	m_TimerFuncs.push_back(wrap);
+}
 #endif
 
 void luaopen_action(lua_State* L)
