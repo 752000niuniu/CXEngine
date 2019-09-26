@@ -8,6 +8,13 @@ local BTTALE_TURN_EXECUTE = 4
 local BTTALE_TURN_NEXT = 5
 local BATTLE_END = 6
 
+local COMMAND_STATE_PREPARE = 1
+local COMMAND_STATE_PALY = 2
+local COMMAND_STATE_STOP = 3
+
+local COMMAND_TYPE_ATTACK = 1
+local COMMAND_TYPE_CAST = 2
+
 local CurrentTurn = 1
 local Commands = {}
 local BattleState = BATTLE_DEFAULT
@@ -15,18 +22,59 @@ local tAttackers = {}
 local tDefenders = {}
 
 local CommandMT = {}
-
-CommandMT.__index = CommandMT
-
-local AttackCommandMT = CommandMT
-
-AttackCommandMT.__index = AttackCommandMT
-
-
-
-function create_commnad()
-
+function CommandMT:new(o)
+    o = o or {}
+    self.__index = self 
+    setmetatable(o, self)
+    return o
 end
+
+function CommandMT:Init(actor)
+    self.state = COMMAND_STATE_PREPARE
+    self.type =  COMMAND_TYPE_ATTACK
+    self.master = actor
+end
+
+
+function CommandMT:GetState()
+    return self.state
+end
+
+function CommandMT:GetMaster()
+    return self.master
+end
+
+function CommandMT:GetType()
+    return self.type
+end
+
+function CommandMT:StartCast()
+    local actor = self.master
+    actor:GetTarget():SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF,0x1D3FF13C ))
+    actor:PlayAttack()
+end
+
+function CommandMT:Update()
+    if self.state == COMMAND_STATE_PREPARE then
+        self:StartCast()
+        self.state = COMMAND_STATE_PALY
+    elseif self.state == COMMAND_STATE_PALY then
+    
+    elseif self.state == COMMAND_STATE_STOP then
+        
+    end    
+end
+
+function CommandMT:IsFinished()
+    return self.state == COMMAND_STATE_STOP
+end
+
+
+
+-- local AttackCommandMT = CommandMT:new()
+
+
+
 
 BattleBG = BattleBG or nil
 combat_self_pos = combat_self_pos or {}
@@ -116,6 +164,7 @@ function combat_system_update()
     而 npc的输入来自随机
     敌对玩家的输入来自网络
 ]]
+
         if check_turn_ready() then
             BattleState = BTTALE_TURN_EXECUTE
         end
@@ -134,19 +183,26 @@ function combat_system_update()
 ]]
         if #Commands > 0 then
             local cmd = Commands[1]
-            -- local st = cmd:GetState()
-            -- if st == CMD_START then
-            --     cmd:Start()
-            --     st = CMD_PLAYING
-            -- elseif st == CMD_PLAYING then
-
-            -- elseif st == CMD_END then
-            --     cmd:End()
-            --     table.remove(Commands,1)
-            -- end
+            cmd:Update()
+            if cmd:IsFinished() then
+                table.remove(Commands,1)
+            end
+        else 
+            BattleState = BTTALE_TURN_NEXT
         end
 
     elseif BattleState == BTTALE_TURN_NEXT then
+        CurrentTurn = CurrentTurn + 1 
+        for i,actor in ipairs(tDefenders) do
+            actor:SetProperty(PROP_TURN_READY,false)
+        end
+    
+        for i,actor in ipairs(tAttackers) do
+            actor:SetProperty(PROP_TURN_READY,false)
+        end
+
+        BattleState = BATTLE_TURN_STAND_BY
+
 
     end
 	for i,actor in ipairs(tDefenders) do
@@ -181,7 +237,10 @@ end
 
 
 function combat_system_on_acting_end(actor)
-    combat_system_switch_battle(false)
+    if #Commands > 0 then
+       local cmd = Commands[1]
+       cmd.state = COMMAND_STATE_STOP
+    end
 end
 
 
@@ -205,13 +264,33 @@ function combat_system_on_end()
 end
 
 function combat_system_imgui_update()
+    if BattleState == BATTLE_TURN_STAND_BY then
+
+        if imgui.Button('敌人模拟攻击##player') then
+            local player = actor_manager_fetch_local_player()
+            local enemy = player:GetTarget()
+            enemy:SetTarget(player)
+
+            local cmd = CommandMT:new()
+            cmd:Init(enemy)
+            table.insert(Commands,cmd)
+
+            enemy:SetProperty(PROP_TURN_READY, true)
+        end    
+
+
+        if imgui.Button('攻击##player') then
+            local player = actor_manager_fetch_local_player()
+            
+            local cmd = CommandMT:new()
+            cmd:Init(player)
+            table.insert(Commands,cmd)
+
+            player:SetProperty(PROP_TURN_READY, true)
+        end    
+    end
 	imgui.Begin('Menu',menu_show)
 
-    if imgui.Button('攻击##player') then
-        local player = actor_manager_fetch_local_player()
-
-        player:SetProperty(PROP_TURN_READY)
-    end
 
     if imgui.Button('法术##player') then
 
