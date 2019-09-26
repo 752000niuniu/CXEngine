@@ -14,6 +14,19 @@ local BattleState = BATTLE_DEFAULT
 local tAttackers = {}
 local tDefenders = {}
 
+local CommandMT = {}
+
+CommandMT.__index = CommandMT
+
+local AttackCommandMT = CommandMT
+
+AttackCommandMT.__index = AttackCommandMT
+
+
+
+function create_commnad()
+
+end
 
 BattleBG = BattleBG or nil
 combat_self_pos = combat_self_pos or {}
@@ -48,7 +61,21 @@ function calc_combat_enemy_pos(ratio_x, ratio_y)
 	}
 end
 
+function check_turn_ready()
+    local ready = true
+    for i,actor in ipairs(tDefenders) do
+        if not actor:GetProperty(PROP_TURN_READY) then
+            ready = false
+        end
+    end
 
+    for i,actor in ipairs(tAttackers) do
+        if not actor:GetProperty(PROP_TURN_READY) then
+            ready = false
+        end
+    end
+    return ready
+end
 
 function combat_system_init()
     BattleBG = animation_create(ADDONWDF, 0xE3B87E0F)
@@ -83,23 +110,41 @@ function combat_system_update()
         end
         BattleState = BATTLE_TURN_STAND_BY
     elseif BattleState == BATTLE_TURN_STAND_BY then
-        local ready = true
-        for i,actor in ipairs(tDefenders) do
-            if not actor:GetProperty(PROP_TURN_READY) then
-                ready = false
-            end
-        end
-
-        for i,actor in ipairs(tAttackers) do
-            if not actor:GetProperty(PROP_TURN_READY) then
-                ready = false
-            end
-        end
-        if ready then
+--[[
+    每帧update都看player是不是输入了指令
+    local player的指令输入来自键盘 或者  鼠标
+    而 npc的输入来自随机
+    敌对玩家的输入来自网络
+]]
+        if check_turn_ready() then
             BattleState = BTTALE_TURN_EXECUTE
         end
     elseif BattleState == BTTALE_TURN_EXECUTE then
+--[[
+    处理每一条战斗指令,
+    每条战斗指令,代表某个actor的演出
+    处理完战斗指令,所有的actor演出结束
+    战斗指令的先后顺序代表actor的先后顺序
 
+    攻击指令
+        攻击对象 攻击效果
+    施法指令
+        
+    防御指令
+]]
+        if #Commands > 0 then
+            local cmd = Commands[1]
+            -- local st = cmd:GetState()
+            -- if st == CMD_START then
+            --     cmd:Start()
+            --     st = CMD_PLAYING
+            -- elseif st == CMD_PLAYING then
+
+            -- elseif st == CMD_END then
+            --     cmd:End()
+            --     table.remove(Commands,1)
+            -- end
+        end
 
     elseif BattleState == BTTALE_TURN_NEXT then
 
@@ -161,6 +206,12 @@ end
 
 function combat_system_imgui_update()
 	imgui.Begin('Menu',menu_show)
+
+    if imgui.Button('攻击##player') then
+        local player = actor_manager_fetch_local_player()
+
+        player:SetProperty(PROP_TURN_READY)
+    end
 
     if imgui.Button('法术##player') then
 
