@@ -35,7 +35,6 @@ function CommandMT:Init(actor)
     self.master = actor
 end
 
-
 function CommandMT:GetState()
     return self.state
 end
@@ -70,11 +69,19 @@ function CommandMT:IsFinished()
 end
 
 
+local CastCommandMT = CommandMT:new()
+function CastCommandMT:Init(actor)
+    self.state = COMMAND_STATE_PREPARE
+    self.type =  COMMAND_TYPE_CAST
+    self.master = actor
+end
+
+function CastCommandMT:StartCast()
+    local actor = self.master
+    actor:PlayCast()
+end
 
 -- local AttackCommandMT = CommandMT:new()
-
-
-
 
 BattleBG = BattleBG or nil
 combat_self_pos = combat_self_pos or {}
@@ -278,6 +285,25 @@ function combat_system_imgui_update()
             enemy:SetProperty(PROP_TURN_READY, true)
         end    
 
+        if imgui.Button('敌人模拟法术攻击##player') then
+            local magic_tbl = content_system_get_table('magic')
+            local keys = utils_fetch_sort_keys(magic_tbl)
+            local cast_id = magic_tbl[keys[math.random(1,#keys)]].resid
+
+            local player = actor_manager_fetch_local_player()
+            local enemy = player:GetTarget()
+            enemy:SetTarget(player)
+            
+            enemy:SetProperty(PROP_ASM_PLAY_BEHIT, true)
+            enemy:SetProperty(PROP_CAST_ID, res_encode(MAGICWDF, cast_id))
+            enemy:SetProperty(PROP_ASM_BUFF_ANIM, 0)
+
+            local cmd = CastCommandMT:new()
+            cmd:Init(enemy)
+            table.insert(Commands,cmd)
+
+            enemy:SetProperty(PROP_TURN_READY, true)
+        end
 
         if imgui.Button('攻击##player') then
             local player = actor_manager_fetch_local_player()
@@ -287,7 +313,26 @@ function combat_system_imgui_update()
             table.insert(Commands,cmd)
 
             player:SetProperty(PROP_TURN_READY, true)
-        end    
+        end  
+        
+        if imgui.Button('法术攻击##player') then
+            local magic_tbl = content_system_get_table('magic')
+            local keys = utils_fetch_sort_keys(magic_tbl)
+            local cast_id = magic_tbl[keys[math.random(1,#keys)]].resid
+
+            local player = actor_manager_fetch_local_player()
+            
+            player:SetProperty(PROP_ASM_PLAY_BEHIT , true)
+            player:SetProperty(PROP_CAST_ID, res_encode(MAGICWDF, cast_id))
+            player:SetProperty(PROP_ASM_BUFF_ANIM,0)
+
+            local cmd = CastCommandMT:new()
+            cmd:Init(player)
+            table.insert(Commands,cmd)
+
+            player:SetProperty(PROP_TURN_READY, true)
+        end  
+        
     end
 	imgui.Begin('Menu',menu_show)
 

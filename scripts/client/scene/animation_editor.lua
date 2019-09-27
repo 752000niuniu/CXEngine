@@ -100,10 +100,6 @@ local bb_menu_show = true
 local magic_menu_show = false
 
 function OnSceneImGuiUpdate()
-    if imgui.Button('Addy') then
-        npc_dialog_set_xy(0,-100)
-    end
-
     if imgui.Button('Close') then
         npc_dialog_show(false,'')
     end
