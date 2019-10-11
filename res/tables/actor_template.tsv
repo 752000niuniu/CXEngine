@@ -45,7 +45,7 @@ prop_base_sp	float	0
 prop_base_lv	float	0
 prop_base_exp	float	0
 prop_base_force	float	0
-prop_base_defend	float	0
+prop_base_health	float	0
 prop_base_stamina	float	0
 prop_base_agility	float	0
 prop_base_magic	float	0

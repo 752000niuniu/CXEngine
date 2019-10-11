@@ -92,7 +92,6 @@ function ActorMT:SetProperties(props)
     draw_avatar_boundingbox(avatar)
 end
 
-
 local AnimationMT = base_sprite_get_metatable()
 function AnimationMT:DrawAvatarInfo()
     draw_avatar_info(self)
@@ -102,3 +101,6 @@ end
 function AnimationMT:DrawBoundingBox()
     draw_avatar_boundingbox(self)
 end
+
+
+
