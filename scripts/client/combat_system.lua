@@ -1,5 +1,3 @@
-
-
 local BATTLE_DEFAULT = 0
 local BATTLE_PREPARE = 1
 local BATTLE_START = 2
@@ -67,7 +65,6 @@ end
 function CommandMT:IsFinished()
     return self.state == COMMAND_STATE_STOP
 end
-
 
 local CastCommandMT = CommandMT:new()
 function CastCommandMT:Init(actor)
@@ -140,29 +137,53 @@ function combat_system_init()
 	combat_enemy_pos =  calc_combat_enemy_pos(ratio_x, ratio_y)
 end
 
+function combat_system_on_start()
+    ui_renderer_clear()
+    local init_actor = function(actor, pos, dir)
+        actor:SetProperty(PROP_IS_COMBAT,true)
+        actor:SetProperty(PROP_TURN_READY,false)
+        actor:SetProperty(PROP_COMBAT_POS,pos.x,pos.y)
+        actor:MoveTo(pos.x,pos.y)
+        actor:SetActionID(ACTION_BATIDLE)
+        actor:SetDir(dir)
+    end
+
+    for i,actor in ipairs(tDefenders) do
+        local pos =  combat_enemy_pos[i]
+        init_actor(actor, pos, DIR_SE)
+    end
+
+    for i,actor in ipairs(tAttackers) do
+        local pos =  combat_self_pos[i]
+        init_actor(actor, pos, DIR_NW)
+    end
+end
+
+function combat_system_on_end()
+    for i,actor in ipairs(tDefenders) do
+        actor:SetProperty(PROP_ASM_BUFF_ANIM, 0)
+        actor:ClearBuffAnim()
+        actor:SetActionID(ACTION_IDLE)
+        actor:SetProperty(PROP_IS_COMBAT,false)
+        actor:SetProperty(PROP_CAN_MOVE,true)
+    end
+
+    for i,actor in ipairs(tAttackers) do
+        actor:SetProperty(PROP_ASM_BUFF_ANIM, 0)
+        actor:ClearBuffAnim()
+        actor:SetActionID(ACTION_IDLE)
+        actor:SetProperty(PROP_IS_COMBAT,false)
+        actor:SetProperty(PROP_CAN_MOVE,true)
+    end
+    animation_manager_clear()
+    scene_set_combat(false)
+end
+
 function combat_system_update()
     if BattleState == BATTLE_DEFAULT then
         return
     elseif BattleState == BATTLE_START then
-        ui_renderer_clear()
-        local init_actor = function(actor, pos, dir)
-            actor:SetProperty(PROP_IS_COMBAT,true)
-            actor:SetProperty(PROP_TURN_READY,false)
-            actor:SetProperty(PROP_COMBAT_POS,pos.x,pos.y)
-            actor:MoveTo(pos.x,pos.y)
-            actor:SetActionID(ACTION_BATIDLE)
-            actor:SetDir(dir)
-        end
-        
-        for i,actor in ipairs(tDefenders) do
-            local pos =  combat_enemy_pos[i]
-            init_actor(actor, pos, DIR_SE)
-        end
-    
-        for i,actor in ipairs(tAttackers) do
-            local pos =  combat_self_pos[i]
-            init_actor(actor, pos, DIR_NW)
-        end
+        combat_system_on_start()
         BattleState = BATTLE_TURN_STAND_BY
     elseif BattleState == BATTLE_TURN_STAND_BY then
 --[[
@@ -195,7 +216,11 @@ function combat_system_update()
                 table.remove(Commands,1)
             end
         else 
-            BattleState = BTTALE_TURN_NEXT
+            if check_turn_end() then
+                BattleState = BTTALE_TURN_END
+            else
+                BattleState = BTTALE_TURN_NEXT
+            end
         end
 
     elseif BattleState == BTTALE_TURN_NEXT then
@@ -209,9 +234,12 @@ function combat_system_update()
         end
 
         BattleState = BATTLE_TURN_STAND_BY
-
-
+    elseif BattleState == BTTALE_TURN_END then
+        combat_system_on_end()
+        BattleState = BATTLE_DEFAULT
+        return
     end
+
 	for i,actor in ipairs(tDefenders) do
         actor:Update()
     end
@@ -242,7 +270,6 @@ function combat_system_start_battle(atk_actors, dfd_actors)
     BattleState = BATTLE_START
 end
 
-
 function combat_system_on_acting_end(actor)
     if #Commands > 0 then
        local cmd = Commands[1]
@@ -250,29 +277,8 @@ function combat_system_on_acting_end(actor)
     end
 end
 
-
-function combat_system_on_end()
-    for i,actor in ipairs(tDefenders) do
-        actor:SetProperty(PROP_ASM_BUFF_ANIM, 0)
-        actor:ClearBuffAnim()
-        actor:SetActionID(ACTION_IDLE)
-        actor:SetProperty(PROP_IS_COMBAT,false)
-        actor:SetProperty(PROP_CAN_MOVE,true)
-    end
-
-    for i,actor in ipairs(tAttackers) do
-        actor:SetProperty(PROP_ASM_BUFF_ANIM, 0)
-        actor:ClearBuffAnim()
-        actor:SetActionID(ACTION_IDLE)
-        actor:SetProperty(PROP_IS_COMBAT,false)
-        actor:SetProperty(PROP_CAN_MOVE,true)
-    end
-    animation_manager_clear()
-end
-
 function combat_system_imgui_update()
     if BattleState == BATTLE_TURN_STAND_BY then
-
         if imgui.Button('敌人模拟攻击##player') then
             local player = actor_manager_fetch_local_player()
             local enemy = player:GetTarget()
