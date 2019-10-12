@@ -132,41 +132,68 @@ end
 
 
 --气血 ＝体质×成长率×2+体力资质×等级÷1000
-function formula_calc_summon_hp()
-
+function formula_calc_summon_hp(actor)
+    local hp = actor:GetProperty(PROP_BASE_HEALTH) * actor:GetProperty(PROP_SUMMON_GROW_COEF) * 2 
+            + actor:GetProperty(PROP_SUMMON_HEALTH_QUAL) * actor:GetProperty(PROP_LV) / 1000
+    return hp
 end
 
 --魔法 ＝魔力×成长率+法力资质×等级÷500
-function formula_calc_summon_mp()
-
+function formula_calc_summon_mp(actor)
+    local mp = actor:GetProperty(PROP_BASE_MAGIC) * actor:GetProperty(PROP_SUMMON_GROW_COEF) 
+            + actor:GetProperty(PROP_SUMMON_MAGIC_QUAL) * actor:GetProperty(PROP_LV) / 500
+    return mp
 end
 
 --攻击 ＝(等级×1.5+力量)×成长率÷3.1+[(攻击资质-480)÷300+力量÷2500]×等级
-function formula_calc_summon_atk()
-
+function formula_calc_summon_atk(actor)
+    local lv = actor:GetProperty(PROP_LV)
+    local force = actor:GetProperty(PROP_BASE_FORCE) 
+    local grow = actor:GetProperty(PROP_SUMMON_GROW_COEF)
+    local atk_qual = actor:GetProperty(PROP_SUMMON_ATK_QUAL)
+    local atk = (lv*1.5 + force) * grow/3.1 + ((atk_qual-480)/300+force/2500)*lv
+    return atk
 end
 
 --防御 ＝(成长率×0.5-0.2)×耐力+[(防御资质-460)÷450+成长率×0.3]×等级
-function formula_calc_summon_defend()
-
+function formula_calc_summon_defend(actor)
+    local lv = actor:GetProperty(PROP_LV)
+    local stamina = actor:GetProperty(PROP_BASE_STAMINA) 
+    local grow = actor:GetProperty(PROP_SUMMON_GROW_COEF)
+    local def_qual = actor:GetProperty(PROP_SUMMON_DEF_QUAL)
+    local def = (grow*0.5 - 0.2) * stamina + ((def_qual-460)/450+ grow*0.3)*lv
+    return def
 end
 
 --速度 ＝速度资质×敏捷÷1000
-function formula_calc_summon_speed()
-
+function formula_calc_summon_speed(actor)
+    local agility = actor:GetProperty(PROP_BASE_AGILITY) 
+    local speed_qual = actor:GetProperty(PROP_SUMMON_SPEED_QUAL)
+    local speed = agility * speed_qual / 1000
+    return speed
 end
 
 --灵力 ＝(法力资质÷1000+成长率)×等级÷5+魔力×0.7+力量×0.4+体质×0.3+耐力×0.2
-function formula_calc_summon_spritual()
-
+function formula_calc_summon_spritual(actor)
+    local lv = actor:GetProperty(PROP_LV)
+    local grow = actor:GetProperty(PROP_SUMMON_GROW_COEF)
+    local magic_qual = actor:GetProperty(PROP_SUMMON_MAGIC_QUAL)
+    
+    local magic = actor:GetProperty(PROP_BASE_MAGIC) 
+    local force = actor:GetProperty(PROP_BASE_FORCE) 
+    local health = actor:GetProperty(PROP_BASE_HEALTH) 
+    local stamina = actor:GetProperty(PROP_BASE_STAMINA) 
+    
+    local spiritual = (magic_qual/1000+grow)*lv/5 + magic*0.7 + force*0.4 + health*0.3 + stamina*0.2
+    return spiritual
 end
 
 --成长率1 ＝(气血-体力资质×等级÷1000)÷体质÷2
-function formula_calc_summon_growth_1()
-
+function formula_calc_summon_growth_1(actor)
+    return 0
 end
 
 --成长率2 ＝(魔法-法力资质×等级÷500)÷魔力
-function formula_calc_summon_growth_2()
-
+function formula_calc_summon_growth_2(actor)
+    return 0
 end
