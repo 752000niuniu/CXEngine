@@ -103,3 +103,65 @@ mp +-	mp不足 不能释放技能
 横扫伤害计算
 	释放横扫的回合前, 可以提前算出 横扫对目标造成的伤害 以及横扫自己消耗的hp
 
+
+cmd = {
+    master,
+    target,
+    skill_id
+}
+
+atk_skill = {
+    type = 'atk',
+    atk_anim = '',
+    combo,
+    group_kill,
+    buff_id,
+    base_damage,
+    is_suck_blood,
+    is_critical_atk,
+}
+
+cast_skill = {
+    type = 'cast',
+    cast_anim,
+    buff_id
+}
+
+buff = {
+    turn_count,
+    curr_turn,
+    buff_state_anim,
+    buff_props
+}
+
+
+播放攻击指令
+
+待战-> 跑去-> 攻击 -> 
+
+SkillOnStart
+
+SkillOnCombo
+
+SkillOnGroupKill
+
+SkillOnEnd
+
+读取攻击技能id, 是否有combo , 是否是群秒, 是否产生暴击, 是否吸血, 攻击效果, 是否会添加buff
+添加buff的话, 添加后 调用buffOnStart
+
+-> 跑回 -> 结束
+
+
+播放施法指令
+
+待战-> Cast动作->
+SkillOnStart 
+
+SkillOnCombo
+
+SkillOnGroupKill
+
+SkillOnEnd
+
+-> 待战
