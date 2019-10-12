@@ -79,7 +79,6 @@ function CastCommandMT:StartCast()
 end
 
 -- local AttackCommandMT = CommandMT:new()
-
 BattleBG = BattleBG or nil
 combat_self_pos = combat_self_pos or {}
 combat_enemy_pos = combat_enemy_pos or {}
@@ -192,7 +191,6 @@ function combat_system_update()
     而 npc的输入来自随机
     敌对玩家的输入来自网络
 ]]
-
         if check_turn_ready() then
             BattleState = BTTALE_TURN_EXECUTE
         end
@@ -401,4 +399,27 @@ function combat_system_imgui_update()
         player:PlayAttack()
     end
 end
+
+
+
+function BattleCmdOnCombo(actor)
+
+end
+
+function BattleCmdOnGroupKill(actor)
+
+end
+
+function BattleCmdOnTurnReady(actor)
+
+end
+
+function BattleCmdOnTurnEnd(actor)
+
+end
+
+
+
+
+
 

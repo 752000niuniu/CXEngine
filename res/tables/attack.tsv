@@ -1,0 +1,67 @@
+ID	name	type	combo	atk_anim	group_kill	cast_anim	act_turn
+*0		atk	0				
+1	普攻	atk					
+2	横扫千军	atk	3				2
+3	后发制人	atk					2
+4	破釜沉舟	atk			3		2
+5	满天花雨	atk					
+6	天雷斩	atk			3		
+7	雷霆万钧	spell					
+8	烟雨剑法	atk	2				
+9	飘渺式	atk			3		
+12	象形	atk					
+13	鹰击	atk			6		
+14	狮搏	atk					
+15	连环击	atk	6				
+16	惊心一剑	atk					
+17	死亡召唤	atk					
+18	善恶有报	atk					
+19	力劈华山	atk					
+20	夜舞倾城	atk					
+21	壁垒击破	atk					
+22	嗜血追击	atk					
+23	剑荡四方	atk			4		
+24	靛沧海	spell					
+25	斩龙诀	spell					
+26	五雷咒	spell					
+27	紫气东来	spell					
+28	唧唧歪歪	spell					
+29	情天恨海	spell					
+30	飞花摘叶	spell					
+31	雨落寒沙	spell					
+32	天诛地灭	spell					
+33	镇妖	spell					
+34	错乱	spell					
+35	百万神兵	spell					
+36	五雷轰顶	spell					
+37	金刚镯	spell					
+38	龙腾	spell					
+39	龙卷雨击	spell					
+40	龙吟	spell					
+41	龙啸九天	spell					
+42	二龙戏珠	spell					
+43	太极生化	spell					
+44	紧箍咒	spell					
+45	日光华	spell					
+46	三星灭魔	spell					
+47	巨岩破	spell					
+48	苍茫树	spell					
+49	地裂火	spell					
+50	五行错位	spell					
+51	阎罗令	spell					
+52	判官令	spell					
+53	冤魂不散	spell					
+54	尸腐毒	spell					
+55	黄泉之息	spell					
+56	魂飞魄散	spell					
+57	飞砂走石	spell					
+58	三昧真火	spell					
+59	踏山裂石	spell					
+60	摇头摆尾	spell					
+61	魔兽啸天	spell					
+62	勾魂	spell					
+63	摄魄	spell					
+64	夺命蛛丝	spell					
+65	姐妹同心	spell					
+66	瘴气	spell					
+67	幻镜术	spell					
