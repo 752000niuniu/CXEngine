@@ -184,7 +184,19 @@ local LocalPlayerDebugButtons = {
         end
     }
 }
+
+
      
+local cur_add_plan = 1
+local add_plan_map ={
+    [1] = "1,0,3,1,0", -- 3力1体1耐
+    [2] = "0,4,0,1,0", -- 4魔1耐
+    [3] = "2,0,0,2,1", -- 2体2耐1敏
+    [4] = "1,0,0,1,3", -- 3敏1体1耐
+    -- [5] = "0,0,5,0,0", -- 5力
+    [5] = "1,0,4,0,0", -- 4力1体
+}
+
 function on_actor_editor_update()    
     local res 
     imgui.Begin('Actor编辑器')
@@ -275,6 +287,90 @@ function on_actor_editor_update()
         end,function(k,v)
             v.on_click()
         end)
+    end
+
+    if imgui.CollapsingHeader('ActorInfo') then
+        local actor = actor_manager_fetch_local_player()
+        if actor then
+            local actor_type = actor:GetProperty(PROP_ACTOR_TYPE) 
+            for i = 1, 5 do 
+                local selected = imgui.RadioButton(i..'##rbplan',cur_add_plan == i) 
+                if i ~= 5 then
+                    imgui.SameLine()
+                end
+                if selected then
+                    cur_add_plan = i
+                    actor:SetProperty(PROP_ADD_PROP_PLAN, add_plan_map[cur_add_plan])
+                    cxlog_info('cur_add_plan',cur_add_plan,add_plan_map[cur_add_plan])
+                end
+            end
+
+            imgui.Text('等级 '..actor:GetProperty(PROP_LV))
+            imgui.SameLine()
+            if imgui.Button('+5##lv') then
+                local lv = actor:GetProperty(PROP_LV) + 5
+                actor:SetProperty(PROP_LV, lv)
+                if actor==ACTOR_TYPE_PLAYER then
+                    actor:UpdatePropPtsByPlan()
+                end
+            end
+            imgui.SameLine()
+            if imgui.Button('-5##lv') then
+                local lv = actor:GetProperty(PROP_LV) - 5
+                actor:SetProperty(PROP_LV, lv)
+                if actor==ACTOR_TYPE_PLAYER then
+                    actor:UpdatePropPtsByPlan()
+                end
+            end
+
+            if imgui.Button('固定计算') then
+                if actor_type==ACTOR_TYPE_SUMMON then
+                    actor:SetProperty(PROP_SUMMON_ATK_QUAL ,1400)
+                    actor:SetProperty(PROP_SUMMON_DEF_QUAL ,1400)
+                    actor:SetProperty(PROP_SUMMON_HEALTH_QUAL ,4500)
+                    actor:SetProperty(PROP_SUMMON_MAGIC_QUAL , 2500)
+                    actor:SetProperty(PROP_SUMMON_SPEED_QUAL ,1200)
+                    actor:SetProperty(PROP_SUMMON_DODGE_QUAL , 1200)
+                    actor:SetProperty(PROP_SUMMON_GROW_COEF , 1.25)
+
+                    actor:SetProperty(PROP_BASE_HEALTH, 417 )
+                    actor:SetProperty(PROP_BASE_MAGIC,680 )
+                    actor:SetProperty(PROP_BASE_FORCE, 171)
+                    actor:SetProperty(PROP_BASE_STAMINA , 171 )
+                    actor:SetProperty(PROP_BASE_AGILITY, 171)
+                    actor:SetProperty(PROP_LV, 151)
+                else
+                    actor:SetProperty(PROP_BASE_HEALTH, 333 )
+                    actor:SetProperty(PROP_BASE_MAGIC,157 )
+                    actor:SetProperty(PROP_BASE_FORCE, 689)
+                    actor:SetProperty(PROP_BASE_STAMINA , 215 )
+                    actor:SetProperty(PROP_BASE_AGILITY, 157)
+                    actor:SetProperty(PROP_LV, 145)
+                end
+            end
+
+            imgui.Text('MaxHP ' .. actor:GetMaxHP())
+            imgui.Text('当前HP '..actor:GetProperty(PROP_BASE_HP))
+
+            imgui.Text('MaxMP ' .. actor:GetMaxMP())
+            imgui.Text('当前MP '..actor:GetProperty(PROP_BASE_MP))
+
+            imgui.Text('当前SP '..actor:GetProperty(PROP_BASE_SP))
+            
+            imgui.Text('体质 '..actor:GetProperty(PROP_BASE_HEALTH))
+            imgui.Text('魔力 '..actor:GetProperty(PROP_BASE_MAGIC))
+            imgui.Text('力量 '..actor:GetProperty(PROP_BASE_FORCE))
+            imgui.Text('耐力 '..actor:GetProperty(PROP_BASE_STAMINA))
+            imgui.Text('敏捷 '..actor:GetProperty(PROP_BASE_AGILITY))
+
+            
+            imgui.Text('命中 '..actor:CalcTargetHit())
+            imgui.Text('攻击 '..actor:CalcAttack())
+            imgui.Text('防御 '..actor:CalcDefend())
+            imgui.Text('灵力 '..actor:CalcSpiritual())
+            imgui.Text('速度 '..actor:CalcSpeed())
+            imgui.Text('躲闪 '..actor:CalcDodge())
+        end
     end
 
     imgui.End()

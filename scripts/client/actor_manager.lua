@@ -13,7 +13,7 @@ local function utils_find_role_id_row(actor_type, role_id)
     local row_pos =  0
     if actor_type == ACTOR_TYPE_PLAYER then
         row_pos = role_tbl[role_id].row_pos
-    elseif actor_type == ACTOR_TYPE_PET then
+    elseif actor_type == ACTOR_TYPE_SUMMON then
         row_pos = pet_tbl[role_id].row_pos
     elseif actor_type == ACTOR_TYPE_NPC then
         row_pos = npc_tbl[role_id].row_pos

@@ -36,7 +36,7 @@ function OnSceneInit()
     ostime = ostime + 1
     enemyBB  = actor_manager_create_actor(ostime)
     enemyBB:SetProperties({
-        [PROP_ACTOR_TYPE] = ACTOR_TYPE_PET,
+        [PROP_ACTOR_TYPE] = ACTOR_TYPE_SUMMON,
         [PROP_AVATAR_ID] = '古代瑞兽',
         [PROP_WEAPON_AVATAR_ID] = '',
         [PROP_NAME] ='古代瑞兽',
@@ -48,7 +48,7 @@ function OnSceneInit()
     ostime = ostime + 1
     playerBB  = actor_manager_create_actor(ostime)
     playerBB:SetProperties({
-        [PROP_ACTOR_TYPE] = ACTOR_TYPE_PET,
+        [PROP_ACTOR_TYPE] = ACTOR_TYPE_SUMMON,
         [PROP_AVATAR_ID] = '鬼将',
         [PROP_WEAPON_AVATAR_ID] = '',
         [PROP_NAME] ='鬼将',

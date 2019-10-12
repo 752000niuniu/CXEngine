@@ -290,7 +290,7 @@ utils::tsv* ResourceManager::FindAvatarTable(int actor_type)
 	case ACTOR_TYPE_PLAYER:
 		rowTable = &m_AvatarRoleTSV;
 		break;
-	case ACTOR_TYPE_PET:
+	case ACTOR_TYPE_SUMMON:
 	case ACTOR_TYPE_NPC:
 		rowTable = &m_AvatarNpcTSV;
 		break;
@@ -303,7 +303,7 @@ int ResourceManager::ActorTypeToAvatarType(int actorType)
 {
 	if (actorType == ACTOR_TYPE_DEFAULT || actorType == ACTOR_TYPE_PLAYER)
 		return AVATAR_TYPE_ROLE;
-	if (actorType == ACTOR_TYPE_PET || actorType == ACTOR_TYPE_NPC)
+	if (actorType == ACTOR_TYPE_SUMMON || actorType == ACTOR_TYPE_NPC)
 		return AVATAR_TYPE_NPC;
 	return AVATAR_TYPE_ROLE;
 }

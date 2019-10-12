@@ -178,6 +178,10 @@ function combat_system_on_end()
     scene_set_combat(false)
 end
 
+function check_turn_end()
+    return true
+end
+
 function combat_system_update()
     if BattleState == BATTLE_DEFAULT then
         return

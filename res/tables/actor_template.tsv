@@ -44,6 +44,7 @@ prop_base_hp	float	0
 prop_base_mp	float	0
 prop_base_sp	float	0
 prop_lv	int	0
+prop_add_prop_plan	str	1,1,1,1,1
 prop_exp	float	0
 prop_base_force	int	0
 prop_base_health	int	0

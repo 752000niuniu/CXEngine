@@ -727,7 +727,7 @@ void luaopen_actor(lua_State* L)
 #define REG_ENUM(e) (lua_pushinteger(L, e), lua_setglobal(L, #e))
 	REG_ENUM(ACTOR_TYPE_DEFAULT);
 	REG_ENUM(ACTOR_TYPE_PLAYER);
-	REG_ENUM(ACTOR_TYPE_PET);
+	REG_ENUM(ACTOR_TYPE_SUMMON);
 	REG_ENUM(ACTOR_TYPE_NPC);
 
 	REG_ENUM(ACTION_IDLE);
