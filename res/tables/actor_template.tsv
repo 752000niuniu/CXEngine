@@ -40,9 +40,9 @@ prop_asm_damage	int	0
 prop_asm_heal	int	0
 prop_asm_buff_anim	uint64	0
 prop_asm_play_behit	bool	true
-prop_base_hp	float	0
-prop_base_mp	float	0
-prop_base_sp	float	0
+prop_hp	float	0
+prop_mp	float	0
+prop_sp	float	0
 prop_lv	int	0
 prop_add_prop_plan	str	1,1,1,1,1
 prop_exp	float	0

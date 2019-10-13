@@ -28,7 +28,7 @@ CombatSystem::CombatSystem()
 	m_CombatBGPath("")
 {
 	//SKILL_MANAGER_INSTANCE;
-	script_system_call_function(script_system_get_luastate(), "combat_system_init");
+//	script_system_call_function(script_system_get_luastate(), "combat_system_init");
 }
 
 CombatSystem::~CombatSystem()
@@ -39,7 +39,7 @@ CombatSystem::~CombatSystem()
 void CombatSystem::Update()
 {
 
-	script_system_call_function(script_system_get_luastate(), "combat_system_update");
+	//script_system_call_function(script_system_get_luastate(), "combat_system_update");
 //#ifndef SIMPLE_SERVER
 //	if (m_BattleState == BATTLE_DEFAULT) {
 //

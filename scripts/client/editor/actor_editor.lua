@@ -350,12 +350,12 @@ function on_actor_editor_update()
             end
 
             imgui.Text('MaxHP ' .. actor:GetMaxHP())
-            imgui.Text('当前HP '..actor:GetProperty(PROP_BASE_HP))
+            imgui.Text('当前HP '..actor:GetProperty(PROP_HP))
 
             imgui.Text('MaxMP ' .. actor:GetMaxMP())
-            imgui.Text('当前MP '..actor:GetProperty(PROP_BASE_MP))
+            imgui.Text('当前MP '..actor:GetProperty(PROP_MP))
 
-            imgui.Text('当前SP '..actor:GetProperty(PROP_BASE_SP))
+            imgui.Text('当前SP '..actor:GetProperty(PROP_SP))
             
             imgui.Text('体质 '..actor:GetProperty(PROP_BASE_HEALTH))
             imgui.Text('魔力 '..actor:GetProperty(PROP_BASE_MAGIC))

@@ -30,6 +30,8 @@ function OnSceneInit()
         [PROP_NAME] ='巨魔王',
         [PROP_POS] = {206 ,190}
     })
+
+
     -- enemy:ChangePalMatrix(get_pal_from_json('{"1":{"to":40,"mat":[105,273,0,512,0,359,459,412,464],"from":0},"2":{"to":60,"mat":[86,96,134,244,301,144,273,14,330],"from":40},"3":{"to":120,"mat":[24,234,340,325,421,483,345,340,330],"from":60},"4":{"to":256,"mat":[255,0,0,0,255,0,0,0,255],"from":120},"segments":[0,40,60,120,256]}'))
     enemy:SetActionID(ACTION_BATIDLE)
 
@@ -52,8 +54,25 @@ function OnSceneInit()
         [PROP_AVATAR_ID] = '鬼将',
         [PROP_WEAPON_AVATAR_ID] = '',
         [PROP_NAME] ='鬼将',
-        [PROP_POS] = {563,376}
+        [PROP_POS] = {563,376},
+        [PROP_SUMMON_ATK_QUAL] = 1400,
+        [PROP_SUMMON_DEF_QUAL] = 1400,
+        [PROP_SUMMON_HEALTH_QUAL] = 4500,
+        [PROP_SUMMON_MAGIC_QUAL] =  2500,
+        [PROP_SUMMON_SPEED_QUAL] = 1200,
+        [PROP_SUMMON_DODGE_QUAL] =  1200,
+        [PROP_SUMMON_GROW_COEF] =  1.25,
+        [PROP_BASE_HEALTH] = 417 ,
+        [PROP_BASE_MAGIC] = 680 ,
+        [PROP_BASE_FORCE] = 171,
+        [PROP_BASE_STAMINA] =  171 ,
+        [PROP_BASE_AGILITY] = 171,
+        [PROP_LV] = 151
     })
+    playerBB:SetProperty(PROP_HP, playerBB:GetMaxHP())
+    playerBB:SetProperty(PROP_MP, playerBB:GetMaxMP())
+    
+
     -- playerBB:ChangePalMatrix(get_pal_from_json('{"1":{"to":256,"mat":[115,115,110,163,256,239,196,91,292],"from":0},"segments":[0,256]}'))
     playerBB:SetActionID(ACTION_BATIDLE)
 
@@ -63,8 +82,18 @@ function OnSceneInit()
         [PROP_AVATAR_ID] = 'JXK-SWORD',
         [PROP_WEAPON_AVATAR_ID] = 'JXK-SWORD-060-X',
         [PROP_NAME] ='剑侠客',
-        [PROP_POS] = {616,412}
+        [PROP_POS] = {616,412},
+        [PROP_BASE_HEALTH] =  333 ,
+        [PROP_BASE_MAGIC] = 157 ,
+        [PROP_BASE_FORCE] =  689,
+        [PROP_BASE_STAMINA] = 215 ,
+        [PROP_BASE_AGILITY] =  157,
+        [PROP_LV] =  145
     })
+
+    player:SetProperty(PROP_HP, player:GetMaxHP())
+    player:SetProperty(PROP_MP, player:GetMaxMP())
+    
     local new_pal = get_pal_from_json('{"1":{"mat":[220,220,512,512,512,510,512,510,512],"to":40,"from":0},"2":{"mat":[211,211,230,445,292,445,306,306,206],"to":80,"from":40},"3":{"mat":[0,0,0,24,24,24,19,19,19],"to":120,"from":80},"4":{"mat":[255,0,0,0,255,0,0,0,255],"to":256,"from":120},"segments":[0,40,80,120,256]}')  
     -- player:ChangePalMatrix(new_pal)
     player:SetActionID(ACTION_BATIDLE)

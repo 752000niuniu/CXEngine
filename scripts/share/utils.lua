@@ -134,6 +134,51 @@ function utils_parse_tsv_to_rows(path)
     return tbl, col_names
 end
 
+
+function utils_parse_tsv(path, columns)
+    local tbl = {}
+    local col_names = {}
+    local index = 1
+    for line in io.lines(path) do  
+        if index == 1 then
+            for col, name in ipairs(utils_string_split(line,'\t')) do
+                if name~='' then
+                    table.insert(col_names, name)
+                end
+            end
+            -- cxlog_info('colname :'..cjson.encode(col_names))
+        else
+            if line~='' and not line:match('^%*') then
+                local row = {}
+                local vals = utils_string_split_fixcnt(line,'\t',#col_names)
+                for i,key in ipairs(col_names) do
+                    local col = columns[i]
+                    if col.name == key then
+                        if col.def then
+                            if vals[i] == '' then
+                                vals[i] = col.def
+                            end
+                        end
+                        
+                        if col.fmt == 'n' then
+                            row[key] = tonumber(vals[i])
+                        elseif col.fmt == 'i' then
+                            row[key] = math.tointeger(vals[i])
+                        elseif type(col.fmt)=='function' then
+                            row[key] = col.fmt(vals[i])
+                        else
+                            row[key] = vals[i]
+                        end
+                    end
+                end
+                table.insert(tbl,row)
+            end
+        end
+        index = index + 1
+    end
+    return tbl, col_names
+end
+
 function file_read_int4(file)
     local n = file:read(4)
     n = string.unpack('i4',n)

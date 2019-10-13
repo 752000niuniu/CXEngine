@@ -18,8 +18,11 @@ local Commands = {}
 local BattleState = BATTLE_DEFAULT
 local tAttackers = {}
 local tDefenders = {}
+local skill_template_table  = {}
 
 local CommandMT = {}
+
+
 function CommandMT:new(o)
     o = o or {}
     self.__index = self 
@@ -47,7 +50,8 @@ end
 
 function CommandMT:StartCast()
     local actor = self.master
-    actor:GetTarget():SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF,0x1D3FF13C ))
+    local target = actor:GetTarget()
+    target:SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF,0x1D3FF13C))
     actor:PlayAttack()
 end
 
@@ -128,12 +132,28 @@ function check_turn_ready()
     return ready
 end
 
+function init_skill_template_table()
+    local tbl  = utils_parse_tsv(vfs_get_tsvpath('attack'),{
+        { name='ID', fmt='i'},
+        { name='name'},
+        { name='type'},
+        { name='combo', fmt='i', def=0},
+        { name='atk_anim', fmt='i', def=0},
+        { name='group_kill', fmt='i', def=0},
+        { name='cast_anim', fmt='i', def=0},
+        { name='act_turn', fmt='i', def=0},
+    })
+    return tbl
+end
+
 function combat_system_init()
     BattleBG = animation_create(ADDONWDF, 0xE3B87E0F)
     local ratio_x = game_get_width()/ 640 
 	local ratio_y = game_get_height()/ 480
     combat_self_pos =  calc_combat_self_pos(ratio_x, ratio_y)
-	combat_enemy_pos =  calc_combat_enemy_pos(ratio_x, ratio_y)
+    combat_enemy_pos =  calc_combat_enemy_pos(ratio_x, ratio_y)
+    skill_template_table = init_skill_template_table()
+    -- cxlog_info('combat_system_init',cjson.encode(skill_template_table))
 end
 
 function combat_system_on_start()
