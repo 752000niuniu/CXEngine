@@ -70,6 +70,22 @@ function read_actor_template()
     return tbl
 end
 
+
+function init_skill_template_table()
+    local tbl  = utils_parse_tsv(vfs_get_tsvpath('attack'),{
+        { name='ID', fmt='i'},
+        { name='name'},
+        { name='type'},
+        { name='combo', fmt='i', def=0},
+        { name='atk_anim', fmt='i', def=0},
+        { name='group_kill', fmt='i', def=0},
+        { name='cast_anim', fmt='i', def=0},
+        { name='act_turn', fmt='i', def=0},
+    })
+    return tbl
+end
+
+
 function content_system_init()
     content_system_set_table('role', read_tsv_index_by_main_key('avatar_role',false,'ID'))
     content_system_set_table('weapon', read_tsv_index_by_main_key('avatar_weapon',false,'ID'))
@@ -77,4 +93,6 @@ function content_system_init()
     content_system_set_table('magic', read_magic_table())
     content_system_set_table('maps', read_map_table())
     content_system_set_table('actor_template', read_actor_template())
+
+    content_system_set_table('skill', init_skill_template_table())
 end

@@ -18,7 +18,7 @@ script_system_dofile('input_manager.lua')
 
 -- script_system_dofile('generator/imgui_binding_generator.lua')
 -- script_system_dofile('generator/table_template.lua')
--- script_system_dofile('generator/actor_template.lua')
+-- script_system_dofile('../generator/actor_template.lua')
 -- script_system_dofile('parser.lua')
 
 -- luadbg_listen(9527)
@@ -41,6 +41,7 @@ function on_script_system_init()
     scene_manager_init()
 	actor_manager_init()
 	combat_system_init()
+	asm_system_init()
 end
 
 function on_script_system_update()

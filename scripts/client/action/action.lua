@@ -1,3 +1,6 @@
+_skill_template_table = _skill_template_table or {}
+local skill_template_table = _skill_template_table
+
 local ActionHandles = {}
 
 ActionHandles[ASM_ACTION] = {
@@ -102,3 +105,8 @@ function asm_action_on_exit(actor, type)
         ActionHandles[type].OnExit(actor)
     end
 end
+
+function asm_system_init()
+    skill_template_table =  content_system_get_table('skill') 
+end
+
