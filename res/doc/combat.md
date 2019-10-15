@@ -197,3 +197,81 @@ SML魔法驭灵咒	1.9588999 + 0.0138 * i
 其他门派躲避	2.1775 + 0.01839 * i
 WDD速度秘影迷踪	i*0.3
 NE速度清歌妙舞	请看解释！
+
+
+atk_skill = {
+    type = 'atk',
+    combo,
+    atk_anim = '',
+    group_kill,
+    buff_id,
+    base_damage,
+    is_suck_blood,
+    is_critical_atk,
+}
+
+攻击指令
+    如果group_kill , 则有group_kill个完整攻击流程
+攻击流程
+    每个攻击流程,如果有combo,则有combo次攻击动作
+攻击动作
+    每次攻击动作触发一次伤害,每次攻击有可能吸血,反震,反击,防御,播放攻击动画等.
+
+
+attack = {
+    master,
+    target,
+    skill_id,
+}
+->
+if skill.group_kill > 0 
+    generate group kill data
+    kill {target, random target}
+else
+    kill target
+end
+
+kill :
+if combo > 0 then
+    combo attack
+else
+    attack
+end
+
+GroupAttack = {
+    SingleAttack = {
+        target,
+        ComboAttack = {
+            
+        }
+    }
+}
+attack_command = {
+    skill_id,
+    group_kill = {
+        attack_process1 = {
+            attack_action1 = {
+                is_suck_blood,
+                is_critical_atk,
+                is_defend
+            },
+            attack_action2 = {
+                is_suck_blood,
+                is_critical_atk,
+                is_defend
+            },
+        },
+        attack_process2 = {
+            attack_action1 = {
+                is_suck_blood,
+                is_critical_atk,
+                is_defend
+            },
+            attack_action2 = {
+                is_suck_blood,
+                is_critical_atk,
+                is_defend
+            },
+        }
+    }
+}
