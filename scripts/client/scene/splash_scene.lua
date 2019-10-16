@@ -9,6 +9,7 @@ NPC对话框 横向居中 Y偏移290
 ]]
 
 animation = animation or nil
+local player
 function OnSceneInit()
     -- WZIFEWDF, 0x792EA858
     ui_renderer_clear()
@@ -42,7 +43,19 @@ function OnSceneInit()
 
     animation:SetPos(500,100)
 
-
+    player = actor_manager_create_actor(2)
+    player:SetProperties({
+        [PROP_AVATAR_ID] = 'JXK-SWORD',
+        [PROP_WEAPON_AVATAR_ID] = 'JXK-SWORD-060-X',
+        [PROP_NAME] ='剑侠客',
+        [PROP_POS] = {616,412},
+        [PROP_BASE_HEALTH] =  333 ,
+        [PROP_BASE_MAGIC] = 157 ,
+        [PROP_BASE_FORCE] =  689,
+        [PROP_BASE_STAMINA] = 215 ,
+        [PROP_BASE_AGILITY] =  157,
+        [PROP_LV] =  145
+    })
 end
 
 function OnSceneUpdate()    
@@ -60,6 +73,10 @@ function OnSceneImGuiUpdate()
                 animation:SetPos(x-40,y-100)
             end)
         end)
+    end
+
+    if imgui.Button('playAttack') then
+        player:PlayAttack()
     end
 end
 

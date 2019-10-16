@@ -872,7 +872,7 @@ void ActionStateMachine::EnsureLoadAction(int action)
 {
 	if (action < ACTION_IDLE || action >= ACTION_COUNT)return;
 
-	if (m_AvatarActions[action] == nullptr) {
+	if (m_AvatarActions.find(action) == m_AvatarActions.end()) {
 		auto resid = RESOURCE_MANAGER_INSTANCE->GetActorActionResID(m_Actor->GetProperty(PROP_ACTOR_TYPE).toInt(), m_AvatarID, action);
 		if (resid == 0)return;
 		if (m_Actor->GetPalette().size() != 0) {
@@ -887,7 +887,7 @@ void ActionStateMachine::EnsureLoadAction(int action)
 	}
 
 	if (m_HasWeapon) {
-		if (m_WeaponActions[action] == nullptr) {
+		if (m_WeaponActions.find(action) == m_WeaponActions.end()) {
 			auto resid = RESOURCE_MANAGER_INSTANCE->GetActionResID(AVATAR_TYPE_WEAPON, m_WeaponID, action);
 			if (resid == 0) {
 				m_HasWeapon = false; 
@@ -954,5 +954,46 @@ void ActionStateMachine::AddDelayCallback(int ms, function<void()> func)
 void luaopen_action(lua_State* L)
 {
 	
+}
+
+void AttackAction2::Update()
+{
+	auto* avatar = m_pASM->GetAvatar();
+	if (!avatar)return;
+	avatar->Update();
+}
+void AttackAction2::Draw()
+{
+
+}
+void AttackAction2::Exit()
+{
+
+}
+void AttackAction2::Enter()
+{
+	m_pASM->SetAction(ACTION_BATIDLE);
+
+	auto* avatar = m_pASM->GetAvatar();
+	if (!avatar)return;
+	
+	avatar->AddCallback(avatar->GroupFrameCount*avatar->GetFrameInterval(), [this]() {
+		m_pASM->SetAction(ACTION_RUNTO);
+		auto* avatar = m_pASM->GetAvatar();
+		if (!avatar)return;
+		avatar->AddCallback(avatar->GroupFrameCount*avatar->GetFrameInterval(), [this]() {
+			m_pASM->SetAction(ACTION_ATTACK);
+			auto* avatar = m_pASM->GetAvatar();
+			if (!avatar)return;
+			avatar->AddCallback(avatar->GroupFrameCount*avatar->GetFrameInterval(), [this]() {
+				m_pASM->SetAction(ACTION_RUNBACK);
+				auto* avatar = m_pASM->GetAvatar();
+				if (!avatar)return;
+				avatar->AddCallback(avatar->GroupFrameCount*avatar->GetFrameInterval(), [this]() {
+					m_pASM->SetAction(ACTION_BATIDLE);
+				});
+			});
+		});
+	});
 }
 

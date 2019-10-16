@@ -70,6 +70,20 @@ private:
 };
 
 
+class AttackAction2 : public Action
+{
+public:
+	AttackAction2(Actor* actor) :Action(actor) { m_Type = ASM_ATTACK_ACTION; };
+	virtual ~AttackAction2() {};
+	virtual  void Update();
+	virtual  void Draw();
+	virtual void Exit();
+	virtual void Enter();
+private:
+
+	
+};
+
 class CastAction :public Action
 {
 public:

@@ -317,8 +317,7 @@ void Animation::Update()
 			}
 		}
 
-		for (deque<CBData>::iterator it = m_CallbackQueue.begin(); it != m_CallbackQueue.end();) {
-			auto& wrap = *it;
+		for (auto& wrap : m_CallbackQueue) {
 			wrap.dur -= dt;
 			if (wrap.dur <= 0) {
 				wrap.func();
