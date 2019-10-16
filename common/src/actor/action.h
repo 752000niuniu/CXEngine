@@ -150,6 +150,7 @@ public:
 	{
 		int ms;
 		function<void()> func;
+		bool markd = false;
 	};
 
 	ActionStateMachine(Actor* actor);

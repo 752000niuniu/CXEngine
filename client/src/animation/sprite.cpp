@@ -152,7 +152,7 @@ Animation::Animation(uint64_t resoureID /*= 0*/, std::vector<PalSchemePart>* pat
 	int max_dx = 0;
 	int max_frame = 0;
 	for (int i = std::max(GroupFrameCount / 2 - 1, 0); i < GroupFrameCount - 1; i++) {
-		int dx =(int)std::pow((m_pSprite->Frames[i].KeyX - m_pSprite->Frames[i + 1].KeyX), 2);// + std::abs(m_pSprite->Frames[i].width*m_pSprite->Frames[i].height - m_pSprite->Frames[i + 1].width*m_pSprite->Frames[i + 1].height);
+		int dx = (int)std::pow((m_pSprite->Frames[i].KeyX - m_pSprite->Frames[i + 1].KeyX), 2);// + std::abs(m_pSprite->Frames[i].width*m_pSprite->Frames[i].height - m_pSprite->Frames[i + 1].width*m_pSprite->Frames[i + 1].height);
 		if (max_dx < dx) {
 			max_dx = dx;
 			max_frame = i + 1;
@@ -160,8 +160,8 @@ Animation::Animation(uint64_t resoureID /*= 0*/, std::vector<PalSchemePart>* pat
 	}
 	AttackKeyFrame = max_frame;
 	m_bTranslate = false;
-	m_TranslatePos.x = Pos.x;
-	m_TranslatePos.y = Pos.y;
+	m_TranslationPos.x = Pos.x;
+	m_TranslationPos.y = Pos.y;
 	m_Velocity.x = 0;
 	m_Velocity.y = 0;
 	m_bLockFrame = false;
@@ -173,6 +173,14 @@ Animation::Animation(uint32_t pkg, uint32_t wasID, std::vector<PalSchemePart>* p
 	:Animation(RESOURCE_MANAGER_INSTANCE->EncodeWAS(pkg, wasID),patMatrix)
 {
 
+}
+
+Animation::~Animation()
+{
+	lua_State*L = script_system_get_luastate();
+	for (auto& data : m_CallbackQueueLua) {
+		luaL_unref(L, LUA_REGISTRYINDEX, data.func);
+	}
 }
 
 void Animation::SetLoop(int loop)
@@ -187,6 +195,7 @@ void Animation::SetLoop(int loop)
 		m_bLoop = true;
 	}
 }
+
 void Animation::Reset()
 {
 	PlayTime = 0;
@@ -212,6 +221,18 @@ void Animation::Replay()
 	m_Visible = true;
 }
 
+void Animation::AddCallbackLua(float dur, int funcRef)
+{
+	CBDataLua data(dur,funcRef);
+	m_CallbackQueueLua.push_back(data);
+}
+
+void Animation::AddCallback(float dur, function<void()> func)
+{
+	CBData data(dur,func);
+	m_CallbackQueue.push_back(std::move(data));
+}
+
 void Animation::AddFrameCallback(int frame, std::function<void()> callback)
 {
 	m_Callbacks[frame] = callback;
@@ -221,21 +242,29 @@ void Animation::Translate(CXPos pos, int duration)
 {
 	m_bTranslate = true;
 	m_Duration = duration/1000.f;
-	m_TranslatePos = pos;
-	m_Velocity = CXPos((m_TranslatePos.x - Pos.x) / m_Duration, (m_TranslatePos.y - Pos.y) / m_Duration);
+	m_TranslationPos = Pos;
+	m_TranslationToPos = pos;
+	m_Velocity = CXPos((m_TranslationToPos.x - m_TranslationPos.x) / m_Duration, (m_TranslationToPos.y - m_TranslationPos.y) / m_Duration);
 }
 
 void Animation::LockFrame(int frame)
 {
 	m_bLockFrame = true;
-	m_LockFrame = frame;
+	CurrentFrame = frame;
+	PlayTime = 0;
 }
 
 void Animation::UnLockFrame()
 {
 	m_bLockFrame = false;
-	m_LockFrame = 0;
 }
+
+
+void Animation::RemoveFrameCallback(int frame)
+{
+	m_Callbacks.erase(frame);
+}
+
 
 void Animation::Update()
 {
@@ -244,33 +273,86 @@ void Animation::Update()
 	m_bFrameUpdate = false;
 	float dt = WINDOW_INSTANCE->GetDeltaTime();
 	if (m_State == ANIMATION_PLAY) {
+		if (m_bLockFrame) return;
+		if (m_bTranslate) {
+			float dist = std::pow(m_Velocity.x*dt, 2) + std::pow(m_Velocity.y*dt, 2);
+			if (GMath::Astar_GetDistanceSquare(m_TranslationPos.x, m_TranslationPos.y, m_TranslationToPos.x, m_TranslationToPos.y) > dist) {
+				m_TranslationPos.x = m_TranslationPos.x + m_Velocity.x*dt;
+				m_TranslationPos.y = m_TranslationPos.y + m_Velocity.y*dt;
+			}
+			else {
+				m_TranslationPos.x = m_TranslationToPos.x;
+				m_TranslationPos.y = m_TranslationToPos.y;
+				m_bTranslate = false;
+			}
+		}
+
 		PlayTime = PlayTime + dt;
 		if (PlayTime >= FrameInterval)
 		{
 			m_bFrameUpdate = true;
 			PlayTime = (PlayTime - std::floor(PlayTime / FrameInterval)*FrameInterval);
 			CurrentFrame = CurrentFrame + 1;
-			if (m_Callbacks[CurrentFrame]) {
+			if (m_Callbacks.find(CurrentFrame) != m_Callbacks.end()) {
 				m_Callbacks[CurrentFrame]();
 			}
 			if (CurrentFrame >= GroupFrameCount) {
 				m_bGroupEndUpdate = true;
-				if(m_bLoop){
+				if (m_bLoop) {
 					CurrentFrame = 0;
 					if (m_LoopCount > 0) {
 						m_LoopCount = m_LoopCount - 1;
 						if (m_LoopCount == 0) {
 							m_bLoop = false;
 							m_State = ANIMATION_STOP;
+							return;
 						}
 					}
 				}
 				else {
 					CurrentFrame = CurrentFrame - 1;
 					m_State = ANIMATION_STOP;
+					return;
 				}
 			}
 		}
+
+		for (deque<CBData>::iterator it = m_CallbackQueue.begin(); it != m_CallbackQueue.end();) {
+			auto& wrap = *it;
+			wrap.dur -= dt;
+			if (wrap.dur <= 0) {
+				wrap.func();
+				wrap.markd = true;
+			}
+		}
+		for (auto it = m_CallbackQueue.begin(); it != m_CallbackQueue.end();) {
+			if (it->markd) {
+				it = m_CallbackQueue.erase(it);
+			}else{
+				it++;
+			}
+		}
+		
+		for (auto& wrap : m_CallbackQueueLua) {
+			wrap.dur -= dt;
+			if (wrap.dur <= 0) {
+				lua_State*L = script_system_get_luastate();
+				int ref = wrap.func;
+				lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
+				int res = lua_pcall(L, 0, 0, 0);
+				check_lua_error(L, res);
+				luaL_unref(L, LUA_REGISTRYINDEX, ref);
+				wrap.markd = true;
+			}
+		}
+		for (auto it = m_CallbackQueueLua.begin(); it != m_CallbackQueueLua.end();) {
+			if (it->markd) {
+				it =m_CallbackQueueLua.erase(it);
+			}else{
+				it++;
+			}
+		}
+
 	}
 	else if (m_State == ANIMATION_STOP) {
 		
@@ -280,23 +362,6 @@ void Animation::Update()
 		m_PauseTime = m_PauseTime - ms;
 		if (m_PauseTime <= 0) {
 			m_State = m_PreviousState;
-		}
-	}
-	if (m_bLockFrame) {
-		CurrentFrame = m_LockFrame;
-	}
-	if (m_State != ANIMATION_STOP) {
-		if (m_bTranslate) {
-			float dist = std::pow(m_Velocity.x*dt, 2) + std::pow(m_Velocity.y*dt, 2);
-			if (GMath::Astar_GetDistanceSquare(Pos.x, Pos.y, m_TranslatePos.x, m_TranslatePos.y) > dist) {
-				Pos.x = Pos.x + m_Velocity.x*dt;
-				Pos.y = Pos.y + m_Velocity.y*dt;
-			}
-			else {
-				Pos.x = m_TranslatePos.x;
-				Pos.y = m_TranslatePos.y;
-				m_bTranslate = false;
-			}
 		}
 	}
 }
@@ -310,10 +375,16 @@ void Animation::Draw()
 	if (texture)
 	{
 		auto& frame = m_pSprite->Frames[Dir*GroupFrameCount + CurrentFrame];
-		SPRITE_RENDERER_INSTANCE->DrawFrameSprite(texture,
-			glm::vec2(Pos.x - frame.KeyX, Pos.y - frame.KeyY),
-			glm::vec2(frame.Width, frame.Height), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-
+		if(m_bTranslate){
+			SPRITE_RENDERER_INSTANCE->DrawFrameSprite(texture,
+				glm::vec2(m_TranslationPos.x - frame.KeyX, m_TranslationPos.y - frame.KeyY),
+				glm::vec2(frame.Width, frame.Height), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+		}else{
+			SPRITE_RENDERER_INSTANCE->DrawFrameSprite(texture,
+				glm::vec2(Pos.x - frame.KeyX, Pos.y - frame.KeyY),
+				glm::vec2(frame.Width, frame.Height), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+		}
+		
 	}
 }
 
@@ -323,9 +394,6 @@ void Animation::Pause(int ms)
 	m_PreviousState = m_State;
 	m_State = ANIMATION_PAUSE;
 }
-
-
-
 
 BeatNumber::BeatNumber() :
 	m_HitAnim(MISCWDF, 0x30F737D8),
@@ -792,8 +860,26 @@ int animation_translate(lua_State*L) {
 	int dur = (int)lua_tointeger(L, 4);
 	Pos tpos(animation->Pos.x + x, animation->Pos.y + y);
 	animation->Translate(tpos, dur);
+
+	if (lua_isfunction(L, 5)) {
+		lua_pushvalue(L, 5);
+		int ref = luaL_ref(L, LUA_REGISTRYINDEX);
+		animation->AddCallbackLua(dur / 1000.f, ref);
+	}
 	return 0;
 }
+
+int animation_add_callback(lua_State*L) {
+	auto* animation = lua_check_animation(L, 1);
+	int dur = (int)lua_tointeger(L, 2);
+	if (lua_isfunction(L, 3)) {
+		lua_pushvalue(L, 3);
+		int ref = luaL_ref(L, LUA_REGISTRYINDEX);
+		animation->AddCallbackLua(dur / 1000.f, ref);
+	}
+	return 0;
+}
+
 
 luaL_Reg MT_ANIMATION[] = {
 { "Pause",animation_pause },
@@ -805,6 +891,7 @@ luaL_Reg MT_ANIMATION[] = {
 { "GetVisible", animation_get_visible },
 { "SetVisible", animation_set_visible },
 { "Translate", animation_translate },
+{ "AddCallback", animation_add_callback},
 { NULL, NULL }
 };
 

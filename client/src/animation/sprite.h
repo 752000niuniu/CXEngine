@@ -56,12 +56,42 @@ enum EAnimationState
 	ANIMATION_PAUSE
 };
 
+enum EAnimationCBFuncType
+{
+	ANIMATION_CBFUNC_C = 0,
+	ANIMATION_CBFUNC_LUA
+};
+
+
 class Animation : public BaseSprite
 {
 public:
+	struct CBDataLua{
+		float dur;
+		int func;
+		bool markd;
+		CBDataLua(float d,int f){
+			dur = d;
+			func = f;
+			markd = false;
+		}
+	};
+
+	struct CBData{
+		float dur;
+		function<void()> func;
+		bool markd;
+		CBData(float d,function<void()> f){
+			dur = d;
+			func = f;
+			markd = false;
+		}
+	};
+
+	
 	Animation(uint64_t resoureID = 0, std::vector<PalSchemePart>* patMatrix = nullptr);
 	Animation(uint32_t pkg, uint32_t wasID, std::vector<PalSchemePart>* patMatrix = nullptr);
-	virtual ~Animation() override {};
+	virtual ~Animation() override;
 	void Update() override;
 	void Draw() override;
 	void SetVisible(bool visible) { m_Visible = visible; };
@@ -74,7 +104,12 @@ public:
 	void Play();
 	void Replay();
 	
+	
+	void AddCallbackLua(float dur,int funcRef);
+	void AddCallback(float dur, function<void()> func);
 	void AddFrameCallback(int frame, std::function<void()> callback);
+	void RemoveFrameCallback(int frame);
+
 	void SetFrameInterval(float interval) { FrameInterval = interval; };
 	float GetFrameInterval() { return FrameInterval; };
 
@@ -98,11 +133,17 @@ private:
 	int m_State;
 	bool m_Visible;
 	int m_PauseTime;
-	std::map<int, std::function<void()>> m_Callbacks;
+	
+	map<int, std::function<void()>> m_Callbacks;
+	
+	deque<CBDataLua> m_CallbackQueueLua;
+	deque<CBData> m_CallbackQueue;
+	
 	int m_LockFrame;
 	bool m_bLockFrame;
 	bool m_bTranslate;
-	CXPos m_TranslatePos;
+	CXPos m_TranslationPos;
+	CXPos m_TranslationToPos;
 	float m_Duration;
 	CXPos m_Velocity;
 	bool m_bLoop;

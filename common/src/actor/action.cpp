@@ -684,11 +684,16 @@ ActionStateMachine::~ActionStateMachine()
 void ActionStateMachine::Update()
 {
 	int msdt = (int)WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
-	for (auto it = m_TimerFuncs.begin(); it != m_TimerFuncs.end();) {
-		auto& wrap = *it;
+	for (auto& wrap : m_TimerFuncs) {
 		wrap.ms -= msdt;
 		if (wrap.ms <= 0) {
 			wrap.func();
+			wrap.markd = true;
+		}
+	}
+
+	for (auto it = m_TimerFuncs.begin(); it != m_TimerFuncs.end();) {
+		if(it->markd){
 			it = m_TimerFuncs.erase(it);
 		}else{
 			it++;
