@@ -10,6 +10,8 @@ MoveHandle::MoveHandle(Actor* actor)
 	:m_Actor(actor)
 {
 	m_bMove = false;
+	m_bMoveWithDuration = false;
+	m_bKeepDir = false;
 }
 
 MoveHandle::~MoveHandle()
@@ -25,7 +27,13 @@ void MoveHandle::Update()
 		Pos pos = m_Actor->GetPos();
 		if (moveTo.x != pos.x || moveTo.y != pos.y) {
 			float dt = WINDOW_INSTANCE->GetDeltaTime();
-			float localVelocity = m_Actor->GetProperty(PROP_MOVE_VELOCITY).toFloat()*dt;
+			float localVelocity = 0.f;
+			if(m_bMoveWithDuration){
+				localVelocity = m_MoveVelocity*dt;
+			}else{
+				localVelocity = m_Actor->GetProperty(PROP_MOVE_VELOCITY).toFloat()*dt;
+			}
+			
 			bool useMoveList = !m_MoveList.empty();
 			Pos dest;
 			if (useMoveList)
@@ -47,7 +55,9 @@ void MoveHandle::Update()
 				float stepRangeY = sin(DegreeToRadian(degree));
 				m_Actor->TranslateX(stepRangeX * localVelocity);
 				m_Actor->TranslateY(stepRangeY * localVelocity);
-				m_Actor->SetDir(m_Dir);
+				if(!m_bKeepDir){
+					m_Actor->SetDir(m_Dir);
+				}
 			}
 			else
 			{
@@ -65,6 +75,8 @@ void MoveHandle::Update()
 			dest.y = m_Actor->GetMoveToPos().y;
 			m_Actor->SetPos(dest);
 			m_bMove = false;
+			m_bKeepDir = false;
+			m_bMoveWithDuration = false;
 		}
 	}
 	
@@ -72,8 +84,21 @@ void MoveHandle::Update()
 
 void MoveHandle::MoveOnScreen(float x, float y)
 {
+	m_MoveDuration = 0.0f;
 	m_Actor->SetMoveToPos({ x,y });
 	m_bMove = true;
+}
+
+void MoveHandle::MoveOnScreenWithDuration(Pos offset, float move_dur,bool keepdir)
+{
+	Pos dest = m_Actor->GetPos() + offset;
+	m_MoveDuration = move_dur;
+	m_Actor->SetMoveToPos(dest);
+	float dist = std::sqrt(m_Actor->GetMoveDestDistSquare(dest));
+	m_MoveVelocity = dist / m_MoveDuration;
+	m_bMove = true;
+	m_bMoveWithDuration = true;
+	m_bKeepDir = keepdir;
 }
 
 void MoveHandle::MoveTo(float x, float y)

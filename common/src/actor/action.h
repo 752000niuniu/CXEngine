@@ -190,8 +190,10 @@ public:
 
 	int GetActionID() { return m_ActionID; };
 
-	void SetBuffAnim(uint64_t id);
-	Animation* GetBuffAnim() { return m_BuffAnim; }
+	void AddStateAnim(Animation* anim);
+	void RemoveStateAnim(Animation* anim);
+	void ClearStateAnim();
+
 	void AddDelayCallback(int ms, function<void()> func);
 private:
 	Actor * m_Actor;
@@ -205,8 +207,8 @@ private:
 	std::map<int, Animation*> m_WeaponActions;
 	std::map<int, Animation*> m_AvatarActions;
 	Animation* m_PlayerShadow;
-	Animation* m_BuffAnim;
 	deque<TimerFuncWrap> m_TimerFuncs;
+	deque<Animation*> m_StateAnimQueue;
 };
 #endif // !SIMPLE_SERVER
 

@@ -19,6 +19,7 @@ class GameMap;
 
 class BaseScene;
 
+
 #ifndef SIMPLE_SERVER
 class Actor : public BaseGameEntity, public View
 #else
@@ -38,6 +39,7 @@ public:
 	virtual void SetDir(int dir);
 	int GetDir();
 	int GetDirByDegree(float degree);
+	Pos  GetAttackVec();
 	void ReverseDir();
 
 	void SetActionID(int state);

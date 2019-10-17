@@ -24,6 +24,7 @@ public:
 	int GetFrameHeight(int index = -1);
 
 	void EnableDrag(bool enable);
+	float GetGroupFrameTime();
 
 	int TotalFrames;
 	int CurrentFrame;
@@ -36,6 +37,7 @@ public:
 	int Dir;
 	uint64_t ResID;
 	CXPos Pos;
+	CXPos Offset;
 	NE::Sprite* m_pSprite;
 	float FrameInterval;
 	float PlayTime;
@@ -151,6 +153,7 @@ private:
 	bool m_bLoop;
 };
 
+
 class BeatNumber 
 {
 public:
@@ -197,8 +200,8 @@ public:
 	void Draw();
 	void Clear();
 private:
-	std::vector<Animation*> m_Animations;
-	std::vector<BeatNumber*> m_BeatNumbers;
+	deque<Animation*> m_Animations;
+	deque<BeatNumber*> m_BeatNumbers;
 	
 };
 

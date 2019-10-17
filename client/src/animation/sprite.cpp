@@ -57,6 +57,7 @@ BaseSprite::BaseSprite(uint64_t resoureID, std::vector<PalSchemePart>* patMatrix
 		UtilsGetFrameTexture(m_pSprite, i);
 	}
 	Pos = { 0,0 };
+	Offset = { 0,0 };
 	FrameInterval = 0.064f;
 	PlayTime = 0.f;
 	Dir = 0;
@@ -125,6 +126,10 @@ void BaseSprite::EnableDrag(bool enable)
 	}
 }
 
+float BaseSprite::GetGroupFrameTime()
+{
+	return FrameInterval * GroupFrameCount;
+}
 Bound BaseSprite::GetViewBounds()
 {
 	return Bound{ Pos.x - KeyX, Pos.x - KeyX + Width,
@@ -273,7 +278,6 @@ void Animation::RemoveFrameCallback(int frame)
 {
 	m_Callbacks.erase(frame);
 }
-
 
 void Animation::Update()
 {
@@ -523,7 +527,15 @@ AnimationManager::AnimationManager()
 
 AnimationManager::~AnimationManager()
 {
+	for (auto& it : m_Animations) {
+		delete it;
+	}
+	m_Animations.clear();
 
+	for (auto& it : m_BeatNumbers) {
+		delete it;
+	}
+	m_BeatNumbers.clear();
 }
 
 void AnimationManager::AddAnimation(Animation* animation)
@@ -538,42 +550,42 @@ void AnimationManager::AddBeatNumber(BeatNumber* bn)
 
 void AnimationManager::Update()
 {
-	{
-		std::vector<Animation*> tmpSet(m_Animations.begin(), m_Animations.end());
-		m_Animations.clear();
-		for(auto& it : tmpSet){
-			it->Update();
-			if (it->GetState() == ANIMATION_STOP) {
-				delete it;
-			}
-			else {
-				m_Animations.push_back(it);
-			}
+	for (auto& anim : m_Animations) {
+		anim->Update();
+	}
+	for (auto it = m_Animations.begin(); it != m_Animations.end();) {
+		if ((*it)->GetState() == ANIMATION_STOP) {
+			delete *it;
+			it = m_Animations.erase(it);
+		}
+		else {
+			it++;
 		}
 	}
-	{
-		std::vector<BeatNumber*> tmpSet(m_BeatNumbers.begin(), m_BeatNumbers.end());
-		m_BeatNumbers.clear();
-		for (auto& it : tmpSet) {
-			it->Update();
-			if (it->GetVisible() == false) {
-				delete it;
-			}
-			else {
-				m_BeatNumbers.push_back(it);
-			}
+
+	for (auto& beatnum : m_BeatNumbers) {
+		beatnum->Update();
+	}
+	for (auto it = m_BeatNumbers.begin(); it != m_BeatNumbers.end();) {
+		if ((*it)->GetVisible() == false) {
+			delete *it;
+			it = m_BeatNumbers.erase(it);
+		}
+		else {
+			it++;
 		}
 	}
 }
+
 
 void AnimationManager::Draw()
 {
 	for (auto& it : m_Animations) {
 		it->Draw();
 	}
-	for (auto it = m_BeatNumbers.begin(); it != m_BeatNumbers.end(); it++)
+	for (auto& it : m_BeatNumbers)
 	{
-		(*it)->Draw();
+		it->Draw();
 	}
 }
 

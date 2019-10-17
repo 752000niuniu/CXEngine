@@ -17,6 +17,7 @@
 #include "scene/scene_manager.h"
 #include "script_system.h"
 
+#define  PERFRAME_TIME (0.016f*2.5f)
 std::map<CXString, int> g_AttackKeyFrame = {
 	{"FYN-DBSWORDS" ,5 },
 	{"FYN-RING" ,9 },
@@ -113,6 +114,51 @@ void call_combat_system_on_acting_end(Actor* actor)
 	check_lua_error(L, res);
 }
 
+
+bool CalcRunToPos(Actor* actor, Actor* target, Pos& runto) {
+	auto* attackAvatar = actor->GetASM()->GetAvatar(ACTION_ATTACK);
+	auto* targetAvatar = target->GetASM()->GetAvatar(ACTION_BEHIT);
+	if (attackAvatar && targetAvatar) {
+		int attackKeyframe = g_AttackKeyFrame[actor->GetProperty(PROP_AVATAR_ID).toString()];
+		if (attackKeyframe == 0)attackKeyframe = attackAvatar->GetAttackKeyFrame();
+		int dir = actor->GetDir();
+		auto* attackFrame = attackAvatar->GetFrame(dir*attackAvatar->GroupFrameCount + attackKeyframe);
+		auto* targetFrame = targetAvatar->GetFrame(GMath::GetReverseDir(dir) * targetAvatar->GroupFrameCount + targetAvatar->GroupFrameCount - 1);
+		float x = (float)target->GetX();
+		float y = (float)target->GetY();
+		if (dir == DIR_NE) {
+			x = x - attackFrame->Width - 5;
+			y = y - targetFrame->KeyY + targetFrame->Height *0.5f - attackFrame->Height / 2 + 11;
+		}
+		else if (dir == DIR_NW) {
+			x = x + 5;
+			y = y - targetFrame->KeyY + targetFrame->Height *0.5f - attackFrame->Height / 2 + 11;
+		}
+		else if (dir == DIR_SE) {
+			x = x - attackFrame->Width - 5;
+			y = y - targetFrame->KeyY + targetFrame->Height *0.5f - attackFrame->Height / 2 - 11;
+		}
+		else if (dir == DIR_SW) {
+			x = x + 5;
+			y = y - targetFrame->KeyY + targetFrame->Height *0.5f - attackFrame->Height / 2 - 11;
+		}
+		x = x + attackFrame->KeyX;
+		y = y + attackFrame->KeyY;
+		Pos src = actor->GetPos();
+		runto.x = x - src.x;
+		runto.y = y - src.y;
+		return true;
+	}
+	return false;
+}
+
+Animation* CreateBuffAnimation(uint64_t resid){
+	if (resid == 0)return nullptr;
+	Animation* anim = new Animation(resid);
+	anim->SetLoop(0);
+	return anim;
+}
+
 #ifndef SIMPLE_SERVER
 Action::Action(Actor* _actor) :
 	m_Actor(_actor),
@@ -182,15 +228,10 @@ void AttackAction::Update()
 		if (avatar->IsGroupEndUpdate()) {
 			m_pASM->SetAction(ACTION_RUNTO);
 			if (m_Target) {
-				m_Actor->GetMoveHandle()->MoveOnScreen(m_Runto.x, m_Runto.y);
 				avatar = m_pASM->GetAvatar();
 				if (!avatar)return;
-				float dist = std::sqrt(m_Actor->GetMoveDestDistSquare(m_Runto));
-				float perframetime = 0.016f * 2.5f;
-				float perframe_dist = dist / avatar->GroupFrameCount;
-				float velocity = perframe_dist / perframetime;
-				avatar->FrameInterval = perframetime;
-				m_Actor->SetProperty(PROP_MOVE_VELOCITY, velocity);
+				avatar->FrameInterval = PERFRAME_TIME;
+				m_Actor->GetMoveHandle()->MoveOnScreenWithDuration(m_Runto, avatar->GetGroupFrameTime(), true);
 			}
 		}
 		else {
@@ -208,15 +249,10 @@ void AttackAction::Update()
 			if (m_ComboCount == 0 || m_Target->GetProperty(PROP_IS_DEAD).toBool()) {
 				m_pASM->SetAction(ACTION_RUNBACK);
 				m_Actor->ReverseDir();
-				m_Actor->GetMoveHandle()->MoveOnScreen(m_BackupPos.x, m_BackupPos.y);
 				avatar = m_pASM->GetAvatar();
 				if (!avatar)return;
-				float dist = std::sqrt(m_Actor->GetMoveDestDistSquare(m_BackupPos));
-				float perframetime = 0.016f * 2.5f ;
-				float perframe_dist = dist / avatar->GroupFrameCount;
-				float velocity = perframe_dist / perframetime;
-				avatar->FrameInterval = perframetime;
-				m_Actor->SetProperty(PROP_MOVE_VELOCITY, velocity);
+				avatar->FrameInterval = PERFRAME_TIME;
+				m_Actor->GetMoveHandle()->MoveOnScreenWithDuration({ -m_Runto.x,-m_Runto.y }, avatar->GetGroupFrameTime(), true);
 			}
 			else {
 				m_pASM->SetAction(ACTION_ATTACK);
@@ -227,7 +263,7 @@ void AttackAction::Update()
 			if (attackKeyframe == 0)attackKeyframe = avatar->GetAttackKeyFrame();
 			if (avatar->CurrentFrame == attackKeyframe) {
 				BeHitAction* behit = new BeHitAction(m_Target, m_Actor);
-				behit->MoveVec = m_AttackVec;
+				behit->MoveVec = m_Actor->GetAttackVec();
 				m_Target->GetASM()->ChangeAction(behit);
 				if(m_Target->GetProperty(PROP_IS_DEAD).toBool()){
 					avatar->Pause(500);
@@ -236,7 +272,8 @@ void AttackAction::Update()
 				}
 				if (m_ComboCount == 1) {
 					uint64_t resid = m_Actor->GetProperty(PROP_ASM_BUFF_ANIM).toUInt64();
-					m_pASM->SetBuffAnim(resid);
+					auto* anim = CreateBuffAnimation(resid);
+					m_pASM->AddStateAnim(anim);
 				}
 			}
 		}
@@ -260,12 +297,12 @@ void AttackAction::Draw()
 {
 }
 
-
 void AttackAction::Exit()
 {
 	m_Actor->SetPos(m_BackupPos);
 	m_Actor->SetProperty(PROP_MOVE_VELOCITY, m_SavedVelocity);
 }
+
 
 void AttackAction::Enter()
 {
@@ -276,11 +313,6 @@ void AttackAction::Enter()
 
 	m_Target = m_Actor->GetTarget();
 	if (m_Target) {
-		glm::vec2  v(m_Target->GetPos().x - m_Actor->GetPos().x, m_Target->GetPos().y - m_Actor->GetPos().y);
-		v = glm::normalize(v);
-		m_AttackVec.x = v.x ;
-		m_AttackVec.y = v.y ;
-	
 		float degree = m_Actor->GetMoveDestAngle(m_Target->GetPos());
 		int dir = m_Actor->GetDirByDegree(degree);
 		dir = GMath::Dir8toDir4(dir);
@@ -288,38 +320,8 @@ void AttackAction::Enter()
 		m_Target->SetDir(dir);
 		m_Target->ReverseDir();
 
-		auto* attackAvatar = m_pASM->GetAvatar(ACTION_ATTACK);
-		auto* targetAvatar = m_Target->GetASM()->GetAvatar(ACTION_BEHIT);
-		if (attackAvatar && targetAvatar) {
-			int attackKeyframe = g_AttackKeyFrame[m_Actor->GetProperty(PROP_AVATAR_ID).toString()];
-			if (attackKeyframe == 0)attackKeyframe = attackAvatar->GetAttackKeyFrame();
-			auto* attackFrame = attackAvatar->GetFrame(dir*attackAvatar->GroupFrameCount + attackKeyframe);
-			auto* targetFrame = targetAvatar->GetFrame(GMath::GetReverseDir(dir) * targetAvatar->GroupFrameCount + targetAvatar->GroupFrameCount-1);
-			float x = (float)m_Target->GetX();
-			float y = (float)m_Target->GetY();
-			if (dir == DIR_NE) {
-				x = x - attackFrame->Width - 5;
-				y = y - targetFrame->KeyY + targetFrame->Height *0.5f - attackFrame->Height / 2 + 11;
-			}
-			else if (dir == DIR_NW) {
-				x = x + 5;
-				y = y - targetFrame->KeyY + targetFrame->Height *0.5f - attackFrame->Height / 2 + 11;
-			}
-			else if (dir == DIR_SE) {
-				x = x - attackFrame->Width - 5;
-				y = y - targetFrame->KeyY + targetFrame->Height *0.5f - attackFrame->Height / 2 - 11;
-			}
-			else if (dir == DIR_SW) {
-				x = x + 5;
-				y = y - targetFrame->KeyY + targetFrame->Height *0.5f - attackFrame->Height / 2 - 11;
-			}
-			x = x + attackFrame->KeyX;
-			y = y + attackFrame->KeyY;
-			m_Runto.x = x;
-			m_Runto.y = y;
-			
-			m_Target->SetActionID(ACTION_BATIDLE);
-		}
+		m_Target->SetActionID(ACTION_BATIDLE);
+		CalcRunToPos(m_Actor, m_Target, m_Runto);
 	}
 	m_pASM->SetAction(ACTION_BATIDLE);
 	m_SavedVelocity = m_Actor->GetProperty(PROP_MOVE_VELOCITY).toFloat();
@@ -353,7 +355,7 @@ void CastAction::Update()
 			if (m_Actor->GetProperty(PROP_ASM_PLAY_BEHIT).toBool()) {
 				if (avatar->CurrentFrame == avatar->GroupFrameCount / 2) {
 					BeCastAction* action = new BeCastAction(m_Target, m_Actor);
-					action->MoveVec = m_AttackVec;
+					action->MoveVec = m_Actor->GetAttackVec();
 					m_Target->GetASM()->ChangeAction(action);
 				}
 			}
@@ -367,7 +369,8 @@ void CastAction::Update()
 					anim->Pos.y = targetAvatar->Pos.y - targetAvatar->GetFrameKeyY() + targetAvatar->GetFrameHeight() / 2;
 					anim->AddFrameCallback(anim->GroupFrameCount/6*5, [this, anim]() {
 						uint64_t resid = m_Actor->GetProperty(PROP_ASM_BUFF_ANIM).toUInt64();
-						m_Target->GetASM()->SetBuffAnim(resid);
+						auto* anim = CreateBuffAnimation(resid);
+						m_Target->GetASM()->AddStateAnim(anim);
 						});
 					AnimationManager::GetInstance()->AddAnimation(anim);
 				}
@@ -384,11 +387,6 @@ void CastAction::Enter()
 {
 	m_Target = m_Actor->GetTarget();
 	if(m_Target){
-		glm::vec2  v(m_Target->GetPos().x - m_Actor->GetPos().x, m_Target->GetPos().y - m_Actor->GetPos().y);
-		v = glm::normalize(v);
-		m_AttackVec.x = v.x;
-		m_AttackVec.y = v.y;
-
 		float degree = m_Actor->GetMoveDestAngle(m_Target->GetPos());
 		int dir = m_Actor->GetDirByDegree(degree);
 		dir = GMath::Dir8toDir4(dir);
@@ -411,14 +409,12 @@ void BeHitAction::Update()
 	int action = m_pASM->GetActionID();
 	if (action == ACTION_BEHIT) {
 		if (avatar->IsGroupEndUpdate()) {
-			if(m_Actor->GetProperty(PROP_IS_DEAD).toBool()){
-				DeadFlyAction* action = new DeadFlyAction(m_Actor,m_Attacker, MoveVec);
+			if (m_Actor->GetProperty(PROP_IS_DEAD).toBool()) {
+				DeadFlyAction* action = new DeadFlyAction(m_Actor, m_Attacker, MoveVec);
 				m_pASM->ChangeAction(action);
-			}else{
-				Pos pos = m_Actor->GetPos();
-				pos.x = pos.x - MoveVec.x * 20;
-				pos.y = pos.y - MoveVec.y * 20;
-				m_Actor->SetPos(pos);
+			}
+			else {
+				m_Actor->GetMoveHandle()->MoveOnScreenWithDuration({ -MoveVec.x * 10,-MoveVec.y * 10 }, PERFRAME_TIME / 2, true);
 				m_pASM->SetAction(ACTION_BATIDLE);
 			}
 		}
@@ -426,25 +422,17 @@ void BeHitAction::Update()
 			if (avatar->CurrentFrame == 1) {
 				Animation* anim = new Animation(m_Actor->GetProperty(PROP_ASM_BEHIT_ANIM).toUInt64());
 				anim->SetLoop(1);
-				anim->Pos.x = avatar->Pos.x;
-				anim->Pos.y = avatar->Pos.y - avatar->GetFrameKeyY() + avatar->GetFrameHeight() / 2.0f;
-				anim->AddFrameCallback(1, [this,anim]() {
+				anim->Offset.y = -avatar->GetFrameKeyY() + avatar->GetFrameHeight() / 2.0f;
+				anim->AddFrameCallback(1, [this, avatar]() {
 					Pos pos = m_Actor->GetPos();
-					pos.x = pos.x + MoveVec.x * 10;
-					pos.y = pos.y + MoveVec.y * 10;
-					m_Actor->SetPos(pos);
-
-					anim->Pos.x += MoveVec.x * 10;
-					anim->Pos.y += MoveVec.y * 10;
-				});
-
-				anim->AddFrameCallback(anim->GroupFrameCount / 2, [this, anim]() {
-					Pos pos = m_Actor->GetPos();
-					pos.x = pos.x + MoveVec.x * 10;
-					pos.y = pos.y + MoveVec.y * 10;
+					pos.x = pos.x + MoveVec.x * 3;
+					pos.y = pos.y + MoveVec.y * 3;
 					m_Actor->SetPos(pos);
 				});
-				AnimationManager::GetInstance()->AddAnimation(anim); 
+				anim->AddFrameCallback(anim->GroupFrameCount / 2, [this, avatar]() {
+					m_Actor->GetMoveHandle()->MoveOnScreenWithDuration({ MoveVec.x * 7 ,MoveVec.y * 7 }, PERFRAME_TIME * 4, true);
+				});
+				m_Actor->GetASM()->AddStateAnim(anim);
 				int tm = (int)(anim->GroupFrameCount*anim->FrameInterval * 1000);
 				avatar->Pause(tm);
 			}
@@ -651,7 +639,6 @@ void DeadFlyAction::Exit()
 ActionStateMachine::ActionStateMachine(Actor* _actor)
 	:m_Actor(_actor)
 {
-	m_BuffAnim = nullptr;
 	m_TimeInterval = 0.016f * 5;
 	m_pCurrentAction = nullptr;
 	m_pPreviousAction = nullptr;
@@ -678,7 +665,10 @@ ActionStateMachine::~ActionStateMachine()
 	m_WeaponActions.clear();
 
 	SafeDelete(m_PlayerShadow);
-	SafeDelete(m_BuffAnim);
+	for (auto& it : m_StateAnimQueue){
+		SafeDelete(it);
+	}
+	m_StateAnimQueue.clear();
 }
 
 void ActionStateMachine::Update()
@@ -724,9 +714,18 @@ void ActionStateMachine::Update()
 		auto* weapon = GetWeapon(m_ActionID);
 		weapon->CurrentFrame = avatar->CurrentFrame;
 	}
-	
-	if (m_BuffAnim) {
-		m_BuffAnim->Update();
+
+	for (auto& anim : m_StateAnimQueue) {
+		anim->Update();
+	}
+	for (auto it = m_StateAnimQueue.begin(); it != m_StateAnimQueue.end();) {
+		if ((*it)->GetState() == ANIMATION_STOP) {
+			delete *it;
+			it = m_StateAnimQueue.erase(it);
+		}
+		else {
+			it++;
+		}
 	}
 }
 
@@ -783,13 +782,6 @@ void ActionStateMachine::Draw()
 	m_PlayerShadow->Pos.x = avatar->Pos.x;
 	m_PlayerShadow->Pos.y = avatar->Pos.y;
 	m_PlayerShadow->Draw();
-
-	if (m_BuffAnim) {
-		m_BuffAnim->Pos.x = avatar->Pos.x;
-		m_BuffAnim->Pos.y = avatar->Pos.y;// -avatar->KeyY + avatar->Height / 2;
-		m_BuffAnim->Draw();
-	}
-
 	avatar->Draw();
 
 	if (HasWeapon() && action_is_show_weapon(m_ActionID)) {
@@ -804,7 +796,11 @@ void ActionStateMachine::Draw()
 		m_pCurrentAction->Draw();
 	}
 
-	
+	for (auto& anim : m_StateAnimQueue) {
+		anim->Pos.x = avatar->Pos.x + anim->Offset.x;
+		anim->Pos.y = avatar->Pos.y + anim->Offset.y;
+		anim->Draw();
+	}
 }
 
 void ActionStateMachine::SetWeapon(CXString id)
@@ -838,7 +834,6 @@ void ActionStateMachine::SetAction(int id)
 	if (!HasWeapon() || !action_is_show_weapon(m_ActionID))return;
 	auto* weapon = GetWeapon(m_ActionID);
 	weapon->Reset();
-	
 }
 
 void ActionStateMachine::RestoreAction()
@@ -865,8 +860,6 @@ void ActionStateMachine::ChangeAction(Action* action)
 		m_pCurrentAction->OnEnter();
 	}
 }
-
-
 
 void ActionStateMachine::EnsureLoadAction(int action)
 {
@@ -896,7 +889,6 @@ void ActionStateMachine::EnsureLoadAction(int action)
 			m_WeaponActions[action] = new Animation(resid);
 			m_WeaponActions[action]->FrameInterval = m_TimeInterval;
 			m_WeaponActions[action]->SetLoop(0);
-
 		}
 	}
 }
@@ -933,13 +925,29 @@ int ActionStateMachine::GetDirCount(int action)
 	return 4;
 }
 
-void ActionStateMachine::SetBuffAnim(uint64_t id)
+void ActionStateMachine::AddStateAnim(Animation* anim)
 {
-	SafeDelete(m_BuffAnim);
-	if(id!=0){
-		m_BuffAnim = new Animation(id);
-		m_BuffAnim->SetLoop(0);
+	if (anim == nullptr)return;
+	m_StateAnimQueue.push_back(anim);
+}
+
+void ActionStateMachine::RemoveStateAnim(Animation* anim)
+{
+	for (auto it = m_StateAnimQueue.begin(); it != m_StateAnimQueue.end();) {
+		if ((*it) == anim) {
+			delete (*it);
+			m_StateAnimQueue.erase(it);
+			break;
+		}
 	}
+}
+
+void ActionStateMachine::ClearStateAnim()
+{
+	for (auto& it : m_StateAnimQueue) {
+		SafeDelete(it);
+	}
+	m_StateAnimQueue.clear();
 }
 
 void ActionStateMachine::AddDelayCallback(int ms, function<void()> func)

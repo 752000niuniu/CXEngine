@@ -263,6 +263,17 @@ int Actor::GetDirByDegree(float degree)
 #endif
 }
 
+Pos Actor::GetAttackVec()
+{
+	Actor* target = this->GetTarget();
+	if (target == nullptr)return { 0,0 };
+	Pos tmp = target->GetPos() - this->GetPos();
+	glm::vec2  v(tmp.x, tmp.y);
+	v = glm::normalize(v);
+	Pos vec(v.x, v.y);
+	return vec;
+}
+
 void Actor::SetLocal(bool local)
 {
 	actor_manager_set_local_player(this);
@@ -642,7 +653,7 @@ int actor_get_target(lua_State* L) {
 int actor_clear_buff_anim(lua_State*L){
 	Actor* actor = lua_check_actor(L, 1);
 #ifndef SIMPLE_SERVER
-	actor->GetASM()->SetBuffAnim(0);
+	actor->GetASM()->ClearStateAnim();
 #endif
 	return 0;
 }
