@@ -115,6 +115,16 @@ void call_combat_system_on_acting_end(Actor* actor)
 }
 
 
+
+#ifndef SIMPLE_SERVER
+
+Animation* CreateBuffAnimation(uint64_t resid) {
+	if (resid == 0)return nullptr;
+	Animation* anim = new Animation(resid);
+	anim->SetLoop(0);
+	return anim;
+}
+
 bool CalcRunToPos(Actor* actor, Actor* target, Pos& runto) {
 	auto* attackAvatar = actor->GetASM()->GetAvatar(ACTION_ATTACK);
 	auto* targetAvatar = target->GetASM()->GetAvatar(ACTION_BEHIT);
@@ -152,14 +162,6 @@ bool CalcRunToPos(Actor* actor, Actor* target, Pos& runto) {
 	return false;
 }
 
-Animation* CreateBuffAnimation(uint64_t resid){
-	if (resid == 0)return nullptr;
-	Animation* anim = new Animation(resid);
-	anim->SetLoop(0);
-	return anim;
-}
-
-#ifndef SIMPLE_SERVER
 Action::Action(Actor* _actor) :
 	m_Actor(_actor),
 	m_Type(ASM_ACTION)
@@ -503,6 +505,7 @@ void BeCastAction::Update()
 					pos.y = pos.y + MoveVec.y * 5;
 					m_Actor->SetPos(pos);
 				});
+
 				AnimationManager::GetInstance()->AddAnimation(anim);
 				int tm = (int)(anim->GroupFrameCount*anim->FrameInterval * 1000);
 				avatar->Pause(tm);
@@ -957,12 +960,6 @@ void ActionStateMachine::AddDelayCallback(int ms, function<void()> func)
 	wrap.func = func;
 	m_TimerFuncs.push_back(wrap);
 }
-#endif
-
-void luaopen_action(lua_State* L)
-{
-	
-}
 
 void AttackAction2::Update()
 {
@@ -984,7 +981,7 @@ void AttackAction2::Enter()
 
 	auto* avatar = m_pASM->GetAvatar();
 	if (!avatar)return;
-	
+
 	avatar->AddCallback(avatar->GroupFrameCount*avatar->GetFrameInterval(), [this]() {
 		m_pASM->SetAction(ACTION_RUNTO);
 		auto* avatar = m_pASM->GetAvatar();
@@ -999,9 +996,17 @@ void AttackAction2::Enter()
 				if (!avatar)return;
 				avatar->AddCallback(avatar->GroupFrameCount*avatar->GetFrameInterval(), [this]() {
 					m_pASM->SetAction(ACTION_BATIDLE);
+					});
 				});
 			});
 		});
-	});
+}
+
+
+#endif
+
+void luaopen_action(lua_State* L)
+{
+	
 }
 
