@@ -54,6 +54,14 @@ function CommandMT:StartCast()
     if skill.type == 'atk' then
         target:SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF,0x1D3FF13C))
         actor:PlayAttack()
+        --[[
+            待战->跑去->攻击
+            ID	name	type	combo	atk_anim	group_kill	cast_anim	act_turn
+            ->跑回->待战
+        ]]
+        
+
+
     elseif skill.type == 'spell' then
         actor:PlayCast()
     end
@@ -285,6 +293,8 @@ function combat_system_imgui_update()
             local enemy = player:GetTarget()
             enemy:SetTarget(player)
 
+            enemy:SetProperty(PROP_USING_SKILL, 1)
+
             local cmd = CommandMT:new()
             cmd:Init(enemy)
             table.insert(Commands,cmd)
@@ -305,7 +315,7 @@ function combat_system_imgui_update()
             enemy:SetProperty(PROP_CAST_ID, res_encode(MAGICWDF, cast_id))
             enemy:SetProperty(PROP_ASM_BUFF_ANIM, 0)
 
-            local cmd = CastCommandMT:new()
+            local cmd = CommandMT:new()
             cmd:Init(enemy)
             table.insert(Commands,cmd)
 
@@ -314,7 +324,8 @@ function combat_system_imgui_update()
 
         if imgui.Button('攻击##player') then
             local player = actor_manager_fetch_local_player()
-            
+            player:SetProperty(PROP_USING_SKILL, 1)
+
             local cmd = CommandMT:new()
             cmd:Init(player)
             table.insert(Commands,cmd)
@@ -333,7 +344,7 @@ function combat_system_imgui_update()
             player:SetProperty(PROP_CAST_ID, res_encode(MAGICWDF, cast_id))
             player:SetProperty(PROP_ASM_BUFF_ANIM,0)
 
-            local cmd = CastCommandMT:new()
+            local cmd = CommandMT:new()
             cmd:Init(player)
             table.insert(Commands,cmd)
 

@@ -238,6 +238,14 @@ void Animation::AddFrameCallback(int frame, std::function<void()> callback)
 	m_Callbacks[frame] = callback;
 }
 
+void Animation::TranslateTo(CXPos pos, int duration)
+{
+	m_bTranslatePos = true;
+	m_Duration = duration / 1000.f;
+	m_TranslationToPos = pos;
+	m_Velocity = CXPos((m_TranslationToPos.x - Pos.x) / m_Duration, (m_TranslationToPos.y - Pos.y) / m_Duration);
+}
+
 void Animation::Translate(CXPos pos, int duration)
 {
 	m_bTranslate = true;
@@ -246,6 +254,7 @@ void Animation::Translate(CXPos pos, int duration)
 	m_TranslationToPos = pos;
 	m_Velocity = CXPos((m_TranslationToPos.x - m_TranslationPos.x) / m_Duration, (m_TranslationToPos.y - m_TranslationPos.y) / m_Duration);
 }
+
 
 void Animation::LockFrame(int frame)
 {
@@ -284,6 +293,19 @@ void Animation::Update()
 				m_TranslationPos.x = m_TranslationToPos.x;
 				m_TranslationPos.y = m_TranslationToPos.y;
 				m_bTranslate = false;
+			}
+		}
+
+		if (m_bTranslatePos) {
+			float dist = std::pow(m_Velocity.x*dt, 2) + std::pow(m_Velocity.y*dt, 2);
+			if (GMath::Astar_GetDistanceSquare(Pos.x, Pos.y, m_TranslationToPos.x, m_TranslationToPos.y) > dist) {
+				Pos.x = Pos.x + m_Velocity.x*dt;
+				Pos.y = Pos.y + m_Velocity.y*dt;
+			}
+			else {
+				Pos.x = m_TranslationToPos.x;
+				Pos.y = m_TranslationToPos.y;
+				m_bTranslatePos = false;
 			}
 		}
 

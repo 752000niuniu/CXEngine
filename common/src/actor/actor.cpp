@@ -511,7 +511,7 @@ int actor_clear_frames(lua_State* L) {
 int actor_play_attack(lua_State*L){
 #ifndef SIMPLE_SERVER 
 	Actor* actor = lua_check_actor(L, 1);
-	AttackAction2* action = new AttackAction2(actor);
+	AttackAction* action = new AttackAction(actor);
 	actor->GetASM()->ChangeAction(action);
 #endif
 	return 0;

@@ -119,6 +119,7 @@ public:
 	bool IsFrameUpdate() { return m_bFrameUpdate; };
 	int GetAttackKeyFrame() { return AttackKeyFrame; };
 	
+	void TranslateTo(CXPos pos, int duration);
 	void Translate(CXPos pos, int duration);
 	void LockFrame(int frame);
 	void UnLockFrame();
@@ -142,6 +143,7 @@ private:
 	int m_LockFrame;
 	bool m_bLockFrame;
 	bool m_bTranslate;
+	bool m_bTranslatePos;
 	CXPos m_TranslationPos;
 	CXPos m_TranslationToPos;
 	float m_Duration;
