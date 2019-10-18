@@ -356,20 +356,20 @@ function formula_calc_atk_base_damage(atk, def, is_critical, is_combo, combo_coe
     end
 
     base = base * actor_type_coef
-    cxlog_info('atk',atk,'def',def,'damage', base)
+    -- cxlog_info('atk',atk,'def',def,'damage', base)
     return base
 end
 
 function formula_calc_atk_float_damage(atk, damage)
     if atk * 0.1 <= damage and damage <= atk * 0.9 then
         damage = damage * math.random(90,110)/100
-        cxlog_info('0.1~0.9', damage, 'atk', atk)
+        -- cxlog_info('0.1~0.9', damage, 'atk', atk)
     elseif damage < atk * 0.1 then
         damage = atk * math.random(10,20)/100
-        cxlog_info('<0.1',damage , 'atk', atk)
+        -- cxlog_info('<0.1',damage , 'atk', atk)
     elseif damage > atk * 0.9 then
         damage = atk * math.random(85,95)/100
-        cxlog_info('>0.9',damage , 'atk', atk)
+        -- cxlog_info('>0.9',damage , 'atk', atk)
     end
     return damage
 end
