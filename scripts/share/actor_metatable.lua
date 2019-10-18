@@ -332,3 +332,65 @@ function ActorMT:UpdatePropPtsByPlan()
     self:SetProperty(PROP_BASE_AGILITY, agility)
 end
 
+
+-- 伤害基数
+
+--  一般命中：伤害基数＝攻击－防御
+--  爆击：伤害基数＝（攻击－防御）×2
+--  连击：
+--  第一次攻击的 伤害基数＝（75％×攻击－防御）×2
+--  第二次攻击的 伤害基数＝（75％×攻击－防御）×2
+local ACTOR_TYPE_COEF_PVP = 1
+local ACTOR_TYPE_COEF_PVE = 0.9
+local ACTOR_TYPE_COEF_EVP = 0.8
+local ACTOR_TYPE_COEF_EVE = 1
+function formula_calc_atk_base_damage(atk, def, is_critical, is_combo, combo_coef, actor_type_coef)
+    
+    local base = atk - def
+    if is_combo then
+        base = combo_coef*atk - def --第一次0.75 第二次0.5
+    end
+
+    if is_critical then
+        base = base * 2
+    end
+
+    base = base * actor_type_coef
+    cxlog_info('atk',atk,'def',def,'damage', base)
+    return base
+end
+
+function formula_calc_atk_float_damage(atk, damage)
+    if atk * 0.1 <= damage and damage <= atk * 0.9 then
+        damage = damage * math.random(90,110)/100
+        cxlog_info('0.1~0.9', damage, 'atk', atk)
+    elseif damage < atk * 0.1 then
+        damage = atk * math.random(10,20)/100
+        cxlog_info('<0.1',damage , 'atk', atk)
+    elseif damage > atk * 0.9 then
+        damage = atk * math.random(85,95)/100
+        cxlog_info('>0.9',damage , 'atk', atk)
+    end
+    return damage
+end
+
+
+function formula_calc_atk_night_damage(damage, is_night)
+    if is_night then
+        return damage * 0.8
+    else
+        return damage
+    end
+end
+
+function ActorMT:GetAttackDamage(is_critical, is_combo, combo_coef, actor_type_coef)
+    local target = self:GetTarget()
+    local atk = self:CalcAttack()
+    local def = target:CalcDefend()
+    local damage = formula_calc_atk_base_damage(atk, def, is_critical, is_combo, combo_coef, actor_type_coef)
+    damage = formula_calc_atk_float_damage(atk,damage)
+    return damage
+end
+
+--大多数法术伤害结果＝武器伤害/4＋灵力差＋法伤系数×技能等级＋初始值
+--Damage=WD(weapon damage)/4+ΔF+K*SKILL+I

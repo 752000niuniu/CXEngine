@@ -20,6 +20,8 @@ local tAttackers = {}
 local tDefenders = {}
 local skill_template_table  = {}
 
+
+
 local CommandMT = {}
 function CommandMT:new(o)
     o = o or {}
@@ -52,6 +54,9 @@ function CommandMT:StartCast()
     local skill = skill_template_table[skill_id]
     local target = actor:GetTarget()
     if skill.type == 'atk' then
+        
+        cxlog_info('damage', actor:GetAttackDamage(false,false,0,1))
+
         target:SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF,0x1D3FF13C))
         actor:PlayAttack()
         --[[
@@ -185,8 +190,14 @@ function combat_system_on_end()
     scene_set_combat(false)
 end
 
-function check_turn_end()
-    return true
+
+function combat_system_on_turn_end()
+
+end
+
+
+function check_battle_end()
+    return false
 end
 
 function combat_system_update()
@@ -225,8 +236,8 @@ function combat_system_update()
                 table.remove(Commands,1)
             end
         else 
-            if check_turn_end() then
-                BattleState = BTTALE_TURN_END
+            if check_battle_end() then
+                BattleState = BTTALE_END
             else
                 BattleState = BTTALE_TURN_NEXT
             end
@@ -243,7 +254,7 @@ function combat_system_update()
         end
 
         BattleState = BATTLE_TURN_STAND_BY
-    elseif BattleState == BTTALE_TURN_END then
+    elseif BattleState == BTTALE_END then
         combat_system_on_end()
         BattleState = BATTLE_DEFAULT
         return

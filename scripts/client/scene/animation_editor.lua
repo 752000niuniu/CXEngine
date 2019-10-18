@@ -28,8 +28,15 @@ function OnSceneInit()
         [PROP_AVATAR_ID] = 'JMW-AXE',
         [PROP_WEAPON_AVATAR_ID] = 'JMW-AXE-060-X',
         [PROP_NAME] ='巨魔王',
-        [PROP_POS] = {206 ,190}
+        [PROP_POS] = {206 ,190},
+        [PROP_BASE_HEALTH] =  333 ,
+        [PROP_BASE_MAGIC] = 157 ,
+        [PROP_BASE_FORCE] =  215,
+        [PROP_BASE_STAMINA] = 157  ,
+        [PROP_BASE_AGILITY] =  689,
+        [PROP_LV] =  145
     })
+
 
 
     -- enemy:ChangePalMatrix(get_pal_from_json('{"1":{"to":40,"mat":[105,273,0,512,0,359,459,412,464],"from":0},"2":{"to":60,"mat":[86,96,134,244,301,144,273,14,330],"from":40},"3":{"to":120,"mat":[24,234,340,325,421,483,345,340,330],"from":60},"4":{"to":256,"mat":[255,0,0,0,255,0,0,0,255],"from":120},"segments":[0,40,60,120,256]}'))
@@ -44,6 +51,7 @@ function OnSceneInit()
         [PROP_NAME] ='古代瑞兽',
         [PROP_POS] = {274, 250}
     })
+
     -- enemyBB:ChangePalMatrix(get_pal_from_json('{"1":{"to":256,"mat":[52,0,0,88,254,204,161,204,154],"from":0},"segments":[0,256]}')  )
     enemyBB:SetActionID(ACTION_BATIDLE)
     
@@ -118,6 +126,11 @@ function OnSceneInit()
     for i,actor in ipairs(actors) do
         actor:SetProperty(PROP_SCENE_ID,-105)
     end
+    local player = actor_manager_fetch_local_player()
+    player:SetTarget(enemy)
+    player:StopMove()
+    combat_system_start_battle({player},{player:GetTarget()})
+    -- cxlog_info(player:GetProperty(PROP_NAME), player:GetTarget():GetProperty(PROP_NAME))
 end
 
 local actor_dir = 0
