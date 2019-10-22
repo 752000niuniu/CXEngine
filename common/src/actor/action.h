@@ -51,7 +51,7 @@ Defender:   behit effect           behitback          clps|behit fly
 class AttackAction : public Action
 {
 public:
-	AttackAction(Actor* actor) :Action(actor) { m_Type = ASM_ATTACK_ACTION; };
+	AttackAction(Actor* actor) :Action(actor) { m_Type = ASM_ATTACK_ACTION; m_bFinishAttack = false; };
 	virtual ~AttackAction() {};
 	virtual  void Update();
 	virtual  void Draw() ;
@@ -67,6 +67,7 @@ private:
 	Pos m_AttackVec;
 	int m_ComboCount;
 	Actor* m_Target;
+	bool m_bFinishAttack;
 };
 
 
@@ -112,6 +113,7 @@ private:
 	Actor* m_Attacker;
 	int m_State;
 	Pos m_SavedPos;
+	bool m_bMoveEnd;
 };
 
 class BeCastAction : public Action

@@ -92,6 +92,17 @@ function ActorMT:SetProperties(props)
     draw_avatar_boundingbox(avatar)
 end
 
+function ActorMT:GetAvatarRect()
+    local avatar = self:GetAvatar()
+    if not avatar then return 0,0,0,0 end
+    local x, y = avatar:GetPos()
+    local kx, ky = avatar:GetKeyX(), avatar:GetKeyY()
+    local w , h = avatar:GetWidth(), avatar:GetHeight()
+    x = x - kx
+    y = y - ky 
+    return x,y,w,h
+end
+
 local AnimationMT = base_sprite_get_metatable()
 function AnimationMT:DrawAvatarInfo()
     draw_avatar_info(self)

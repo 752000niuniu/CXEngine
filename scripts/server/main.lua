@@ -1,5 +1,5 @@
 
-
+script_system_dofile('../share/enums.lua')
 script_system_dofile('../share/vfs.lua')
 script_system_dofile('../share/utils.lua')
 script_system_dofile('../share/content_system.lua')

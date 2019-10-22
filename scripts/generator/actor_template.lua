@@ -69,6 +69,7 @@ end
 
 function solve()
     local path = vfs_makepath('res/tables/actor_template.tsv')
+    cxlog_info('path',path)
     local tbl = utils_parse_tsv_to_rows(path) 
     for i,row in ipairs(tbl) do
         table.insert(actor_enums,  row.name:upper())  

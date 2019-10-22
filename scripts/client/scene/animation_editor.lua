@@ -28,6 +28,7 @@ function OnSceneInit()
         [PROP_AVATAR_ID] = 'JMW-AXE',
         [PROP_WEAPON_AVATAR_ID] = 'JMW-AXE-060-X',
         [PROP_NAME] ='巨魔王',
+        [PROP_RACE] = RACE_DEVIL,
         [PROP_POS] = {206 ,190},
         [PROP_BASE_HEALTH] =  333 ,
         [PROP_BASE_MAGIC] = 157 ,
@@ -37,8 +38,9 @@ function OnSceneInit()
         [PROP_LV] =  145
     })
 
-
-
+    enemy:SetProperty(PROP_HP, enemy:GetMaxHP())
+    enemy:SetProperty(PROP_MP, enemy:GetMaxMP())
+    
     -- enemy:ChangePalMatrix(get_pal_from_json('{"1":{"to":40,"mat":[105,273,0,512,0,359,459,412,464],"from":0},"2":{"to":60,"mat":[86,96,134,244,301,144,273,14,330],"from":40},"3":{"to":120,"mat":[24,234,340,325,421,483,345,340,330],"from":60},"4":{"to":256,"mat":[255,0,0,0,255,0,0,0,255],"from":120},"segments":[0,40,60,120,256]}'))
     enemy:SetActionID(ACTION_BATIDLE)
 
@@ -90,6 +92,7 @@ function OnSceneInit()
         [PROP_AVATAR_ID] = 'JXK-SWORD',
         [PROP_WEAPON_AVATAR_ID] = 'JXK-SWORD-060-X',
         [PROP_NAME] ='剑侠客',
+        [PROP_RACE] = RACE_HUMAN,
         [PROP_POS] = {616,412},
         [PROP_BASE_HEALTH] =  333 ,
         [PROP_BASE_MAGIC] = 157 ,

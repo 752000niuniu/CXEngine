@@ -53,9 +53,6 @@ function ActorMT:StopMove()
     self:MoveTo(x,y)
 end
 
-local RACE_HUMAN = 1
-local RACE_SPIRIT = 2
-local RACE_DEVIL = 3
 
 COEF = {
     [RACE_HUMAN] = {
@@ -224,6 +221,46 @@ function ActorMT:GetMaxMP()
     end
     return 0
 end
+
+function ActorMT:GetHP()
+    return math.floor(self:GetProperty(PROP_HP))
+end
+
+function ActorMT:GetMP()
+    return math.floor(self:GetProperty(PROP_MP))
+end
+
+function ActorMT:ModifyHP(delta)
+    local hp = self:GetProperty(PROP_HP) 
+    hp = delta + hp
+    if hp <= 0 then 
+        hp = 0 
+    end
+    local max_hp = self:GetMaxHP()
+    if hp >= max_hp then
+        hp = max_hp
+    end
+    self:SetProperty(PROP_HP,hp) 
+    if hp  == 0 then
+        self:SetProperty(PROP_IS_DEAD, true)
+    end
+end
+
+
+function ActorMT:ModifyMP(delta)
+    local mp = self:GetProperty(PROP_MP) 
+    mp = delta + mp
+    if mp <= 0 then 
+        mp = 0 
+    end
+    local max_mp = self:GetMaxHP()
+    if mp >= max_mp then
+        mp = max_mp
+    end
+    self:SetProperty(PROP_MP,mp) 
+end
+
+
 
 function ActorMT:CalcTargetHit()
     local actor_type = self:GetProperty(PROP_ACTOR_TYPE) 

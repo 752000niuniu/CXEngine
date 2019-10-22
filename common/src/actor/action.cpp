@@ -236,9 +236,6 @@ void AttackAction::Update()
 				m_Actor->GetMoveHandle()->MoveOnScreenWithDuration(m_Runto, avatar->GetGroupFrameTime(), true);
 			}
 		}
-		else {
-
-		}
 	}
 	else if (action == ACTION_RUNTO) {
 		if (avatar->IsGroupEndUpdate()) {
@@ -287,10 +284,8 @@ void AttackAction::Update()
 			auto* new_action = new Action(m_Actor);
 			m_pASM->ChangeAction(new_action);
 
-			m_pASM->AddDelayCallback(500, [this]() {
-				m_Actor->SetProperty(PROP_COMBAT_ACTING, false);
-				call_combat_system_on_acting_end(m_Actor);
-			});
+			m_Actor->SetProperty(PROP_COMBAT_ACTING, false);
+			call_combat_system_on_acting_end(m_Actor);
 		}
 	}
 }
@@ -462,7 +457,7 @@ void BeHitAction::Enter()
 	float bny = (float)(m_Actor->GetY() + offy - targetAvatar->GetFrameKeyY() + targetAvatar->GetFrameHeight() / 2);
 	beatNumber->SetPos((float)m_Actor->GetX() + offx, bny);
 
-	beatNumber->SetNumber(m_Actor->GetProperty(PROP_ASM_DAMAGE).toInt());
+	beatNumber->SetNumber(m_Actor->GetProperty(PROP_ASM_DAMAGE).toFloat());
 	beatNumber->Beat();
 	AnimationManager::GetInstance()->AddBeatNumber(beatNumber);
 }
@@ -534,7 +529,7 @@ void BeCastAction::Enter()
 	float bny = (float)(m_Actor->GetY() + offy - targetAvatar->GetFrameKeyY() + targetAvatar->GetFrameHeight() / 2);
 	beatNumber->SetPos((float)m_Actor->GetX() + offx, bny);
 	
-	beatNumber->SetNumber(m_Actor->GetProperty(PROP_ASM_DAMAGE).toInt());
+	beatNumber->SetNumber(m_Actor->GetProperty(PROP_ASM_DAMAGE).toFloat());
 	beatNumber->Beat();
 	AnimationManager::GetInstance()->AddBeatNumber(beatNumber);
 }

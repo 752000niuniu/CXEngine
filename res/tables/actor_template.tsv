@@ -37,8 +37,8 @@ prop_using_skill	int	0
 prop_turn_ready	bool	false
 prop_asm_atk_combo	int	1
 prop_asm_behit_anim	uint64	0
-prop_asm_damage	int	0
-prop_asm_heal	int	0
+prop_asm_damage	float	0
+prop_asm_heal	float	0
 prop_asm_buff_anim	uint64	0
 prop_asm_play_behit	bool	true
 prop_hp	float	0

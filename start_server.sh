@@ -1,1 +1,1 @@
-start ./bin/Debug/SimpleServer.exe --cwd=./
+start ./bin/Debug/SimpleServer.exe --cwd=`pwd`/

@@ -35,18 +35,18 @@ ActionHandles[ASM_CAST_ACTION]={
 
 ActionHandles[ASM_BEHIT_ACTION]={
     OnEnter = function(actor)
-        local dead = math.random(0,10) < 3
-        actor:SetProperty(PROP_IS_DEAD, dead)
+        -- local dead = math.random(0,10) < 3
+        -- actor:SetProperty(PROP_IS_DEAD, dead)
 
-        local randoms= {}
-        table.insert(randoms, math.random(10,99))
-        table.insert(randoms, math.random(100,999))
-        table.insert(randoms, math.random(1000,9999))
-        table.insert(randoms, math.random(10000,99999))
-        table.insert(randoms, math.random(100000,999999))
+        -- local randoms= {}
+        -- table.insert(randoms, math.random(10,99))
+        -- table.insert(randoms, math.random(100,999))
+        -- table.insert(randoms, math.random(1000,9999))
+        -- table.insert(randoms, math.random(10000,99999))
+        -- table.insert(randoms, math.random(100000,999999))
         
-        local which = math.random(1,#randoms)
-        actor:SetProperty(PROP_ASM_DAMAGE,randoms[which]) 
+        -- local which = math.random(1,#randoms)
+        -- actor:SetProperty(PROP_ASM_DAMAGE,randoms[which]) 
     end,
     OnExit = function(actor)
 

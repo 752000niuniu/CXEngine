@@ -207,12 +207,17 @@ function on_actor_editor_update()
     imgui.SameLine()
     if imgui.Button('Reload') then
         actor_manager_clear_all()
-        scene_manager_reload()
+        script_system_dofile('../share/enums.lua')
+        script_system_dofile('actor_metatable.lua')
+        script_system_dofile('../share/actor_metatable.lua')
         script_system_dofile('../share/utils.lua')
+        script_system_dofile('combat_system.lua')
+        combat_system_init()
         script_system_dofile('editor/imgui_editor.lua')
         script_system_dofile('ui_renderer.lua')
-        script_system_dofile('combat_system.lua')
         script_system_dofile('input_manager.lua')
+        scene_manager_reload()
+        
         collectgarbage()
     end
 

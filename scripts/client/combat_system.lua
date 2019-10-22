@@ -20,8 +20,6 @@ local tAttackers = {}
 local tDefenders = {}
 local skill_template_table  = {}
 
-
-
 local CommandMT = {}
 function CommandMT:new(o)
     o = o or {}
@@ -54,8 +52,11 @@ function CommandMT:StartCast()
     local skill = skill_template_table[skill_id]
     local target = actor:GetTarget()
     if skill.type == 'atk' then
-        
-        cxlog_info('damage', actor:GetAttackDamage(false,false,0,1))
+        local damage = actor:GetAttackDamage(false,false,0,1)
+        target:SetProperty(PROP_ASM_DAMAGE,damage) 
+        target:ModifyHP(-damage)
+
+        cxlog_info('damage', damage)
 
         target:SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF,0x1D3FF13C))
         actor:PlayAttack()
@@ -64,9 +65,6 @@ function CommandMT:StartCast()
             ID	name	type	combo	atk_anim	group_kill	cast_anim	act_turn
             ->跑回->待战
         ]]
-        
-
-
     elseif skill.type == 'spell' then
         actor:PlayCast()
     end
@@ -361,7 +359,6 @@ function combat_system_imgui_update()
 
             player:SetProperty(PROP_TURN_READY, true)
         end  
-        
     end
 	imgui.Begin('Menu',menu_show)
 
@@ -423,9 +420,23 @@ function combat_system_imgui_update()
         player:GetTarget():SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF,0x1D3FF13C))
         player:PlayAttack()
     end
+
+    for i,actor in ipairs(tDefenders) do
+        local x,y,w,h = actor:GetAvatarRect()
+        imgui.SetCursorPos(x,y-10)
+        local max_hp = actor:GetMaxHP()
+        local hp = actor:GetHP()
+        imgui.Text(hp..'/'..max_hp)
+    end
+
+    for i,actor in ipairs(tAttackers) do
+        local x,y,w,h = actor:GetAvatarRect()
+        imgui.SetCursorPos(x,y-10)
+        local max_hp = actor:GetMaxHP()
+        local hp =  actor:GetHP()
+        imgui.Text(hp..'/'..max_hp)
+    end
 end
-
-
 
 function BattleCmdOnCombo(actor)
 

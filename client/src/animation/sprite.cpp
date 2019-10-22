@@ -496,9 +496,10 @@ void BeatNumber::SetPos(float x, float y)
 	m_Pos.y = y;
 }
 
-void BeatNumber::SetNumber(int num)
+void BeatNumber::SetNumber(float number)
 {
-	m_Number = num;
+	m_Number = std::floor(number);
+	int num = m_Number;
 	m_Digits.clear();
 	int i = 0;
 	do {

@@ -167,7 +167,7 @@ public:
 	void Update();
 	void Draw();
 	void SetPos(float x, float y);
-	void SetNumber(int num);
+	void SetNumber(float num);
 	void Beat();
 	void SetVisible(bool visible) { m_Visible = visible; };
 	bool GetVisible() { return m_Visible; };

@@ -3,17 +3,18 @@ SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
 DefaultMapID = 1001
 
+script_system_dofile('../share/enums.lua')
 script_system_dofile('../share/vfs.lua')
 script_system_dofile('../share/utils.lua')
 script_system_dofile('../share/content_system.lua')
 script_system_dofile('../share/actor_metatable.lua')
 
 script_system_dofile 'actor_metatable.lua'
+script_system_dofile('combat_system.lua')
 script_system_dofile 'scene_manager.lua'
 script_system_dofile 'actor_manager.lua'
 script_system_dofile('action/action.lua')
 script_system_dofile('ui_renderer.lua')
-script_system_dofile('combat_system.lua')
 script_system_dofile('input_manager.lua')
 
 -- script_system_dofile('generator/imgui_binding_generator.lua')
