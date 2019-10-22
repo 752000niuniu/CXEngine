@@ -318,6 +318,10 @@ function ActorMT:CalcDodge()
     return 0
 end
 
+function ActorMT:IsDead()
+    return self:GetProperty(PROP_IS_DEAD)
+end
+
 local init_prop = {
     [RACE_HUMAN] = {
         10,10,10,10,10

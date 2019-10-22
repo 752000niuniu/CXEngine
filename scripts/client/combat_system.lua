@@ -72,6 +72,10 @@ end
 
 function CommandMT:Update()
     if self.state == COMMAND_STATE_PREPARE then
+        if self.master:IsDead() then
+            self.state = COMMAND_STATE_STOP
+            return
+        end
         self:StartCast()
         self.state = COMMAND_STATE_PALY
     elseif self.state == COMMAND_STATE_PALY then
@@ -195,6 +199,26 @@ end
 
 
 function check_battle_end()
+    do 
+        local all_dead = true
+        for i,actor in ipairs(tDefenders) do
+            if not actor:IsDead() then
+                all_dead = false
+            end
+        end
+        if all_dead then return true end
+    end
+
+    do 
+        local all_dead = true
+        for i,actor in ipairs(tAttackers) do
+            if not actor:IsDead() then
+                all_dead = false
+            end
+        end
+        if all_dead then return true end
+    end
+
     return false
 end
 

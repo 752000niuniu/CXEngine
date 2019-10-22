@@ -38,7 +38,7 @@ function OnSceneInit()
         [PROP_LV] =  145
     })
 
-    enemy:SetProperty(PROP_HP, enemy:GetMaxHP())
+    enemy:SetProperty(PROP_HP, enemy:GetMaxHP()/3)
     enemy:SetProperty(PROP_MP, enemy:GetMaxMP())
     
     -- enemy:ChangePalMatrix(get_pal_from_json('{"1":{"to":40,"mat":[105,273,0,512,0,359,459,412,464],"from":0},"2":{"to":60,"mat":[86,96,134,244,301,144,273,14,330],"from":40},"3":{"to":120,"mat":[24,234,340,325,421,483,345,340,330],"from":60},"4":{"to":256,"mat":[255,0,0,0,255,0,0,0,255],"from":120},"segments":[0,40,60,120,256]}'))
@@ -102,7 +102,7 @@ function OnSceneInit()
         [PROP_LV] =  145
     })
 
-    player:SetProperty(PROP_HP, player:GetMaxHP())
+    player:SetProperty(PROP_HP, player:GetMaxHP()/3)
     player:SetProperty(PROP_MP, player:GetMaxMP())
     
     local new_pal = get_pal_from_json('{"1":{"mat":[220,220,512,512,512,510,512,510,512],"to":40,"from":0},"2":{"mat":[211,211,230,445,292,445,306,306,206],"to":80,"from":40},"3":{"mat":[0,0,0,24,24,24,19,19,19],"to":120,"from":80},"4":{"mat":[255,0,0,0,255,0,0,0,255],"to":256,"from":120},"segments":[0,40,80,120,256]}')  
