@@ -214,5 +214,6 @@ private:
 };
 #endif // !SIMPLE_SERVER
 
+int action_get_attack_key_frame(const char* str);
 
 void luaopen_action(lua_State* L);

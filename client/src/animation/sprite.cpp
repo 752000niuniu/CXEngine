@@ -205,6 +205,7 @@ void Animation::Reset()
 {
 	PlayTime = 0;
 	CurrentFrame = 0;
+	m_bGroupEndUpdate = false;
 }
 
 void Animation::Stop()
@@ -498,7 +499,7 @@ void BeatNumber::SetPos(float x, float y)
 
 void BeatNumber::SetNumber(float number)
 {
-	m_Number = std::floor(number);
+	m_Number =(int)std::floor(number);
 	int num = m_Number;
 	m_Digits.clear();
 	int i = 0;
@@ -759,6 +760,14 @@ int base_sprite_get_group_frame_count(lua_State* L) {
 	lua_pushinteger(L, sp->GroupFrameCount);
 	return 1;
 }
+
+int base_sprite_get_group_frame_time(lua_State* L) {
+	auto* sp = lua_check_base_sprite(L, 1);
+	lua_pushnumber(L, sp->GetGroupFrameTime());
+	return 1;
+}
+
+
 int base_sprite_get_group_count(lua_State* L) {
 	auto* sp = lua_check_base_sprite(L, 1);
 	lua_pushinteger(L, sp->GroupCount);
@@ -826,6 +835,7 @@ luaL_Reg MT_BASE_SPRITE[] = {
 { "GetCurrentFrame", base_sprite_get_current_frame },
 { "SetCurrentFrame", base_sprite_set_current_frame },
 { "GetGroupFrameCount", base_sprite_get_group_frame_count },
+{ "GetGroupFrameTime", base_sprite_get_group_frame_time},
 { "GetGroupCount", base_sprite_get_group_count },
 { "EnableDrag", base_sprite_enable_drag },
 { "Export", base_sprite_export },
@@ -914,6 +924,23 @@ int animation_add_callback(lua_State*L) {
 	return 0;
 }
 
+int animation_add_frame_callback(lua_State*L){
+	auto* animation = lua_check_animation(L, 1);
+	int frame = (int)lua_tointeger(L, 2);
+	if (lua_isfunction(L, 3)) {
+		lua_pushvalue(L, 3);
+		int ref = luaL_ref(L, LUA_REGISTRYINDEX);
+		animation->AddCallbackLua(animation->FrameInterval*frame, ref);
+	}
+	return 0;
+}
+
+int animation_get_key_frame(lua_State*L) {
+	auto* animation = lua_check_animation(L, 1);
+	lua_pushinteger(L, animation->GetAttackKeyFrame());
+	return 1;
+}
+
 
 luaL_Reg MT_ANIMATION[] = {
 { "Pause",animation_pause },
@@ -926,6 +953,8 @@ luaL_Reg MT_ANIMATION[] = {
 { "SetVisible", animation_set_visible },
 { "Translate", animation_translate },
 { "AddCallback", animation_add_callback},
+{ "AddFrameCallback", animation_add_frame_callback},
+{ "GetKeyFrame", animation_get_key_frame},
 { NULL, NULL }
 };
 
@@ -948,7 +977,7 @@ void lua_push_base_sprite(lua_State* L, BaseSprite* sprite)
 void lua_push_animation(lua_State*L, Animation* sprite)
 {
 	lua_push_pointer(L, sprite);
-	if (luaL_newmetatable(L, "MT_BASE_SPRITE")) {
+	if (luaL_newmetatable(L, "MT_ANIMATION")) {
 		luaL_setfuncs(L, MT_BASE_SPRITE, 0);
 		luaL_setfuncs(L, MT_ANIMATION, 0);
 		lua_pushvalue(L, -1);
@@ -1013,7 +1042,7 @@ int beat_number_set_pos(lua_State*L) {
 
 int beat_number_set_number(lua_State*L) {
 	auto* bn = lua_check_pointer<BeatNumber>(L, 1);
-	int  num = (int)lua_tointeger(L, 2);
+	float  num = (float)lua_tonumber(L, 2);
 	bn->SetNumber(num);
 	return 0;
 }

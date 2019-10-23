@@ -34,6 +34,7 @@
 #include "protocol.h"
 #include "combat/combat.h"
 #include "cxlua.h"
+#include "actor/action.h"
 
 
 
@@ -102,6 +103,7 @@ void script_system_prepare_init()
 	luaopen_combat_system(L);
 	luaopen_audio_manager(L);
 	luaopen_ui_renderer(L);
+	luaopen_action(L);
 #else
 	luaopen_game_server(L);
 #endif // !SIMPLE_SERVER

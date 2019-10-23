@@ -106,7 +106,6 @@ public:
 	void Play();
 	void Replay();
 	
-	
 	void AddCallbackLua(float dur,int funcRef);
 	void AddCallback(float dur, function<void()> func);
 	void AddFrameCallback(int frame, std::function<void()> callback);

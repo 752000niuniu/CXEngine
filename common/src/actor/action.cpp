@@ -222,70 +222,66 @@ void Action::Enter()
 
 void AttackAction::Update()
 {
+	int action = m_pASM->GetActionID();
 	auto* avatar = m_pASM->GetAvatar();
 	if (!avatar)return;
 	avatar->Update();
-	int action = m_pASM->GetActionID();
-	if (action == ACTION_BATIDLE) {
-		if (avatar->IsGroupEndUpdate()) {
-			m_pASM->SetAction(ACTION_RUNTO);
-			if (m_Target) {
-				avatar = m_pASM->GetAvatar();
-				if (!avatar)return;
-				avatar->FrameInterval = PERFRAME_TIME;
-				m_Actor->GetMoveHandle()->MoveOnScreenWithDuration(m_Runto, avatar->GetGroupFrameTime(), true);
-			}
-		}
-	}
-	else if (action == ACTION_RUNTO) {
+	if (action == ACTION_RUNTO) {
 		if (avatar->IsGroupEndUpdate()) {
 			m_pASM->SetAction(ACTION_ATTACK);
+			
+			lua_State* L = script_system_get_luastate();
+			lua_getglobal(L, "on_atk_skill_launch");
+			lua_push_actor(L, m_Actor);
+			int res = lua_pcall(L, 1, 0, 0);
+			check_lua_error(L, res);
 		}
 	}
 	else if (action == ACTION_ATTACK) {
-		if (avatar->IsGroupEndUpdate()) {
-			m_ComboCount = m_ComboCount - 1;
-			if (m_ComboCount == 0 || m_Target->GetProperty(PROP_IS_DEAD).toBool()) {
-				m_pASM->SetAction(ACTION_RUNBACK);
-				m_Actor->ReverseDir();
-				avatar = m_pASM->GetAvatar();
-				if (!avatar)return;
-				avatar->FrameInterval = PERFRAME_TIME;
-				m_Actor->GetMoveHandle()->MoveOnScreenWithDuration({ -m_Runto.x,-m_Runto.y }, avatar->GetGroupFrameTime(), true);
-			}
-			else {
-				m_pASM->SetAction(ACTION_ATTACK);
-			}
-		}
-		else if (avatar->IsFrameUpdate()) {
-			int attackKeyframe = g_AttackKeyFrame[m_Actor->GetProperty(PROP_AVATAR_ID).toString()];
-			if (attackKeyframe == 0)attackKeyframe = avatar->GetAttackKeyFrame();
-			if (avatar->CurrentFrame == attackKeyframe) {
-				BeHitAction* behit = new BeHitAction(m_Target, m_Actor);
-				behit->MoveVec = m_Actor->GetAttackVec();
-				m_Target->GetASM()->ChangeAction(behit);
-				if(m_Target->GetProperty(PROP_IS_DEAD).toBool()){
-					avatar->Pause(500);
-				}else{
-					avatar->Pause(200);
-				}
-				if (m_ComboCount == 1) {
-					uint64_t resid = m_Actor->GetProperty(PROP_ASM_BUFF_ANIM).toUInt64();
-					auto* anim = CreateBuffAnimation(resid);
-					m_pASM->AddStateAnim(anim);
-				}
-			}
-		}
+		//if (avatar->IsGroupEndUpdate()) {
+		//	script_system_call_function(script_system_get_luastate(), "on_atk_skill_");
+		//	/*m_ComboCount = m_ComboCount - 1;
+		//	if (m_ComboCount == 0 || m_Target->GetProperty(PROP_IS_DEAD).toBool()) {
+		//		m_pASM->SetAction(ACTION_RUNBACK);
+		//		m_Actor->ReverseDir();
+		//		avatar = m_pASM->GetAvatar();
+		//		if (!avatar)return;
+		//		avatar->FrameInterval = PERFRAME_TIME;
+		//		m_Actor->GetMoveHandle()->MoveOnScreenWithDuration({ -m_Runto.x,-m_Runto.y }, avatar->GetGroupFrameTime(), true);
+		//	}
+		//	else {
+		//		m_pASM->SetAction(ACTION_ATTACK);
+		//	}*/
+		//}
+		//else if (avatar->IsFrameUpdate()) {
+		//	int attackKeyframe = g_AttackKeyFrame[m_Actor->GetProperty(PROP_AVATAR_ID).toString()];
+		//	if (attackKeyframe == 0)attackKeyframe = avatar->GetAttackKeyFrame();
+		//	if (avatar->CurrentFrame == attackKeyframe) {
+		//		BeHitAction* behit = new BeHitAction(m_Target, m_Actor);
+		//		behit->MoveVec = m_Actor->GetAttackVec();
+		//		m_Target->GetASM()->ChangeAction(behit);
+		//		if(m_Target->GetProperty(PROP_IS_DEAD).toBool()){
+		//			avatar->Pause(500);
+		//		}else{
+		//			avatar->Pause(200);
+		//		}
+		//		if (m_ComboCount == 1) {
+		//			uint64_t resid = m_Actor->GetProperty(PROP_ASM_BUFF_ANIM).toUInt64();
+		//			auto* anim = CreateBuffAnimation(resid);
+		//			m_pASM->AddStateAnim(anim);
+		//		}
+		//	}
+		//}
 	}
 	else if (action == ACTION_RUNBACK) {
 		if (avatar->IsGroupEndUpdate()) {
 			m_Actor->ReverseDir();
-			m_Actor->SetActionID(ACTION_BATIDLE);
-			auto* new_action = new Action(m_Actor);
-			m_pASM->ChangeAction(new_action);
 
-			m_Actor->SetProperty(PROP_COMBAT_ACTING, false);
-			call_combat_system_on_acting_end(m_Actor);
+		
+			m_Actor->SetActionID(ACTION_BATIDLE);
+			m_Actor->GetASM()->RestoreAction();
+			//auto* new_action = new Action(m_Actor);
+			//m_pASM->ChangeAction(new_action);*/
 		}
 	}
 }
@@ -296,33 +292,55 @@ void AttackAction::Draw()
 
 void AttackAction::Exit()
 {
+	lua_State* L = script_system_get_luastate();
+	lua_getglobal(L, "on_atk_skill_end");
+	lua_push_actor(L, m_Actor);
+	int res = lua_pcall(L, 1, 0, 0);
+	check_lua_error(L, res);
+
 	m_Actor->SetPos(m_BackupPos);
 	m_Actor->SetProperty(PROP_MOVE_VELOCITY, m_SavedVelocity);
+	m_Actor->SetProperty(PROP_COMBAT_ACTING, false);
+	call_combat_system_on_acting_end(m_Actor);
 }
 
 
 void AttackAction::Enter()
 {
 	m_ComboCount = m_Actor->GetProperty(PROP_ASM_ATK_COMBO).toInt();
-
 	m_BackupActionID = m_Actor->GetProperty(PROP_ACTION_ID).toInt();
 	m_BackupPos = m_Actor->GetPos();
 
-	m_Target = m_Actor->GetTarget();
-	if (m_Target) {
-		float degree = m_Actor->GetMoveDestAngle(m_Target->GetPos());
-		int dir = m_Actor->GetDirByDegree(degree);
-		dir = GMath::Dir8toDir4(dir);
-		m_Actor->SetDir(dir);
-		m_Target->SetDir(dir);
-		m_Target->ReverseDir();
-
-		m_Target->SetActionID(ACTION_BATIDLE);
-		CalcRunToPos(m_Actor, m_Target, m_Runto);
-	}
-	m_pASM->SetAction(ACTION_BATIDLE);
 	m_SavedVelocity = m_Actor->GetProperty(PROP_MOVE_VELOCITY).toFloat();
+
+	//Sm_Target = m_Actor->GetTarget();
+	//if (m_Target) {
+	//	float degree = m_Actor->GetMoveDestAngle(m_Target->GetPos());
+	//	int dir = m_Actor->GetDirByDegree(degree);
+	//	dir = GMath::Dir8toDir4(dir);
+	//	m_Actor->SetDir(dir);
+	//	m_Target->SetDir(dir);
+	//	m_Target->ReverseDir();
+	//	 
+	//	//m_Target->SetActionID(ACTION_BATIDLE);
+	//	CalcRunToPos(m_Actor, m_Target, m_Runto);
+	//}
+	//m_pASM->SetAction(ACTION_RUNTO);
+	
+	lua_State* L = script_system_get_luastate();
+	lua_getglobal(L, "on_atk_skill_start");
+	lua_push_actor(L, m_Actor);
+	int res = lua_pcall(L, 1, 0, 0);
+	check_lua_error(L, res);
+
 	m_Actor->SetProperty(PROP_COMBAT_ACTING, true);
+
+	/*if (m_Target) {
+		auto* avatar = m_pASM->GetAvatar();
+		if (!avatar)return;
+		avatar->FrameInterval = PERFRAME_TIME;
+		m_Actor->GetMoveHandle()->MoveOnScreenWithDuration(m_Runto, avatar->GetGroupFrameTime(), true);
+	}*/
 }
 
 
@@ -411,8 +429,8 @@ void BeHitAction::Update()
 				m_pASM->ChangeAction(action);
 			}
 			else {
-				m_Actor->GetMoveHandle()->MoveOnScreenWithDuration({ -MoveVec.x * 10,-MoveVec.y * 10 }, PERFRAME_TIME / 2, true);
-				m_pASM->SetAction(ACTION_BATIDLE);
+				m_Actor->SetActionID(ACTION_BATIDLE);
+				m_pASM->RestoreAction();
 			}
 		}
 		else if (avatar->IsFrameUpdate()) {
@@ -440,6 +458,7 @@ void BeHitAction::Update()
 void BeHitAction::Exit()
 {
 	m_Actor->SetPos(m_SavedPos);
+	m_Actor->GetMoveHandle()->MoveOnScreenWithDuration({ -MoveVec.x * 10,-MoveVec.y * 10 }, PERFRAME_TIME / 2, true);
 }
 
 void BeHitAction::Enter()
@@ -837,10 +856,14 @@ void ActionStateMachine::SetAction(int id)
 void ActionStateMachine::RestoreAction()
 {
 	if (m_pCurrentAction) {
+		m_pCurrentAction->OnExit();
 		delete m_pCurrentAction;
-		m_pCurrentAction = nullptr;
 	}
 	m_pCurrentAction = m_pPreviousAction;
+	if(m_pCurrentAction){
+		m_pCurrentAction->OnEnter();
+	}
+	m_pPreviousAction = nullptr;
 }
 
 void ActionStateMachine::ChangeAction(Action* action)
@@ -1000,8 +1023,23 @@ void AttackAction2::Enter()
 
 #endif
 
+int action_get_attack_key_frame(const char* str)
+{
+	return g_AttackKeyFrame[str];
+}
+
+int action_calc_run_to_pos(lua_State*L){
+	Actor* actor = lua_check_actor(L, 1);
+	Pos runto;
+	CalcRunToPos(actor, actor->GetTarget(), runto);
+	lua_pushnumber(L, runto.x);
+	lua_pushnumber(L, runto.y);
+	return 2;
+}
+
 void luaopen_action(lua_State* L)
 {
-	
+	script_system_register_function(L, action_get_attack_key_frame);
+	script_system_register_luac_function(L, action_calc_run_to_pos);
 }
 

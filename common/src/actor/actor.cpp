@@ -549,7 +549,8 @@ int actor_set_time_interval(lua_State*L) {
 int actor_get_avatar(lua_State*L) {
 #ifndef SIMPLE_SERVER
 	Actor* actor = lua_check_actor(L, 1);
-	auto* avatar = actor->GetASM()->GetAvatar();
+	int action = (int)luaL_optinteger(L, 2, -1);
+	auto* avatar = actor->GetASM()->GetAvatar(action);
 	if (avatar == nullptr)return 0;
 	lua_push_animation(L, avatar);
 	return 1;
@@ -658,6 +659,72 @@ int actor_clear_buff_anim(lua_State*L){
 	return 0;
 }
 
+int actor_restore_action(lua_State*L)
+{
+	Actor* actor = lua_check_actor(L, 1);
+#ifndef SIMPLE_SERVER
+	actor->GetASM()->RestoreAction();
+#endif
+	return 0;
+}
+int actor_asm_set_action(lua_State*L){
+	Actor* actor = lua_check_actor(L, 1);
+	int action_id = (int)lua_tointeger(L, 2);
+#ifndef SIMPLE_SERVER
+	actor->GetASM()->SetAction(action_id);
+#endif
+	return 0;
+}
+
+int actor_play_be_hit(lua_State*L) {
+	Actor* actor = lua_check_actor(L, 1);
+#ifndef SIMPLE_SERVER
+	BeHitAction* behit = new BeHitAction(actor->GetTarget(), actor);
+	behit->MoveVec = actor->GetAttackVec();
+	actor->GetTarget()->GetASM()->ChangeAction(behit);
+	auto * avatar = actor->GetASM()->GetAvatar();
+	if(actor->GetTarget()->GetProperty(PROP_IS_DEAD).toBool()){
+		avatar->Pause(500);
+	}else{
+		avatar->Pause(200);
+	}
+#endif
+	return 0;
+}
+
+int actor_move_on_screen_with_duration(lua_State*L) {
+	Actor* actor = lua_check_actor(L, 1);
+#ifndef SIMPLE_SERVER
+	float offx = (float)lua_tonumber(L, 2);
+	float offy = (float)lua_tonumber(L, 3);
+	float dur  = (float)lua_tonumber(L, 4);
+	bool keep_dir = lua_toboolean(L, 5) != 0;
+	actor->GetMoveHandle()->MoveOnScreenWithDuration({ offx,offy }, dur, keep_dir);
+#endif
+	return 0;
+}
+
+int actor_get_move_dest_angle(lua_State*L) {
+	Actor* actor = lua_check_actor(L, 1);
+#ifndef SIMPLE_SERVER
+	float x = (float)lua_tonumber(L, 2);
+	float y = (float)lua_tonumber(L, 3);
+	float angle= actor->GetMoveDestAngle({ x,y });
+	lua_pushnumber(L, angle);
+#endif
+	return 1;
+}
+
+int actor_get_dir_by_degree(lua_State*L) {
+	Actor* actor = lua_check_actor(L, 1);
+#ifndef SIMPLE_SERVER
+	float degree = (float)lua_tonumber(L, 2);
+	lua_pushnumber(L, actor->GetDirByDegree(degree));
+#endif
+	return 1;
+}
+
+
 //{ "__gc",actor_destroy },
 luaL_Reg mt_actor[] = {
 	{ "Destroy",actor_destroy },
@@ -694,6 +761,12 @@ luaL_Reg mt_actor[] = {
 { "GetProperty", actor_get_prop},
 { "SetProperty", actor_set_prop},
 { "ResetASM", actor_reset_asm},
+{"RestoreAction", actor_restore_action},
+{"ASMSetAction", actor_asm_set_action},
+{"PlayBeHit", actor_play_be_hit},
+{"MoveOnScreenWithDuration",actor_move_on_screen_with_duration},
+{"GetMoveDestAngle",actor_get_move_dest_angle},
+{"GetDirByDegree",actor_get_dir_by_degree},
 { NULL, NULL }
 };
 
@@ -727,8 +800,65 @@ std::string action_system_get_action_name(int action) {
 	return action_get_name(action);
 }
 
+float math_get_distance(float sx, float sy, float ex, float ey)
+{
+	return GMath::Astar_GetDistance(sx,sy,ex,ey);
+}
+
+float math_get_distance_square(float sx, float sy, float ex, float ey){
+	return GMath::Astar_GetDistanceSquare(sx, sy, ex, ey);
+}
+
+float astar_get_angle(float sx, float sy, float ex, float ey) {
+	return GMath::Astar_GetAngle(sx, sy, ex, ey);
+}
+
+int astar_get_angle_use_box_xy(int sx, int sy, int ex, int ey) {
+	return GMath::Astar_GetAngleUseBoxXY(sx, sy, ex, ey);
+}
+
+int astar_get_dir_use_int(int degree) {
+	return GMath::Astar_GetDirUseInt(degree);
+}
+
+int astar_get_dir(float degree) {
+	return GMath::Astar_GetDir(degree);
+}
+
+int astar_get_dir4(float degree) {
+	return GMath::Astar_GetDir4(degree);
+}
+
+int math_get_reverse_dir(int dir) {
+	return GMath::GetReverseDir(dir);
+}
+
+int math_clamp(int value,int min,int max) {
+	return GMath::Clamp(value, min, max);
+}
+
+int math_dir_8_to_4(int dir) {
+	return GMath::Dir8toDir4(dir);
+}
+
+int math_next_dir4(int dir) {
+	return GMath::NextDir4(dir);
+}
+
 void luaopen_actor(lua_State* L)
 {
+	script_system_register_function(L, math_get_distance);
+	script_system_register_function(L, math_get_distance_square);
+	script_system_register_function(L, astar_get_angle);
+	script_system_register_function(L, astar_get_angle_use_box_xy);
+	script_system_register_function(L, astar_get_dir_use_int);
+	script_system_register_function(L, astar_get_dir);
+	script_system_register_function(L, astar_get_dir4);
+	script_system_register_function(L, math_get_reverse_dir);
+	script_system_register_function(L, math_clamp);
+	script_system_register_function(L, math_dir_8_to_4);
+	script_system_register_function(L, math_next_dir4);
+
 	script_system_register_luac_function(L, actor_get_metatable);
 
 	script_system_register_function(L, action_system_get_action_size);

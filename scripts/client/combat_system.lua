@@ -1,3 +1,4 @@
+PERFRAME_TIME = 0.016*2.5
 local BATTLE_DEFAULT = 0
 local BATTLE_PREPARE = 1
 local BATTLE_START = 2
@@ -57,6 +58,7 @@ function CommandMT:StartCast()
         target:ModifyHP(-damage)
 
         cxlog_info('damage', damage)
+    
 
         target:SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF,0x1D3FF13C))
         actor:PlayAttack()
@@ -478,8 +480,107 @@ function BattleCmdOnTurnEnd(actor)
 
 end
 
+local runto_x , runto_ y = 0 , 0
+function calc_run_to_pos(actor, target)
+    local attackAvatar = actor:GetAvatar(ACTION_ATTACK)
+    local targetAvatar = target:GetAvatar(ACTION_BEHIT)
+    if attackAvatar and targetAvatar then
+        local actor_avtar_id = actor:GetProperty(PROP_AVATAR_ID)
+        local attackKeyframe = action_get_attack_key_frame(actor_avtar_id)
+        if attackKeyframe == 0 then attackKeyframe = attackAvatar:GetAttackKeyFrame() end
+        local dir = actor:GetDir()
+        local attackFrame = dir * attackAvatar:GetGroupFrameCount() + attackKeyframe
+        local targetFrame = math_get_reverse_dir(dir) * targetAvatar:GetGroupFrameCount() + targetAvatar:GetGroupFrameCount()-1 
+        local x, y = target:GetPos()
+        local minus_target_key_y_plus_half_height_minus_attack_half_height = 
+            - targetAvatar:GetFrameKeyY(targetFrame) + targetAvatar:GetFrameHeight(targetFrame)*0.5 - attackAvatar:GetFrameHeight(attackFrame)/2
 
+        if dir == DIR_NE then
+            x = x - attackAvatar:GetFrameWidth(attackFrame) - 5
+            y = y + minus_target_key_y_plus_half_height_minus_attack_half_height + 11
+        elseif dir == DIR_NW then
+            x = x + 5
+            y = y + minus_target_key_y_plus_half_height_minus_attack_half_height + 11            
+        elseif dir == DIR_SE then
+            x = x - attackAvatar:GetFrameWidth(attackFrame) - 5
+            y = y + minus_target_key_y_plus_half_height_minus_attack_half_height - 11            
+        elseif dir == DIR_SW then
+            x = x + 5
+            y = y + minus_target_key_y_plus_half_height_minus_attack_half_height - 11            
+        end
+        
+		x = x + attackAvatar:GetKeyX(attackFrame)
+		y = y + attackAvatar:GetKeyY(attackFrame)
+        local src_x,src_y = actor:GetPos();
+        runto_x = x - src_x
+        runto_y = y - src_y
+        return runto_x ,runto_y
+    end
+end
 
+function on_atk_skill_start(actor)
+    local target = actor:GetTarget()
+    if target then
+        local tar_x,tar_y = target:GetPos()
+        local degree = actor:GetMoveDestAngle(tar_x,tar_y)
+        local dir = actor:GetDirByDegree(degree)
+        dir = math_dir_8_to_4(dir)
+        actor:SetDir(dir)
+        target:SetDir(dir)
+        target:ReverseDir()
+        
+        runto_x, runto_y =  calc_run_to_pos(actor,target)
+        
+        actor:ASMSetAction(ACTION_RUNTO)
+        local avatar = actor:GetAvatar()
+        if not avatar then return end
+        avatar:SetFrameInterval(PERFRAME_TIME)
+        actor:MoveOnScreenWithDuration(runto_x,runto_y,avatar:GetGroupFrameTime(),true)
+    end
+end
 
+function on_atk_skill_end(actor)
 
+end
+
+-- //	int attackKeyframe = g_AttackKeyFrame[m_Actor->GetProperty(PROP_AVATAR_ID).toString()];
+-- 		//	if (attackKeyframe == 0)attackKeyframe = avatar->GetAttackKeyFrame();
+-- 		//	if (avatar->CurrentFrame == attackKeyframe) {
+-- 		//		BeHitAction* behit = new BeHitAction(m_Target, m_Actor);
+-- 		//		behit->MoveVec = m_Actor->GetAttackVec();
+-- 		//		m_Target->GetASM()->ChangeAction(behit);
+-- 		//		if(m_Target->GetProperty(PROP_IS_DEAD).toBool()){
+-- 		//			avatar->Pause(500);
+-- 		//		}else{
+-- 		//			avatar->Pause(200);
+-- 		//		}
+-- 		//		if (m_ComboCount == 1) {
+-- 		//			uint64_t resid = m_Actor->GetProperty(PROP_ASM_BUFF_ANIM).toUInt64();
+-- 		//			auto* anim = CreateBuffAnimation(resid);
+-- 		//			m_pASM->AddStateAnim(anim);
+-- 		//		}
+-- 		//	}
+-- 		//}
+
+function on_atk_skill_launch(actor)
+    local avatar = actor:GetAvatar()
+    local avatar_id = actor:GetProperty(PROP_AVATAR_ID)
+    local key_frame = action_get_attack_key_frame(avatar_id)
+    if key_frame == 0 then
+        key_frame = avatar:GetKeyFrame()
+    end
+    avatar:AddFrameCallback(key_frame, function()
+        actor:PlayBeHit()
+    end)
+
+    avatar:AddFrameCallback(avatar:GetGroupFrameCount() , function()
+        actor:ASMSetAction(ACTION_RUNBACK)
+        actor:ReverseDir()
+        local avatar = actor:GetAvatar(ACTION_RUNBACK)
+        if not avatar then return end
+        avatar:SetFrameInterval(PERFRAME_TIME)
+       
+        actor:MoveOnScreenWithDuration(-runto_x,-runto_y,avatar:GetGroupFrameTime(),true)
+    end)
+end
 
