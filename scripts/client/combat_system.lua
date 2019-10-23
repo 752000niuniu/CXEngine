@@ -480,21 +480,22 @@ function BattleCmdOnTurnEnd(actor)
 
 end
 
-local runto_x , runto_ y = 0 , 0
 function calc_run_to_pos(actor, target)
+    local dir = actor:GetDir()
     local attackAvatar = actor:GetAvatar(ACTION_ATTACK)
+    attackAvatar:SetDir(dir)
     local targetAvatar = target:GetAvatar(ACTION_BEHIT)
+    targetAvatar:SetDir(math_get_reverse_dir(dir))
     if attackAvatar and targetAvatar then
         local actor_avtar_id = actor:GetProperty(PROP_AVATAR_ID)
         local attackKeyframe = action_get_attack_key_frame(actor_avtar_id)
         if attackKeyframe == 0 then attackKeyframe = attackAvatar:GetAttackKeyFrame() end
-        local dir = actor:GetDir()
-        local attackFrame = dir * attackAvatar:GetGroupFrameCount() + attackKeyframe
-        local targetFrame = math_get_reverse_dir(dir) * targetAvatar:GetGroupFrameCount() + targetAvatar:GetGroupFrameCount()-1 
+        local attackFrame = attackKeyframe
+        local targetFrame = targetAvatar:GetGroupFrameCount() - 1 
         local x, y = target:GetPos()
         local minus_target_key_y_plus_half_height_minus_attack_half_height = 
             - targetAvatar:GetFrameKeyY(targetFrame) + targetAvatar:GetFrameHeight(targetFrame)*0.5 - attackAvatar:GetFrameHeight(attackFrame)/2
-
+        
         if dir == DIR_NE then
             x = x - attackAvatar:GetFrameWidth(attackFrame) - 5
             y = y + minus_target_key_y_plus_half_height_minus_attack_half_height + 11
@@ -509,11 +510,11 @@ function calc_run_to_pos(actor, target)
             y = y + minus_target_key_y_plus_half_height_minus_attack_half_height - 11            
         end
         
-		x = x + attackAvatar:GetKeyX(attackFrame)
-		y = y + attackAvatar:GetKeyY(attackFrame)
-        local src_x,src_y = actor:GetPos();
-        runto_x = x - src_x
-        runto_y = y - src_y
+		x = x + attackAvatar:GetFrameKeyX(attackFrame)
+		y = y + attackAvatar:GetFrameKeyY(attackFrame)
+        local src_x,src_y = actor:GetPos()
+        local runto_x = x - src_x
+        local runto_y = y - src_y
         return runto_x ,runto_y
     end
 end
@@ -529,7 +530,9 @@ function on_atk_skill_start(actor)
         target:SetDir(dir)
         target:ReverseDir()
         
-        runto_x, runto_y =  calc_run_to_pos(actor,target)
+        local runto_x, runto_y =  calc_run_to_pos(actor,target)
+        actor:SetProperty(PROP_ASM_RUNTO_X, runto_x)
+        actor:SetProperty(PROP_ASM_RUNTO_Y, runto_y)
         
         actor:ASMSetAction(ACTION_RUNTO)
         local avatar = actor:GetAvatar()
@@ -580,6 +583,8 @@ function on_atk_skill_launch(actor)
         if not avatar then return end
         avatar:SetFrameInterval(PERFRAME_TIME)
        
+        local runto_x = actor:GetProperty(PROP_ASM_RUNTO_X)
+        local runto_y = actor:GetProperty(PROP_ASM_RUNTO_Y)
         actor:MoveOnScreenWithDuration(-runto_x,-runto_y,avatar:GetGroupFrameTime(),true)
     end)
 end

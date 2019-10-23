@@ -41,6 +41,8 @@ prop_asm_damage	float	0
 prop_asm_heal	float	0
 prop_asm_buff_anim	uint64	0
 prop_asm_play_behit	bool	true
+prop_asm_runto_x	float	0
+prop_asm_runto_y	float	0
 prop_hp	float	0
 prop_mp	float	0
 prop_sp	float	0
