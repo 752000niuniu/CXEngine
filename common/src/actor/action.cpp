@@ -1031,7 +1031,7 @@ int action_get_attack_key_frame(const char* str)
 int action_calc_run_to_pos(lua_State*L){
 	Actor* actor = lua_check_actor(L, 1);
 	Pos runto;
-	CalcRunToPos(actor, actor->GetTarget(), runto);
+	//CalcRunToPos(actor, actor->GetTarget(), runto);
 	lua_pushnumber(L, runto.x);
 	lua_pushnumber(L, runto.y);
 	return 2;
