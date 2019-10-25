@@ -695,23 +695,6 @@ ActionStateMachine::~ActionStateMachine()
 
 void ActionStateMachine::Update()
 {
-	int msdt = (int)WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
-	for (auto& wrap : m_TimerFuncs) {
-		wrap.ms -= msdt;
-		if (wrap.ms <= 0) {
-			wrap.func();
-			wrap.markd = true;
-		}
-	}
-
-	for (auto it = m_TimerFuncs.begin(); it != m_TimerFuncs.end();) {
-		if(it->markd){
-			it = m_TimerFuncs.erase(it);
-		}else{
-			it++;
-		}
-	}
-
 	if (m_AvatarID != m_Actor->GetProperty(PROP_AVATAR_ID).toString())
 	{
 		SetAvatar(m_Actor->GetProperty(PROP_AVATAR_ID).toString());
@@ -730,6 +713,11 @@ void ActionStateMachine::Update()
 		m_ActionQueue.pop_front();
 		m_ActionQueue.push_back(action);
 		m_bMoveActionToBack = false;
+		if (!m_ActionQueue.empty()) {
+			m_ActionID = m_ActionQueue.front();
+			auto* avatar = GetAvatar(m_ActionID);
+			avatar->Replay();
+		}
 	}
 
 	//auto* avatar = GetAvatar(m_ActionID);
@@ -744,6 +732,29 @@ void ActionStateMachine::Update()
 	if (avatar->GetState() == ANIMATION_STOP) {
 		cxlog_info("pop action %d\n", m_ActionID);
 		m_ActionQueue.pop_front();
+		if (!m_ActionQueue.empty()) {
+			m_ActionID = m_ActionQueue.front();
+			avatar = GetAvatar(m_ActionID);
+			avatar->Replay();
+		}
+	}
+
+	int msdt = (int)WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
+	for (auto& wrap : m_TimerFuncs) {
+		wrap.ms -= msdt;
+		if (wrap.ms <= 0) {
+			wrap.func();
+			wrap.markd = true;
+		}
+	}
+
+	for (auto it = m_TimerFuncs.begin(); it != m_TimerFuncs.end();) {
+		if (it->markd) {
+			it = m_TimerFuncs.erase(it);
+		}
+		else {
+			it++;
+		}
 	}
 
 	/*if (m_pCurrentAction) {
@@ -921,6 +932,7 @@ void ActionStateMachine::EnsureLoadAction(int action)
 		
 		m_AvatarActions[action]->FrameInterval = m_TimeInterval;
 		m_AvatarActions[action]->SetLoop(0);
+		m_AvatarActions[action]->Replay();
 	}
 
 	if (m_HasWeapon) {
@@ -933,6 +945,7 @@ void ActionStateMachine::EnsureLoadAction(int action)
 			m_WeaponActions[action] = new Animation(resid);
 			m_WeaponActions[action]->FrameInterval = m_TimeInterval;
 			m_WeaponActions[action]->SetLoop(0);
+			m_WeaponActions[action]->Replay();
 		}
 	}
 }
@@ -972,6 +985,7 @@ int ActionStateMachine::GetDirCount(int action)
 void ActionStateMachine::AddStateAnim(Animation* anim)
 {
 	if (anim == nullptr)return;
+	anim->Replay();
 	m_StateAnimQueue.push_back(anim);
 }
 

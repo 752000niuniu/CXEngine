@@ -11,9 +11,14 @@ function actor_on_click(actor, button, x, y)
 					txt = '我是找你打架的',
 					func = function()
 						local player = actor_manager_fetch_local_player()
+						local target = player:GetTarget()
+						player:SetProperty(PROP_HP, player:GetMaxHP()/3)
+						target:SetProperty(PROP_HP, target:GetMaxHP()/3)
+
 						player:StopMove()
-						combat_system_start_battle({player},{player:GetTarget()})
-						cxlog_info(player:GetProperty(PROP_NAME), player:GetTarget():GetProperty(PROP_NAME))
+						combat_system_start_battle({player},{target})
+
+						cxlog_info(player:GetProperty(PROP_NAME), target:GetProperty(PROP_NAME))
 					end
 				},
 				{ 

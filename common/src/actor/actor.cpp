@@ -751,6 +751,30 @@ int actor_move_action_to_back(lua_State*L) {
 	return 0;
 }
 
+int actor_add_state_anim(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	Animation* anim = lua_check_animation(L, 2);
+#ifndef SIMPLE_SERVER
+	actor->GetASM()->AddStateAnim(anim);
+#endif
+	return 0;
+}
+int actor_remove_state_anim(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	Animation* anim = lua_check_animation(L, 2);
+#ifndef SIMPLE_SERVER
+	actor->GetASM()->RemoveStateAnim(anim);
+#endif
+	return 0;
+}
+int actor_clear_state_anim(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+#ifndef SIMPLE_SERVER
+	actor->GetASM()->ClearStateAnim();
+#endif
+	return 0;
+}
+
 //{ "__gc",actor_destroy },
 luaL_Reg mt_actor[] = {
 	{ "Destroy",actor_destroy },
@@ -796,6 +820,9 @@ luaL_Reg mt_actor[] = {
 {"PushAction",actor_push_action},
 {"ClearAction",actor_clear_action},
 {"MoveActionToBack",actor_move_action_to_back},
+{"AddStateAnim",actor_add_state_anim},
+{"RemoveStateAnim",actor_remove_state_anim},
+{"ClearStateAnim",actor_clear_state_anim},
 { NULL, NULL }
 };
 

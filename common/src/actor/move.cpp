@@ -79,8 +79,10 @@ void MoveHandle::Update()
 			m_bMoveWithDuration = false;
 
 			if (!m_Actor->IsCombat()) {
+#ifndef SIMPLE_SERVER 
 				m_Actor->GetASM()->ClearAction();
 				m_Actor->GetASM()->PushAction(ACTION_IDLE);
+#endif
 			}
 		}
 	}
@@ -128,8 +130,10 @@ void MoveHandle::MoveTo(float x, float y)
 
 	m_Actor->SetMoveToPos({ x,y });
 	if(!m_Actor->IsCombat()){
+#ifndef SIMPLE_SERVER 
 		m_Actor->GetASM()->ClearAction();
 		m_Actor->GetASM()->PushAction(ACTION_WALK);
+#endif
 	}
 	
 	m_bMove = true;

@@ -57,11 +57,10 @@ function CommandMT:StartCast()
         target:SetProperty(PROP_ASM_DAMAGE,damage) 
         target:ModifyHP(-damage)
 
-        cxlog_info('damage', damage)
-    
-
+        cxlog_info('damage', damage,skill.atk_anim)
+        target:SetProperty(PROP_ASM_BEHIT_ANIM, skill.atk_anim)
+        local id = target:GetProperty(PROP_ASM_BEHIT_ANIM)
         on_cast_normal_attack(actor, target)
-
         -- target:SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF,0x1D3FF13C))
         -- actor:PlayAttack()
         --[[
@@ -332,7 +331,7 @@ function combat_system_imgui_update()
             local enemy = player:GetTarget()
             enemy:SetTarget(player)
 
-            enemy:SetProperty(PROP_USING_SKILL, 1)
+            enemy:SetProperty(PROP_USING_SKILL, 18)
 
             local cmd = CommandMT:new()
             cmd:Init(enemy)
@@ -363,7 +362,7 @@ function combat_system_imgui_update()
 
         if imgui.Button('攻击##player') then
             local player = actor_manager_fetch_local_player()
-            player:SetProperty(PROP_USING_SKILL, 1)
+            player:SetProperty(PROP_USING_SKILL, 18)
 
             local cmd = CommandMT:new()
             cmd:Init(player)
@@ -620,7 +619,7 @@ function on_cast_normal_attack(actor, target)
     runto_action:AddCallback(0,function()
         local runto_x = actor:GetProperty(PROP_ASM_RUNTO_X)
         local runto_y = actor:GetProperty(PROP_ASM_RUNTO_Y)
-        actor:MoveOnScreenWithDuration(runto_x,runto_y,runto_action:GetGroupFrameTime(),true)
+        actor:MoveOnScreenWithDuration(runto_x,runto_y,runto_action:GetGroupFrameTime()-PERFRAME_TIME,true)
     end)
     actor:PushAction(ACTION_RUNTO)
 
@@ -633,7 +632,23 @@ function on_cast_normal_attack(actor, target)
         key_frame = attack_action:GetKeyFrame()
     end
     attack_action:AddFrameCallback(key_frame, function()
-        actor:PlayBeHit()
+        local behit_action = target:GetAvatar(ACTION_BEHIT)
+        behit_action:SetLoop(-1)
+        behit_action:AddFrameCallback(1, function()
+            attack_action:Pause(500)
+            behit_action:Pause(500)
+
+            local avatar = target:GetAvatar()
+            local resid = target:GetProperty(PROP_ASM_BEHIT_ANIM)
+            local pack, was = res_decode(resid)
+            local anim = animation_create(pack,was)
+            anim:SetLoop(-1)
+            local offy =  -avatar:GetFrameKeyY() + avatar:GetFrameHeight() / 2.0
+            anim:SetOffsetY(offy)  
+            target:AddStateAnim(anim)
+        end)
+        target:PushAction(ACTION_BEHIT)
+        target:MoveActionToBack()
     end)
     actor:PushAction(ACTION_ATTACK)
 
@@ -646,7 +661,7 @@ function on_cast_normal_attack(actor, target)
         actor:ReverseDir()
         local runto_x = actor:GetProperty(PROP_ASM_RUNTO_X)
         local runto_y = actor:GetProperty(PROP_ASM_RUNTO_Y)
-        actor:MoveOnScreenWithDuration(-runto_x,-runto_y,runback_action:GetGroupFrameTime(),true)
+        actor:MoveOnScreenWithDuration(-runto_x,-runto_y,runback_action:GetGroupFrameTime()-PERFRAME_TIME,true)
     end)
 
     runback_action:AddStopCallback(function()

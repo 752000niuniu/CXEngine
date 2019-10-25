@@ -63,11 +63,17 @@ enum EAnimationCBFuncType
 	ANIMATION_CBFUNC_C = 0,
 	ANIMATION_CBFUNC_LUA
 };
-
+enum EAnimationLoopMode
+{
+	ANIMATION_LOOPMODE_RESTART=0,
+	ANIMATION_LOOPMODE_STOPFIX,
+};
 
 class Animation : public BaseSprite
 {
 public:
+	
+
 	struct CBDataLua{
 		float dur;
 		int func;
@@ -100,7 +106,7 @@ public:
 	bool GetVisible() { return m_Visible; };
 
 	void Pause(int ms);
-	void SetLoop(int loop);
+	void SetLoop(int loop,int mode = ANIMATION_LOOPMODE_RESTART);
 	void Reset();
 	void Stop();
 	void Play();
@@ -127,6 +133,8 @@ public:
 	int GetState() { return m_State; };
 
 	void AddStopCallback(int funcRef);
+	void AddStartCallback(int funcRef);
+	void AddLoopCallback(int funcRef);
 private:
 	bool m_bGroupEndUpdate;
 	bool m_bFrameUpdate;
@@ -137,7 +145,10 @@ private:
 	int m_State;
 	bool m_Visible;
 	int m_PauseTime;
-	int m_StopRef;
+	int m_StopCBRef;
+	int m_StartCBRef;
+	int m_LoopCBRef;
+	int m_LoopMode;
 	map<int, std::function<void()>> m_Callbacks;
 	
 	deque<CBDataLua> m_CallbackQueueLua;
@@ -208,4 +219,7 @@ private:
 
 void lua_push_base_sprite(lua_State* L, BaseSprite* sprite);
 void lua_push_animation(lua_State*L, Animation* sprite);
+
+Animation* lua_check_animation(lua_State* L, int index);
+
 void luaopen_sprite(lua_State* L);

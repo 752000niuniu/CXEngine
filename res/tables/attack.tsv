@@ -1,6 +1,6 @@
 ID	name	type	combo	atk_anim	group_kill	cast_anim	act_turn
 *0		atk	0				
-1	普攻	atk					
+1	普攻	atk		0-0x1D3FF13C			
 2	横扫千军	atk	3				2
 3	后发制人	atk					2
 4	破釜沉舟	atk			3		2
@@ -15,7 +15,7 @@ ID	name	type	combo	atk_anim	group_kill	cast_anim	act_turn
 15	连环击	atk	6				
 16	惊心一剑	atk					
 17	死亡召唤	atk					
-18	善恶有报	atk					
+18	善恶有报	atk		0-0x8D8A818D			
 19	力劈华山	atk					
 20	夜舞倾城	atk					
 21	壁垒击破	atk					

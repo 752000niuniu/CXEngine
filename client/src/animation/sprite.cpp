@@ -150,7 +150,7 @@ void BaseSprite::OnDragMove(int dx, int dy)
 Animation::Animation(uint64_t resoureID /*= 0*/, std::vector<PalSchemePart>* patMatrix ) :BaseSprite(resoureID, patMatrix)
 {
 	m_Visible = true;
-	m_State = ANIMATION_PLAY;
+	m_State = ANIMATION_STOP;
 	m_LoopCount = 0;
 	m_bFrameUpdate = false;
 	m_bGroupEndUpdate = false;
@@ -172,7 +172,10 @@ Animation::Animation(uint64_t resoureID /*= 0*/, std::vector<PalSchemePart>* pat
 	m_bLockFrame = false;
 	m_LockFrame = CurrentFrame;
 	m_bLoop = true;
-	m_StopRef = -1;
+	m_StopCBRef = -1;
+	m_StartCBRef = -1;
+	m_LoopCBRef = -1;
+	m_LoopMode = ANIMATION_LOOPMODE_RESTART;
 }
 
 Animation::Animation(uint32_t pkg, uint32_t wasID, std::vector<PalSchemePart>* patMatrix)
@@ -189,17 +192,17 @@ Animation::~Animation()
 	}
 }
 
-void Animation::SetLoop(int loop)
+void Animation::SetLoop(int loop,int mode)
 {
 	if (loop < 0) {
 		m_LoopCount = 0;
-		m_State = ANIMATION_PLAY;
 		m_bLoop = false;
 	}
 	else {
 		m_LoopCount = loop;
 		m_bLoop = true;
 	}
+	m_LoopMode = mode;
 }
 
 void Animation::Reset()
@@ -213,12 +216,32 @@ void Animation::Stop()
 {
 	m_PreviousState = m_State;
 	m_State = ANIMATION_STOP;
+	if (m_StopCBRef != -1) {
+		lua_State* L = script_system_get_luastate();
+		int ref = m_StopCBRef;
+		lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
+		int res = lua_pcall(L, 0, 0, 0);
+		check_lua_error(L, res);
+		luaL_unref(L, LUA_REGISTRYINDEX, ref);
+		m_StopCBRef = -1;
+	}
+
 }
 
 void Animation::Play()
 {
 	m_PreviousState = m_State;
 	m_State = ANIMATION_PLAY;
+	
+	if (m_StartCBRef != -1) {
+		lua_State* L = script_system_get_luastate();
+		int ref = m_StartCBRef;
+		lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
+		int res = lua_pcall(L, 0, 0, 0);
+		check_lua_error(L, res);
+		luaL_unref(L, LUA_REGISTRYINDEX, ref);
+		m_StartCBRef = -1;
+	}
 }
 
 void Animation::Replay()
@@ -278,7 +301,18 @@ void Animation::UnLockFrame()
 
 void Animation::AddStopCallback(int funcRef)
 {
-	m_StopRef = funcRef;
+	m_StopCBRef = funcRef;
+}
+
+
+void Animation::AddStartCallback(int funcRef)
+{
+	m_StartCBRef = funcRef;
+}
+
+void Animation::AddLoopCallback(int funcRef)
+{
+	m_LoopCBRef = funcRef;
 }
 
 void Animation::RemoveFrameCallback(int frame)
@@ -369,37 +403,25 @@ void Animation::Update()
 			if (CurrentFrame >= GroupFrameCount) {
 				m_bGroupEndUpdate = true;
 				if (m_bLoop) {
-					CurrentFrame = 0;
+					if (m_LoopMode == ANIMATION_LOOPMODE_RESTART) {
+						CurrentFrame = 0;
+					}
+					else if (m_LoopMode == ANIMATION_LOOPMODE_STOPFIX) {
+						CurrentFrame = GroupFrameCount - 1;
+					}
+					
 					if (m_LoopCount > 0) {
 						m_LoopCount = m_LoopCount - 1;
 						if (m_LoopCount == 0) {
 							m_bLoop = false;
-							m_State = ANIMATION_STOP;
-							if(m_StopRef!=-1){
-								lua_State*L = script_system_get_luastate();
-								int ref = m_StopRef;
-								lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
-								int res = lua_pcall(L, 0, 0, 0);
-								check_lua_error(L, res);
-								luaL_unref(L, LUA_REGISTRYINDEX, ref);
-								m_StopRef = -1;
-							}
+							Stop();			
 							return;
 						}
 					}
 				}
 				else {
 					CurrentFrame = CurrentFrame - 1;
-					m_State = ANIMATION_STOP;
-					if (m_StopRef != -1) {
-						lua_State*L = script_system_get_luastate();
-						int ref = m_StopRef;
-						lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
-						int res = lua_pcall(L, 0, 0, 0);
-						check_lua_error(L, res);
-						luaL_unref(L, LUA_REGISTRYINDEX, ref);
-						m_StopRef = -1;
-					}
+					Stop();
 					return;
 				}
 			}
@@ -984,6 +1006,21 @@ int animation_add_stop_callback(lua_State*L){
 	return 0;
 }
 
+int animation_set_offset_x(lua_State* L) {
+	auto* animation = lua_check_animation(L, 1);
+	float offx = (float)lua_tonumber(L, 2);
+	animation->Offset.x = offx;
+	return 0;
+}
+
+int animation_set_offset_y(lua_State* L) {
+	auto* animation = lua_check_animation(L, 1);
+	float offy = (float)lua_tonumber(L, 2);
+	animation->Offset.y = offy;
+	return 0;
+}
+
+
 luaL_Reg MT_ANIMATION[] = {
 { "Pause",animation_pause },
 { "Stop",animation_stop},
@@ -999,7 +1036,8 @@ luaL_Reg MT_ANIMATION[] = {
 { "AddFrameCallback", animation_add_frame_callback},
 { "GetKeyFrame", animation_get_key_frame},
 { "Reset", animation_reset},
-
+{ "SetOffsetX", animation_set_offset_x},
+{ "SetOffsetY", animation_set_offset_y},
 { NULL, NULL }
 };
 
