@@ -16,6 +16,9 @@
 #include "actor_manager.h"
 #include "scene/scene_manager.h"
 #include "script_system.h"
+#include "logger.h"
+
+
 
 #define  PERFRAME_TIME (0.016f*2.5f)
 std::map<CXString, int> g_AttackKeyFrame = {
@@ -667,6 +670,8 @@ ActionStateMachine::ActionStateMachine(Actor* _actor)
 	m_WeaponID = m_Actor->GetProperty(PROP_WEAPON_AVATAR_ID).toString();
 	m_AvatarID = m_Actor->GetProperty(PROP_AVATAR_ID).toString();
 	m_ActionID = ACTION_IDLE;
+	m_bMoveActionToBack = false;
+	m_ActionQueue.push_back(ACTION_IDLE);
 }
 
 ActionStateMachine::~ActionStateMachine()
@@ -720,12 +725,30 @@ void ActionStateMachine::Update()
 		}
 	}
 
+	if (m_bMoveActionToBack) {
+		int action = m_ActionQueue.front();
+		m_ActionQueue.pop_front();
+		m_ActionQueue.push_back(action);
+		m_bMoveActionToBack = false;
+	}
+
+	//auto* avatar = GetAvatar(m_ActionID);
+	//if (!avatar)return;
+	m_ActionID = -1;
+	if (!m_ActionQueue.empty()) {
+		m_ActionID = m_ActionQueue.front();
+	}
 	auto* avatar = GetAvatar(m_ActionID);
 	if (!avatar)return;
-
-	if (m_pCurrentAction) {
-		m_pCurrentAction->Update();
+	avatar->Update();
+	if (avatar->GetState() == ANIMATION_STOP) {
+		cxlog_info("pop action %d\n", m_ActionID);
+		m_ActionQueue.pop_front();
 	}
+
+	/*if (m_pCurrentAction) {
+		m_pCurrentAction->Update();
+	}*/
 
 	if (HasWeapon() && action_is_show_weapon(m_ActionID)) {
 		auto* weapon = GetWeapon(m_ActionID);

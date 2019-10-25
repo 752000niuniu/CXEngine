@@ -181,7 +181,7 @@ public:
 	void RestoreAction();
 	void ChangeAction(Action* action);
 	void EnsureLoadAction(int action);
-
+	
 	Animation* GetAvatar(int action = -1);
 	Animation* GetWeapon(int action = -1);
 	bool HasWeapon() { return m_HasWeapon; }
@@ -197,6 +197,15 @@ public:
 	void ClearStateAnim();
 
 	void AddDelayCallback(int ms, function<void()> func);
+
+	void MoveActionToBack() { m_bMoveActionToBack = true; }
+	void PushAction(int action) { m_ActionQueue.push_back(action); }
+	void ClearAction() { m_ActionQueue.clear(); }
+	int GetCurrentAction() { 
+		if (m_ActionQueue.empty())return -1;
+		return m_ActionQueue.front();
+	}
+	
 private:
 	Actor * m_Actor;
 	float m_TimeInterval;
@@ -211,6 +220,8 @@ private:
 	Animation* m_PlayerShadow;
 	deque<TimerFuncWrap> m_TimerFuncs;
 	deque<Animation*> m_StateAnimQueue;
+	bool		m_bMoveActionToBack;
+	deque<int> m_ActionQueue;
 };
 #endif // !SIMPLE_SERVER
 

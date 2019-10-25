@@ -45,8 +45,10 @@ Actor::Actor(uint64_t pid)
 	m_SayDuration = 0;
 	m_ASM = new ActionStateMachine(this);  
 	INPUT_MANAGER_INSTANCE->RegisterView(this);
-	PathMoveAction* action = new PathMoveAction(this);
-	m_ASM->ChangeAction(action);
+	/*PathMoveAction* action = new PathMoveAction(this);
+	m_ASM->ChangeAction(action);*/
+	//m_ASM->PushAction(ACTION_IDLE);
+
 	m_NameTV = new UITextView();
 	m_NameTV->Font = "SIMSUN";
 	m_NameTV->Size = 16.f;
@@ -724,6 +726,30 @@ int actor_get_dir_by_degree(lua_State*L) {
 	return 1;
 }
 
+int actor_push_action(lua_State*L) {
+	Actor* actor = lua_check_actor(L, 1);
+	int action = (int)lua_tointeger(L, 2);
+#ifndef SIMPLE_SERVER
+	actor->GetASM()->PushAction(action);
+#endif
+	return 0;
+}
+
+int actor_clear_action(lua_State*L) {
+	Actor* actor = lua_check_actor(L, 1);
+#ifndef SIMPLE_SERVER
+	actor->GetASM()->ClearAction();
+#endif
+	return 0;
+}
+
+int actor_move_action_to_back(lua_State*L) {
+	Actor* actor = lua_check_actor(L, 1);
+#ifndef SIMPLE_SERVER
+	actor->GetASM()->MoveActionToBack();
+#endif
+	return 0;
+}
 
 //{ "__gc",actor_destroy },
 luaL_Reg mt_actor[] = {
@@ -767,6 +793,9 @@ luaL_Reg mt_actor[] = {
 {"MoveOnScreenWithDuration",actor_move_on_screen_with_duration},
 {"GetMoveDestAngle",actor_get_move_dest_angle},
 {"GetDirByDegree",actor_get_dir_by_degree},
+{"PushAction",actor_push_action},
+{"ClearAction",actor_clear_action},
+{"MoveActionToBack",actor_move_action_to_back},
 { NULL, NULL }
 };
 

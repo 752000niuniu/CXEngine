@@ -1,4 +1,4 @@
-PERFRAME_TIME = 0.016*2.5
+PERFRAME_TIME = 0.016*2.5  
 local BATTLE_DEFAULT = 0
 local BATTLE_PREPARE = 1
 local BATTLE_START = 2
@@ -60,8 +60,10 @@ function CommandMT:StartCast()
         cxlog_info('damage', damage)
     
 
-        target:SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF,0x1D3FF13C))
-        actor:PlayAttack()
+        on_cast_normal_attack(actor, target)
+
+        -- target:SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF,0x1D3FF13C))
+        -- actor:PlayAttack()
         --[[
             待战->跑去->攻击
             ID	name	type	combo	atk_anim	group_kill	cast_anim	act_turn
@@ -158,9 +160,9 @@ function combat_system_on_start()
         actor:SetProperty(PROP_IS_COMBAT,true)
         actor:SetProperty(PROP_TURN_READY,false)
         actor:SetProperty(PROP_COMBAT_POS,pos.x,pos.y)
-        actor:MoveTo(pos.x,pos.y)
-        actor:SetActionID(ACTION_BATIDLE)
         actor:SetDir(dir)
+        actor:ClearAction()
+        actor:PushAction(ACTION_BATIDLE)
     end
 
     for i,actor in ipairs(tDefenders) do
@@ -175,20 +177,22 @@ function combat_system_on_start()
 end
 
 function combat_system_on_end()
-    for i,actor in ipairs(tDefenders) do
+    local reset_actor = function(actor)
         actor:SetProperty(PROP_ASM_BUFF_ANIM, 0)
         actor:ClearBuffAnim()
         actor:SetActionID(ACTION_IDLE)
         actor:SetProperty(PROP_IS_COMBAT,false)
         actor:SetProperty(PROP_CAN_MOVE,true)
+        actor:ClearAction()
+        actor:PushAction(ACTION_IDLE)
+    end
+
+    for i,actor in ipairs(tDefenders) do
+        reset_actor(actor)
     end
 
     for i,actor in ipairs(tAttackers) do
-        actor:SetProperty(PROP_ASM_BUFF_ANIM, 0)
-        actor:ClearBuffAnim()
-        actor:SetActionID(ACTION_IDLE)
-        actor:SetProperty(PROP_IS_COMBAT,false)
-        actor:SetProperty(PROP_CAN_MOVE,true)
+        reset_actor(actor)
     end
     animation_manager_clear()
     scene_set_combat(false)
@@ -489,7 +493,7 @@ function calc_run_to_pos(actor, target)
     if attackAvatar and targetAvatar then
         local actor_avtar_id = actor:GetProperty(PROP_AVATAR_ID)
         local attackKeyframe = action_get_attack_key_frame(actor_avtar_id)
-        if attackKeyframe == 0 then attackKeyframe = attackAvatar:GetAttackKeyFrame() end
+        if attackKeyframe == 0 then attackKeyframe = attackAvatar:GetKeyFrame() end
         local attackFrame = attackKeyframe
         local targetFrame = targetAvatar:GetGroupFrameCount() - 1 
         local x, y = target:GetPos()
@@ -577,15 +581,79 @@ function on_atk_skill_launch(actor)
     end)
 
     avatar:AddFrameCallback(avatar:GetGroupFrameCount() , function()
-        actor:ASMSetAction(ACTION_RUNBACK)
-        actor:ReverseDir()
-        local avatar = actor:GetAvatar(ACTION_RUNBACK)
-        if not avatar then return end
-        avatar:SetFrameInterval(PERFRAME_TIME)
-       
-        local runto_x = actor:GetProperty(PROP_ASM_RUNTO_X)
-        local runto_y = actor:GetProperty(PROP_ASM_RUNTO_Y)
-        actor:MoveOnScreenWithDuration(-runto_x,-runto_y,avatar:GetGroupFrameTime(),true)
+        if combo > 0 then
+            on_atk_skill_launch(actor)
+        else
+            actor:ASMSetAction(ACTION_RUNBACK)
+            actor:ReverseDir()
+            local avatar = actor:GetAvatar(ACTION_RUNBACK)
+            if not avatar then return end
+            avatar:SetFrameInterval(PERFRAME_TIME)
+           
+            local runto_x = actor:GetProperty(PROP_ASM_RUNTO_X)
+            local runto_y = actor:GetProperty(PROP_ASM_RUNTO_Y)
+            actor:MoveOnScreenWithDuration(-runto_x,-runto_y,avatar:GetGroupFrameTime(),true)
+        end
     end)
 end
 
+
+function on_cast_normal_attack(actor, target)
+    -- target:SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF,0x1D3FF13C))
+    -- actor:PlayAttack()
+    local tar_x,tar_y = target:GetPos()
+    local degree = actor:GetMoveDestAngle(tar_x,tar_y)
+    local dir = actor:GetDirByDegree(degree)
+    dir = math_dir_8_to_4(dir)
+    actor:SetDir(dir)
+    target:SetDir(dir)
+    target:ReverseDir()
+    
+    local runto_x, runto_y =  calc_run_to_pos(actor,target)
+    actor:SetProperty(PROP_ASM_RUNTO_X, runto_x)
+    actor:SetProperty(PROP_ASM_RUNTO_Y, runto_y)
+    
+    local runto_action = actor:GetAvatar(ACTION_RUNTO)
+    runto_action:Reset()
+    runto_action:SetLoop(-1)
+    runto_action:SetFrameInterval(PERFRAME_TIME)
+    runto_action:AddCallback(0,function()
+        local runto_x = actor:GetProperty(PROP_ASM_RUNTO_X)
+        local runto_y = actor:GetProperty(PROP_ASM_RUNTO_Y)
+        actor:MoveOnScreenWithDuration(runto_x,runto_y,runto_action:GetGroupFrameTime(),true)
+    end)
+    actor:PushAction(ACTION_RUNTO)
+
+    local attack_action = actor:GetAvatar(ACTION_ATTACK)
+    attack_action:Reset()
+    attack_action:SetLoop(-1)
+    local avatar_id = actor:GetProperty(PROP_AVATAR_ID)
+    local key_frame = action_get_attack_key_frame(avatar_id)
+    if key_frame == 0 then
+        key_frame = attack_action:GetKeyFrame()
+    end
+    attack_action:AddFrameCallback(key_frame, function()
+        actor:PlayBeHit()
+    end)
+    actor:PushAction(ACTION_ATTACK)
+
+
+    local runback_action = actor:GetAvatar(ACTION_RUNBACK)
+    runback_action:Reset()
+    runback_action:SetLoop(-1)
+    runback_action:SetFrameInterval(PERFRAME_TIME)
+    runback_action:AddCallback(0,function()
+        actor:ReverseDir()
+        local runto_x = actor:GetProperty(PROP_ASM_RUNTO_X)
+        local runto_y = actor:GetProperty(PROP_ASM_RUNTO_Y)
+        actor:MoveOnScreenWithDuration(-runto_x,-runto_y,runback_action:GetGroupFrameTime(),true)
+    end)
+
+    runback_action:AddStopCallback(function()
+        actor:ReverseDir()
+        combat_system_on_acting_end(actor)
+    end)
+
+    actor:PushAction(ACTION_RUNBACK)
+    actor:MoveActionToBack()
+end

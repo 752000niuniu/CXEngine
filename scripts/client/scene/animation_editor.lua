@@ -133,7 +133,7 @@ function OnSceneInit()
     player:SetTarget(enemy)
     player:StopMove()
     combat_system_start_battle({player},{player:GetTarget()})
-    -- cxlog_info(player:GetProperty(PROP_NAME), player:GetTarget():GetProperty(PROP_NAME))
+    cxlog_info(player:GetProperty(PROP_NAME), player:GetTarget():GetProperty(PROP_NAME))
 end
 
 local actor_dir = 0

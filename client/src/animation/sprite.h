@@ -125,6 +125,8 @@ public:
 	void LockFrame(int frame);
 	void UnLockFrame();
 	int GetState() { return m_State; };
+
+	void AddStopCallback(int funcRef);
 private:
 	bool m_bGroupEndUpdate;
 	bool m_bFrameUpdate;
@@ -135,7 +137,7 @@ private:
 	int m_State;
 	bool m_Visible;
 	int m_PauseTime;
-	
+	int m_StopRef;
 	map<int, std::function<void()>> m_Callbacks;
 	
 	deque<CBDataLua> m_CallbackQueueLua;

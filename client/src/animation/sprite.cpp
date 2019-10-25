@@ -172,6 +172,7 @@ Animation::Animation(uint64_t resoureID /*= 0*/, std::vector<PalSchemePart>* pat
 	m_bLockFrame = false;
 	m_LockFrame = CurrentFrame;
 	m_bLoop = true;
+	m_StopRef = -1;
 }
 
 Animation::Animation(uint32_t pkg, uint32_t wasID, std::vector<PalSchemePart>* patMatrix)
@@ -275,6 +276,11 @@ void Animation::UnLockFrame()
 }
 
 
+void Animation::AddStopCallback(int funcRef)
+{
+	m_StopRef = funcRef;
+}
+
 void Animation::RemoveFrameCallback(int frame)
 {
 	m_Callbacks.erase(frame);
@@ -314,6 +320,43 @@ void Animation::Update()
 			}
 		}
 
+		for (auto& wrap : m_CallbackQueue) {
+			wrap.dur -= dt;
+			if (wrap.dur <= 0) {
+				wrap.func();
+				wrap.markd = true;
+			}
+		}
+		for (auto it = m_CallbackQueue.begin(); it != m_CallbackQueue.end();) {
+			if (it->markd) {
+				it = m_CallbackQueue.erase(it);
+			}
+			else {
+				it++;
+			}
+		}
+
+		for (auto& wrap : m_CallbackQueueLua) {
+			wrap.dur -= dt;
+			if (wrap.dur <= 0) {
+				lua_State*L = script_system_get_luastate();
+				int ref = wrap.func;
+				lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
+				int res = lua_pcall(L, 0, 0, 0);
+				check_lua_error(L, res);
+				luaL_unref(L, LUA_REGISTRYINDEX, ref);
+				wrap.markd = true;
+			}
+		}
+		for (auto it = m_CallbackQueueLua.begin(); it != m_CallbackQueueLua.end();) {
+			if (it->markd) {
+				it = m_CallbackQueueLua.erase(it);
+			}
+			else {
+				it++;
+			}
+		}
+
 		PlayTime = PlayTime + dt;
 		if (PlayTime >= FrameInterval)
 		{
@@ -332,6 +375,15 @@ void Animation::Update()
 						if (m_LoopCount == 0) {
 							m_bLoop = false;
 							m_State = ANIMATION_STOP;
+							if(m_StopRef!=-1){
+								lua_State*L = script_system_get_luastate();
+								int ref = m_StopRef;
+								lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
+								int res = lua_pcall(L, 0, 0, 0);
+								check_lua_error(L, res);
+								luaL_unref(L, LUA_REGISTRYINDEX, ref);
+								m_StopRef = -1;
+							}
 							return;
 						}
 					}
@@ -339,45 +391,21 @@ void Animation::Update()
 				else {
 					CurrentFrame = CurrentFrame - 1;
 					m_State = ANIMATION_STOP;
+					if (m_StopRef != -1) {
+						lua_State*L = script_system_get_luastate();
+						int ref = m_StopRef;
+						lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
+						int res = lua_pcall(L, 0, 0, 0);
+						check_lua_error(L, res);
+						luaL_unref(L, LUA_REGISTRYINDEX, ref);
+						m_StopRef = -1;
+					}
 					return;
 				}
 			}
 		}
 
-		for (auto& wrap : m_CallbackQueue) {
-			wrap.dur -= dt;
-			if (wrap.dur <= 0) {
-				wrap.func();
-				wrap.markd = true;
-			}
-		}
-		for (auto it = m_CallbackQueue.begin(); it != m_CallbackQueue.end();) {
-			if (it->markd) {
-				it = m_CallbackQueue.erase(it);
-			}else{
-				it++;
-			}
-		}
 		
-		for (auto& wrap : m_CallbackQueueLua) {
-			wrap.dur -= dt;
-			if (wrap.dur <= 0) {
-				lua_State*L = script_system_get_luastate();
-				int ref = wrap.func;
-				lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
-				int res = lua_pcall(L, 0, 0, 0);
-				check_lua_error(L, res);
-				luaL_unref(L, LUA_REGISTRYINDEX, ref);
-				wrap.markd = true;
-			}
-		}
-		for (auto it = m_CallbackQueueLua.begin(); it != m_CallbackQueueLua.end();) {
-			if (it->markd) {
-				it =m_CallbackQueueLua.erase(it);
-			}else{
-				it++;
-			}
-		}
 
 	}
 	else if (m_State == ANIMATION_STOP) {
@@ -901,25 +929,25 @@ int animation_translate(lua_State*L) {
 	auto* animation = lua_check_animation(L, 1);
 	float x = (float)lua_tonumber(L, 2);
 	float y = (float)lua_tonumber(L, 3);
-	int dur = (int)lua_tointeger(L, 4);
+	float dur = (float)lua_tonumber(L, 4);
 	Pos tpos(animation->Pos.x + x, animation->Pos.y + y);
-	animation->Translate(tpos, dur);
+	animation->Translate(tpos, (int)(dur * 1000));
 
 	if (lua_isfunction(L, 5)) {
 		lua_pushvalue(L, 5);
 		int ref = luaL_ref(L, LUA_REGISTRYINDEX);
-		animation->AddCallbackLua(dur / 1000.f, ref);
+		animation->AddCallbackLua(dur, ref);
 	}
 	return 0;
 }
 
 int animation_add_callback(lua_State*L) {
 	auto* animation = lua_check_animation(L, 1);
-	int dur = (int)lua_tointeger(L, 2);
+	float dur = (float)lua_tonumber(L, 2);
 	if (lua_isfunction(L, 3)) {
 		lua_pushvalue(L, 3);
 		int ref = luaL_ref(L, LUA_REGISTRYINDEX);
-		animation->AddCallbackLua(dur / 1000.f, ref);
+		animation->AddCallbackLua(dur, ref);
 	}
 	return 0;
 }
@@ -941,6 +969,20 @@ int animation_get_key_frame(lua_State*L) {
 	return 1;
 }
 
+int animation_reset(lua_State*L) {
+	auto* animation = lua_check_animation(L, 1);
+	animation->Reset();
+	return 0;
+}
+int animation_add_stop_callback(lua_State*L){
+	auto* animation = lua_check_animation(L, 1);
+	if (lua_isfunction(L, 2)) {
+		lua_pushvalue(L, 2);
+		int ref = luaL_ref(L, LUA_REGISTRYINDEX);
+		animation->AddStopCallback(ref);
+	}
+	return 0;
+}
 
 luaL_Reg MT_ANIMATION[] = {
 { "Pause",animation_pause },
@@ -953,8 +995,11 @@ luaL_Reg MT_ANIMATION[] = {
 { "SetVisible", animation_set_visible },
 { "Translate", animation_translate },
 { "AddCallback", animation_add_callback},
+{ "AddStopCallback", animation_add_stop_callback},
 { "AddFrameCallback", animation_add_frame_callback},
 { "GetKeyFrame", animation_get_key_frame},
+{ "Reset", animation_reset},
+
 { NULL, NULL }
 };
 
