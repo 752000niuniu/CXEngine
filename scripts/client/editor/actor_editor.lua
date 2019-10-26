@@ -182,6 +182,15 @@ local LocalPlayerDebugButtons = {
             player:SetProperty(PROP_ASM_BUFF_ANIM, 0)
             player:PlayAttack()
         end
+    },
+    {
+        name = '升级',
+        on_click  = function()
+            local player = actor_manager_fetch_local_player()
+            local anim = animation_create(ADDONWDF,0x9B3AF4E5) 
+            anim:SetLoop(-1)
+            player:AddStateAnim(anim)
+        end
     }
 }
 
@@ -375,6 +384,16 @@ function on_actor_editor_update()
             imgui.Text('灵力 '..actor:CalcSpiritual())
             imgui.Text('速度 '..actor:CalcSpeed())
             imgui.Text('躲闪 '..actor:CalcDodge())
+
+            if actor:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_SUMMON then
+                imgui.Text('攻击资质 '..actor:GetProperty(PROP_SUMMON_ATK_QUAL))
+                imgui.Text('防御资质 '..actor:GetProperty(PROP_SUMMON_DEF_QUAL))
+                imgui.Text('体力资质 '..actor:GetProperty(PROP_SUMMON_HEALTH_QUAL))
+                imgui.Text('法力资质 '..actor:GetProperty(PROP_SUMMON_MAGIC_QUAL))
+                imgui.Text('速度资质 '..actor:GetProperty(PROP_SUMMON_SPEED_QUAL))
+                imgui.Text('躲闪资质 '..actor:GetProperty(PROP_SUMMON_DODGE_QUAL))
+                imgui.Text('成长 '    ..actor:GetProperty(PROP_SUMMON_GROW_COEF))
+            end
         end
     end
 

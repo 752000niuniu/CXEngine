@@ -63,9 +63,17 @@ function CommandMT:StartCast()
 
         target:SetProperty(PROP_ASM_BEHIT_ANIM, skill.atk_anim)
         local id = target:GetProperty(PROP_ASM_BEHIT_ANIM)
-        on_cast_attack(actor, target)
+        on_cast_attack(actor, target,skill)
     elseif skill.type == 'spell' then
-        actor:PlayCast()
+        
+        local damage = actor:GetAttackDamage(false,false,0,1)
+        target:SetProperty(PROP_ASM_DAMAGE,damage) 
+        target:ModifyHP(-damage)
+        cxlog_info('damage', damage,skill.atk_anim)
+
+        target:SetProperty(PROP_ASM_BEHIT_ANIM, skill.atk_anim)
+        local id = target:GetProperty(PROP_ASM_BEHIT_ANIM)
+        on_cast_spell(actor, target,skill)
     end
 end
 
@@ -88,8 +96,6 @@ function CommandMT:IsFinished()
     return self.state == COMMAND_STATE_STOP
 end
 
-
--- local AttackCommandMT = CommandMT:new()
 BattleBG = BattleBG or nil
 combat_self_pos = combat_self_pos or {}
 combat_enemy_pos = combat_enemy_pos or {}
@@ -324,22 +330,23 @@ function combat_system_on_acting_end(actor)
     end
 end
 
+function test_local_player_cast(cast_id)
+    local player = actor_manager_fetch_local_player()
+    player:SetProperty(PROP_USING_SKILL, cast_id)
+
+    local cmd = CommandMT:new()
+    cmd:Init(player)
+    table.insert(Commands,cmd)
+
+    player:SetProperty(PROP_TURN_READY, true)
+
+    for i,actor in ipairs(tDefenders) do
+        actor:SetProperty(PROP_TURN_READY,true)
+    end
+end
+
 function combat_system_imgui_update()
     if BattleState == BATTLE_TURN_STAND_BY then
-        if imgui.Button('敌人模拟攻击##player') then
-            local player = actor_manager_fetch_local_player()
-            local enemy = player:GetTarget()
-            enemy:SetTarget(player)
-
-            enemy:SetProperty(PROP_USING_SKILL, 18)
-
-            local cmd = CommandMT:new()
-            cmd:Init(enemy)
-            table.insert(Commands,cmd)
-
-            enemy:SetProperty(PROP_TURN_READY, true)
-        end    
-
         if imgui.Button('敌人模拟法术攻击##player') then
             local magic_tbl = content_system_get_table('magic')
             local keys = utils_fetch_sort_keys(magic_tbl)
@@ -359,41 +366,16 @@ function combat_system_imgui_update()
 
             enemy:SetProperty(PROP_TURN_READY, true)
         end
-
-        if imgui.Button('攻击##player') then
-            local player = actor_manager_fetch_local_player()
-            player:SetProperty(PROP_USING_SKILL, 1)
-
-            local cmd = CommandMT:new()
-            cmd:Init(player)
-            table.insert(Commands,cmd)
-
-            player:SetProperty(PROP_TURN_READY, true)
-        end  
-        
-        if imgui.Button('法术攻击##player') then
-            local magic_tbl = content_system_get_table('magic')
-            local keys = utils_fetch_sort_keys(magic_tbl)
-            local cast_id = magic_tbl[keys[math.random(1,#keys)]].resid
-
-            local player = actor_manager_fetch_local_player()
-            
-            player:SetProperty(PROP_ASM_PLAY_BEHIT , true)
-            player:SetProperty(PROP_CAST_ID, res_encode(MAGICWDF, cast_id))
-            player:SetProperty(PROP_ASM_BUFF_ANIM,0)
-
-            local cmd = CommandMT:new()
-            cmd:Init(player)
-            table.insert(Commands,cmd)
-
-            player:SetProperty(PROP_TURN_READY, true)
-        end  
     end
 	imgui.Begin('Menu',menu_show)
 
 
-    if imgui.Button('法术##player') then
+    if imgui.Button('攻击##player') then
+        test_local_player_cast(1)
+    end  
 
+    if imgui.Button('法术##player') then
+        test_local_player_cast(58)
     end
 
     if imgui.Button('特技##player') then
@@ -521,6 +503,107 @@ function calc_run_to_pos(actor, target)
         return runto_x ,runto_y
     end
 end
+
+function on_cast_spell(actor, target, skill)
+    local tar_x,tar_y = target:GetPos()
+    local degree = actor:GetMoveDestAngle(tar_x,tar_y)
+    local dir = actor:GetDirByDegree(degree)
+    dir = math_dir_8_to_4(dir)
+    actor:SetDir(dir)
+    target:SetDir(dir)
+    target:ReverseDir()
+
+
+    local cast_action = actor:GetAvatar(ACTION_CAST)
+    cast_action:Reset()
+    cast_action:SetLoop(-1)
+    cast_action:AddFrameCallback(cast_action:GetGroupFrameCount()/2,function()
+        
+        local behit_action = target:GetAvatar(ACTION_BEHIT)
+        behit_action:Reset()
+        behit_action:SetLoop(1)
+        behit_action:AddFrameCallback(1, function()
+            local avatar = target:GetAvatar()
+            local resid = skill.atk_anim
+            local pack, was = res_decode(resid)
+            local anim = animation_create(pack,was)
+            anim:SetLoop(-1)
+            -- local offy = -avatar:GetFrameKeyY() + avatar:GetFrameHeight() / 2.0
+            -- anim:SetOffsetY(offy)  
+            target:AddStateAnim(anim)
+
+            local damage = target:GetProperty(PROP_ASM_DAMAGE) 
+            target:ShowBeatNumber(damage)
+            behit_action:Pause(math.floor(anim:GetGroupFrameTime()* 1000))
+        end)
+
+        behit_action:AddStopCallback(function()
+            if target:IsDead() then
+                behit_action:Reset()
+                behit_action:Play()
+                behit_action:SetLoop(0)
+
+                local last_x, last_y = target:GetPos()
+                local last_dir = target:GetDir()
+                local dx, dy = 0,0
+                local dir_x ,dir_y = actor:GetAttackVec()
+                local fly_x ,fly_y = 0,0 
+                behit_action:AddUpdateCallback(function()
+                    local actor = target
+                
+                    local px, py = actor:GetPos()
+                    local avatar = actor:GetAvatar()
+                    if py - avatar:GetFrameKeyY() <= 0 then
+                        dir_y = -dir_y
+                    end
+
+                    if py - avatar:GetFrameKeyY() + avatar:GetFrameHeight()  >= 600 then
+                        dir_y = -dir_y
+                    end
+                    
+                    if avatar:IsFrameUpdate() then
+                        px = px + dir_x * 49
+                        py = py + dir_y * 49
+                        actor:SetProperty(PROP_COMBAT_POS, px,py)
+                    end
+
+                    if avatar:IsGroupEndUpdate() then
+                        local dir = actor:GetDir()
+                        dir = math_next_dir4(dir)
+                        actor:SetDir(dir)
+                    end
+                    if px - avatar:GetFrameKeyX() < 0 then
+                        behit_action:RemoveUpdateCallback()
+                        behit_action:Stop()
+                        actor:SetProperty(PROP_COMBAT_POS,last_x,last_y)
+                        actor:SetDir(last_dir)
+                        combat_system_on_acting_end(target)    
+                    end
+
+                    if px - avatar:GetFrameKeyX() + avatar:GetFrameWidth() >= 800 then
+                        behit_action:RemoveUpdateCallback()
+                        behit_action:Stop()
+                        actor:SetProperty(PROP_COMBAT_POS,last_x,last_y)
+                        actor:SetDir(last_dir)
+                        combat_system_on_acting_end(target)    
+                    end
+                end)
+            else
+                combat_system_on_acting_end(target)
+            end
+        end)
+
+        target:PushAction(ACTION_BEHIT)
+        target:MoveActionToBack()
+    end)
+    cast_action:AddStopCallback(function()
+        combat_system_on_acting_end(actor)
+    end)
+
+    actor:PushAction(ACTION_CAST)
+    actor:MoveActionToBack()
+end
+
 
 function on_cast_attack(actor, target)
     local tar_x,tar_y = target:GetPos()

@@ -107,6 +107,30 @@ function imgui_std_horizontal_button_layout(tbl, next_fn, on_click)
     end)
 end
 
+function utils_save_rows_to_tsv(path, col_names, rows, def_row)
+    local f = io.open(path,'w+')
+    for i, col_name in ipairs(col_names) do
+        f:write(col_name..'\t')
+    end
+    f:write('\n')
+
+    if def_row then
+        f:write('*')
+        for i,val in ipairs(def_row) do
+            f:write(val..'\t')
+        end
+        f:write('\n')
+    end
+    
+    for i,row in ipairs(rows) do
+        for j,name in ipairs(col_names) do
+            f:write(row[name]..'\t')
+        end
+        f:write('\n')
+    end
+    f:close()
+end
+
 function utils_parse_tsv_to_rows(path)
     local tbl = {}
     local col_names = {}

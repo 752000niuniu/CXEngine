@@ -1,67 +1,67 @@
-ID	name	type	combo	atk_anim	group_kill	cast_anim	act_turn
+ID	name	type	combo	atk_anim	group_kill	cast_anim	act_turn	
 *0		atk	0				
-1	普攻	atk		0-0x1D3FF13C			
-2	横扫千军	atk	3				2
-3	后发制人	atk					2
-4	破釜沉舟	atk			3		2
-5	满天花雨	atk					
-6	天雷斩	atk			3		
-7	雷霆万钧	spell					
-8	烟雨剑法	atk	2				
-9	飘渺式	atk			3		
-12	象形	atk					
-13	鹰击	atk			6		
-14	狮搏	atk					
-15	连环击	atk	6				
-16	惊心一剑	atk					
-17	死亡召唤	atk					
-18	善恶有报	atk		0-0x8D8A818D			
-19	力劈华山	atk					
-20	夜舞倾城	atk					
-21	壁垒击破	atk					
-22	嗜血追击	atk					
-23	剑荡四方	atk			4		
-24	靛沧海	spell					
-25	斩龙诀	spell					
-26	五雷咒	spell					
-27	紫气东来	spell					
-28	唧唧歪歪	spell					
-29	情天恨海	spell					
-30	飞花摘叶	spell					
-31	雨落寒沙	spell					
-32	天诛地灭	spell					
-33	镇妖	spell					
-34	错乱	spell					
-35	百万神兵	spell					
-36	五雷轰顶	spell					
-37	金刚镯	spell					
-38	龙腾	spell					
-39	龙卷雨击	spell					
-40	龙吟	spell					
-41	龙啸九天	spell					
-42	二龙戏珠	spell					
-43	太极生化	spell					
-44	紧箍咒	spell					
-45	日光华	spell					
-46	三星灭魔	spell					
-47	巨岩破	spell					
-48	苍茫树	spell					
-49	地裂火	spell					
-50	五行错位	spell					
-51	阎罗令	spell					
-52	判官令	spell					
-53	冤魂不散	spell					
-54	尸腐毒	spell					
-55	黄泉之息	spell					
-56	魂飞魄散	spell					
-57	飞砂走石	spell					
-58	三昧真火	spell					
-59	踏山裂石	spell					
-60	摇头摆尾	spell					
-61	魔兽啸天	spell					
-62	勾魂	spell					
-63	摄魄	spell					
-64	夺命蛛丝	spell					
-65	姐妹同心	spell					
-66	瘴气	spell					
-67	幻镜术	spell					
+1	普攻	atk		0-1D3FF13C				
+2	横扫千军	atk	3	6-ACA4A54A			2	
+3	后发制人	atk		6-39B69986			2	
+4	破釜沉舟	atk		6-78D6FD06	3		2	
+5	满天花雨	atk		6-9D5F7277				
+6	天雷斩	atk			3			
+7	雷霆万钧	spell		6-279AF873				
+8	烟雨剑法	atk	2					
+9	飘渺式	atk			3			
+12	象形	atk						
+13	鹰击	atk			6			
+14	狮搏	atk						
+15	连环击	atk	6					
+16	惊心一剑	atk						
+17	死亡召唤	atk		6-4E02EC44				
+18	善恶有报	atk		0-8D8A818D				
+19	力劈华山	atk		6-FF33B0EE				
+20	夜舞倾城	atk		6-F18C76DD				
+21	壁垒击破	atk						
+22	嗜血追击	atk						
+23	剑荡四方	atk			4			
+24	靛沧海	spell		6-6C5F8376				
+25	斩龙诀	spell						
+26	五雷咒	spell		6-387C1EEB				
+27	紫气东来	spell		6-A742E8AB				
+28	唧唧歪歪	spell		6-C12C2663				
+29	情天恨海	spell		6-14E3155E				
+30	飞花摘叶	spell		6-78BF64A4				
+31	雨落寒沙	spell						
+32	天诛地灭	spell		6-178C114C				
+33	镇妖	spell		6-1EB0026B				
+34	错乱	spell		6-2EB3476E				
+35	百万神兵	spell		6-8B8516F1				
+36	五雷轰顶	spell		6-FFD64CCA				
+37	金刚镯	spell		6-B4F1628C				
+38	龙腾	spell		6-7367AF0F				
+39	龙卷雨击	spell		6-F1F26922				
+40	龙吟	spell		6-6BCAD3D9				
+41	龙啸九天	spell		6-20D80D98				
+42	二龙戏珠	spell		6-9EC0624E				
+43	太极生化	spell		6-FB918ADC				
+44	紧箍咒	spell		6-5480C749				
+45	日光华	spell		6-45CA9913				
+46	三星灭魔	spell		6-4850F165				
+47	巨岩破	spell		6-565A6FE1				
+48	苍茫树	spell		6-9CCB6E84				
+49	地裂火	spell		6-18E13BE9				
+50	五行错位	spell		6-5A07D50A				
+51	阎罗令	spell		6-9EB11259				
+52	判官令	spell		6-241C668A				
+53	冤魂不散	spell		6-4EA6D4BF				
+54	尸腐毒	spell		6-150CC3BD				
+55	黄泉之息	spell		6-2611E02E				
+56	魂飞魄散	spell						
+57	飞砂走石	spell		6-2ABF191D				
+58	三昧真火	spell		6-FCDCCCEC				
+59	踏山裂石	spell		6-A68B3211				
+60	摇头摆尾	spell						
+61	魔兽啸天	spell		6-68B4ACC7				
+62	勾魂	spell		6-1B472F2F				
+63	摄魄	spell		6-F145AC62				
+64	夺命蛛丝	spell		6-7CD9C342				
+65	姐妹同心	spell		6-EF3E3FE4				
+66	瘴气	spell		6-BA6FC6C2				
+67	幻镜术	spell						

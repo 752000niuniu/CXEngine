@@ -77,13 +77,7 @@ function init_skill_template_table()
         { name='name'},
         { name='type'},
         { name='combo', fmt='i', def=0},
-        { name='atk_anim', fmt=function(str)
-            local strs = utils_string_split(str,'-')
-            local pack = math.tointeger(strs[1]) 
-            local was = math.tointeger(strs[2]) 
-            local res  = res_encode(pack,was)
-            return res
-        end, def=0},
+        { name='atk_anim', fmt=res_parse_resid, def=0},
         { name='group_kill', fmt='i', def=0},
         { name='cast_anim', fmt='i', def=0},
         { name='act_turn', fmt='i', def=0},

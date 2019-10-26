@@ -454,6 +454,18 @@ int res_decode(lua_State* L) {
 	return 2;
 }
 
+int res_parse_resid(lua_State*L){
+	const char* str = lua_tostring(L, 1);
+	auto strs = utils::split(str, '-');
+	if(strs.size()!=2){
+		lua_pushinteger(L, 0);
+		return 1;
+	}
+	uint32 pack = std::stoul(strs[0], 0);
+	uint32 wasID = std::stoul(strs[1], 0, 16);
+	lua_pushinteger(L, res_encode_was(pack,wasID));
+	return 1;
+}
 
 void luaopen_resource_manager(lua_State* L)
 {
@@ -501,4 +513,6 @@ void luaopen_resource_manager(lua_State* L)
 	script_system_register_luac_function(L, resource_get_weapon_id);
 	
 	script_system_register_luac_function(L, res_get_was);
+
+	script_system_register_luac_function(L, res_parse_resid);
 }
