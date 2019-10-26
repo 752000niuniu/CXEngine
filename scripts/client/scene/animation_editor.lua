@@ -44,6 +44,30 @@ function OnSceneInit()
     -- enemy:ChangePalMatrix(get_pal_from_json('{"1":{"to":40,"mat":[105,273,0,512,0,359,459,412,464],"from":0},"2":{"to":60,"mat":[86,96,134,244,301,144,273,14,330],"from":40},"3":{"to":120,"mat":[24,234,340,325,421,483,345,340,330],"from":60},"4":{"to":256,"mat":[255,0,0,0,255,0,0,0,255],"from":120},"segments":[0,40,60,120,256]}'))
     enemy:SetActionID(ACTION_BATIDLE)
 
+    local enemys = {}
+    for i=1,10 do
+        ostime = ostime+1
+        local actor =  actor_manager_create_actor(ostime)
+        actor:SetProperties({
+            [PROP_AVATAR_ID] = 'JMW-AXE',
+            [PROP_WEAPON_AVATAR_ID] = 'JMW-AXE-060-X',
+            [PROP_NAME] ='巨魔王'..i,
+            [PROP_RACE] = RACE_DEVIL,
+            [PROP_POS] = {206 ,190},
+            [PROP_BASE_HEALTH] =  333 ,
+            [PROP_BASE_MAGIC] = 157 ,
+            [PROP_BASE_FORCE] =  215,
+            [PROP_BASE_STAMINA] = 157  ,
+            [PROP_BASE_AGILITY] =  689,
+            [PROP_LV] =  145
+        })
+
+        actor:SetProperty(PROP_HP, enemy:GetMaxHP()/3)
+        actor:SetProperty(PROP_MP, enemy:GetMaxMP())
+        actor:SetActionID(ACTION_BATIDLE)
+        table.insert(enemys,actor)
+    end
+
     ostime = ostime + 1
     enemyBB  = actor_manager_create_actor(ostime)
     enemyBB:SetProperties({
@@ -132,7 +156,8 @@ function OnSceneInit()
     local player = actor_manager_fetch_local_player()
     player:SetTarget(enemy)
     player:StopMove()
-    combat_system_start_battle({player},{player:GetTarget()})
+    -- {player:GetTarget(),playerBB,enemyBB}
+    combat_system_start_battle({player},enemys)
     cxlog_info(player:GetProperty(PROP_NAME), player:GetTarget():GetProperty(PROP_NAME))
 end
 

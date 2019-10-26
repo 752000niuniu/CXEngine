@@ -447,8 +447,7 @@ end
 -- 法宠(单法)=等级×3+灵力差×1.2+20
 -- 法宠(群法)=(等级×3+灵力差×1.2+10)×（10-作用人数）/10
 
-function ActorMT:GetSpellDamage()
-    local target = self:GetTarget()
+function ActorMT:GetSpellDamage(target)
     local spell_atk = self:CalcSpiritual()
     local spell_def = target:CalcDefend()
     local lv = self:GetProperty(PROP_LV)

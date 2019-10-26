@@ -61,17 +61,9 @@ function CommandMT:StartCast()
         target:ModifyHP(-damage)
 
         target:SetProperty(PROP_ASM_BEHIT_ANIM, skill.atk_anim)
-        local id = target:GetProperty(PROP_ASM_BEHIT_ANIM)
         on_cast_attack(actor, target,skill)
     elseif skill.type == 'spell' then
-        
-        local damage = actor:GetSpellDamage()
-        target:SetProperty(PROP_ASM_DAMAGE,damage) 
-        target:ModifyHP(-damage)
-
-        target:SetProperty(PROP_ASM_BEHIT_ANIM, skill.atk_anim)
-        local id = target:GetProperty(PROP_ASM_BEHIT_ANIM)
-        on_cast_spell(actor, target,skill)
+        on_cast_spell(actor,skill)
     end
 end
 
@@ -258,8 +250,12 @@ function combat_system_update()
 ]]
         if #Commands > 0 then
             local cmd = Commands[1]
-            cmd:Update()
-            if cmd:IsFinished() then
+            if not cmd.master:IsDead() then
+                cmd:Update()
+                if cmd:IsFinished() then
+                    table.remove(Commands,1)
+                end
+            else
                 table.remove(Commands,1)
             end
         else 
@@ -317,13 +313,49 @@ function combat_system_start_battle(atk_actors, dfd_actors)
     BattleState = BATTLE_START
 end
 
+function combat_system_get_group(actor)
+    for i,v in ipairs(tAttackers) do
+        if v == actor then
+            return tAttackers
+        end
+    end
+    for i,v in ipairs(tDefenders) do
+        if v == actor then
+            return tDefenders
+        end
+    end
+end
+
+
+function combat_system_remove_from_battle(actor)
+    for i,v in ipairs(tAttackers) do
+        if v:GetID() == actor:GetID() then
+            table.remove(tAttackers,i)
+            cxlog_info('combat_system_remove_from_battle','atk',i)
+            return 
+        end
+    end
+    for i,v in ipairs(tDefenders) do
+        if v:GetID() == actor:GetID() then
+            table.remove(tDefenders,i)
+            cxlog_info('combat_system_remove_from_battle','def',i)
+            return 
+        end
+    end
+end
+
+
 function combat_system_on_acting_end(actor)
     actor:SetProperty(PROP_COMBAT_ACTING,false) 
+    combat_system_remove_from_battle(actor)
+    -- cxlog_info('actor:SetProperty(PROP_COMBAT_ACTING,false) ',actor:GetProperty(PROP_NAME), actor:GetProperty(PROP_HP),actor:IsDead())
     if #Commands > 0 then
         local cmd = Commands[1]
-        if cmd.master:GetProperty(PROP_COMBAT_ACTING) == false and 
-            cmd.master:GetTarget():GetProperty(PROP_COMBAT_ACTING) == false then
-            cmd.state = COMMAND_STATE_STOP
+        if cmd.master:GetProperty(PROP_COMBAT_ACTING) == false then
+            -- cmd.state = COMMAND_STATE_STOP
+            if #tDefenders == 0 then
+                cmd.state = COMMAND_STATE_STOP
+            end
         end
     end
 end
@@ -373,7 +405,7 @@ function combat_system_imgui_update()
     end  
 
     if imgui.Button('法术##player') then
-        test_local_player_cast(58)
+        test_local_player_cast(51)
     end
 
     if imgui.Button('特技##player') then
@@ -502,97 +534,93 @@ function calc_run_to_pos(actor, target)
     end
 end
 
-function on_cast_spell(actor, target, skill)
-    local tar_x,tar_y = target:GetPos()
-    local degree = actor:GetMoveDestAngle(tar_x,tar_y)
-    local dir = actor:GetDirByDegree(degree)
-    dir = math_dir_8_to_4(dir)
-    actor:SetDir(dir)
-    target:SetDir(dir)
-    target:ReverseDir()
-
-
+function on_cast_spell(actor, skill)
     local cast_action = actor:GetAvatar(ACTION_CAST)
     cast_action:Reset()
     cast_action:SetLoop(-1)
     cast_action:AddFrameCallback(cast_action:GetGroupFrameCount()/2,function()
-        
-        local behit_action = target:GetAvatar(ACTION_BEHIT)
-        behit_action:Reset()
-        behit_action:SetLoop(1)
-        behit_action:AddFrameCallback(1, function()
-            local avatar = target:GetAvatar()
-            local resid = skill.atk_anim
-            local pack, was = res_decode(resid)
-            local anim = animation_create(pack,was)
-            anim:SetLoop(-1)
-            -- local offy = -avatar:GetFrameKeyY() + avatar:GetFrameHeight() / 2.0
-            -- anim:SetOffsetY(offy)  
-            target:AddStateAnim(anim)
+        for i, target in ipairs(tDefenders) do
+            local damage = actor:GetSpellDamage(target)
+            target:SetProperty(PROP_ASM_DAMAGE,damage) 
+            target:ModifyHP(-damage)
+            target:SetProperty(PROP_ASM_BEHIT_ANIM, skill.atk_anim)
 
-            local damage = target:GetProperty(PROP_ASM_DAMAGE) 
-            target:ShowBeatNumber(damage)
-            behit_action:Pause(math.floor(anim:GetGroupFrameTime()* 1000))
-        end)
+            local behit_action = target:GetAvatar(ACTION_BEHIT)
+            behit_action:Reset()
+            behit_action:SetLoop(1)
+            behit_action:AddFrameCallback(1, function()
+                local avatar = target:GetAvatar()
+                local resid = skill.atk_anim
+                local pack, was = res_decode(resid)
+                local anim = animation_create(pack,was)
+                anim:SetLoop(-1)
+                -- local offy = -avatar:GetFrameKeyY() + avatar:GetFrameHeight() / 2.0
+                -- anim:SetOffsetY(offy)  
+                target:AddStateAnim(anim)
 
-        behit_action:AddStopCallback(function()
-            if target:IsDead() then
-                behit_action:Reset()
-                behit_action:Play()
-                behit_action:SetLoop(0)
+                local damage = target:GetProperty(PROP_ASM_DAMAGE) 
+                target:ShowBeatNumber(damage)
+                behit_action:Pause(math.floor(anim:GetGroupFrameTime()* 1000))
+            end)
 
-                local last_x, last_y = target:GetPos()
-                local last_dir = target:GetDir()
-                local dx, dy = 0,0
-                local dir_x ,dir_y = actor:GetAttackVec()
-                local fly_x ,fly_y = 0,0 
-                behit_action:AddUpdateCallback(function()
-                    local actor = target
-                
-                    local px, py = actor:GetPos()
-                    local avatar = actor:GetAvatar()
-                    if py - avatar:GetFrameKeyY() <= 0 then
-                        dir_y = -dir_y
-                    end
+            behit_action:AddStopCallback(function()
+                if target:IsDead() then
+                    behit_action:Reset()
+                    behit_action:Play()
+                    behit_action:SetLoop(0)
 
-                    if py - avatar:GetFrameKeyY() + avatar:GetFrameHeight()  >= 600 then
-                        dir_y = -dir_y
-                    end
+                    local last_x, last_y = target:GetPos()
+                    local last_dir = target:GetDir()
+                    local dx, dy = 0,0
+                    local dir_x ,dir_y = actor:GetAttackVec()
+                    local fly_x ,fly_y = 0,0 
+                    behit_action:AddUpdateCallback(function()
+                        local actor = target
                     
-                    if avatar:IsFrameUpdate() then
-                        px = px + dir_x * 49
-                        py = py + dir_y * 49
-                        actor:SetProperty(PROP_COMBAT_POS, px,py)
-                    end
+                        local px, py = actor:GetPos()
+                        local avatar = actor:GetAvatar()
+                        if py - avatar:GetFrameKeyY() <= 0 then
+                            dir_y = -dir_y
+                        end
 
-                    if avatar:IsGroupEndUpdate() then
-                        local dir = actor:GetDir()
-                        dir = math_next_dir4(dir)
-                        actor:SetDir(dir)
-                    end
-                    if px - avatar:GetFrameKeyX() < 0 then
-                        behit_action:RemoveUpdateCallback()
-                        behit_action:Stop()
-                        actor:SetProperty(PROP_COMBAT_POS,last_x,last_y)
-                        actor:SetDir(last_dir)
-                        combat_system_on_acting_end(target)    
-                    end
+                        if py - avatar:GetFrameKeyY() + avatar:GetFrameHeight()  >= 600 then
+                            dir_y = -dir_y
+                        end
+                        
+                        if avatar:IsFrameUpdate() then
+                            px = px + dir_x * 49
+                            py = py + dir_y * 49
+                            actor:SetProperty(PROP_COMBAT_POS, px,py)
+                        end
 
-                    if px - avatar:GetFrameKeyX() + avatar:GetFrameWidth() >= 800 then
-                        behit_action:RemoveUpdateCallback()
-                        behit_action:Stop()
-                        actor:SetProperty(PROP_COMBAT_POS,last_x,last_y)
-                        actor:SetDir(last_dir)
-                        combat_system_on_acting_end(target)    
-                    end
-                end)
-            else
-                combat_system_on_acting_end(target)
-            end
-        end)
+                        if avatar:IsGroupEndUpdate() then
+                            local dir = actor:GetDir()
+                            dir = math_next_dir4(dir)
+                            actor:SetDir(dir)
+                        end
+                        if px - avatar:GetFrameKeyX() < 0 then
+                            behit_action:RemoveUpdateCallback()
+                            behit_action:Stop()
+                            actor:SetProperty(PROP_COMBAT_POS,last_x,last_y)
+                            actor:SetDir(last_dir)
+                            combat_system_on_acting_end(target)    
+                        end
 
-        target:PushAction(ACTION_BEHIT)
-        target:MoveActionToBack()
+                        if px - avatar:GetFrameKeyX() + avatar:GetFrameWidth() >= 800 then
+                            behit_action:RemoveUpdateCallback()
+                            behit_action:Stop()
+                            actor:SetProperty(PROP_COMBAT_POS,last_x,last_y)
+                            actor:SetDir(last_dir)
+                            combat_system_on_acting_end(target)    
+                        end
+                    end)
+                else
+                    combat_system_on_acting_end(target)
+                end
+            end)
+            target:PushAction(ACTION_BEHIT)
+            target:MoveActionToBack()
+        end
     end)
     cast_action:AddStopCallback(function()
         combat_system_on_acting_end(actor)
