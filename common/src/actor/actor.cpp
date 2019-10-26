@@ -513,15 +513,6 @@ int actor_clear_frames(lua_State* L) {
 	return 0;
 }
 
-int actor_play_attack(lua_State*L){
-#ifndef SIMPLE_SERVER 
-	Actor* actor = lua_check_actor(L, 1);
-	AttackAction* action = new AttackAction(actor);
-	actor->GetASM()->ChangeAction(action);
-#endif
-	return 0;
-}
-
 int actor_play_cast(lua_State*L) {
 #ifndef SIMPLE_SERVER 
 	Actor* actor = lua_check_actor(L, 1);
@@ -811,7 +802,6 @@ luaL_Reg mt_actor[] = {
 { "ClearFrames", actor_clear_frames },
 { "SetTarget", actor_set_target},
 { "GetTarget", actor_get_target},
-{ "PlayAttack", actor_play_attack },
 { "PlayCast", actor_play_cast },
 { "SetTimeInterval", actor_set_time_interval },
 { "GetAvatar", actor_get_avatar },

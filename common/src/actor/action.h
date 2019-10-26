@@ -37,54 +37,6 @@ protected:
 	Actor* m_Actor;
 };
 
-/*
-attack animation sequence:
-Batidle -> Runto -> Attack() -> Runback -> Batidle
-Attack will trigger other actor to play behit action
-Attack will do some action delay 
-
-timeline------check hit------------delay done---------check death--------------------------------------------------------
-Attacker:   attack delay	     attack continue       runback               
-Defender:   behit effect           behitback          clps|behit fly
-
-*/
-class AttackAction : public Action
-{
-public:
-	AttackAction(Actor* actor) :Action(actor) { m_Type = ASM_ATTACK_ACTION; m_bFinishAttack = false; };
-	virtual ~AttackAction() {};
-	virtual  void Update();
-	virtual  void Draw() ;
-	virtual void Exit();
-	virtual void Enter();
-private:
-	
-	Pos m_BackupPos;
-	int m_BackupActionID;
-	float m_SavedVelocity;
-	int m_ID;
-	Pos m_Runto;
-	Pos m_AttackVec;
-	int m_ComboCount;
-	Actor* m_Target;
-	bool m_bFinishAttack;
-};
-
-
-class AttackAction2 : public Action
-{
-public:
-	AttackAction2(Actor* actor) :Action(actor) { m_Type = ASM_ATTACK_ACTION; };
-	virtual ~AttackAction2() {};
-	virtual  void Update();
-	virtual  void Draw();
-	virtual void Exit();
-	virtual void Enter();
-private:
-
-	
-};
-
 class CastAction :public Action
 {
 public:
