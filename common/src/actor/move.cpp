@@ -114,6 +114,14 @@ void MoveHandle::MoveTo(float x, float y)
 	if (!m_Actor->GetProperty(PROP_CAN_MOVE).toBool())return;
 	GameMap* map = m_Actor->GetScene()->GetGameMap();
 	if (!map)return;
+
+	Pos pos = m_Actor->GetPos();
+	if (GMath::Astar_GetDistanceSquare(pos.x, pos.y, x, y) < 16) {
+		m_Actor->SetPos(x, y);
+		m_bMove = false;
+		return;
+	}
+
 	if(m_Actor->GetScene()->IsCombat()){
 		m_BackupMoveList.clear();
 		m_MoveList.clear();

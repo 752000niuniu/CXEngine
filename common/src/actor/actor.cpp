@@ -472,14 +472,6 @@ int actor_move_to(lua_State* L){
 	Actor* actor = lua_check_actor(L, 1);
 	float x = (float)lua_tonumber(L, 2);
 	float y = (float)lua_tonumber(L, 3);
-#ifndef SIMPLE_SERVER
-	PathMoveAction* action = dynamic_cast<PathMoveAction*>(actor->GetASM()->GetAction());
-	if (action == nullptr){
-		action = new PathMoveAction(actor);
-		actor->GetASM()->ChangeAction(action);
-	}
-	actor->GetASM()->Update();
-#endif
 	actor->GetMoveHandle()->MoveTo(x, y);
 	return 0;
 }
@@ -775,6 +767,26 @@ int actor_clear_state_anim(lua_State* L) {
 	return 0;
 }
 
+int actor_show_beatnumber(lua_State*L){
+	Actor* actor = lua_check_actor(L, 1);
+	float num = (float)lua_tonumber(L, 2);
+#ifndef SIMPLE_SERVER
+	auto* beatnumber = actor->GetASM()->GetBeatNumber();
+	beatnumber->SetNumber(num);
+	auto* map = SCENE_MANAGER_INSTANCE->GetCurrentScene()->GetGameMap();
+	int offx = map != nullptr ? map->GetMapOffsetX() : 0;
+	int offy = map != nullptr ? map->GetMapOffsetY() : 0;
+	if (actor->IsCombat()) {
+		offx = offy = 0;
+	}
+	auto* avatar = actor->GetASM()->GetAvatar();
+	float bny = (float)(actor->GetY() + offy - avatar->GetFrameKeyY() + avatar->GetFrameHeight() / 2);
+	beatnumber->SetPos(actor->GetX() + offx, bny);
+	beatnumber->Beat();
+#endif
+	return 0;
+}
+
 //{ "__gc",actor_destroy },
 luaL_Reg mt_actor[] = {
 	{ "Destroy",actor_destroy },
@@ -823,6 +835,7 @@ luaL_Reg mt_actor[] = {
 {"AddStateAnim",actor_add_state_anim},
 {"RemoveStateAnim",actor_remove_state_anim},
 {"ClearStateAnim",actor_clear_state_anim},
+{"ShowBeatNumber",actor_show_beatnumber},
 { NULL, NULL }
 };
 

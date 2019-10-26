@@ -672,6 +672,9 @@ ActionStateMachine::ActionStateMachine(Actor* _actor)
 	m_ActionID = ACTION_IDLE;
 	m_bMoveActionToBack = false;
 	m_ActionQueue.push_back(ACTION_IDLE);
+	m_BeatNumber = new BeatNumber();
+
+	
 }
 
 ActionStateMachine::~ActionStateMachine()
@@ -691,6 +694,9 @@ ActionStateMachine::~ActionStateMachine()
 		SafeDelete(it);
 	}
 	m_StateAnimQueue.clear();
+
+	m_ActionQueue.clear();
+	SafeDelete(m_BeatNumber);
 }
 
 void ActionStateMachine::Update()
@@ -778,6 +784,9 @@ void ActionStateMachine::Update()
 			it++;
 		}
 	}
+	if(m_BeatNumber){
+		m_BeatNumber->Update();
+	}
 }
 
 void ActionStateMachine::Draw()
@@ -851,6 +860,10 @@ void ActionStateMachine::Draw()
 		anim->Pos.x = avatar->Pos.x + anim->Offset.x;
 		anim->Pos.y = avatar->Pos.y + anim->Offset.y;
 		anim->Draw();
+	}
+
+	if(m_BeatNumber){
+		m_BeatNumber->Draw();
 	}
 }
 
@@ -1014,6 +1027,11 @@ void ActionStateMachine::AddDelayCallback(int ms, function<void()> func)
 	wrap.ms = ms;
 	wrap.func = func;
 	m_TimerFuncs.push_back(wrap);
+}
+
+BeatNumber* ActionStateMachine::GetBeatNumber()
+{
+	return m_BeatNumber;
 }
 
 void AttackAction2::Update()

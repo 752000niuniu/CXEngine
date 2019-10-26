@@ -241,8 +241,10 @@ function ActorMT:ModifyHP(delta)
         hp = max_hp
     end
     self:SetProperty(PROP_HP,hp) 
-    if hp  == 0 then
+    if hp  <= 0 then
         self:SetProperty(PROP_IS_DEAD, true)
+    else
+        self:SetProperty(PROP_IS_DEAD, false)
     end
 end
 

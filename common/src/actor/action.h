@@ -205,7 +205,7 @@ public:
 		if (m_ActionQueue.empty())return -1;
 		return m_ActionQueue.front();
 	}
-	
+	BeatNumber* GetBeatNumber();
 private:
 	Actor * m_Actor;
 	float m_TimeInterval;
@@ -222,6 +222,7 @@ private:
 	deque<Animation*> m_StateAnimQueue;
 	bool		m_bMoveActionToBack;
 	deque<int> m_ActionQueue;
+	BeatNumber* m_BeatNumber;
 };
 #endif // !SIMPLE_SERVER
 

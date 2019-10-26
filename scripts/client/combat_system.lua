@@ -362,7 +362,7 @@ function combat_system_imgui_update()
 
         if imgui.Button('攻击##player') then
             local player = actor_manager_fetch_local_player()
-            player:SetProperty(PROP_USING_SKILL, 18)
+            player:SetProperty(PROP_USING_SKILL, 1)
 
             local cmd = CommandMT:new()
             cmd:Init(player)
@@ -635,9 +635,6 @@ function on_cast_normal_attack(actor, target)
         local behit_action = target:GetAvatar(ACTION_BEHIT)
         behit_action:SetLoop(-1)
         behit_action:AddFrameCallback(1, function()
-            attack_action:Pause(500)
-            behit_action:Pause(500)
-
             local avatar = target:GetAvatar()
             local resid = target:GetProperty(PROP_ASM_BEHIT_ANIM)
             local pack, was = res_decode(resid)
@@ -646,6 +643,12 @@ function on_cast_normal_attack(actor, target)
             local offy =  -avatar:GetFrameKeyY() + avatar:GetFrameHeight() / 2.0
             anim:SetOffsetY(offy)  
             target:AddStateAnim(anim)
+
+            
+            local damage = target:GetProperty(PROP_ASM_DAMAGE) 
+            target:ShowBeatNumber(damage)
+            attack_action:Pause(math.floor(anim:GetGroupFrameTime()* 1000))
+            behit_action:Pause(math.floor( anim:GetGroupFrameTime()* 1000))
         end)
         target:PushAction(ACTION_BEHIT)
         target:MoveActionToBack()
