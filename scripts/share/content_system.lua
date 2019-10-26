@@ -72,7 +72,7 @@ end
 
 
 function init_skill_template_table()
-    local tbl  = utils_parse_tsv(vfs_get_tsvpath('attack'),{
+    local tbl  = utils_parse_tsv(vfs_get_tsvpath('skill'),{
         { name='ID', fmt='i'},
         { name='name'},
         { name='type'},

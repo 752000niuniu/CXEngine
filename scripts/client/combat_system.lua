@@ -59,17 +59,15 @@ function CommandMT:StartCast()
         local damage = actor:GetAttackDamage(false,false,0,1)
         target:SetProperty(PROP_ASM_DAMAGE,damage) 
         target:ModifyHP(-damage)
-        cxlog_info('damage', damage,skill.atk_anim)
 
         target:SetProperty(PROP_ASM_BEHIT_ANIM, skill.atk_anim)
         local id = target:GetProperty(PROP_ASM_BEHIT_ANIM)
         on_cast_attack(actor, target,skill)
     elseif skill.type == 'spell' then
         
-        local damage = actor:GetAttackDamage(false,false,0,1)
+        local damage = actor:GetSpellDamage()
         target:SetProperty(PROP_ASM_DAMAGE,damage) 
         target:ModifyHP(-damage)
-        cxlog_info('damage', damage,skill.atk_anim)
 
         target:SetProperty(PROP_ASM_BEHIT_ANIM, skill.atk_anim)
         local id = target:GetProperty(PROP_ASM_BEHIT_ANIM)

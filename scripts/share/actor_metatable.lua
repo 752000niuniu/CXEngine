@@ -437,3 +437,21 @@ end
 
 --大多数法术伤害结果＝武器伤害/4＋灵力差＋法伤系数×技能等级＋初始值
 --Damage=WD(weapon damage)/4+ΔF+K*SKILL+I
+
+-- [梦幻西游法伤的计算公式？（包括修炼的计算公式。）]https://zhidao.baidu.com/question/568287506.html?qbl=relate_question_0&word=%C3%CE%BB%C3%CE%F7%D3%CE%C8%CB%CE%EF%B7%A8%C9%CB%B7%A8%B7%C0%D4%F5%C3%B4%BC%C6%CB%E3
+--  https://zhidao.baidu.com/question/1302219466168637659.html
+--  https://gameinstitute.qq.com/community/detail/100032
+-- [在《梦幻西游》里都有哪些经典的数值公式？]https://www.gameres.com/849887.html
+-- 
+
+-- 法宠(单法)=等级×3+灵力差×1.2+20
+-- 法宠(群法)=(等级×3+灵力差×1.2+10)×（10-作用人数）/10
+
+function ActorMT:GetSpellDamage()
+    local target = self:GetTarget()
+    local spell_atk = self:CalcSpiritual()
+    local spell_def = target:CalcDefend()
+    local lv = self:GetProperty(PROP_LV)
+    local damage = lv*3 + (spell_atk-spell_def)*1.2 + 20
+    return damage
+end
