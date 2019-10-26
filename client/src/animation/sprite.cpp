@@ -10,6 +10,19 @@
 #include "actor/actor_manager.h"
 #include "graphics/ui_renderer.h"
 
+
+void CallLuaFunByRef(int& ref)
+{
+	if (ref != -1) {
+		lua_State* L = script_system_get_luastate();
+		lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
+		int res = lua_pcall(L, 0, 0, 0);
+		check_lua_error(L, res);
+		luaL_unref(L, LUA_REGISTRYINDEX, ref);
+		ref = -1;
+	}
+}
+
 String UtilsGetFramePath(Sprite* m_pSprite, int index)
 {
 	if (m_pSprite)
@@ -175,6 +188,7 @@ Animation::Animation(uint64_t resoureID /*= 0*/, std::vector<PalSchemePart>* pat
 	m_StopCBRef = -1;
 	m_StartCBRef = -1;
 	m_LoopCBRef = -1;
+	m_UpdateCBRef = -1;
 	m_LoopMode = ANIMATION_LOOPMODE_RESTART;
 }
 
@@ -216,32 +230,14 @@ void Animation::Stop()
 {
 	m_PreviousState = m_State;
 	m_State = ANIMATION_STOP;
-	if (m_StopCBRef != -1) {
-		lua_State* L = script_system_get_luastate();
-		int ref = m_StopCBRef;
-		lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
-		int res = lua_pcall(L, 0, 0, 0);
-		check_lua_error(L, res);
-		luaL_unref(L, LUA_REGISTRYINDEX, ref);
-		m_StopCBRef = -1;
-	}
-
+	CallLuaFunByRef(m_StopCBRef);
 }
 
 void Animation::Play()
 {
 	m_PreviousState = m_State;
 	m_State = ANIMATION_PLAY;
-	
-	if (m_StartCBRef != -1) {
-		lua_State* L = script_system_get_luastate();
-		int ref = m_StartCBRef;
-		lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
-		int res = lua_pcall(L, 0, 0, 0);
-		check_lua_error(L, res);
-		luaL_unref(L, LUA_REGISTRYINDEX, ref);
-		m_StartCBRef = -1;
-	}
+	CallLuaFunByRef(m_StartCBRef);
 }
 
 void Animation::Replay()
@@ -313,6 +309,20 @@ void Animation::AddStartCallback(int funcRef)
 void Animation::AddLoopCallback(int funcRef)
 {
 	m_LoopCBRef = funcRef;
+}
+
+void Animation::AddUpdateCallback(int funcRef)
+{
+	m_UpdateCBRef = funcRef;
+}
+
+void Animation::RemoveUpdateCallback()
+{
+	if (m_UpdateCBRef != -1) {
+		auto* L = script_system_get_luastate();
+		luaL_unref(L, LUA_REGISTRYINDEX, m_UpdateCBRef);
+		m_UpdateCBRef = -1;
+	}
 }
 
 void Animation::RemoveFrameCallback(int frame)
@@ -440,6 +450,13 @@ void Animation::Update()
 			m_State = m_PreviousState;
 		}
 	}
+	if (m_UpdateCBRef != -1) {
+		lua_State* L = script_system_get_luastate();
+		lua_rawgeti(L, LUA_REGISTRYINDEX, m_UpdateCBRef);
+		int res = lua_pcall(L, 0, 0, 0);
+		check_lua_error(L, res);
+	}
+
 }
 
 void Animation::Draw()
@@ -985,6 +1002,32 @@ int animation_add_frame_callback(lua_State*L){
 	return 0;
 }
 
+int animation_add_start_callback(lua_State*L){
+	auto* animation = lua_check_animation(L, 1);
+	if (lua_isfunction(L, 2)) {
+		lua_pushvalue(L, 2);
+		int ref = luaL_ref(L, LUA_REGISTRYINDEX);
+		animation->AddStartCallback(ref);
+	}
+	return 0;
+}
+
+int animation_add_update_callback(lua_State*L){
+	auto* animation = lua_check_animation(L, 1);
+	if (lua_isfunction(L, 2)) {
+		lua_pushvalue(L, 2);
+		int ref = luaL_ref(L, LUA_REGISTRYINDEX);
+		animation->AddUpdateCallback(ref);
+	}
+	return 0;
+}
+
+int animation_remove_update_callback(lua_State*L){
+	auto* animation = lua_check_animation(L, 1);
+	animation->RemoveUpdateCallback();
+	return 0;
+}
+
 int animation_get_key_frame(lua_State*L) {
 	auto* animation = lua_check_animation(L, 1);
 	lua_pushinteger(L, animation->GetAttackKeyFrame());
@@ -1020,6 +1063,17 @@ int animation_set_offset_y(lua_State* L) {
 	return 0;
 }
 
+int animation_is_group_end_update(lua_State*L){
+	auto* animation = lua_check_animation(L, 1);
+	lua_pushboolean(L, animation->IsGroupEndUpdate());
+	return 1;
+}
+int animation_is_frame_update(lua_State*L){
+	auto* animation = lua_check_animation(L, 1);
+	lua_pushboolean(L, animation->IsFrameUpdate());
+	return 1;
+}
+
 
 luaL_Reg MT_ANIMATION[] = {
 { "Pause",animation_pause },
@@ -1034,10 +1088,15 @@ luaL_Reg MT_ANIMATION[] = {
 { "AddCallback", animation_add_callback},
 { "AddStopCallback", animation_add_stop_callback},
 { "AddFrameCallback", animation_add_frame_callback},
+{ "AddStartCallback", animation_add_start_callback},
+{ "AddUpdateCallback", animation_add_update_callback},
+{ "RemoveUpdateCallback", animation_remove_update_callback},
 { "GetKeyFrame", animation_get_key_frame},
 { "Reset", animation_reset},
 { "SetOffsetX", animation_set_offset_x},
 { "SetOffsetY", animation_set_offset_y},
+{ "IsGroupEndUpdate", animation_is_group_end_update},
+{ "IsFrameUpdate", animation_is_frame_update},
 { NULL, NULL }
 };
 

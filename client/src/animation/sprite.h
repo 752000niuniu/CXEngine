@@ -135,6 +135,9 @@ public:
 	void AddStopCallback(int funcRef);
 	void AddStartCallback(int funcRef);
 	void AddLoopCallback(int funcRef);
+	void AddUpdateCallback(int funcRef);
+	void RemoveUpdateCallback();
+
 private:
 	bool m_bGroupEndUpdate;
 	bool m_bFrameUpdate;
@@ -148,6 +151,7 @@ private:
 	int m_StopCBRef;
 	int m_StartCBRef;
 	int m_LoopCBRef;
+	int m_UpdateCBRef;
 	int m_LoopMode;
 	map<int, std::function<void()>> m_Callbacks;
 	

@@ -778,6 +778,14 @@ int actor_show_beatnumber(lua_State*L){
 	return 0;
 }
 
+int actor_get_attack_vec(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+	Pos vec= actor->GetAttackVec();
+	lua_pushnumber(L, vec.x);
+	lua_pushnumber(L, vec.y);
+	return 2;
+}
+
 //{ "__gc",actor_destroy },
 luaL_Reg mt_actor[] = {
 	{ "Destroy",actor_destroy },
@@ -826,6 +834,7 @@ luaL_Reg mt_actor[] = {
 {"RemoveStateAnim",actor_remove_state_anim},
 {"ClearStateAnim",actor_clear_state_anim},
 {"ShowBeatNumber",actor_show_beatnumber},
+{"GetAttackVec",actor_get_attack_vec},
 { NULL, NULL }
 };
 

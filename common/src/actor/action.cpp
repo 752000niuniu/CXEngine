@@ -207,10 +207,10 @@ void CastAction::Update()
 			m_Actor->SetActionID(ACTION_BATIDLE);
 			auto* new_action = new Action(m_Actor);
 			m_pASM->ChangeAction(new_action);
-			m_pASM->AddDelayCallback(1000, [this]() {
+			/*m_pASM->AddDelayCallback(1000, [this]() {
 				m_Actor->SetProperty(PROP_COMBAT_ACTING, false);
 				call_combat_system_on_acting_end(m_Actor);
-			});
+			});*/
 		}
 		else if (avatar->IsFrameUpdate()) {
 			if (m_Actor->GetProperty(PROP_ASM_PLAY_BEHIT).toBool()) {
@@ -569,8 +569,6 @@ void ActionStateMachine::Update()
 		}
 	}
 
-	//auto* avatar = GetAvatar(m_ActionID);
-	//if (!avatar)return;
 	m_ActionID = -1;
 	if (!m_ActionQueue.empty()) {
 		m_ActionID = m_ActionQueue.front();
@@ -587,28 +585,6 @@ void ActionStateMachine::Update()
 			avatar->Replay();
 		}
 	}
-
-	int msdt = (int)WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
-	for (auto& wrap : m_TimerFuncs) {
-		wrap.ms -= msdt;
-		if (wrap.ms <= 0) {
-			wrap.func();
-			wrap.markd = true;
-		}
-	}
-
-	for (auto it = m_TimerFuncs.begin(); it != m_TimerFuncs.end();) {
-		if (it->markd) {
-			it = m_TimerFuncs.erase(it);
-		}
-		else {
-			it++;
-		}
-	}
-
-	/*if (m_pCurrentAction) {
-		m_pCurrentAction->Update();
-	}*/
 
 	if (HasWeapon() && action_is_show_weapon(m_ActionID)) {
 		auto* weapon = GetWeapon(m_ActionID);
@@ -862,14 +838,6 @@ void ActionStateMachine::ClearStateAnim()
 		SafeDelete(it);
 	}
 	m_StateAnimQueue.clear();
-}
-
-void ActionStateMachine::AddDelayCallback(int ms, function<void()> func)
-{
-	TimerFuncWrap wrap;
-	wrap.ms = ms;
-	wrap.func = func;
-	m_TimerFuncs.push_back(wrap);
 }
 
 BeatNumber* ActionStateMachine::GetBeatNumber()

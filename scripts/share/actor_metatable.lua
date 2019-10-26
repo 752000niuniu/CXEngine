@@ -321,7 +321,7 @@ function ActorMT:CalcDodge()
 end
 
 function ActorMT:IsDead()
-    return self:GetProperty(PROP_IS_DEAD)
+    return self:GetProperty(PROP_HP) <= 0 
 end
 
 local init_prop = {

@@ -114,13 +114,6 @@ private:
 class ActionStateMachine
 {
 public:
-	struct TimerFuncWrap
-	{
-		int ms;
-		function<void()> func;
-		bool markd = false;
-	};
-
 	ActionStateMachine(Actor* actor);
 	~ActionStateMachine();
 	void Update();
@@ -148,8 +141,6 @@ public:
 	void RemoveStateAnim(Animation* anim);
 	void ClearStateAnim();
 
-	void AddDelayCallback(int ms, function<void()> func);
-
 	void MoveActionToBack() { m_bMoveActionToBack = true; }
 	void PushAction(int action) { m_ActionQueue.push_back(action); }
 	void ClearAction() { m_ActionQueue.clear(); }
@@ -170,7 +161,6 @@ private:
 	std::map<int, Animation*> m_WeaponActions;
 	std::map<int, Animation*> m_AvatarActions;
 	Animation* m_PlayerShadow;
-	deque<TimerFuncWrap> m_TimerFuncs;
 	deque<Animation*> m_StateAnimQueue;
 	bool		m_bMoveActionToBack;
 	deque<int> m_ActionQueue;
