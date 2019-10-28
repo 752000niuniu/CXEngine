@@ -336,24 +336,25 @@ void Actor::OnDragMove(int dx, int dy)
 void Actor::OnHover(float x, float y)
 {
 	lua_State* L = script_system_get_luastate();
-	lua_getglobal(L, "actor_on_hover");
+	lua_getglobal(L, "actor_fire_event");
 	lua_push_actor(L, this);
+	lua_pushinteger(L, ACTOR_EV_ON_HOVER);
 	lua_pushnumber(L, x);
 	lua_pushnumber(L, y);
-	int res = lua_pcall(L, 3, 0, 0);
+	int res = lua_pcall(L, 4, 1, 0);
 	check_lua_error(L, res);
-
 }
 
 bool Actor::OnClick(int button, int x, int y)
 {
 	lua_State* L = script_system_get_luastate();
-	lua_getglobal(L, "actor_on_click");
+	lua_getglobal(L, "actor_fire_event");
 	lua_push_actor(L, this);
+	lua_pushinteger(L, ACTOR_EV_ON_CLICK);
 	lua_pushinteger(L, button);
 	lua_pushnumber(L, x);
 	lua_pushnumber(L, y);
-	int res = lua_pcall(L, 4, 1, 0);
+	int res = lua_pcall(L, 5, 1, 0);
 	check_lua_error(L, res);
 	bool clicked = (bool)lua_toboolean(L, 1);
 	return clicked;
@@ -769,10 +770,10 @@ int actor_show_beatnumber(lua_State*L){
 	int offy = map != nullptr ? map->GetMapOffsetY() : 0;
 	if (actor->IsCombat()) {
 		offx = offy = 0;
-	}
+	} 
 	auto* avatar = actor->GetASM()->GetAvatar();
 	float bny = (float)(actor->GetY() + offy - avatar->GetFrameKeyY() + avatar->GetFrameHeight() / 2);
-	beatnumber->SetPos(actor->GetX() + offx, bny);
+	beatnumber->SetPos((float)actor->GetX() + offx, bny);
 	beatnumber->Beat();
 #endif
 	return 0;
@@ -1003,6 +1004,10 @@ void luaopen_actor(lua_State* L)
 	REG_ENUM(DIR_NW);
 	REG_ENUM(DIR_SE);
 	REG_ENUM(DIR_SW);
+
+
+	REG_ENUM(ACTOR_EV_ON_CLICK);
+	REG_ENUM(ACTOR_EV_ON_HOVER);
 #undef REG_ENUM
 	luaopen_actor_enum(L);
 }

@@ -33,6 +33,25 @@ function CommandMT:Init(actor)
     self.state = COMMAND_STATE_PREPARE
     self.type =  COMMAND_TYPE_ATTACK
     self.master = actor
+    self.main_target = actor:GetTarget()
+    self.targets = { self.main_target }
+    self.acting_actors = {}
+end
+
+
+function CommandMT:AddTarget(actor)
+    table.insert(self.targets, actor)
+end
+
+function CommandMT:SetMainTarget(actor)
+    for i, target in ipairs(self.targets) do
+        if target == actor then
+            self.main_target = actor
+            return 
+        end
+    end
+    self:AddTarget(actor)
+    self.main_target = actor
 end
 
 function CommandMT:GetState()
@@ -47,19 +66,38 @@ function CommandMT:GetType()
     return self.type
 end
 
+function CommandMT:AddActing(actor)
+    for i,v in ipairs(self.acting_actors) do
+        if v:GetID() == actor:GetID() then
+            return
+        end
+    end
+    table.insert(self.acting_actors,actor)
+end
+
+function CommandMT:RemoveActing(actor)
+    for i,v in ipairs(self.acting_actors) do
+        if v:GetID() == actor:GetID() then
+            table.remove(self.acting_actors, i)
+            return 
+        end
+    end
+end
+
+function CommandMT:IsActing()
+    return #self.acting_actors > 0
+end
+
 function CommandMT:StartCast()
     local actor = self.master
     local skill_id = actor:GetProperty(PROP_USING_SKILL)
     local skill = skill_template_table[skill_id]
-    local target = actor:GetTarget()
-
-    actor:SetProperty(PROP_COMBAT_ACTING,true) 
-    target:SetProperty(PROP_COMBAT_ACTING,true) 
+    local target = self.main_target
+    
     if skill.type == 'atk' then
         local damage = actor:GetAttackDamage(false,false,0,1)
         target:SetProperty(PROP_ASM_DAMAGE,damage) 
         target:ModifyHP(-damage)
-
         target:SetProperty(PROP_ASM_BEHIT_ANIM, skill.atk_anim)
         on_cast_attack(actor, target,skill)
     elseif skill.type == 'spell' then
@@ -76,7 +114,9 @@ function CommandMT:Update()
         self:StartCast()
         self.state = COMMAND_STATE_PALY
     elseif self.state == COMMAND_STATE_PALY then
-    
+        if not self:IsActing() then
+            self.state = COMMAND_STATE_STOP
+        end
     elseif self.state == COMMAND_STATE_STOP then
         
     end    
@@ -145,6 +185,26 @@ function combat_system_init()
     -- cxlog_info('combat_system_init',cjson.encode(skill_template_table))
 end
 
+function combat_system_all_actor_exe_func(func)
+    for i,actor in ipairs(tAttackers) do
+        func(actor)
+    end
+
+    for i,actor in ipairs(tDefenders) do
+        func(actor)
+    end
+end
+
+function auto_ready_other_actors()
+    combat_system_all_actor_exe_func(function(actor)
+        if not actor:IsLocal() then
+            actor:SetProperty(PROP_TURN_READY,true)
+        end
+    end)
+end
+    
+
+local actor_on_click_cb = {}
 function combat_system_on_start()
     ui_renderer_clear()
     local init_actor = function(actor, pos, dir)
@@ -154,6 +214,19 @@ function combat_system_on_start()
         actor:SetDir(dir)
         actor:ClearAction()
         actor:PushAction(ACTION_BATIDLE)
+
+        actor_on_click_cb[actor:GetID()] = actor_reg_event(actor, ACTOR_EV_ON_CLICK, function(actor, button, x, y)
+            local player = actor_manager_fetch_local_player()
+            player:SetTarget(actor)
+            player:SetProperty(PROP_USING_SKILL, 1)
+
+            local cmd = CommandMT:new()
+            cmd:Init(player)
+            table.insert(Commands,cmd)
+
+            player:SetProperty(PROP_TURN_READY, true)        
+            auto_ready_other_actors()
+        end)
     end
 
     for i,actor in ipairs(tDefenders) do
@@ -176,6 +249,8 @@ function combat_system_on_end()
         actor:SetProperty(PROP_CAN_MOVE,true)
         actor:ClearAction()
         actor:PushAction(ACTION_IDLE)
+
+        actor_reg_event(actor, ACTOR_EV_ON_CLICK, actor_on_click_cb[actor:GetID()])
     end
 
     for i,actor in ipairs(tDefenders) do
@@ -219,6 +294,13 @@ function check_battle_end()
     return false
 end
 
+function combat_system_fetch_current_cmd()
+    if #Commands > 0 then
+        local cmd = Commands[1]
+        return cmd
+    end
+end
+local CurrentCmd = {}
 function combat_system_update()
     if BattleState == BATTLE_DEFAULT then
         return
@@ -251,6 +333,7 @@ function combat_system_update()
         if #Commands > 0 then
             local cmd = Commands[1]
             if not cmd.master:IsDead() then
+                CurrentCmd = cmd
                 cmd:Update()
                 if cmd:IsFinished() then
                     table.remove(Commands,1)
@@ -295,13 +378,22 @@ end
 
 function combat_system_draw()
     BattleBG:Draw()
+
+    local drawActors = {}
     for i,actor in ipairs(tDefenders) do
-        actor:Draw()
+        table.insert(drawActors,actor)
     end
 
     for i,actor in ipairs(tAttackers) do
+        table.insert(drawActors,actor)
+    end
+    table.sort(drawActors,function(a,b) return a:GetY() < b:GetY() end)
+
+
+    for i,actor in ipairs(drawActors) do
         actor:Draw()
     end
+
     animation_manager_draw()
 end
 
@@ -331,14 +423,14 @@ function combat_system_remove_from_battle(actor)
     for i,v in ipairs(tAttackers) do
         if v:GetID() == actor:GetID() then
             table.remove(tAttackers,i)
-            cxlog_info('combat_system_remove_from_battle','atk',i)
+            -- cxlog_info('combat_system_remove_from_battle','atk',i)
             return 
         end
     end
     for i,v in ipairs(tDefenders) do
         if v:GetID() == actor:GetID() then
             table.remove(tDefenders,i)
-            cxlog_info('combat_system_remove_from_battle','def',i)
+            -- cxlog_info('combat_system_remove_from_battle','def',i)
             return 
         end
     end
@@ -347,7 +439,9 @@ end
 
 function combat_system_on_acting_end(actor)
     actor:SetProperty(PROP_COMBAT_ACTING,false) 
-    combat_system_remove_from_battle(actor)
+    if actor:IsDead() then
+        combat_system_remove_from_battle(actor)
+    end
     -- cxlog_info('actor:SetProperty(PROP_COMBAT_ACTING,false) ',actor:GetProperty(PROP_NAME), actor:GetProperty(PROP_HP),actor:IsDead())
     if #Commands > 0 then
         local cmd = Commands[1]
@@ -603,6 +697,9 @@ function on_cast_spell(actor, skill)
                             behit_action:Stop()
                             actor:SetProperty(PROP_COMBAT_POS,last_x,last_y)
                             actor:SetDir(last_dir)
+                            
+                            
+
                             combat_system_on_acting_end(target)    
                         end
 
@@ -722,7 +819,7 @@ function on_cast_attack(actor, target)
                         behit_action:Stop()
                         actor:SetProperty(PROP_COMBAT_POS,last_x,last_y)
                         actor:SetDir(last_dir)
-                        combat_system_on_acting_end(target)    
+                        CurrentCmd:RemoveActing(target)
                     end
 
                     if px - avatar:GetFrameKeyX() + avatar:GetFrameWidth() >= 800 then
@@ -730,13 +827,14 @@ function on_cast_attack(actor, target)
                         behit_action:Stop()
                         actor:SetProperty(PROP_COMBAT_POS,last_x,last_y)
                         actor:SetDir(last_dir)
-                        combat_system_on_acting_end(target)    
+                        CurrentCmd:RemoveActing(target)
                     end
                 end)
             else
-                combat_system_on_acting_end(target)
+                CurrentCmd:RemoveActing(target)
             end
         end)
+        CurrentCmd:AddActing(target)
         target:PushAction(ACTION_BEHIT)
         target:MoveActionToBack()
     end)
@@ -756,9 +854,10 @@ function on_cast_attack(actor, target)
 
     runback_action:AddStopCallback(function()
         actor:ReverseDir()
-        combat_system_on_acting_end(actor)
+        CurrentCmd:RemoveActing(actor)     
     end)
 
+    CurrentCmd:AddActing(actor) 
     actor:PushAction(ACTION_RUNBACK)
     actor:MoveActionToBack()
 end

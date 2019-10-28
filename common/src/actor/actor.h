@@ -14,6 +14,7 @@ class TextView;
 class UITextView;
 #endif
 #include "actor_prop.h"
+#include "actor_event.h"
 
 class GameMap;
 

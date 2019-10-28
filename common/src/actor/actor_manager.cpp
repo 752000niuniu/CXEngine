@@ -77,9 +77,18 @@ void actor_manager_update()
 void actor_manager_draw()
 {
 #ifndef SIMPLE_SERVER
+	vector<Actor*> drawPlayers;
 	for (auto& it : g_Players)
 	{
-		Actor* player = it.second;
+		drawPlayers.push_back(it.second);
+	}
+	
+	std::sort(drawPlayers.begin(), drawPlayers.end(), [](Actor* lhs, Actor* rhs) {
+		return lhs->GetY() < rhs->GetY();
+		});
+
+	for (auto* player: drawPlayers)
+	{
 		player->OnDraw();
 	}
 	AnimationManager::GetInstance()->Draw();

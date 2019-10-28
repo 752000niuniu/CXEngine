@@ -15,6 +15,7 @@ script_system_dofile 'scene_manager.lua'
 script_system_dofile 'actor_manager.lua'
 script_system_dofile('action/action.lua')
 script_system_dofile('ui_renderer.lua')
+script_system_dofile('event_system.lua')
 script_system_dofile('input_manager.lua')
 
 -- script_system_dofile('generator/imgui_binding_generator.lua')
@@ -114,4 +115,8 @@ function game_dispatch_message(pt)
 			player:MoveTo(req.x,req.y)
 		end
     end
+end
+
+function input_manager_on_mouse_move(mx, my)
+	-- cxlog_info('input_manager_on_mouse_move', mx, my)
 end

@@ -48,6 +48,18 @@ function ActorMT:GetPos()
     end
 end
 
+
+function ActorMT:GetY()
+    local x,y = self:GetPos()
+    return y
+end
+
+
+function ActorMT:GetX()
+    local x,y = self:GetPos()
+    return x
+end
+
 function ActorMT:StopMove()
     local x,y = self:GetPos()
     self:MoveTo(x,y)
