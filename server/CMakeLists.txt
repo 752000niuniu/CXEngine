@@ -7,7 +7,7 @@ find_package(CXBase)
 find_package(GLEW CONFIG)
 find_package(glfw3)
 find_package(IMGui)
-find_package(luadbg CONFIG)
+find_package(luadbg_static)
 
 file(GLOB_RECURSE  PRIVATE_HEADERS "src/*.h" "src/*.hpp" "src/*.inl")
 file(GLOB_RECURSE  SOURCES_CPP "src/*.cpp")
@@ -64,5 +64,5 @@ PRIVATE
   # SOIL
   CXBase::CXBase
   IMGui::IMGui
-  luadbg
+  luadbg_static
 )

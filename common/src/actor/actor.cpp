@@ -736,16 +736,16 @@ int actor_move_action_to_back(lua_State*L) {
 
 int actor_add_state_anim(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
-	Animation* anim = lua_check_animation(L, 2);
 #ifndef SIMPLE_SERVER
+	Animation* anim = lua_check_animation(L, 2);
 	actor->GetASM()->AddStateAnim(anim);
 #endif
 	return 0;
 }
 int actor_remove_state_anim(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
-	Animation* anim = lua_check_animation(L, 2);
 #ifndef SIMPLE_SERVER
+	Animation* anim = lua_check_animation(L, 2);
 	actor->GetASM()->RemoveStateAnim(anim);
 #endif
 	return 0;
