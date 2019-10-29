@@ -79,6 +79,9 @@ function CommandMT:RemoveActing(actor)
     for i,v in ipairs(self.acting_actors) do
         if v:GetID() == actor:GetID() then
             table.remove(self.acting_actors, i)
+            if #self.acting_actors == 0 then
+                self.state = COMMAND_STATE_STOP
+            end
             return 
         end
     end
@@ -114,9 +117,7 @@ function CommandMT:Update()
         self:StartCast()
         self.state = COMMAND_STATE_PALY
     elseif self.state == COMMAND_STATE_PALY then
-        if not self:IsActing() then
-            self.state = COMMAND_STATE_STOP
-        end
+        
     elseif self.state == COMMAND_STATE_STOP then
         
     end    
@@ -216,6 +217,7 @@ function combat_system_on_start()
         actor:PushAction(ACTION_BATIDLE)
 
         actor_on_click_cb[actor:GetID()] = actor_reg_event(actor, ACTOR_EV_ON_CLICK, function(actor, button, x, y)
+            if BattleState ~= BATTLE_TURN_STAND_BY then return end
             local player = actor_manager_fetch_local_player()
             player:SetTarget(actor)
             player:SetProperty(PROP_USING_SKILL, 1)
@@ -820,6 +822,7 @@ function on_cast_attack(actor, target)
                         actor:SetProperty(PROP_COMBAT_POS,last_x,last_y)
                         actor:SetDir(last_dir)
                         CurrentCmd:RemoveActing(target)
+                        combat_system_remove_from_battle(target)
                     end
 
                     if px - avatar:GetFrameKeyX() + avatar:GetFrameWidth() >= 800 then
@@ -828,6 +831,7 @@ function on_cast_attack(actor, target)
                         actor:SetProperty(PROP_COMBAT_POS,last_x,last_y)
                         actor:SetDir(last_dir)
                         CurrentCmd:RemoveActing(target)
+                        combat_system_remove_from_battle(target)
                     end
                 end)
             else
@@ -839,7 +843,6 @@ function on_cast_attack(actor, target)
         target:MoveActionToBack()
     end)
     actor:PushAction(ACTION_ATTACK)
-
 
     local runback_action = actor:GetAvatar(ACTION_RUNBACK)
     runback_action:Reset()

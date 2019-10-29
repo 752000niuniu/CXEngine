@@ -65,7 +65,7 @@ function OnSceneInit()
             [PROP_LV] =  145
         })
 
-        actor:SetProperty(PROP_HP, enemy:GetMaxHP())
+        actor:SetProperty(PROP_HP, enemy:GetMaxHP()/2)
         actor:SetProperty(PROP_MP, enemy:GetMaxMP())
         actor:SetActionID(ACTION_BATIDLE)
         table.insert(enemys,actor)
