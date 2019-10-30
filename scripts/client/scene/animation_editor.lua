@@ -10,9 +10,6 @@ local MagicAnim
 local BeHitAnim 
 local magic_tsv 
 
-
-
-
 --剑侠客 攻击
 ---待战-> Runto-> Attack-> Runback -> 待战
 function OnAttackActionCapter(actor, avatar)
@@ -48,7 +45,7 @@ function OnSceneInit()
     enemy:SetActionID(ACTION_BATIDLE)
 
     local enemys = {}
-    for i=1,10 do
+    for i=1,3 do
         ostime = ostime+1
         local actor =  actor_manager_create_actor(ostime)
         actor:SetProperties({
@@ -214,6 +211,7 @@ function check_dest_hit_actor(dest_x, dest_y)
     local hit_actor = nil
     local actors = actor_manager_fetch_all_players()
     for i,actor in ipairs(actors) do
+        cxlog_info('check_dest_hit_actor', actor:GetProperty(PROP_NAME))
         if not actor:IsLocal() then
             local avatar = actor:GetAvatar()
             local avx, avy = actor:GetProperty(PROP_POS)
@@ -226,7 +224,7 @@ function check_dest_hit_actor(dest_x, dest_y)
                 break
             end
         end
-        -- cxlog_info(mx, my, cx,cy ,brx,bry) 
+        
     end
     return hit_actor
 end

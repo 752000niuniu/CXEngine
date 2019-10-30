@@ -33,6 +33,8 @@ prop_combat_dir	int	0
 prop_combat_backup_pos	vec2	{0,0}
 prop_combat_target_pos	vec2	{0,0}
 prop_combat_acting	bool	false
+prop_team_type	int	0
+prop_team_id	uint64	0
 prop_using_skill	int	0
 prop_turn_ready	bool	false
 prop_asm_atk_combo	int	1

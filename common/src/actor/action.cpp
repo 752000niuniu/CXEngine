@@ -578,11 +578,14 @@ void ActionStateMachine::Update()
 	avatar->Update();
 	if (avatar->GetState() == ANIMATION_STOP) {
 		cxlog_info("pop action %d\n", m_ActionID);
-		m_ActionQueue.pop_front();
-		if (!m_ActionQueue.empty()) {
-			m_ActionID = m_ActionQueue.front();
-			avatar = GetAvatar(m_ActionID);
-			avatar->Replay();
+		int frontID = m_ActionQueue.front();
+		if(m_ActionID == frontID){
+			m_ActionQueue.pop_front();
+			if (!m_ActionQueue.empty()) {
+				m_ActionID = m_ActionQueue.front();
+				avatar = GetAvatar(m_ActionID);
+				avatar->Replay();
+			}
 		}
 	}
 
