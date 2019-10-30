@@ -306,3 +306,28 @@ attack_command = {
 
 1. 单秒
 2. 群秒
+
+
+
+一个回合表演 对应一个command队列更新
+
+command执行顺序由player速度决定
+
+一个command对应于一个player表演
+
+command有各种类型
+
+攻击:
+
+
+施法:
+
+
+战斗群组
+每个战斗里的player都有一个Group 这个Group包含本组的所有player
+
+
+
+
+
+
