@@ -17,9 +17,14 @@ local COMMAND_TYPE_CAST = 2
 local TEAM_TYPE_ATTACKER = 1
 local TEAM_TYPE_DEFENDER = 2
 
+local ACTOR_CLICK_MODE_ATTACK = 1
+local ACTOR_CLICK_MODE_SPELL = 2
+local ACTOR_CLICK_MODE  = ACTOR_CLICK_MODE_ATTACK
+
 local CurrentTurn = 1
 local Commands = {}
 local BattleState = BATTLE_DEFAULT
+
 
 local skill_template_table  = {}
 
@@ -278,11 +283,44 @@ end
 function auto_ready_other_actors()
     for i,actor in ipairs(BattleActors) do
         if not actor:IsLocal() then
-            actor:SetProperty(PROP_TURN_READY,true)
+            -- local player = actor_manager_fetch_local_player()
+            -- actor:SetTarget(player)
+            -- actor:SetProperty(PROP_USING_SKILL, 1)
+
+            -- local cmd = CommandMT:new()
+            -- cmd:Init(actor)
+            -- table.insert(Commands,cmd)
+            actor:SetProperty(PROP_TURN_READY, true)        
         end
     end
 end
     
+function combat_system_actor_on_click(actor, button, x, y)
+    if BattleState ~= BATTLE_TURN_STAND_BY then return end
+    if ACTOR_CLICK_MODE == ACTOR_CLICK_MODE_ATTACK then
+        local player = actor_manager_fetch_local_player()
+        player:SetTarget(actor)
+        player:SetProperty(PROP_USING_SKILL, 1)
+    
+        local cmd = CommandMT:new()
+        cmd:Init(player)
+        table.insert(Commands,cmd)
+        player:SetProperty(PROP_TURN_READY, true)        
+        auto_ready_other_actors()
+    elseif ACTOR_CLICK_MODE == ACTOR_CLICK_MODE_SPELL then
+        local player = actor_manager_fetch_local_player()
+        player:SetTarget(actor)
+    
+        local cmd = CommandMT:new()
+        cmd:Init(player)
+        table.insert(Commands,cmd)
+        player:SetProperty(PROP_TURN_READY, true)        
+        auto_ready_other_actors()
+    end
+
+    ACTOR_CLICK_MODE = ACTOR_CLICK_MODE_ATTACK
+end
+
 
 local actor_on_click_cb = {}
 function combat_system_on_start()
@@ -296,16 +334,7 @@ function combat_system_on_start()
         actor:PushAction(ACTION_BATIDLE)
 
         actor_on_click_cb[actor:GetID()] = actor_reg_event(actor, ACTOR_EV_ON_CLICK, function(actor, button, x, y)
-            if BattleState ~= BATTLE_TURN_STAND_BY then return end
-            local player = actor_manager_fetch_local_player()
-            player:SetTarget(actor)
-            player:SetProperty(PROP_USING_SKILL, 1)
-
-            local cmd = CommandMT:new()
-            cmd:Init(player)
-            table.insert(Commands,cmd)
-            player:SetProperty(PROP_TURN_READY, true)        
-            auto_ready_other_actors()
+            combat_system_actor_on_click(actor,button,x,y)
         end)
     end
 
@@ -527,18 +556,17 @@ function test_local_player_cast(cast_id)
 end
 
 function combat_system_imgui_update()
-    if BattleState == BATTLE_TURN_STAND_BY then
-     
-    end
+    if BattleState ~= BATTLE_TURN_STAND_BY then return end
 	imgui.Begin('Menu',menu_show)
 
-
     if imgui.Button('攻击##player') then
-        test_local_player_cast(1)
+        ACTOR_CLICK_MODE = ACTOR_CLICK_MODE_ATTACK
     end  
 
     if imgui.Button('法术##player') then
-        test_local_player_cast(51)
+        imgui.OpenPopup('SpellSelector')
+        ACTOR_CLICK_MODE = ACTOR_CLICK_MODE_SPELL
+        -- test_local_player_cast(51)
     end
 
     if imgui.Button('特技##player') then
@@ -569,25 +597,44 @@ function combat_system_imgui_update()
         combat_system_on_end()
         scene_set_combat(false)
     end
+    if imgui.BeginPopup('SpellSelector') then
+        local player = actor_manager_fetch_local_player()
+        if imgui.Button('雷霆万钧') then
+            player:SetProperty(PROP_USING_SKILL, 7)
+            imgui.CloseCurrentPopup()
+        end
+        if imgui.Button('五雷轰顶') then
+            player:SetProperty(PROP_USING_SKILL, 36)
+            imgui.CloseCurrentPopup()
+        end
+        if imgui.Button('龙腾') then
+            player:SetProperty(PROP_USING_SKILL, 38)
+            imgui.CloseCurrentPopup()
+        end
+
+        imgui.EndPopup('SpellSelector')
+    end
     imgui.End()
 
-    imgui.Begin('BBMenu',bb_menu_show)
-    if imgui.Button('法术##bb') then
 
-    end
 
-    if imgui.Button('道具##bb') then
+    -- imgui.Begin('BBMenu',bb_menu_show)
+    -- if imgui.Button('法术##bb') then
 
-    end
+    -- end
 
-    if imgui.Button('防御##bb') then
+    -- if imgui.Button('道具##bb') then
 
-    end
+    -- end
 
-    if imgui.Button('逃跑##bb') then
+    -- if imgui.Button('防御##bb') then
 
-    end
-    imgui.End()
+    -- end
+
+    -- if imgui.Button('逃跑##bb') then
+
+    -- end
+    -- imgui.End()
 
     if  imgui.KeysMod('ALT') and imgui.IsKeyReleased(string.byte('A'))  then
         local player = actor_manager_fetch_local_player()
