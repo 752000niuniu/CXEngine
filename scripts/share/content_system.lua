@@ -80,7 +80,7 @@ function init_skill_template_table()
         { name='atk_anim', fmt=res_parse_resid, def=0},
         { name='group_kill', fmt='i', def=0},
         { name='cast_anim', fmt='i', def=0},
-        { name='act_turn', fmt='i', def=0},
+        { name='act_turn', fmt='i', def=0}
     })
 
     local ret = {}
@@ -94,7 +94,7 @@ function init_buffer_template_table()
     local tbl  = utils_parse_tsv(vfs_get_tsvpath('buffer'),{
         { name='ID', fmt='i'},
         { name='name'},
-        { name='type'},
+        { name='type',def=0},
         { name='buffer_anim', fmt=res_parse_resid, def=0},
     })
 

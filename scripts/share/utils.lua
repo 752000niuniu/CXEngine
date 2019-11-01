@@ -173,7 +173,7 @@ function utils_parse_tsv(path, columns)
             -- cxlog_info('colname :'..cjson.encode(col_names))
         else
             if line~='' and not line:match('^%*') then
-                local row = {}
+                local row = {} 
                 local vals = utils_string_split_fixcnt(line,'\t',#col_names)
                 for i,key in ipairs(col_names) do
                     local col = columns[i]

@@ -29,9 +29,9 @@ end
 
 function vfs_get_luapath(path)
 	if SIMPLE_SERVER then
-		return work_dir..'scritps/server/'..path
+		return work_dir..'scripts/server/'..path
 	else
-		return work_dir..'scritps/client/'..path
+		return work_dir..'scripts/client/'..path
 	end
 end
 

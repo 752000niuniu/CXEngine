@@ -1,3 +1,5 @@
+dofile(vfs_get_luapath('../combat/skill.lua') )
+
 PERFRAME_TIME = 0.016*2.5  
 local BATTLE_DEFAULT = 0
 local BATTLE_PREPARE = 1
@@ -201,24 +203,7 @@ function CommandMT:StartCast()
     local actor = self.master
     local skill_id = actor:GetProperty(PROP_USING_SKILL)
     local skill = skill_template_table[skill_id]
-    local target = self.main_target
-    
-    if skill.type == 'atk' then
-        local damage = actor:GetAttackDamage(false,false,0,1)
-        target:SetProperty(PROP_ASM_DAMAGE,damage) 
-        target:ModifyHP(-damage)
-        target:SetProperty(PROP_ASM_BEHIT_ANIM, skill.atk_anim)
-        on_cast_attack(actor, target,skill)
-    elseif skill.type == 'spell' then
-        local player = actor_manager_fetch_local_player()
-        for i, target in ipairs(BattleActors) do
-            if actor:GetProperty(PROP_TEAM_TYPE) ~= target:GetProperty(PROP_TEAM_TYPE) then
-                actor:SetTarget(target)
-                break
-            end
-        end
-        on_cast_spell(actor,skill)
-    end
+    on_cast_skill(skill, actor)
 end
 
 function CommandMT:Update()
@@ -285,6 +270,7 @@ function combat_system_init()
     combat_enemy_pos =  calc_combat_enemy_pos(ratio_x, ratio_y)
     skill_template_table = content_system_get_table('skill')
     buffer_template_table = content_system_get_table('buffer')
+    init_skills()
     -- cxlog_info('combat_system_init',cjson.encode(skill_template_table))
 end
 
@@ -611,8 +597,8 @@ function combat_system_imgui_update()
             player:SetProperty(PROP_USING_SKILL, 20)
             imgui.CloseCurrentPopup()
         end
-        if imgui.Button('五雷轰顶') then
-            player:SetProperty(PROP_USING_SKILL, 36)
+        if imgui.Button('催眠符') then
+            player:SetProperty(PROP_USING_SKILL, 26)
             imgui.CloseCurrentPopup()
         end
         if imgui.Button('龙腾') then
@@ -623,9 +609,6 @@ function combat_system_imgui_update()
         imgui.EndPopup('SpellSelector')
     end
     imgui.End()
-
-
-
     -- imgui.Begin('BBMenu',bb_menu_show)
     -- if imgui.Button('法术##bb') then
 
@@ -654,21 +637,6 @@ function combat_system_imgui_update()
     AttackerTeam:DrawHP()
 end
 
-function BattleCmdOnCombo(actor)
-
-end
-
-function BattleCmdOnGroupKill(actor)
-
-end
-
-function BattleCmdOnTurnReady(actor)
-
-end
-
-function BattleCmdOnTurnEnd(actor)
-
-end
 
 function calc_run_to_pos(actor, target)
     local dir = actor:GetDir()
@@ -709,7 +677,9 @@ function calc_run_to_pos(actor, target)
     end
 end
 
-function on_cast_spell(actor, skill)
+function on_cast_spell( skill, actor)
+    skill_on_start(skill, actor)
+    local target = actor:GetTarget()
     local cast_action = actor:GetAvatar(ACTION_CAST)
     cast_action:Reset()
     cast_action:SetLoop(-1)
@@ -740,6 +710,7 @@ function on_cast_spell(actor, skill)
                 end)
         
                 behit_action:AddStopCallback(function()
+                    skill_on_hit(skill, actor, target)
                     if target:IsDead() then
                         behit_action:Reset()
                         behit_action:Play()
@@ -812,7 +783,10 @@ function on_cast_spell(actor, skill)
 end
 
 
-function on_cast_attack(actor, target)
+function on_cast_attack(skill, actor)
+    skill_on_start(skill, actor)
+
+    local target = actor:GetTarget()
     local tar_x,tar_y = target:GetPos()
     local degree = actor:GetMoveDestAngle(tar_x,tar_y)
     local dir = actor:GetDirByDegree(degree)
@@ -865,6 +839,7 @@ function on_cast_attack(actor, target)
         end)
         
         behit_action:AddStopCallback(function()
+            skill_on_hit(skill, actor)
             if target:IsDead() then
                 behit_action:Reset()
                 behit_action:Play()
@@ -946,4 +921,25 @@ function on_cast_attack(actor, target)
     CurrentCmd:AddActing(actor) 
     actor:PushAction(ACTION_RUNBACK)
     actor:MoveActionToBack()
+end
+
+
+function on_cast_skill(skill, actor)
+    local target = actor:GetTarget()
+    if skill.type == 'atk' then
+        local damage = actor:GetAttackDamage(false,false,0,1)
+        target:SetProperty(PROP_ASM_DAMAGE,damage) 
+        target:ModifyHP(-damage)
+        target:SetProperty(PROP_ASM_BEHIT_ANIM, skill.atk_anim)
+        on_cast_attack(skill, actor)
+    elseif skill.type == 'spell' then
+        local player = actor_manager_fetch_local_player()
+        for i, target in ipairs(BattleActors) do
+            if actor:GetProperty(PROP_TEAM_TYPE) ~= target:GetProperty(PROP_TEAM_TYPE) then
+                actor:SetTarget(target)
+                break
+            end
+        end
+        on_cast_spell(skill,actor)
+    end
 end
