@@ -90,6 +90,21 @@ function init_skill_template_table()
     return ret
 end
 
+function init_buffer_template_table()
+    local tbl  = utils_parse_tsv(vfs_get_tsvpath('buffer'),{
+        { name='ID', fmt='i'},
+        { name='name'},
+        { name='type'},
+        { name='buffer_anim', fmt=res_parse_resid, def=0},
+    })
+
+    local ret = {}
+    for i,row in ipairs(tbl) do
+        ret[row.ID] = row
+    end
+    return ret
+end
+
 
 function content_system_init()
     content_system_set_table('role', read_tsv_index_by_main_key('avatar_role',false,'ID'))
@@ -100,4 +115,6 @@ function content_system_init()
     content_system_set_table('actor_template', read_actor_template())
 
     content_system_set_table('skill', init_skill_template_table())
+    content_system_set_table('buffer', init_buffer_template_table())
+    
 end

@@ -10,7 +10,7 @@ script_system_dofile('../share/content_system.lua')
 script_system_dofile('../share/actor_metatable.lua')
 
 script_system_dofile 'actor_metatable.lua'
-script_system_dofile('combat_system.lua')
+script_system_dofile('../combat/combat_system.lua')
 script_system_dofile 'scene_manager.lua'
 script_system_dofile 'actor_manager.lua'
 script_system_dofile('action/action.lua')

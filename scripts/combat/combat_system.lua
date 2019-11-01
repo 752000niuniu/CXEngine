@@ -25,8 +25,18 @@ local CurrentTurn = 1
 local Commands = {}
 local BattleState = BATTLE_DEFAULT
 
-
 local skill_template_table  = {}
+local buffer_template_table = {}
+
+local BufferMT = {}
+function BufferMT:new(o)
+    o = o or {
+    }
+    self.__index = self 
+    setmetatable(o, self)
+    return o
+end
+
 
 local TeamMT = {}
 function TeamMT:new(o)
@@ -114,12 +124,9 @@ function TeamMT:DrawHP()
     end
 end
 
-
-
 local AttackerTeam 
 local DefenderTeam
-local BattleActors =  {}
-
+local ActorBuffers = {}
 local CommandMT = {}
 function CommandMT:new(o)
     o = o or {}
@@ -277,6 +284,7 @@ function combat_system_init()
     combat_self_pos =  calc_combat_self_pos(ratio_x, ratio_y)
     combat_enemy_pos =  calc_combat_enemy_pos(ratio_x, ratio_y)
     skill_template_table = content_system_get_table('skill')
+    buffer_template_table = content_system_get_table('buffer')
     -- cxlog_info('combat_system_init',cjson.encode(skill_template_table))
 end
 
@@ -560,7 +568,7 @@ function combat_system_imgui_update()
 	imgui.Begin('Menu',menu_show)
 
     if imgui.Button('攻击##player') then
-        ACTOR_CLICK_MODE = ACTOR_CLICK_MODE_ATTACK
+        
     end  
 
     if imgui.Button('法术##player') then
@@ -599,8 +607,8 @@ function combat_system_imgui_update()
     end
     if imgui.BeginPopup('SpellSelector') then
         local player = actor_manager_fetch_local_player()
-        if imgui.Button('雷霆万钧') then
-            player:SetProperty(PROP_USING_SKILL, 7)
+        if imgui.Button('横扫千军') then
+            player:SetProperty(PROP_USING_SKILL, 20)
             imgui.CloseCurrentPopup()
         end
         if imgui.Button('五雷轰顶') then
@@ -855,6 +863,7 @@ function on_cast_attack(actor, target)
             attack_action:Pause(math.floor(anim:GetGroupFrameTime()* 1000))
             behit_action:Pause(math.floor(anim:GetGroupFrameTime()* 1000))
         end)
+        
         behit_action:AddStopCallback(function()
             if target:IsDead() then
                 behit_action:Reset()
