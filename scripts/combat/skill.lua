@@ -29,6 +29,13 @@ function init_skills()
     end
 end
 
+function skill_on_turn(turn)
+    local skill_tpl = content_system_get_table('skill')
+    for id,skill in pairs(skill_tpl) do
+        skill.turn = turn
+    end
+end
+
 function skill_on_start(skill, actor, target)
     if skill_table[skill.ID] then
         if skill_table[skill.ID].SkillOnStart then

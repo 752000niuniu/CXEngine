@@ -1,4 +1,5 @@
 dofile(vfs_get_luapath('../combat/skill.lua') )
+dofile(vfs_get_luapath('../combat/buffer.lua') )
 
 PERFRAME_TIME = 0.016*2.5  
 local BATTLE_DEFAULT = 0
@@ -271,6 +272,7 @@ function combat_system_init()
     skill_template_table = content_system_get_table('skill')
     buffer_template_table = content_system_get_table('buffer')
     init_skills()
+    init_buffers()
     -- cxlog_info('combat_system_init',cjson.encode(skill_template_table))
 end
 
@@ -390,6 +392,7 @@ function combat_system_update()
         combat_system_on_start()
         BattleState = BATTLE_TURN_STAND_BY
         cxlog_info('BATTLE_TURN_STAND_BY')
+        skill_on_turn(CurrentTurn)
     elseif BattleState == BATTLE_TURN_STAND_BY then
 --[[
     每帧update都看player是不是输入了指令
@@ -441,6 +444,13 @@ function combat_system_update()
         for i,actor in ipairs(BattleActors) do
             actor:SetProperty(PROP_TURN_READY,false)
         end
+
+        skill_on_turn(CurrentTurn)
+        
+        for i,actor in ipairs(BattleActors) do
+            actor:BufferNextTurn(CurrentTurn)
+        end
+
 
         BattleState = BATTLE_TURN_STAND_BY
         cxlog_info('BATTLE_TURN_STAND_BY')
