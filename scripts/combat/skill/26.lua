@@ -3,8 +3,8 @@ function SkillOnStart(skill, actor, target)
 
 end
 
-function SkillOnHit(skill, actor, target)
-    target:AddBuffer(1,skill.turn)
+function SkillOnHit(skill, actor, hit_actor)
+    hit_actor:AddBuffer(1,skill.turn)
 end
 
 function SkillOnEnd(skill, actor, target)
