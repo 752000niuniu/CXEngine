@@ -137,9 +137,12 @@ public:
 
 	int GetActionID() { return m_ActionID; };
 
-	void AddStateAnim(Animation* anim);
-	void RemoveStateAnim(Animation* anim);
-	void ClearStateAnim();
+	void AddFrontAnim(Animation* anim);
+	void AddBackAnim(Animation* anim);
+	void RemoveFrontAnim(Animation* anim);
+	void RemoveBackAnim(Animation* anim);
+	void ClearFrontAnim();
+	void ClearBackAnim();
 
 	void MoveActionToBack() { m_bMoveActionToBack = true; }
 	void PushAction(int action) { m_ActionQueue.push_back(action); }
@@ -161,7 +164,8 @@ private:
 	std::map<int, Animation*> m_WeaponActions;
 	std::map<int, Animation*> m_AvatarActions;
 	Animation* m_PlayerShadow;
-	deque<Animation*> m_StateAnimQueue;
+	deque<Animation*> m_FrontAnimQueue;
+	deque<Animation*> m_BackAnimQueue;
 	bool		m_bMoveActionToBack;
 	deque<int> m_ActionQueue;
 	BeatNumber* m_BeatNumber;

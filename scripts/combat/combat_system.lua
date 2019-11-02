@@ -348,7 +348,6 @@ end
 function combat_system_on_end()
     local reset_actor = function(actor)
         actor:SetProperty(PROP_ASM_BUFF_ANIM, 0)
-        actor:ClearBuffAnim()
         -- actor:SetActionID(ACTION_IDLE)
         actor:SetProperty(PROP_IS_COMBAT,false)
         actor:SetProperty(PROP_CAN_MOVE,true)
@@ -515,7 +514,6 @@ end
 function combat_system_remove_from_battle(_actor_)
     local reset_actor = function(actor)
         actor:SetProperty(PROP_ASM_BUFF_ANIM, 0)
-        actor:ClearBuffAnim()
         -- actor:SetActionID(ACTION_IDLE)
         actor:SetProperty(PROP_IS_COMBAT,false)
         actor:SetProperty(PROP_CAN_MOVE,true)
@@ -702,7 +700,7 @@ function on_cast_spell( skill, actor)
                     anim:SetLoop(-1)
                     -- local offy = -avatar:GetFrameKeyY() + avatar:GetFrameHeight() / 2.0
                     -- anim:SetOffsetY(offy)  
-                    target:AddStateAnim(anim)
+                    target:AddFrontAnim(anim)
         
                     local damage = target:GetProperty(PROP_ASM_DAMAGE) 
                     target:ShowBeatNumber(damage)
@@ -830,7 +828,7 @@ function on_cast_attack(skill, actor)
             anim:SetLoop(-1)
             local offy =  -avatar:GetFrameKeyY() + avatar:GetFrameHeight() / 2.0
             anim:SetOffsetY(offy)  
-            target:AddStateAnim(anim)
+            target:AddFrontAnim(anim)
 
             local damage = target:GetProperty(PROP_ASM_DAMAGE) 
             target:ShowBeatNumber(damage)

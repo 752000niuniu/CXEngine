@@ -231,7 +231,7 @@ void CastAction::Update()
 					anim->AddFrameCallback(anim->GroupFrameCount/6*5, [this, anim]() {
 						uint64_t resid = m_Actor->GetProperty(PROP_ASM_BUFF_ANIM).toUInt64();
 						auto* anim = CreateBuffAnimation(resid);
-						m_Target->GetASM()->AddStateAnim(anim);
+						m_Target->GetASM()->AddFrontAnim(anim);
 						});
 					AnimationManager::GetInstance()->AddAnimation(anim);
 				}
@@ -293,7 +293,7 @@ void BeHitAction::Update()
 				anim->AddFrameCallback(anim->GroupFrameCount / 2, [this, avatar]() {
 					m_Actor->GetMoveHandle()->MoveOnScreenWithDuration({ MoveVec.x * 7 ,MoveVec.y * 7 }, PERFRAME_TIME * 4, true);
 				});
-				m_Actor->GetASM()->AddStateAnim(anim);
+				m_Actor->GetASM()->AddFrontAnim(anim);
 				int tm = (int)(anim->GroupFrameCount*anim->FrameInterval * 1000);
 				avatar->Pause(tm);
 			}
@@ -533,10 +533,15 @@ ActionStateMachine::~ActionStateMachine()
 	m_WeaponActions.clear();
 
 	SafeDelete(m_PlayerShadow);
-	for (auto& it : m_StateAnimQueue){
+	for (auto& it : m_FrontAnimQueue){
 		SafeDelete(it);
 	}
-	m_StateAnimQueue.clear();
+	m_FrontAnimQueue.clear();
+
+	for (auto& it : m_BackAnimQueue) {
+		SafeDelete(it);
+	}
+	m_BackAnimQueue.clear();
 
 	m_ActionQueue.clear();
 	SafeDelete(m_BeatNumber);
@@ -594,18 +599,32 @@ void ActionStateMachine::Update()
 		weapon->CurrentFrame = avatar->CurrentFrame;
 	}
 
-	for (auto& anim : m_StateAnimQueue) {
+	for (auto& anim : m_FrontAnimQueue) {
 		anim->Update();
 	}
-	for (auto it = m_StateAnimQueue.begin(); it != m_StateAnimQueue.end();) {
+	for (auto it = m_FrontAnimQueue.begin(); it != m_FrontAnimQueue.end();) {
 		if ((*it)->GetState() == ANIMATION_STOP) {
 			delete *it;
-			it = m_StateAnimQueue.erase(it);
+			it = m_FrontAnimQueue.erase(it);
 		}
 		else {
 			it++;
 		}
 	}
+
+	for (auto& anim : m_BackAnimQueue) {
+		anim->Update();
+	}
+	for (auto it = m_BackAnimQueue.begin(); it != m_BackAnimQueue.end();) {
+		if ((*it)->GetState() == ANIMATION_STOP) {
+			delete* it;
+			it = m_BackAnimQueue.erase(it);
+		}
+		else {
+			it++;
+		}
+	}
+
 	if(m_BeatNumber){
 		m_BeatNumber->Update();
 	}
@@ -663,6 +682,14 @@ void ActionStateMachine::Draw()
 
 	m_PlayerShadow->Pos.x = avatar->Pos.x;
 	m_PlayerShadow->Pos.y = avatar->Pos.y;
+
+
+	for (auto& anim : m_BackAnimQueue) {
+		anim->Pos.x = avatar->Pos.x + anim->Offset.x;
+		anim->Pos.y = avatar->Pos.y + anim->Offset.y;
+		anim->Draw();
+	}
+
 	m_PlayerShadow->Draw();
 	avatar->Draw();
 
@@ -677,12 +704,13 @@ void ActionStateMachine::Draw()
 	if (m_pCurrentAction) {
 		m_pCurrentAction->Draw();
 	}
-
-	for (auto& anim : m_StateAnimQueue) {
+	
+	for (auto& anim : m_FrontAnimQueue) {
 		anim->Pos.x = avatar->Pos.x + anim->Offset.x;
 		anim->Pos.y = avatar->Pos.y + anim->Offset.y;
 		anim->Draw();
 	}
+	
 
 	if(m_BeatNumber){
 		m_BeatNumber->Draw();
@@ -817,30 +845,56 @@ int ActionStateMachine::GetDirCount(int action)
 	return 4;
 }
 
-void ActionStateMachine::AddStateAnim(Animation* anim)
+void ActionStateMachine::AddFrontAnim(Animation* anim)
 {
 	if (anim == nullptr)return;
 	anim->Replay();
-	m_StateAnimQueue.push_back(anim);
+	m_FrontAnimQueue.push_back(anim);
 }
 
-void ActionStateMachine::RemoveStateAnim(Animation* anim)
+void ActionStateMachine::AddBackAnim(Animation* anim)
 {
-	for (auto it = m_StateAnimQueue.begin(); it != m_StateAnimQueue.end();) {
+	if (anim == nullptr)return;
+	anim->Replay();
+	m_BackAnimQueue.push_back(anim);
+}
+
+void ActionStateMachine::RemoveFrontAnim(Animation* anim)
+{
+	for (auto it = m_FrontAnimQueue.begin(); it != m_FrontAnimQueue.end();) {
 		if ((*it) == anim) {
 			delete (*it);
-			m_StateAnimQueue.erase(it);
+			m_FrontAnimQueue.erase(it);
 			break;
 		}
 	}
 }
 
-void ActionStateMachine::ClearStateAnim()
+void ActionStateMachine::RemoveBackAnim(Animation* anim)
 {
-	for (auto& it : m_StateAnimQueue) {
+	for (auto it = m_BackAnimQueue.begin(); it != m_BackAnimQueue.end();) {
+		if ((*it) == anim) {
+			delete (*it);
+			m_BackAnimQueue.erase(it);
+			break;
+		}
+	}
+}
+
+void ActionStateMachine::ClearFrontAnim()
+{
+	for (auto& it : m_FrontAnimQueue) {
 		SafeDelete(it);
 	}
-	m_StateAnimQueue.clear();
+	m_FrontAnimQueue.clear();
+}
+
+void ActionStateMachine::ClearBackAnim()
+{
+	for (auto& it : m_BackAnimQueue) {
+		SafeDelete(it);
+	}
+	m_BackAnimQueue.clear();
 }
 
 BeatNumber* ActionStateMachine::GetBeatNumber()

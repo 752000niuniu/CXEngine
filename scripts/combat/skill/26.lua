@@ -8,7 +8,7 @@ function SkillOnHit(skill, actor, target)
     anim:SetLoop(1)
 -- local offy = -avatar:GetFrameKeyY() + avatar:GetFrameHeight() / 2.0
     anim:SetOffsetY(10)  
-    target:AddStateAnim(anim)
+    target:AddBackAnim(anim)
 end
 
 function SkillOnEnd(skill, actor, target)

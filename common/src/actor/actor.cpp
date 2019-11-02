@@ -637,13 +637,6 @@ int actor_get_target(lua_State* L) {
 	lua_push_actor(L, actor->GetTarget());
 	return 1;
 }
-int actor_clear_buff_anim(lua_State*L){
-	Actor* actor = lua_check_actor(L, 1);
-#ifndef SIMPLE_SERVER
-	actor->GetASM()->ClearStateAnim();
-#endif
-	return 0;
-}
 
 int actor_restore_action(lua_State*L)
 {
@@ -735,26 +728,52 @@ int actor_move_action_to_back(lua_State*L) {
 	return 0;
 }
 
-int actor_add_state_anim(lua_State* L) {
+int actor_add_front_anim(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 #ifndef SIMPLE_SERVER
 	Animation* anim = lua_check_animation(L, 2);
-	actor->GetASM()->AddStateAnim(anim);
+	actor->GetASM()->AddFrontAnim(anim);
 #endif
 	return 0;
 }
-int actor_remove_state_anim(lua_State* L) {
+int actor_remove_front_anim(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 #ifndef SIMPLE_SERVER
 	Animation* anim = lua_check_animation(L, 2);
-	actor->GetASM()->RemoveStateAnim(anim);
+	actor->GetASM()->RemoveFrontAnim(anim);
 #endif
 	return 0;
 }
-int actor_clear_state_anim(lua_State* L) {
+
+int actor_add_back_anim(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
 #ifndef SIMPLE_SERVER
-	actor->GetASM()->ClearStateAnim();
+	Animation* anim = lua_check_animation(L, 2);
+	actor->GetASM()->AddBackAnim(anim);
+#endif
+	return 0;
+}
+int actor_remove_back_anim(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+#ifndef SIMPLE_SERVER
+	Animation* anim = lua_check_animation(L, 2);
+	actor->GetASM()->RemoveBackAnim(anim);
+#endif
+	return 0;
+}
+
+int actor_clear_front_anim(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+#ifndef SIMPLE_SERVER
+	actor->GetASM()->ClearFrontAnim();
+#endif
+	return 0;
+}
+
+int actor_clear_back_anim(lua_State* L) {
+	Actor* actor = lua_check_actor(L, 1);
+#ifndef SIMPLE_SERVER
+	actor->GetASM()->ClearBackAnim();
 #endif
 	return 0;
 }
@@ -800,7 +819,6 @@ luaL_Reg mt_actor[] = {
 { "ReverseDir", actor_reverse_dir },
 { "SetLocal", actor_set_local },
 { "IsLocal", actor_is_local },
-{ "ClearBuffAnim", actor_clear_buff_anim},
 { "SetActionID", actor_set_action_id },
 { "GetActionID", actor_get_action_id },
 { "TranslateX", actor_translate_x },
@@ -831,9 +849,12 @@ luaL_Reg mt_actor[] = {
 {"PushAction",actor_push_action},
 {"ClearAction",actor_clear_action},
 {"MoveActionToBack",actor_move_action_to_back},
-{"AddStateAnim",actor_add_state_anim},
-{"RemoveStateAnim",actor_remove_state_anim},
-{"ClearStateAnim",actor_clear_state_anim},
+{"AddFrontAnim",actor_add_front_anim},
+{"RemoveFrontAnim",actor_remove_front_anim},
+{"AddBackAnim",actor_add_back_anim},
+{"RemoveBackAnim",actor_remove_back_anim},
+{ "ClearBackAnim", actor_clear_back_anim},
+{ "ClearFrontAnim", actor_clear_front_anim},
 {"ShowBeatNumber",actor_show_beatnumber},
 {"GetAttackVec",actor_get_attack_vec},
 { NULL, NULL }
