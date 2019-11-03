@@ -596,20 +596,31 @@ function combat_system_imgui_update()
         combat_system_on_end()
         scene_set_combat(false)
     end
+    imgui.SetNextWindowSize(350,400)
     if imgui.BeginPopup('SpellSelector') then
-        local player = actor_manager_fetch_local_player()
-        if imgui.Button('横扫千军') then
-            player:SetProperty(PROP_USING_SKILL, 20)
-            imgui.CloseCurrentPopup()
-        end
-        if imgui.Button('催眠符') then
-            player:SetProperty(PROP_USING_SKILL, 26)
-            imgui.CloseCurrentPopup()
-        end
-        if imgui.Button('龙腾') then
-            player:SetProperty(PROP_USING_SKILL, 38)
-            imgui.CloseCurrentPopup()
-        end
+        local skill_tbl = content_system_get_table('skill')
+        imgui.HorizontalLayout(skill_tbl,next,function(k,v) 
+            if imgui.Button(v.name..'##'..v.ID) then
+                local player = actor_manager_fetch_local_player()      
+                player:SetProperty(PROP_USING_SKILL, v.ID)
+                imgui.CloseCurrentPopup()
+            end
+        end)
+
+        -- local player = actor_manager_fetch_local_player()
+
+        -- if imgui.Button('横扫千军') then
+        --     player:SetProperty(PROP_USING_SKILL, 20)
+        --     imgui.CloseCurrentPopup()
+        -- end
+        -- if imgui.Button('催眠符') then
+        --     player:SetProperty(PROP_USING_SKILL, 26)
+        --     imgui.CloseCurrentPopup()
+        -- end
+        -- if imgui.Button('龙腾') then
+        --     player:SetProperty(PROP_USING_SKILL, 38)
+        --     imgui.CloseCurrentPopup()
+        -- end
 
         imgui.EndPopup('SpellSelector')
     end

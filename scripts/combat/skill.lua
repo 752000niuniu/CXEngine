@@ -1,3 +1,8 @@
+local SKILL_SUBTYPE_DEFAULT = 0
+local SKILL_SUBTYPE_SEAL = 1
+local SKILL_SUBTYPE_HEAL = 2
+local SKILL_SUBTYPE_AUXI = 3
+
 
 local SkillMT = {}
 local skill_table = {}
@@ -39,6 +44,9 @@ function init_skills()
                 skill.SkillOnStart = module.SkillOnStart
                 skill.SkillOnEnd = module.SkillOnEnd
                 skill.SkillOnHit = module.SkillOnHit
+                skill.SkillOnSpell = module.SkillOnSpell
+                skill.SkillOnAfterSpell = module.SkillOnAfterSpell
+                
             else
                 cxlog_info(fun,err)
             end
@@ -93,38 +101,55 @@ function on_cast_spell( skill, actor)
     if skill.templ.SkillOnStart then
         skill.templ.SkillOnStart(skill, actor)
     end
-    local target = actor:GetTarget()
     local cast_action = actor:GetAvatar(ACTION_CAST)
     cast_action:Reset()
     cast_action:SetLoop(-1)
     cast_action:AddFrameCallback(cast_action:GetGroupFrameCount()/2,function()
-        for i,target in ipairs(BattleActors) do
-            if target:GetProperty(PROP_TEAM_TYPE) ~= actor:GetProperty(PROP_TEAM_TYPE) then
-                local damage = actor:GetSpellDamage(target)
-                target:SetProperty(PROP_ASM_DAMAGE,damage) 
-                target:ModifyHP(-damage)
-                target:SetProperty(PROP_ASM_BEHIT_ANIM, skill.templ.atk_anim)
-        
+        for i=1,skill.spell_cnt do
+            local target = skill.spell_actors[i]
+            local damage = skill.spell_damage[i]
+
+            if skill.templ.sub_type == SKILL_SUBTYPE_SEAL then
+                local resid = skill.atk_anim
+                local pack, was = res_decode(resid)
+                local anim = animation_create(pack,was)
+                anim:SetLoop(-1)
+                
+                target:AddFrontAnim(anim)
+                skill.spell_anim = anim
+                if skill.templ.SkillOnSpell then
+                    skill.templ.SkillOnSpell(skill, actor, target)
+                end
+                anim:AddStopCallback(function()
+                    if skill.templ.SkillOnAfterSpell then
+                        skill.templ.SkillOnAfterSpell(skill, actor, target)
+                    end 
+                end)
+            else
                 local behit_action = target:GetAvatar(ACTION_BEHIT)
                 behit_action:Reset()
                 behit_action:SetLoop(1)
                 behit_action:AddFrameCallback(1, function()
-                    local avatar = target:GetAvatar()
-                    local resid = skill.templ.atk_anim
+                    local resid = skill.atk_anim
                     local pack, was = res_decode(resid)
                     local anim = animation_create(pack,was)
                     anim:SetLoop(-1)
+                    
                     target:AddFrontAnim(anim)
-        
-                    local damage = target:GetProperty(PROP_ASM_DAMAGE) 
                     target:ShowBeatNumber(damage)
                     behit_action:Pause(math.floor(anim:GetGroupFrameTime()* 1000))
+                    skill.spell_anim = anim
+                    if skill.templ.SkillOnSpell then
+                        skill.templ.SkillOnSpell(skill, actor, target)
+                    end
+                    anim:AddStopCallback(function()
+                        if skill.templ.SkillOnAfterSpell then
+                            skill.templ.SkillOnAfterSpell(skill, actor, target)
+                        end 
+                    end)
                 end)
         
                 behit_action:AddStopCallback(function()
-                    if skill.templ.SkillOnHit then
-                        skill.templ.SkillOnHit(skill, actor, target)
-                    end
                     if target:IsDead() then
                         behit_action:Reset()
                         behit_action:Play()
@@ -186,6 +211,7 @@ function on_cast_spell( skill, actor)
                 target:PushAction(ACTION_BEHIT)
                 target:MoveActionToBack()
             end
+            
         end
     end)
     cast_action:AddStopCallback(function()
@@ -371,7 +397,6 @@ function on_cast_attack(skill, actor)
 end
 
 local ActorMT = actor_get_metatable()
-
 function ActorMT:CastSkill(skill_id)
     local actor = self
     local skill_tpl = skill_table[skill_id]
@@ -384,7 +409,6 @@ function ActorMT:CastSkill(skill_id)
     skill.combo = skill.templ.combo
     skill.type = skill.templ.type
 
-    local target = actor:GetTarget()
     if skill.type == 'atk' then
         if skill.group_kill > 0 then
             on_cast_group_attack(skill, actor)
@@ -396,8 +420,8 @@ function ActorMT:CastSkill(skill_id)
             else
                 skill.atk_cnt = 1
             end
-
-            for i = 1, skill.atk_cnt do
+            local target = actor:GetTarget()
+            for i=1, skill.atk_cnt do
                 local damage = actor:GetAttackDamage(false,false,0,1)
                 table.insert(skill.atk_damage, damage)
                 target:ModifyHP(-damage)
@@ -409,13 +433,56 @@ function ActorMT:CastSkill(skill_id)
             on_cast_attack(skill, actor)
         end
     elseif skill.type == 'spell' then
-        local player = actor_manager_fetch_local_player()
-        for i, target in ipairs(BattleActors) do
-            if actor:GetProperty(PROP_TEAM_TYPE) ~= target:GetProperty(PROP_TEAM_TYPE) then
-                actor:SetTarget(target)
-                break
+        local to_self_group = false
+        if skill.sub_type == SKILL_SUBTYPE_DEFAULT or skill.sub_type == SKILL_SUBTYPE_SEAL then
+            to_self_group = false
+        elseif skill.sub_type == SKILL_SUBTYPE_HEAL or skill.sub_type == SKILL_SUBTYPE_AUXI then
+            to_self_group = true
+        end
+        local targets = {}
+        for i, actor in ipairs(BattleActors) do
+            if to_self_group then
+                if actor:GetProperty(PROP_TEAM_TYPE) == self:GetProperty(PROP_TEAM_TYPE) then
+                    table.insert(targets,actor)
+                end    
+            else
+                if actor:GetProperty(PROP_TEAM_TYPE) ~= self:GetProperty(PROP_TEAM_TYPE) then
+                    table.insert(targets,actor)
+                end    
             end
         end
+        table.sort(targets,function(a,b)
+            return a:CalcSpeed() > b:CalcSpeed()
+        end)
+        
+        if skill.templ.group_kill > 0 then
+            skill.spell_cnt = math.min(#targets,skill.group_kill) 
+            skill.spell_actors = { }
+            for i=1,#targets do
+                local target = targets[i]
+                if target:GetID() ~= self:GetTarget():GetID() and #skill.spell_actors < skill.spell_cnt-1 then
+                    table.insert(skill.spell_actors, target)
+                end
+            end
+            table.insert(skill.spell_actors,self:GetTarget())
+        else
+            skill.spell_cnt = 1
+            skill.spell_actors = {}
+            table.insert(skill.spell_actors,self:GetTarget())
+        end
+        
+        skill.spell_damage = {}
+        for i=1,skill.spell_cnt do
+            local target = skill.spell_actors[i]
+            local damage = actor:GetSpellDamage(target)
+            if skill.templ.sub_type == SKILL_SUBTYPE_SEAL then
+                damage = 0
+            end
+            table.insert(skill.spell_damage,damage)
+            target:ModifyHP(-damage)
+        end
+
+        skill.atk_anim = skill.templ.atk_anim
         on_cast_spell(skill,actor)
     end
 end

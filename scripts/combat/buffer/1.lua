@@ -3,7 +3,6 @@ function BufferOnStart(buffer, actor, turn)
     buffer.anim = anim 
     anim:SetLoop(0)
 -- local offy = -avatar:GetFrameKeyY() + avatar:GetFrameHeight() / 2.0
-    anim:SetOffsetY(10)  
     actor:AddBackAnim(anim)
 end
 
