@@ -8,12 +8,5 @@ function BufferOnStart(buffer, actor, turn)
 end
 
 function BufferOnEnd(buffer, actor, target)
-
-end
-
-function BufferOnNextTurn(buffer, actor, turn)
-    cxlog_info('BufferOnNextTurn', turn , buffer.add_turn)
-    if turn - buffer.add_turn == 3 then
-        buffer.anim:Stop()
-    end
+    buffer.anim:Stop()
 end

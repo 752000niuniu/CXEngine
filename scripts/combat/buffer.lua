@@ -47,14 +47,13 @@ function ActorMT:GetBuffers()
     return Buffers[id]
 end
 
-function ActorMT:AddBuffer(buff_id, cur_turn)
-    cxlog_info('add buffer',buff_id,cur_turn)
+function ActorMT:AddBuffer(buff_id, turn_cnt)
     local buff_tpl = buffer_table[buff_id]
     if not buff_tpl then return end
     local buff = {}
     buff.tid = buff_id
-    buff.add_turn = cur_turn
-    
+    buff.turn_cnt = turn_cnt
+    buff.turn_counter = 0
     local buffers = self:GetBuffers()
     buffers[buff_id] = buff
     local templ = buffer_table[buff_id]
@@ -74,14 +73,18 @@ function ActorMT:RemoveBuffer(buff_id)
     buffers[buff_id] = nil
 end
 
-function ActorMT:BufferNextTurn(turn)
+function ActorMT:BufferNextTurn()
     local buffers = self:GetBuffers()
     if buffers then
         for id,buff in pairs(buffers) do
+            buff.turn_counter = buff.turn_counter + 1
             local templ = buffer_table[id]
             if templ.BufferOnNextTurn then
-                templ.BufferOnNextTurn(buff,self,turn)
+                templ.BufferOnNextTurn(buff,self)
             end     
+            if buff.turn_counter == buff.turn_cnt then
+                self:RemoveBuffer(id)
+            end
         end
     end
 end

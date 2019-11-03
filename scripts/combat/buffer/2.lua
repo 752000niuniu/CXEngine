@@ -1,18 +1,13 @@
-function BufferOnStart(buffer, actor, target)
+function BufferOnStart(buff, actor, target)
     local anim = animation_create(23,0xD9463A0C)
     anim:SetLoop(0)
     -- local offy = -avatar:GetFrameKeyY() + avatar:GetFrameHeight() / 2.0
     anim:SetOffsetY(10)
-    buffer.anim = anim 
+    buff.anim = anim 
+    buff.turn_cnt = 2
     actor:AddBackAnim(anim)
 end
 
-function BufferOnEnd(buffer, actor, target)
-    
-end
-
-function BufferOnNextTurn(buffer, actor, turn)
-    if turn - buffer.add_turn == 1 then
-        buffer.anim:Stop()
-    end
+function BufferOnEnd(buff, actor, target)
+    buff.anim:Stop()
 end
