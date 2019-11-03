@@ -390,7 +390,14 @@ end
 
 local CurrentCmd = {}
 function combat_system_current_cmd()
-    return CurrentCmd
+    if #Commands > 0 then
+        local cmd = Commands[1]
+        return cmd
+    end
+end
+
+function combat_system_current_turn()
+    return CurrentTurn
 end
 
 function combat_system_update()

@@ -100,10 +100,15 @@ public:
 	Animation(uint64_t resoureID = 0, std::vector<PalSchemePart>* patMatrix = nullptr);
 	Animation(uint32_t pkg, uint32_t wasID, std::vector<PalSchemePart>* patMatrix = nullptr);
 	virtual ~Animation() override;
+	
+	Animation** GetUserData() { return m_UserData; };
+	
 	void Update() override;
 	void Draw() override;
 	void SetVisible(bool visible) { m_Visible = visible; };
 	bool GetVisible() { return m_Visible; };
+	void SetLuaRef(int ref);
+	int GetLuaRef() { return m_LuaRef; };
 
 	void Pause(int ms);
 	void SetLoop(int loop,int mode = ANIMATION_LOOPMODE_RESTART);
@@ -138,10 +143,12 @@ public:
 	void AddUpdateCallback(int funcRef);
 	void RemoveUpdateCallback();
 
+	void CallLuaFunByRef(int& ref);
 private:
 	bool m_bGroupEndUpdate;
 	bool m_bFrameUpdate;
 	int m_LoopCount;
+	int m_LoopCounter;
 	int AttackKeyFrame;
 	int bPlay;
 	int m_PreviousState;
@@ -167,7 +174,10 @@ private:
 	float m_Duration;
 	CXPos m_Velocity;
 	bool m_bLoop;
+	int m_LuaRef;
+	Animation** m_UserData;
 };
+
 
 
 class BeatNumber 

@@ -11,18 +11,6 @@
 #include "graphics/ui_renderer.h"
 
 
-void CallLuaFunByRef(int& ref)
-{
-	if (ref != -1) {
-		lua_State* L = script_system_get_luastate();
-		lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
-		int res = lua_pcall(L, 0, 0, 0);
-		check_lua_error(L, res);
-		luaL_unref(L, LUA_REGISTRYINDEX, ref);
-		ref = -1;
-	}
-}
-
 String UtilsGetFramePath(Sprite* m_pSprite, int index)
 {
 	if (m_pSprite)
@@ -165,6 +153,7 @@ Animation::Animation(uint64_t resoureID /*= 0*/, std::vector<PalSchemePart>* pat
 	m_Visible = true;
 	m_State = ANIMATION_STOP;
 	m_LoopCount = 0;
+	m_LoopCounter = 0;
 	m_bFrameUpdate = false;
 	m_bGroupEndUpdate = false;
 	int max_dx = 0;
@@ -190,6 +179,14 @@ Animation::Animation(uint64_t resoureID /*= 0*/, std::vector<PalSchemePart>* pat
 	m_LoopCBRef = -1;
 	m_UpdateCBRef = -1;
 	m_LoopMode = ANIMATION_LOOPMODE_RESTART;
+
+	lua_State* L = script_system_get_luastate();
+	m_UserData = (Animation**)lua_newuserdata(L, sizeof(Animation*));
+	*m_UserData = this;
+	lua_newtable(L);
+	lua_setuservalue(L, -2);
+	m_LuaRef = luaL_ref(L, LUA_REGISTRYINDEX);
+	//lua_pop(L, 1);
 }
 
 Animation::Animation(uint32_t pkg, uint32_t wasID, std::vector<PalSchemePart>* patMatrix)
@@ -204,15 +201,21 @@ Animation::~Animation()
 	for (auto& data : m_CallbackQueueLua) {
 		luaL_unref(L, LUA_REGISTRYINDEX, data.func);
 	}
+	if (m_LuaRef != LUA_NOREF) {
+		luaL_unref(L, LUA_REGISTRYINDEX, m_LuaRef);
+	}
+	
 }
 
 void Animation::SetLoop(int loop,int mode)
 {
 	if (loop < 0) {
+		m_LoopCounter = 0;
 		m_LoopCount = 0;
 		m_bLoop = false;
 	}
 	else {
+		m_LoopCounter = 0;
 		m_LoopCount = loop;
 		m_bLoop = true;
 	}
@@ -325,6 +328,19 @@ void Animation::RemoveUpdateCallback()
 	}
 }
 
+void Animation::CallLuaFunByRef(int& ref)
+{
+	if (ref != -1) {
+		lua_State* L = script_system_get_luastate();
+		lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
+		lua_push_animation(L, this);
+		int res = lua_pcall(L, 1, 0, 0);
+		check_lua_error(L, res);
+		luaL_unref(L, LUA_REGISTRYINDEX, ref);
+		ref = -1;
+	}
+}
+
 void Animation::RemoveFrameCallback(int frame)
 {
 	m_Callbacks.erase(frame);
@@ -385,10 +401,7 @@ void Animation::Update()
 			if (wrap.dur <= 0) {
 				lua_State*L = script_system_get_luastate();
 				int ref = wrap.func;
-				lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
-				int res = lua_pcall(L, 0, 0, 0);
-				check_lua_error(L, res);
-				luaL_unref(L, LUA_REGISTRYINDEX, ref);
+				CallLuaFunByRef(ref);
 				wrap.markd = true;
 			}
 		}
@@ -420,10 +433,24 @@ void Animation::Update()
 						CurrentFrame = GroupFrameCount - 1;
 					}
 					
-					if (m_LoopCount > 0) {
-						m_LoopCount = m_LoopCount - 1;
-						if (m_LoopCount == 0) {
+					if (m_LoopCounter < m_LoopCount ) {
+						m_LoopCounter = m_LoopCounter + 1;
+						if (m_LoopCBRef != -1) {
+							lua_State* L = script_system_get_luastate();
+							lua_rawgeti(L, LUA_REGISTRYINDEX, m_LoopCBRef);
+							lua_push_animation(L, this);
+							lua_pushinteger(L, m_LoopCounter);
+							int res = lua_pcall(L, 2, 0, 0);
+							check_lua_error(L, res);
+						}
+						if (m_LoopCounter == m_LoopCount) {
 							m_bLoop = false;
+							if (m_LoopCBRef != -1) {
+								lua_State* L = script_system_get_luastate();
+								luaL_unref(L, LUA_REGISTRYINDEX, m_LoopCBRef);
+								m_LoopCBRef = -1;
+							}
+							
 							Stop();			
 							return;
 						}
@@ -453,7 +480,8 @@ void Animation::Update()
 	if (m_UpdateCBRef != -1) {
 		lua_State* L = script_system_get_luastate();
 		lua_rawgeti(L, LUA_REGISTRYINDEX, m_UpdateCBRef);
-		int res = lua_pcall(L, 0, 0, 0);
+		lua_push_animation(L, this);
+		int res = lua_pcall(L, 1, 0, 0);
 		check_lua_error(L, res);
 	}
 
@@ -479,6 +507,11 @@ void Animation::Draw()
 		}
 		
 	}
+}
+
+void Animation::SetLuaRef(int ref)
+{
+	m_LuaRef = ref;
 }
 
 void Animation::Pause(int ms)
@@ -974,17 +1007,35 @@ int animation_translate(lua_State*L) {
 
 	if (lua_isfunction(L, 5)) {
 		lua_pushvalue(L, 5);
+
 		int ref = luaL_ref(L, LUA_REGISTRYINDEX);
 		animation->AddCallbackLua(dur, ref);
 	}
 	return 0;
 }
 
+
+
+int animation_add_loop_callback(lua_State* L) {
+	auto* animation = lua_check_animation(L, 1);
+	if (lua_isfunction(L, 2)) {
+		lua_pushvalue(L, 2);	
+		int ref = luaL_ref(L, LUA_REGISTRYINDEX);
+		animation->AddLoopCallback(ref);
+	}
+	
+	return 0;
+}
+
+
 int animation_add_callback(lua_State*L) {
 	auto* animation = lua_check_animation(L, 1);
 	float dur = (float)lua_tonumber(L, 2);
 	if (lua_isfunction(L, 3)) {
 		lua_pushvalue(L, 3);
+		//lua_pushvalue(L, 1);
+		//lua_setupvalue(L, -2, 1);
+
 		int ref = luaL_ref(L, LUA_REGISTRYINDEX);
 		animation->AddCallbackLua(dur, ref);
 	}
@@ -996,6 +1047,9 @@ int animation_add_frame_callback(lua_State*L){
 	int frame = (int)lua_tointeger(L, 2);
 	if (lua_isfunction(L, 3)) {
 		lua_pushvalue(L, 3);
+	//	lua_pushvalue(L, 1);
+	//	lua_setupvalue(L, -2, 1);
+
 		int ref = luaL_ref(L, LUA_REGISTRYINDEX);
 		animation->AddCallbackLua(animation->FrameInterval*frame, ref);
 	}
@@ -1074,6 +1128,51 @@ int animation_is_frame_update(lua_State*L){
 	return 1;
 }
 
+int animation_index(lua_State* L) {
+	// 1 = table, 2 = key
+	const char* key = lua_tostring(L, 2);
+	//cxlog_info("animation_index , %s\n", key);
+	lua_getmetatable(L, 1);		
+	lua_getfield(L, -1, key);
+	if (!lua_isnil(L, -1)) {
+		//cxlog_info("index type %d %s\n", lua_type(L, -1), key);
+		return 1;
+	}
+	else {
+		lua_getuservalue(L, 1);
+		lua_getfield(L, -1, key);
+		if (!lua_isnil(L, -1)) {
+			return 1;
+		}
+		else {
+			lua_pushnil(L);
+			return 1;
+		}
+	}
+}
+
+int animation_newindex(lua_State*L){
+	// 1 = table, 2 = key, 3 = value
+	lua_getuservalue(L, 1);
+	lua_replace(L, 1);
+	lua_settable(L, 1);
+	return 1;
+}
+
+
+int animation_destroy(lua_State* L) {
+	Animation** ptr = (Animation**)lua_touserdata(L, 1);
+	lua_pushnil(L);
+	lua_setuservalue(L, 1);
+	//int type = lua_type(L, -1);
+	
+	//lua_getfield(L, -1,"a");
+	
+	//auto* animation = lua_check_animation(L, 1);
+	//lua_pushboolean(L, animation->IsFrameUpdate());
+	return 1;
+}
+
 
 luaL_Reg MT_ANIMATION[] = {
 { "Pause",animation_pause },
@@ -1089,6 +1188,7 @@ luaL_Reg MT_ANIMATION[] = {
 { "AddStopCallback", animation_add_stop_callback},
 { "AddFrameCallback", animation_add_frame_callback},
 { "AddStartCallback", animation_add_start_callback},
+{ "AddLoopCallback", animation_add_loop_callback},
 { "AddUpdateCallback", animation_add_update_callback},
 { "RemoveUpdateCallback", animation_remove_update_callback},
 { "GetKeyFrame", animation_get_key_frame},
@@ -1097,6 +1197,9 @@ luaL_Reg MT_ANIMATION[] = {
 { "SetOffsetY", animation_set_offset_y},
 { "IsGroupEndUpdate", animation_is_group_end_update},
 { "IsFrameUpdate", animation_is_frame_update},
+//{ "__gc", animation_destroy},
+{ "__index", animation_index},
+{ "__newindex", animation_newindex},
 { NULL, NULL }
 };
 
@@ -1118,30 +1221,20 @@ void lua_push_base_sprite(lua_State* L, BaseSprite* sprite)
 
 void lua_push_animation(lua_State*L, Animation* sprite)
 {
-	lua_push_pointer(L, sprite);
+	lua_rawgeti(L, LUA_REGISTRYINDEX, sprite->GetLuaRef());
 	if (luaL_newmetatable(L, "MT_ANIMATION")) {
 		luaL_setfuncs(L, MT_BASE_SPRITE, 0);
 		luaL_setfuncs(L, MT_ANIMATION, 0);
-		lua_pushvalue(L, -1);
-		lua_setfield(L, -2, "__index");
 	}
 	lua_setmetatable(L, -2);
 }
+
 
 int animation_create(lua_State* L)
 {
 	uint32_t pack = (uint32_t)lua_tointeger(L, 1);
 	uint32_t wasid = (uint32_t)lua_tointeger(L, 2);
-
-	Animation** ptr = (Animation * *)lua_newuserdata(L, sizeof(Animation));
-	*ptr = new Animation(pack, wasid);
-	if (luaL_newmetatable(L, "MT_ANIMATION")) {
-		luaL_setfuncs(L, MT_BASE_SPRITE, 0);
-		luaL_setfuncs(L, MT_ANIMATION, 0);
-		lua_pushvalue(L, -1);
-		lua_setfield(L, -2, "__index");
-	}
-	lua_setmetatable(L, -2);
+	lua_push_animation(L, new Animation(pack, wasid));
 	return 1;
 }
 

@@ -23,7 +23,7 @@ script_system_dofile('input_manager.lua')
 -- script_system_dofile('../generator/actor_template.lua')
 -- script_system_dofile('parser.lua')
 
--- luadbg_listen(9527)
+luadbg_listen(9527)
 IsCombat = false
 --聊天背景框 wzife 39D3BD99 
 function main()

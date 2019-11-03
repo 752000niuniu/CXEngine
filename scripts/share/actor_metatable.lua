@@ -65,6 +65,17 @@ function ActorMT:StopMove()
     self:MoveTo(x,y)
 end
 
+function ActorMT:FaceTo(target)
+    local actor = self
+    local tar_x,tar_y = target:GetPos()
+    local degree = actor:GetMoveDestAngle(tar_x,tar_y)
+    local dir = actor:GetDirByDegree(degree)
+    dir = math_dir_8_to_4(dir)
+    actor:SetDir(dir)
+    target:SetDir(dir)
+    target:ReverseDir()
+end
+
 
 COEF = {
     [RACE_HUMAN] = {
