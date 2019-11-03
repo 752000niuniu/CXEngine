@@ -114,8 +114,6 @@ function on_cast_spell( skill, actor)
                     local pack, was = res_decode(resid)
                     local anim = animation_create(pack,was)
                     anim:SetLoop(-1)
-                    -- local offy = -avatar:GetFrameKeyY() + avatar:GetFrameHeight() / 2.0
-                    -- anim:SetOffsetY(offy)  
                     target:AddFrontAnim(anim)
         
                     local damage = target:GetProperty(PROP_ASM_DAMAGE) 
@@ -234,6 +232,9 @@ function on_attack_action_callback(attack_action)
         target:ShowBeatNumber(damage)
         attack_action:Pause(math.floor(anim:GetGroupFrameTime()* 1000))
         behit_action:Pause(math.floor(anim:GetGroupFrameTime()* 1000))
+
+        local dir_x ,dir_y = actor:GetAttackVec()
+        target:MoveOnScreenWithDuration(dir_x*24,dir_y*24, anim:GetGroupFrameTime() ,true)
     end)
     
     behit_action:AddStopCallback(function()
@@ -291,8 +292,13 @@ function on_attack_action_callback(attack_action)
                     end
                 end)
             else
+                local dir_x ,dir_y = actor:GetAttackVec()
+                target:MoveOnScreenWithDuration(-dir_x*24,-dir_y*24,PERFRAME_TIME*2,true)
                 combat_system_current_cmd():RemoveActing(target)
             end
+        else 
+            local dir_x ,dir_y = actor:GetAttackVec()
+            target:MoveOnScreenWithDuration(-dir_x*24,-dir_y*24,PERFRAME_TIME*2,true)
         end
     end)
     combat_system_current_cmd():AddActing(target)
@@ -400,13 +406,8 @@ function ActorMT:CastSkill(skill_id)
                     break
                 end
             end
-
             on_cast_attack(skill, actor)
         end
-        -- local damage = actor:GetAttackDamage(false,false,0,1)
-        -- target:SetProperty(PROP_ASM_DAMAGE,damage) 
-        -- target:ModifyHP(-damage)
-        -- target:SetProperty(PROP_ASM_BEHIT_ANIM, skill.templ.atk_anim)
     elseif skill.type == 'spell' then
         local player = actor_manager_fetch_local_player()
         for i, target in ipairs(BattleActors) do
