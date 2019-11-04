@@ -258,3 +258,143 @@ function get_pal_from_json(str)
     end
     return new_pal
 end
+
+function traversal_file(path, cb)
+	local files, dirs = ks.disk_dir(path)
+
+	for i, v in ipairs(files) do 
+		cb(v)
+	end
+	for i,v in ipairs(dirs) do
+		local subpath = path..'/'..v
+		traversal_file(subpath, cb)
+	end
+end
+
+function sort_file_tree_info_once(node)
+	if node.nodes then
+		table.sort(node.nodes,function(a,b) 
+			local alua = a.key:match('%.lua') or a.key:match('%.tab') 
+			local blua = b.key:match('%.lua') or b.key:match('%.tab')
+			-- ks.log_info(a.key, b.key, alua, blua)
+			if alua ~= blua then
+				if alua then
+					return false
+				else
+					return true
+				end
+			else
+				return a.key < b.key
+			end
+		end)
+	end
+end
+
+
+function sort_file_tree_info(node)
+	if node.nodes then
+		table.sort(node.nodes,function(a,b) 
+			local alua = a.key:match('%.lua') 
+			local blua = b.key:match('%.lua') 
+			-- ks.log_info(a.key, b.key, alua, blua)
+			if alua ~= blua then
+				if alua then
+					return false
+				else
+					return true
+				end
+			else
+				return a.key < b.key
+			end
+		end)
+		for ni,n in ipairs(node.nodes) do
+			sort_file_tree_info(n)
+		end
+	end
+end
+
+
+function get_path_from_node(node)
+	local dirs = {}
+	local fname = node.key
+	while node.p ~= nil do
+		if node.p.key ~='' then
+			table.insert(dirs,1,node.p.key)
+		end
+		node = node.p
+	end
+	local dir = table.concat(dirs,'/')
+	local path = dir.. '/'..fname
+	-- ks.log_info('path '.. path)
+	return path
+end
+
+
+
+
+function build_file_tree_info(filepaths)
+	local root = {}
+	root.key = ''
+	root.p = nil
+	root.nodes = nil
+
+	for i,path in ipairs(filepaths) do
+		filepaths[i] = path:gsub('\\','/')
+		local sps = utils_string_split(filepaths[i],'/')
+		local cur = root
+		for si,s in ipairs(sps) do
+			if s:match('%.lua') or s:match('%.tab') then
+				local node = {}
+				node.key = s 
+				node.p = cur 
+				node.nodes = nil
+				if cur.nodes == nil then
+					cur.nodes = {}
+				end
+				table.insert(cur.nodes, node)
+			else
+				if cur.nodes == nil then
+					cur.nodes = {}
+				end
+				local found_node = nil
+				for ni,n in ipairs(cur.nodes) do
+					if n.key == s then
+						found_node = n
+						break
+					end 
+				end
+				if not found_node then
+					local node = {}
+					node.key = s 
+					node.p = cur 
+					node.nodes = nil
+					node.lua_cnt = 0
+					table.insert(cur.nodes, node)
+					cur = node
+				else 
+					cur = found_node
+				end
+			end
+		end
+	end
+	sort_file_tree_info_once(root)
+	return root
+end
+
+
+local cur_selection = ''
+function show_next_tree_node(node)
+	for i,n in ipairs(node.nodes) do
+		if n.nodes then
+			if imgui.TreeNode(n.key.. '##'..tostring(n)) then
+				sort_file_tree_info_once(n)
+				show_next_tree_node(n)
+				imgui.TreePop()
+			end
+		else
+			if imgui.Selectable(n.key..'##'..tostring(n), cur_selection==tostring(n)) then
+				cur_selection = tostring(n)
+			end
+		end
+	end
+end
