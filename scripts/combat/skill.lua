@@ -125,6 +125,23 @@ function on_cast_spell( skill, actor)
                         skill.templ.SkillOnAfterSpell(skill, actor, target)
                     end 
                 end)
+            elseif skill.templ.sub_type==SKILL_SUBTYPE_HEAL then
+                local resid = skill.atk_anim
+                local pack, was = res_decode(resid)
+                local anim = animation_create(pack,was)
+                anim:SetLoop(-1)
+                anim:SetOffsetY(-20)
+                target:AddFrontAnim(anim)
+                skill.spell_anim = anim
+                if skill.templ.SkillOnSpell then
+                    skill.templ.SkillOnSpell(skill, actor, target)
+                end
+                anim:AddStopCallback(function()
+                    target:ShowBeatNumber(-damage)
+                    if skill.templ.SkillOnAfterSpell then
+                        skill.templ.SkillOnAfterSpell(skill, actor, target)
+                    end 
+                end)
             else
                 local behit_action = target:GetAvatar(ACTION_BEHIT)
                 behit_action:Reset()
@@ -136,7 +153,7 @@ function on_cast_spell( skill, actor)
                     anim:SetLoop(-1)
                     
                     target:AddFrontAnim(anim)
-                    target:ShowBeatNumber(damage)
+                    target:ShowBeatNumber(-damage)
                     behit_action:Pause(math.floor(anim:GetGroupFrameTime()* 1000))
                     skill.spell_anim = anim
                     if skill.templ.SkillOnSpell then
@@ -255,7 +272,10 @@ function on_attack_action_callback(attack_action)
         target:AddFrontAnim(anim)
 
         local damage = skill.atk_damage[skill.atk_counter]
-        target:ShowBeatNumber(damage)
+        target:ShowBeatNumber(-damage)
+
+        -- actor:ShowBeatNumber(damage)
+
         attack_action:Pause(math.floor(anim:GetGroupFrameTime()* 1000))
         behit_action:Pause(math.floor(anim:GetGroupFrameTime()* 1000))
 
@@ -476,7 +496,9 @@ function ActorMT:CastSkill(skill_id)
             local target = skill.spell_actors[i]
             local damage = actor:GetSpellDamage(target)
             if skill.templ.sub_type == SKILL_SUBTYPE_SEAL then
-                damage = 0
+                damage = 0            
+            elseif  skill.templ.sub_type == SKILL_SUBTYPE_HEAL then
+                damage = -damage
             end
             table.insert(skill.spell_damage,damage)
             target:ModifyHP(-damage)

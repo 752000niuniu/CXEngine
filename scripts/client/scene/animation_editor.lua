@@ -214,6 +214,7 @@ function check_dest_hit_actor(dest_x, dest_y)
         cxlog_info('check_dest_hit_actor', actor:GetProperty(PROP_NAME))
         if not actor:IsLocal() then
             local avatar = actor:GetAvatar()
+            if not avatar then return end
             local avx, avy = actor:GetProperty(PROP_POS)
             local cx =  avx - avatar:GetFrameKeyX()
             local cy =  avy - avatar:GetFrameKeyY()

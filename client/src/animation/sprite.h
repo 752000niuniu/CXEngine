@@ -213,6 +213,7 @@ private:
 	std::deque<Digit>m_Digits;
 	Animation m_HealAnim;
 	Animation m_HitAnim;
+	bool m_ShowHeal;
 };
 
 class AnimationManager :public Singleton<AnimationManager>

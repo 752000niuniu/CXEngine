@@ -548,16 +548,17 @@ void BeatNumber::Update()
 			float start_time = i * (m_BeatTime / m_BeatHeights);
 			if (m_PlayTime > start_time) {
 				float dur = m_PlayTime - start_time;
-				dig.y = (m_HitAnim.m_pSprite->Height * m_BeatHeights / m_BeatTime)*dur;
-				if (dig.y > m_HitAnim.m_pSprite->Height * m_BeatHeights * 2) {
+				auto& anim = m_ShowHeal ? m_HealAnim : m_HitAnim;
+				dig.y = (anim.m_pSprite->Height * m_BeatHeights / m_BeatTime)*dur;
+				if (dig.y > anim.m_pSprite->Height * m_BeatHeights * 2) {
 					dig.y = 0;
 					if (i == m_Digits.size() - 1) {
 						m_bBeat = false;
 						m_PlayTime = -m_PauseTime;
 					}
 				}
-				else if (dig.y > m_HitAnim.m_pSprite->Height*m_BeatHeights) {
-					dig.y = m_HitAnim.m_pSprite->Height * m_BeatHeights * 2 - dig.y;
+				else if (dig.y > anim.m_pSprite->Height*m_BeatHeights) {
+					dig.y = anim.m_pSprite->Height * m_BeatHeights * 2 - dig.y;
 				}
 			}
 		}
@@ -580,10 +581,11 @@ void BeatNumber::Draw()
 		Digit& dig = m_Digits[i];
 		float x = px + i*m_AdvanceX;
 		float y = m_Pos.y - dig.y;
-		auto* texture = UtilsGetFrameTexture(m_HitAnim.m_pSprite, dig.digit);
+		auto& anim = m_ShowHeal ? m_HealAnim : m_HitAnim;
+		auto* texture = UtilsGetFrameTexture(anim.m_pSprite, dig.digit);
 		if (texture)
 		{
-			auto& frame = m_HitAnim.m_pSprite->Frames[dig.digit];
+			auto& frame = anim.m_pSprite->Frames[dig.digit];
 			SPRITE_RENDERER_INSTANCE->DrawFrameSprite(texture,
 				glm::vec2(x - frame.KeyX, y - frame.KeyY),
 				glm::vec2(frame.Width, frame.Height), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -599,7 +601,12 @@ void BeatNumber::SetPos(float x, float y)
 
 void BeatNumber::SetNumber(float number)
 {
-	m_Number =(int)std::floor(number);
+	if(number>0)
+		m_ShowHeal = true;
+	else
+		m_ShowHeal = false;
+	number = std::abs(number);
+	m_Number = (int)std::floor(number);
 	int num = m_Number;
 	m_Digits.clear();
 	int i = 0;
