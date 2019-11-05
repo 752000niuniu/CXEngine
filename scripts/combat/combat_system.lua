@@ -41,94 +41,6 @@ function BufferMT:new(o)
 end
 
 
-local TeamMT = {}
-function TeamMT:new(o)
-    o = o or {
-        members={}
-    }
-    self.__index = self 
-    setmetatable(o, self)
-    return o
-end
-
-function TeamMT:GetID()
-    return self.id
-end
-
-function TeamMT:SetType(type)
-    self.type = type
-end
-
-function TeamMT:GetType()
-    return self.type 
-end
-
-function TeamMT:AddMember(actor)
-    table.insert(self.members,actor:GetID())
-end
-
-function TeamMT:RemoveMember(actor)
-    for i,id in ipairs(self.members) do
-        if id == actor:GetID() then
-            table.remove(self.members,i)
-            return 
-        end
-    end
-end
-
-function TeamMT:GetGroupKillTargets(count)
-    local targets = {}
-    for i=1,count do
-        table.insert(targets, self.members[i])
-    end
-    return targets
-end
-
-function TeamMT:IsReady()
-    local ready = true
-    for i,id in ipairs(self.members) do
-        local actor = actor_manager_fetch_player_by_id(id)
-        if not actor:GetProperty(PROP_TURN_READY) then
-            ready = false
-            break
-        end
-    end
-    return ready
-end
-
-function TeamMT:SetReady()
-    for i,id in ipairs(self.members) do
-        local actor = actor_manager_fetch_player_by_id(id)
-        actor:SetProperty(PROP_TURN_READY, false)
-    end
-end
-
-
-function TeamMT:IsAllDead()
-    local all_dead = true
-    for i,id in ipairs(self.members) do
-        local actor = actor_manager_fetch_player_by_id(id)
-        if not actor:IsDead() then
-            all_dead = false
-            break
-        end
-    end
-    return all_dead
-end
-
-function TeamMT:DrawHP()
-    for i,id in ipairs(self.members) do
-        local actor = actor_manager_fetch_player_by_id(id)
-        local x,y,w,h = actor:GetAvatarRect()
-        imgui.SetCursorPos(x,y-10)
-        local max_hp = actor:GetMaxHP()
-        local hp = actor:GetHP()
-        imgui.Text(hp..'/'..max_hp)
-    end
-end
-
-local AttackerTeam 
-local DefenderTeam
 local ActorBuffers = {}
 local CommandMT = {}
 function CommandMT:new(o)
@@ -259,7 +171,14 @@ function calc_combat_enemy_pos(ratio_x, ratio_y)
 end
 
 function check_turn_ready()
-    return AttackerTeam:IsReady() and DefenderTeam:IsReady()
+    local ready = true
+    for i,actor in ipairs(BattleActors) do
+        if not actor:GetProperty(PROP_TURN_READY) then
+            ready = false
+            break
+        end
+    end
+    return ready
 end
 
 function combat_system_init()
@@ -378,7 +297,18 @@ function combat_system_on_turn_end()
 end
 
 function check_battle_end()
-    return AttackerTeam:IsAllDead() or DefenderTeam:IsAllDead()
+    local atk_all_dead = true
+    local def_all_dead = true
+    for i,actor in ipairs(BattleActors) do
+        if not actor:IsDead() then
+            if actor:GetProperty(PROP_TEAM_TYPE) == TEAM_TYPE_ATTACKER then
+                atk_all_dead = false
+            else
+                def_all_dead = false
+            end
+        end
+    end
+    return atk_all_dead or def_all_dead
 end
 
 function combat_system_fetch_current_cmd()
@@ -493,43 +423,27 @@ function combat_system_draw()
     animation_manager_draw()
 end
 
-
 function combat_system_start_battle(atk_actors, dfd_actors)
     scene_set_combat(true)
     BattleActors = {}
 
     local team_id = os.time()
-    AttackerTeam = TeamMT:new()
-    AttackerTeam.id = team_id
-    AttackerTeam:SetType(TEAM_TYPE_ATTACKER)
+    
     for i,actor in ipairs(atk_actors) do
-        AttackerTeam:AddMember(actor)
         actor:SetProperty(PROP_TEAM_TYPE, TEAM_TYPE_ATTACKER)
-        actor:SetProperty(PROP_TEAM_ID, AttackerTeam:GetID())
+        actor:SetProperty(PROP_TEAM_ID, team_id)
         table.insert(BattleActors, actor)
     end
 
-    DefenderTeam = TeamMT:new()
-    DefenderTeam.id = team_id + 1
-    DefenderTeam:SetType(TEAM_TYPE_DEFENDER)
+    team_id = team_id + 1
     for i,actor in ipairs(dfd_actors) do
-        DefenderTeam:AddMember(actor)
         actor:SetProperty(PROP_TEAM_TYPE, TEAM_TYPE_DEFENDER)
-        actor:SetProperty(PROP_TEAM_ID, DefenderTeam:GetID())
+        actor:SetProperty(PROP_TEAM_ID, team_id)
         table.insert(BattleActors, actor)
     end
     BattleState = BATTLE_START
 end
 
-function actor_get_team(actor)
-    if actor:GetProperty(PROP_TEAM_TYPE) == TEAM_TYPE_ATTACKER then
-        return AttackerTeam
-    elseif actor:GetProperty(PROP_TEAM_TYPE) == TEAM_TYPE_DEFENDER then
-        return DefenderTeam
-    else
-        cxlog_info('no team!!!')
-    end
-end
 
 function combat_system_remove_from_battle(_actor_)
     for i,actor in ipairs(BattleActors) do
@@ -649,7 +563,13 @@ function combat_system_imgui_update()
         player:PlayAttack()
     end
 
-    DefenderTeam:DrawHP()
-    AttackerTeam:DrawHP()
+
+    for i,actor in ipairs(BattleActors) do
+        local x,y,w,h = actor:GetAvatarRect()
+        imgui.SetCursorPos(x,y-10)
+        local max_hp = actor:GetMaxHP()
+        local hp = actor:GetHP()
+        imgui.Text(hp..'/'..max_hp)
+    end
 end
 
