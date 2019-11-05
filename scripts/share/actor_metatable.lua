@@ -107,8 +107,15 @@ end
 function formula_calc_targethit(actor)
     local race = actor:GetProperty(PROP_RACE)
     local base_target = race == RACE_DEVIL and 27 or 30
-    local target = actor:GetProperty(PROP_BASE_FORCE) * COEF[race].target + base_target
-    return target
+    local target_force = actor:GetProperty(PROP_BASE_FORCE) * COEF[race].target + base_target
+    local lv = actor:GetProperty(PROP_LV)
+    local target_weapon = (lv//10) * 35 + 10
+    local school = actor:GetProperty(PROP_SCHOOL)
+    local target_school = 0
+    if school == SCHOOL_DT then
+        target_school = 0
+    end
+    return target_force+target_weapon
 end
 
 --伤害 力量*0.7+34 力量*0.8+34 力量*0.6+40
