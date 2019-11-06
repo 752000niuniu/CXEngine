@@ -502,14 +502,14 @@ function ActorMT:GetSpellDamage(target)
     return damage
 end
 
-prop_school_skill_lv_targethit	int	0
-prop_school_skill_lv_damage	int	0
-prop_school_skill_lv_defend	int	0
-prop_school_skill_lv_speed	int	0
-prop_school_skill_lv_dodge	int	0
-prop_school_skill_lv_spritual	int	0
-prop_school_skill_lv_hp	int	0
-prop_school_skill_lv_mp	int	0
+-- prop_school_skill_lv_targethit	int	0
+-- prop_school_skill_lv_damage	int	0
+-- prop_school_skill_lv_defend	int	0
+-- prop_school_skill_lv_speed	int	0
+-- prop_school_skill_lv_dodge	int	0
+-- prop_school_skill_lv_spritual	int	0
+-- prop_school_skill_lv_hp	int	0
+-- prop_school_skill_lv_mp	int	0
 function ActorMT:CalcSchoolSkillTargethit()
     local school = self:GetProperty(PROP_SCHOOL)
     local skill_lv = self:GetProperty(PROP_SCHOOL_SKILL_LV_TARGETHIT)
@@ -519,7 +519,7 @@ function ActorMT:CalcSchoolSkillTargethit()
     elseif school == SCHOOL_LB then
 
     elseif school == SCHOOL_PS then
-        
+
     end
 
     for i=0,skill_lv do
