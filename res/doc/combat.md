@@ -24,7 +24,6 @@ PVE 最多5V10  对方是NPC 或者 普通Actor
 5. 回合结束，进入下一个回合
 
 #战斗指令
-
 类型：
 施法技能 ：物理施法，法术施法，特技施法，辅助施法
 普通攻击
@@ -74,8 +73,6 @@ mp +-	mp不足 不能释放技能
 攻击者	待战 -> 跑去 -> 攻击       -> 跑回 ->  待战
 受击者	待战              受击                    待战
 
-
-
 2. 法术类
 
 3. 法术攻击指令
@@ -89,14 +86,6 @@ mp +-	mp不足 不能释放技能
 回合开始后,对战斗指令进行播放
 回合结束, 只用退出播放就行了.
 
-
-
-
-cmd = {
-    master,
-    target,
-    skill_id
-}
 
 atk_skill = {
     type = 'atk',
@@ -124,17 +113,11 @@ buff = {
 
 
 播放攻击指令
-
 待战-> 跑去-> 攻击 -> 
-
 读取攻击技能id, 是否有combo , 是否是群秒, 是否产生暴击, 是否吸血, 攻击效果, 是否会添加buff
 添加buff的话, 添加后 调用buffOnStart
-
 -> 跑回 -> 结束
-
-
 播放施法指令
-
 
 
 atk_skill = {
@@ -155,108 +138,12 @@ atk_skill = {
 攻击动作
     每次攻击动作触发一次伤害,每次攻击有可能吸血,反震,反击,防御,播放攻击动画等.
 
-
 attack = {
     master,
     target,
     skill_id,
 }
-->
-if skill.group_kill > 0 
-    generate group kill data
-    kill {target, random target}
-else
-    kill target
-end
 
-kill :
-if combo > 0 then
-    combo attack
-else
-    attack
-end
-
-GroupAttack = {
-    SingleAttack = {
-        target,
-        ComboAttack = {
-            
-        }
-    }
-}
-attack_command = {
-    skill_id,
-    group_kill = {
-        attack_process1 = {
-            attack_action1 = {
-                is_suck_blood,
-                is_critical_atk,
-                is_defend
-            },
-            attack_action2 = {
-                is_suck_blood,
-                is_critical_atk,
-                is_defend
-            },
-        },
-        attack_process2 = {
-            attack_action1 = {
-                is_suck_blood,
-                is_critical_atk,
-                is_defend
-            },
-            attack_action2 = {
-                is_suck_blood,
-                is_critical_atk,
-                is_defend
-            },
-        }
-    }
-}
-
-战斗中一个玩家的状态机表现:
-
-刚开始是待战 玩家的战斗位置 移动速度 武器动画 人物动画 动作切换
-
-待战->跑去-> 
-攻击 
-    
--> 跑回 -> 待战
-
-
-
-客户端状态机 
-
-待机->走动->待机
-
-待战->(物理攻击)->待战
-
-物理攻击:
-1. 平砍
-2. 连击
-3. 群击
-
-待战->受击->待战
-
-待战->(法术攻击)->待战
-
-法术攻击:
-
-1. 单秒
-2. 群秒
-
-一个回合表演 对应一个command队列更新
-
-command执行顺序由player速度决定
-
-一个command对应于一个player表演
-
-command有各种类型
-
-攻击:
-
-
-施法:
 
 物理攻击 : 连击 暴击 吸血 单体攻击 群体攻击 受击动画
     普攻 
@@ -299,7 +186,6 @@ command有各种类型
 　
 
 
-
 八、修炼公式：
 修炼后伤害加成公式：an=1.02^n *(a+250)-250 ，其中a为原始伤害，n为修炼级数（n≤20）
 以原始伤害a=400为例，修炼10级(n=10)后，an=1.219*(400+250)-250=542.3，增幅35.6％；修炼20级(n=20)后，an=1.486*(400+250)-250=715.9，增幅79.0%。
@@ -316,18 +202,6 @@ command有各种类型
 盘丝 勾魂=SKILL*3+对方当前HP*5% ；姐妹同心MP伤害=SKILL*5
 摄魄=SKILL*3 吸取 SKILL*1.5自身补充
 简评：因目前职业所限暂无研究。
-
-十一、 梦幻各门派技能平均效果计算公式：
-先作如下假设：
-除去所有装备时的人物属性点数为 x （假设为力量）
-除去所有装备的所对应的数值参数为 y （这里对应的就是伤害）
-技能的等级为 z （所要计算的技能等级）
-不同种族的对应资质初始属性为 a
-不同种族的对应的能力初始属性为 b
-所研究的属性和数值的关系是 f
-那么得到每级技能的平均加成效果是：
-每级技能的攻加成绝对值：(y-(x-a)*f-b)/z
-每级技能的攻加成百分比：([y/{(x-a)*f+b}]-1)/z
 
 
 封印
