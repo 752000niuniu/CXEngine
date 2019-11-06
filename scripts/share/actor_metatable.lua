@@ -354,6 +354,23 @@ function ActorMT:IsDead()
     return self:GetProperty(PROP_HP) <= 0 
 end
 
+function ActorMT:GetRaceName()
+    local race = self:GetProperty(PROP_RACE)
+    if race == RACE_DEVIL then
+        return '魔'
+    elseif race == RACE_HUMAN then
+        return '人'
+    elseif race == RACE_SPIRIT then
+        return '仙'
+    end
+end
+
+function ActorMT:GetSchoolName()
+    local school_tbl = content_system_get_table('school')
+    local school = self:GetProperty(PROP_SCHOOL)
+    return school_tbl[school].name
+end
+
 local init_prop = {
     [RACE_HUMAN] = {
         10,10,10,10,10
@@ -483,4 +500,62 @@ function ActorMT:GetSpellDamage(target)
     local lv = self:GetProperty(PROP_LV)
     local damage = lv*3 + (spell_atk-spell_def)*1.2 + 20
     return damage
+end
+
+prop_school_skill_lv_targethit	int	0
+prop_school_skill_lv_damage	int	0
+prop_school_skill_lv_defend	int	0
+prop_school_skill_lv_speed	int	0
+prop_school_skill_lv_dodge	int	0
+prop_school_skill_lv_spritual	int	0
+prop_school_skill_lv_hp	int	0
+prop_school_skill_lv_mp	int	0
+function ActorMT:CalcSchoolSkillTargethit()
+    local school = self:GetProperty(PROP_SCHOOL)
+    local skill_lv = self:GetProperty(PROP_SCHOOL_SKILL_LV_TARGETHIT)
+    local targethit = 0
+    if school == SCHOOL_DT then
+
+    elseif school == SCHOOL_LB then
+
+    elseif school == SCHOOL_PS then
+        
+    end
+
+    for i=0,skill_lv do
+        if school == SCHOOL_DT then
+            targethit = targethit + 0.97 + i*0.0203
+        elseif school == SCHOOL_LB then
+            targethit = targethit + 1 + i*0.0099
+        elseif school == SCHOOL_PS then
+            targethit = targethit + i*3
+        end
+    end
+    return targethit
+end
+
+function ActorMT:CalcSchoolSkillDamage()
+    
+end
+
+function ActorMT:CalcSchoolSkillDefend()
+    
+end
+
+function ActorMT:CalcSchoolSkillSpeed()
+    
+end
+
+function ActorMT:CalcSchoolSkillDodge()
+    
+end
+function ActorMT:CalcSchoolSkillSpritual()
+    
+end
+
+function ActorMT:CalcSchoolSkillHP()
+    
+end
+function ActorMT:CalcSchoolSkillMP()
+    
 end

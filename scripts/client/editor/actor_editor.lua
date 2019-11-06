@@ -362,22 +362,36 @@ function on_actor_editor_update()
                     actor:SetProperty(PROP_LV, 145)
                 end
             end
-
-            imgui.Text('MaxHP ' .. actor:GetMaxHP())
-            imgui.Text('当前HP '..actor:GetProperty(PROP_HP))
-
-            imgui.Text('MaxMP ' .. actor:GetMaxMP())
-            imgui.Text('当前MP '..actor:GetProperty(PROP_MP))
-
-            imgui.Text('当前SP '..actor:GetProperty(PROP_SP))
+            imgui.Text('种族:'..actor:GetRaceName())
+            imgui.SameLine()
+            imgui.Text('门派:'..actor:GetSchoolName())
             
+            imgui.Text('HP:'.. math.floor(actor:GetProperty(PROP_HP)) .. '/'..actor:GetMaxHP())
+            imgui.SameLine()
+            imgui.Text('MP:' .. math.floor(actor:GetProperty(PROP_MP)) ..'/' ..actor:GetMaxMP())
+            imgui.SameLine()
+            imgui.Text('SP:'..actor:GetProperty(PROP_SP) ..'/150')
+            imgui.Separator()
+
             imgui.Text('体质 '..actor:GetProperty(PROP_BASE_HEALTH))
             imgui.Text('魔力 '..actor:GetProperty(PROP_BASE_MAGIC))
             imgui.Text('力量 '..actor:GetProperty(PROP_BASE_FORCE))
             imgui.Text('耐力 '..actor:GetProperty(PROP_BASE_STAMINA))
             imgui.Text('敏捷 '..actor:GetProperty(PROP_BASE_AGILITY))
-
+            imgui.Separator()
             
+            imgui.Text('命中技能等级:'..actor:GetProperty())
+            
+            imgui.Text('HP技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_HP))
+            imgui.Text('MP技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_MP))
+            imgui.Text('命中技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_TARGETHIT))
+            imgui.Text('伤害技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_DAMAGE))
+            imgui.Text('防御技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_DEFEND))
+            imgui.Text('灵力技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_SPRITUAL))
+            imgui.Text('速度技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_SPEED))
+            imgui.Text('躲避技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_DODGE))
+
+            imgui.Separator()
             imgui.Text('命中 '..actor:CalcTargetHit())
             imgui.Text('攻击 '..actor:CalcAttack())
             imgui.Text('防御 '..actor:CalcDefend())
