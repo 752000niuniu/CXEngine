@@ -38,21 +38,21 @@ ID	name	type	sub_type	combo	atk_anim	group_kill	cast_anim	act_turn
 36	FC_落魄符	spell			6-4FB56243			
 37	FC_追魂符	spell			6-D4024676			
 38	FC_飞行符	spell			6-693F825E			
-39	HS_一苇渡江	spell			6-F354CCB8			
-40	HS_佛法无边	spell			6-C8011EF1			
-41	HS_佛门普渡	spell			6-1989B002			
+39	HS_一苇渡江	spell	2		6-F354CCB8			
+40	HS_佛法无边	spell	2		6-C8011EF1			
+41	HS_佛门普渡	spell	2		6-1989B002			
 42	HS_唧唧歪歪	spell			6-C12C2663			
-43	HS_我佛慈悲	spell			6-203B8773			
-44	HS_推拿	spell			6-03139F50			
-45	HS_正骨	spell			6-E869B98A			
+43	HS_我佛慈悲	spell	2		6-203B8773			
+44	HS_推拿	spell	2		6-03139F50			
+45	HS_正骨	spell	2		6-E869B98A			
 46	HS_神佑复生	spell			6-DA22B637			
 47	HS_紫气东来	spell			6-A742E8AB			
-48	HS_舍生取义	spell			6-F0CE9045			
-49	HS_解毒	spell			6-DE34B83E			
-50	HS_达摩护体	spell			6-98F08C75			
-51	HS_金刚护体	spell			6-38C2146B			
-52	HS_金刚护法	spell			6-04DB6C0A			
-53	HS_针灸	spell			6-573F92CA			
+48	HS_舍生取义	spell	2		6-F0CE9045			
+49	HS_解毒	spell	2		6-DE34B83E			
+50	HS_达摩护体	spell	2		6-98F08C75			
+51	HS_金刚护体	spell	2		6-38C2146B			
+52	HS_金刚护法	spell	2		6-04DB6C0A			
+53	HS_针灸	spell	2		6-573F92CA			
 54	HS_韦陀护法	spell			6-94A5BEEC			
 55	LG_斩龙诀	spell						
 56	LG	spell			6-6EFC43B9			

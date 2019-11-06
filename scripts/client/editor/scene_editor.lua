@@ -105,6 +105,9 @@ function on_scene_editor_update()
                 actor:SetProperty(PROP_POS, player:GetProperty(PROP_POS))
                 actor:SetProperty(PROP_SCENE_ID, player:GetProperty(PROP_SCENE_ID))
                 actor:SetDir(player:GetDir())
+                -- actor:ModifyHP(100)
+                actor:SetProperty(PROP_HP,100) 
+                -- actor:(PROP_SCENE_ID, player:GetProperty(PROP_SCENE_ID))
             end
         end)
     end  

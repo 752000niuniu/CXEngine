@@ -2,6 +2,17 @@ name	type	def
 prop_id	uint64	0
 prop_dir	int	4
 prop_race	int	1
+prop_school	int	1
+prop_school_skill_lv_targethit	int	0
+prop_school_skill_lv_damage	int	0
+prop_school_skill_lv_defend	int	0
+prop_school_skill_lv_speed	int	0
+prop_school_skill_lv_dodge	int	0
+prop_school_skill_lv_spritual	int	0
+prop_school_skill_lv_hp	int	0
+prop_school_skill_lv_mp	int	0
+prop_auxi_skill_lv_hp	int	0
+prop_auxi_skill_lv_mp	int	0
 prop_show_boundingbox	bool	false
 prop_show_avatar_info	bool	false
 prop_is_autorun	bool	false
