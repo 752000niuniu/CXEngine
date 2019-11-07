@@ -485,8 +485,9 @@ function ActorMT:CalcAttack()
         local prop_atk = formula_calc_atk(self)
         local skill_atk = self:CalcSchoolSkillDamage()
         local equip_targethit = self:GetProperty(PROP_EQUIP_TARGET)
+        local equip_atk = self:GetProperty(PROP_EQUIP_DAMAGE)
         local skill_targethit = self:CalcSchoolSkillTargethit()
-        return prop_atk + skill_atk +(equip_targethit + skill_targethit) /3
+        return prop_atk + skill_atk + equip_atk +(equip_targethit + skill_targethit) /3
     elseif actor_type == ACTOR_TYPE_SUMMON then
         return formula_calc_summon_atk(self)
     end
