@@ -354,19 +354,24 @@ function on_actor_editor_update()
                     actor:SetProperty(PROP_BASE_AGILITY, 171)
                     actor:SetProperty(PROP_LV, 151)
                 else
-                    actor:SetProperty(PROP_BASE_HEALTH, 333 )
-                    actor:SetProperty(PROP_BASE_MAGIC,157 )
-                    actor:SetProperty(PROP_BASE_FORCE, 689)
-                    actor:SetProperty(PROP_BASE_STAMINA , 215 )
-                    actor:SetProperty(PROP_BASE_AGILITY, 157)
-                    local lv = 145
+                    local lv = 69
+                    actor:SetPropsByPlan({
+                        health = 0,
+                        magic = 0,
+                        force = 5,
+                        stamina = 0,
+                        agility = 0,
+                    })
+
                     actor:SetProperty(PROP_LV, lv)
                     actor:SetProperty(PROP_SCHOOL_SKILL_LV_TARGETHIT, lv) 
                     actor:SetProperty(PROP_SCHOOL_SKILL_LV_DAMAGE, lv) 
                     actor:SetProperty(PROP_SCHOOL_SKILL_LV_DEFEND, lv) 
                     actor:SetProperty(PROP_SCHOOL_SKILL_LV_SPEED, lv) 
                     actor:SetProperty(PROP_SCHOOL_SKILL_LV_DODGE, lv) 
-                    actor:SetProperty(PROP_SCHOOL_SKILL_LV_SPRITUAL, 60) 
+                    actor:SetProperty(PROP_SCHOOL_SKILL_LV_SPIRITUAL, 60) 
+
+                    actor:SetGlobalStandardEquip(lv)
                 end
             end
             imgui.Text('种族:'..actor:GetRaceName())
@@ -394,7 +399,7 @@ function on_actor_editor_update()
             imgui.Text('命中技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_TARGETHIT))
             imgui.Text('伤害技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_DAMAGE))
             imgui.Text('防御技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_DEFEND))
-            imgui.Text('灵力技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_SPRITUAL))
+            imgui.Text('灵力技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_SPIRITUAL))
             imgui.Text('速度技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_SPEED))
             imgui.Text('躲避技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_DODGE))
 

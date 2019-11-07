@@ -8,7 +8,7 @@ prop_school_skill_lv_damage	int	0
 prop_school_skill_lv_defend	int	0
 prop_school_skill_lv_speed	int	0
 prop_school_skill_lv_dodge	int	0
-prop_school_skill_lv_spritual	int	0
+prop_school_skill_lv_spiritual	int	0
 prop_school_skill_lv_hp	int	0
 prop_school_skill_lv_mp	int	0
 prop_equip_hp	float	0

@@ -198,7 +198,7 @@ function formula_calc_summon_speed(actor)
 end
 
 --灵力 ＝等级*(法力资质+1640)*(成长率+1)/7500 +魔力×0.7+力量×0.4+体质×0.3+耐力×0.2
-function formula_calc_summon_spritual(actor)
+function formula_calc_summon_spiritual(actor)
     local lv = actor:GetProperty(PROP_LV)
     local grow = actor:GetProperty(PROP_SUMMON_GROW_COEF)
     local magic_qual = actor:GetProperty(PROP_SUMMON_MAGIC_QUAL)
@@ -361,24 +361,24 @@ function ActorMT:CalcSchoolSkillDodge()
     return dodge    
 end
 
-function ActorMT:CalcSchoolSkillSpritual()
+function ActorMT:CalcSchoolSkillSpiritual()
     local school = self:GetProperty(PROP_SCHOOL)
-    local skill_lv = self:GetProperty(PROP_SCHOOL_SKILL_LV_SPRITUAL)
-    local spritual = 0
+    local skill_lv = self:GetProperty(PROP_SCHOOL_SKILL_LV_SPIRITUAL)
+    local spiritual = 0
     for i=1,skill_lv do
         if school == SCHOOL_PS then
-            spritual = spritual + 0.46639 + 0.0141*i
+            spiritual = spiritual + 0.46639 + 0.0141*i
         else
-            spritual = spritual + 0.46639 + 0.0092*i
+            spiritual = spiritual + 0.46639 + 0.0092*i
         end
     end
-    return spritual    
+    return spiritual    
 end
 
 function ActorMT:CalcSchoolSkillHP(base_hp)
     local school = self:GetProperty(PROP_SCHOOL)
     if school ~= SCHOOL_TG then return 0 end
-    local skill_lv = self:GetProperty(PROP_SCHOOL_SKILL_LV_SPRITUAL)
+    local skill_lv = self:GetProperty(PROP_SCHOOL_SKILL_LV_SPIRITUAL)
     local hp = base_hp
     for i=1,skill_lv do
         hp = hp*(1+0.003)
@@ -390,7 +390,7 @@ end
 function ActorMT:CalcSchoolSkillMP(base_mp)
     local school = self:GetProperty(PROP_SCHOOL)
     if school ~= SCHOOL_WZ then return 0 end
-    local skill_lv = self:GetProperty(PROP_SCHOOL_SKILL_LV_SPRITUAL)
+    local skill_lv = self:GetProperty(PROP_SCHOOL_SKILL_LV_SPIRITUAL)
     local mp = base_mp
     for i=1,skill_lv do
         mp = mp*(1+0.005)
@@ -523,11 +523,11 @@ function ActorMT:CalcSpiritual()
     local actor_type = self:GetProperty(PROP_ACTOR_TYPE) 
     if actor_type == ACTOR_TYPE_PLAYER then
         local prop_spiritual = formula_calc_spiritual(self)
-        local skill_spiritual = self:CalcSchoolSkillSpritual()
+        local skill_spiritual = self:CalcSchoolSkillSpiritual()
         local equip_spiritual = self:GetProperty(PROP_EQUIP_SPIRITUAL)
         return prop_spiritual+ equip_spiritual+ skill_spiritual
     elseif actor_type == ACTOR_TYPE_SUMMON then
-        return formula_calc_summon_spritual(self)
+        return formula_calc_summon_spiritual(self)
     end
     return 0
 end
@@ -576,6 +576,42 @@ local init_prop = {
     },
 }
 
+function ActorMT:SetPropsByPlan(plan)
+    for k,v in pairs(plan) do
+        plan[k] = tonumber(v)/5
+    end
+
+    local lv = self:GetProperty(PROP_LV) 
+    local total = (lv+1) * 5 
+    local actor_type = self:GetProperty(PROP_ACTOR_TYPE)
+    local race = self:GetProperty(PROP_RACE)
+
+
+    local health = 0 
+    local magic = 0 
+    local force = 0 
+    local stamina = 0 
+    local agility = 0 
+    if actor_type == ACTOR_TYPE_PLAYER then
+        health  = init_prop[race][1] + lv + total * plan.health
+        magic   = init_prop[race][2] + lv + total * plan.magic
+        force   = init_prop[race][3] + lv + total * plan.force
+        stamina = init_prop[race][4] + lv + total * plan.stamina
+        agility = init_prop[race][5] + lv + total * plan.agility
+    elseif actor_type == ACTOR_TYPE_SUMMON then
+        health  = 20 + lv + total * plan.health
+        magic   = 20 + lv + total * plan.magic
+        force   = 20 + lv + total * plan.force
+        stamina = 20 + lv + total * plan.stamina
+        agility = 20 + lv + total * plan.agility
+    end
+
+    self:SetProperty(PROP_BASE_HEALTH, health)
+    self:SetProperty(PROP_BASE_MAGIC, magic)
+    self:SetProperty(PROP_BASE_FORCE, force)
+    self:SetProperty(PROP_BASE_STAMINA , stamina)
+    self:SetProperty(PROP_BASE_AGILITY, agility)
+end
 
 function ActorMT:UpdatePropPtsByPlan()
     local planstr = self:GetProperty(PROP_ADD_PROP_PLAN) 
@@ -621,7 +657,7 @@ function ActorMT:UpdatePropPtsByPlan()
     self:SetProperty(PROP_SCHOOL_SKILL_LV_DEFEND, lv) 
     self:SetProperty(PROP_SCHOOL_SKILL_LV_SPEED, lv) 
     self:SetProperty(PROP_SCHOOL_SKILL_LV_DODGE, lv) 
-    self:SetProperty(PROP_SCHOOL_SKILL_LV_SPRITUAL, lv) 
+    self:SetProperty(PROP_SCHOOL_SKILL_LV_SPIRITUAL, lv) 
 end
 
 
@@ -702,4 +738,58 @@ function ActorMT:GetSpellDamage(target)
     local lv = self:GetProperty(PROP_LV)
     local damage = lv*3 + (spell_atk-spell_def)*1.2 + 20
     return damage
+end
+
+
+function ActorMT:SetGlobalStandardEquip(lv, is_enforce)
+    local equip_tbl = content_system_get_table('equip')
+    local x = lv // 10
+    local enforce_suffix = is_enforce and '_enforced' or '' 
+    
+    local weapon = { damage = 0, target = 0 }
+    local weapon_tpl = equip_tbl['weapon'..enforce_suffix]
+    weapon.target = weapon_tpl.base_target + x * weapon_tpl.lv_accum_target
+    weapon.damage = weapon_tpl.base_damage + x * weapon_tpl.lv_accum_damage
+
+    local armor = { defend = 0}
+    local armor_tpl = equip_tbl['armor'..enforce_suffix]
+    armor.defend = armor_tpl.base_defend + x * armor_tpl.lv_accum_defend
+    
+    local helmet = {defend = 0, mp = 0}
+    local helmet_tpl = equip_tbl['helmet'..enforce_suffix]
+    helmet.defend = helmet_tpl.base_defend + x * helmet_tpl.lv_accum_defend
+    helmet.mp = helmet_tpl.base_mp + x * helmet_tpl.lv_accum_mp
+
+
+    local belt = {defend = 0, hp = 0}
+    local belt_tpl = equip_tbl['belt'..enforce_suffix]
+    belt.defend = belt_tpl.base_defend + x * belt_tpl.lv_accum_defend
+    belt.hp = belt_tpl.base_hp + x * belt_tpl.lv_accum_hp
+
+    local necklace = {spiritual = 0}
+    local necklace_tpl = equip_tbl['necklace'..enforce_suffix]
+    necklace.spiritual = necklace_tpl.base_spiritual + x * necklace_tpl.lv_accum_spiritual
+
+    local shoes = {defend = 0 , aglie = 0}
+    local shoes_tpl = equip_tbl['shoes'..enforce_suffix]
+    shoes.defend = shoes_tpl.base_defend + x * shoes_tpl.lv_accum_defend
+    shoes.aglie = shoes_tpl.base_agile + x * shoes_tpl.lv_accum_agile
+
+    local total_hp = belt.hp
+    local total_mp = helmet.mp
+    local total_target = weapon.target
+    local total_damage = weapon.damage
+    local total_defend = armor.defend + helmet.defend + belt.defend+ shoes.defend
+    local total_spritual = necklace.spiritual
+    local total_aglie = shoes.aglie
+
+
+    self:SetProperty(PROP_EQUIP_HP, total_hp) 
+    self:SetProperty(PROP_EQUIP_MP, total_mp) 
+    self:SetProperty(PROP_EQUIP_TARGET, total_target) 
+    self:SetProperty(PROP_EQUIP_DAMAGE, total_damage) 
+    self:SetProperty(PROP_EQUIP_DEFEND, total_defend) 
+    self:SetProperty(PROP_EQUIP_SPIRITUAL, total_spritual) 
+    self:SetProperty(PROP_EQUIP_AGILE, total_aglie) 
+
 end

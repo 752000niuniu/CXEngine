@@ -118,6 +118,32 @@ function init_school_templ_table()
     return ret
 end
 
+function init_equip_templ_table()
+    local tbl = utils_parse_tsv(vfs_get_tsvpath('equip'),{
+        {name = 'name'},
+        {name = 'type'},
+        {name = 'base_target', fmt = 'n' , def = 0},
+        {name = 'lv_accum_target', fmt = 'n' , def = 0},
+        {name = 'base_damage', fmt = 'n' , def = 0},
+        {name = 'lv_accum_damage', fmt = 'n' , def = 0},
+        {name = 'base_defend', fmt = 'n' , def = 0},
+        {name = 'lv_accum_defend', fmt = 'n' , def = 0},
+        {name = 'base_hp', fmt = 'n' , def = 0},
+        {name = 'lv_accum_hp', fmt = 'n' , def = 0},
+        {name = 'base_mp', fmt = 'n' , def = 0},
+        {name = 'lv_accum_mp', fmt = 'n' , def = 0},
+        {name = 'base_spiritual', fmt = 'n' , def = 0},
+        {name = 'lv_accum_spiritual', fmt = 'n' , def = 0},
+        {name = 'base_agile', fmt = 'n' , def = 0},
+        {name = 'lv_accum_agile', fmt = 'n' , def = 0}
+    })
+    local ret = {}
+    for i,row in ipairs(tbl) do
+        ret[row.type] = row
+    end
+    return ret
+end
+
 function content_system_init()
     content_system_set_table('role', read_tsv_index_by_main_key('avatar_role',false,'ID'))
     content_system_set_table('weapon', read_tsv_index_by_main_key('avatar_weapon',false,'ID'))
@@ -130,6 +156,7 @@ function content_system_init()
     content_system_set_table('buffer', init_buffer_template_table())
 
     content_system_set_table('school', init_school_templ_table())
+    content_system_set_table('equip', init_equip_templ_table())
     
     
 end
