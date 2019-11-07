@@ -123,8 +123,11 @@ function OnSceneInit()
         [PROP_BASE_FORCE] =  689,
         [PROP_BASE_STAMINA] = 215 ,
         [PROP_BASE_AGILITY] =  157,
+        [PROP_SCHOOL] =  SCHOOL_DT,
         [PROP_LV] =  145
     })
+
+
 
     player:SetProperty(PROP_HP, player:GetMaxHP()/3)
     player:SetProperty(PROP_MP, player:GetMaxMP())

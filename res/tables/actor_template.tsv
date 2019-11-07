@@ -11,6 +11,13 @@ prop_school_skill_lv_dodge	int	0
 prop_school_skill_lv_spritual	int	0
 prop_school_skill_lv_hp	int	0
 prop_school_skill_lv_mp	int	0
+prop_equip_hp	float	0
+prop_equip_mp	float	0
+prop_equip_target	float	0
+prop_equip_damage	float	0
+prop_equip_defend	float	0
+prop_equip_spiritual	float	0
+prop_equip_agile	float	0
 prop_auxi_skill_lv_hp	int	0
 prop_auxi_skill_lv_mp	int	0
 prop_show_boundingbox	bool	false

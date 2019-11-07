@@ -108,14 +108,7 @@ function formula_calc_targethit(actor)
     local race = actor:GetProperty(PROP_RACE)
     local base_target = race == RACE_DEVIL and 27 or 30
     local target_force = actor:GetProperty(PROP_BASE_FORCE) * COEF[race].target + base_target
-    local lv = actor:GetProperty(PROP_LV)
-    local target_weapon = (lv//10) * 35 + 10
-    local school = actor:GetProperty(PROP_SCHOOL)
-    local target_school = 0
-    if school == SCHOOL_DT then
-        target_school = 0
-    end
-    return target_force+target_weapon
+    return target_force
 end
 
 --伤害 力量*0.7+34 力量*0.8+34 力量*0.6+40
@@ -232,10 +225,188 @@ function formula_calc_summon_growth_2(actor)
     return 0
 end
 
+function ActorMT:CalcSchoolSkillTargethit()
+    local school = self:GetProperty(PROP_SCHOOL)
+    local skill_lv = self:GetProperty(PROP_SCHOOL_SKILL_LV_TARGETHIT)
+    local targethit = 0
+    for i=1,skill_lv do
+        if school == SCHOOL_DT then
+            targethit = targethit + 0.97 + i*0.0203
+        elseif school == SCHOOL_LB then
+            targethit = targethit + 1 + i*0.0099
+        elseif school == SCHOOL_PS then
+            targethit = targethit + i*3
+        end
+    end
+    return targethit
+end
+
+function ActorMT:CalcSchoolSkillDamage()
+    local school = self:GetProperty(PROP_SCHOOL)
+    local skill_lv = self:GetProperty(PROP_SCHOOL_SKILL_LV_DAMAGE)
+    local damage = 0
+    for i=1,skill_lv do
+        if school == SCHOOL_DT then
+            if i == 1 then
+                damage = (69 - 46)
+            else
+                damage = damage + 2.46 + 0.0143*i
+            end
+        elseif school == SCHOOL_HS then
+            if i == 1 then
+                damage = (53 - 46)
+            else
+                damage = damage + 2 + 0.02*i
+            end
+        elseif school == SCHOOL_FC then
+            if i == 1 then
+                damage = (63 - 46)
+            else
+                damage = damage + 1.9799 + 0.02019*i
+            end
+        elseif school == SCHOOL_NE then
+            if i == 1 then
+                damage = (73 - 46)
+            else
+                damage = damage +  2.015+ 0.01*i
+            end
+        elseif school == SCHOOL_TG then
+            if i == 1 then
+                damage = (73 - 46)
+            else
+                damage = damage + 2.4612+ 0.02039*i
+            end
+        elseif school == SCHOOL_LG then
+            if i == 1 then
+                damage = (87 - 46)
+            else
+                damage = damage + 2.0973+ 0.01899*i
+            end
+        elseif school == SCHOOL_WZ then
+            if i == 1 then
+                damage = (77 - 46)
+            else
+                damage = damage + 1.48049+ 0.02009*i
+            end
+        elseif school == SCHOOL_PT then
+            if i == 1 then
+                damage = (67 - 46)
+            else
+                damage = damage + 1.99+ 0.02*i
+            end
+        elseif school == SCHOOL_ST then
+            if i == 1 then
+                damage = (80 - 48)
+            else
+                damage = damage + 1.976+ 0.0091*i
+            end
+        elseif school == SCHOOL_MW then
+            if i == 1 then
+                damage = (80 - 48)
+            else
+                damage = damage + 1.98309+ 0.02019*i
+            end
+        elseif school == SCHOOL_DF then
+            if i == 1 then
+                damage = (100 - 48)
+            else
+                damage = damage + 2.3766+ 0.021073*i --夜晚
+                -- damage = damage + 1.46569+ 0.0092*i 白天
+            end
+        elseif school == SCHOOL_PS then
+            if i == 1 then
+                damage = (85 - 48)
+            else
+                damage = damage + 2.5002 + 0.0089*i
+            end
+        else
+            if i == 1 then
+                damage = (75 - 48)
+            else
+               damage = damage  + 2.46 + 0.0143*i
+            end
+        end        
+    end
+    return damage
+end
+
+function ActorMT:CalcSchoolSkillDefend()
+    local school = self:GetProperty(PROP_SCHOOL)
+    local skill_lv = self:GetProperty(PROP_SCHOOL_SKILL_LV_DEFEND)
+    local defend = 0
+    for i=1,skill_lv do
+        defend = defend + 1 + 0.0138*i
+    end
+    return defend
+end
+
+function ActorMT:CalcSchoolSkillSpeed()
+    local school = self:GetProperty(PROP_SCHOOL)
+    if school ~= SCHOOL_NE then return 0 end
+    local skill_lv = self:GetProperty(PROP_SCHOOL_SKILL_LV_SPEED)
+    local speed = skill_lv/0.7+math.sqrt(skill_lv) - skill_lv/4.2 + skill_lv*skill_lv/5000
+    return speed   
+end
+
+function ActorMT:CalcSchoolSkillDodge()
+    local school = self:GetProperty(PROP_SCHOOL)
+    if school == SCHOOL_NE then return 0 end
+    local skill_lv = self:GetProperty(PROP_SCHOOL_SKILL_LV_DODGE)
+    local dodge = 0
+    for i=1,skill_lv do
+        if school ~= SCHOOL_NE then
+            dodge = dodge + 2.1775  + 0.01839 *i
+        end
+    end
+    return dodge    
+end
+
+function ActorMT:CalcSchoolSkillSpritual()
+    local school = self:GetProperty(PROP_SCHOOL)
+    local skill_lv = self:GetProperty(PROP_SCHOOL_SKILL_LV_SPRITUAL)
+    local spritual = 0
+    for i=1,skill_lv do
+        if school == SCHOOL_PS then
+            spritual = spritual + 0.46639 + 0.0141*i
+        else
+            spritual = spritual + 0.46639 + 0.0092*i
+        end
+    end
+    return spritual    
+end
+
+function ActorMT:CalcSchoolSkillHP(base_hp)
+    local school = self:GetProperty(PROP_SCHOOL)
+    if school ~= SCHOOL_TG then return 0 end
+    local skill_lv = self:GetProperty(PROP_SCHOOL_SKILL_LV_SPRITUAL)
+    local hp = base_hp
+    for i=1,skill_lv do
+        hp = hp*(1+0.003)
+    end
+    hp = hp - base_hp
+    return hp
+end
+
+function ActorMT:CalcSchoolSkillMP(base_mp)
+    local school = self:GetProperty(PROP_SCHOOL)
+    if school ~= SCHOOL_WZ then return 0 end
+    local skill_lv = self:GetProperty(PROP_SCHOOL_SKILL_LV_SPRITUAL)
+    local mp = base_mp
+    for i=1,skill_lv do
+        mp = mp*(1+0.005)
+    end
+    mp = mp - base_mp
+    return mp
+end
+
+
 function ActorMT:GetMaxHP()
     local actor_type = self:GetProperty(PROP_ACTOR_TYPE) 
     if actor_type == ACTOR_TYPE_PLAYER then
-        return formula_calc_hp(self)
+        local hp  = formula_calc_hp(self)
+        local equip_hp = self:GetProperty(PROP_EQUIP_HP)
+        local skill_hp = self:CalcSchoolSkillHP(hp+equip_hp)
+        return hp + equip_hp + skill_hp
     elseif actor_type == ACTOR_TYPE_SUMMON then
         return formula_calc_summon_hp(self)
     end
@@ -245,7 +416,10 @@ end
 function ActorMT:GetMaxMP()
     local actor_type = self:GetProperty(PROP_ACTOR_TYPE) 
     if actor_type == ACTOR_TYPE_PLAYER then
-        return formula_calc_mp(self)
+        local mp = formula_calc_mp(self)
+        local equip_mp = self:GetProperty(PROP_EQUIP_MP)
+        local skill_mp = self:CalcSchoolSkillMP(equip_mp+ mp)
+        return mp + equip_mp+ skill_mp
     elseif actor_type == ACTOR_TYPE_SUMMON then
         return formula_calc_summon_mp(self)
     end
@@ -297,7 +471,10 @@ end
 function ActorMT:CalcTargetHit()
     local actor_type = self:GetProperty(PROP_ACTOR_TYPE) 
     if actor_type == ACTOR_TYPE_PLAYER then
-        return formula_calc_targethit(self)
+        local prop_targethit = formula_calc_targethit(self)
+        local equip_targethit = self:GetProperty(PROP_EQUIP_TARGET)
+        local skill_targethit = self:CalcSchoolSkillTargethit()
+        return prop_targethit +equip_targethit + skill_targethit
     end
     return 0
 end
@@ -305,7 +482,11 @@ end
 function ActorMT:CalcAttack()
     local actor_type = self:GetProperty(PROP_ACTOR_TYPE) 
     if actor_type == ACTOR_TYPE_PLAYER then
-        return formula_calc_atk(self)
+        local prop_atk = formula_calc_atk(self)
+        local skill_atk = self:CalcSchoolSkillDamage()
+        local equip_targethit = self:GetProperty(PROP_EQUIP_TARGET)
+        local skill_targethit = self:CalcSchoolSkillTargethit()
+        return prop_atk + skill_atk +(equip_targethit + skill_targethit) /3
     elseif actor_type == ACTOR_TYPE_SUMMON then
         return formula_calc_summon_atk(self)
     end
@@ -315,7 +496,10 @@ end
 function ActorMT:CalcDefend()
     local actor_type = self:GetProperty(PROP_ACTOR_TYPE) 
     if actor_type == ACTOR_TYPE_PLAYER then
-        return formula_calc_defend(self)
+        local prop_def = formula_calc_defend(self)
+        local skill_def = self:CalcSchoolSkillDefend()
+        local equip_defend = self:GetProperty(PROP_EQUIP_DEFEND)
+        return prop_def + equip_defend + skill_def
     elseif actor_type == ACTOR_TYPE_SUMMON then
         return formula_calc_summon_defend(self)
     end
@@ -325,7 +509,10 @@ end
 function ActorMT:CalcSpeed()
     local actor_type = self:GetProperty(PROP_ACTOR_TYPE) 
     if actor_type == ACTOR_TYPE_PLAYER then
-        return formula_calc_speed(self)
+        local prop_speed = formula_calc_speed(self)
+        local equip_aglie = self:GetProperty(PROP_EQUIP_AGILE)
+        local  skill_speed = self:CalcSchoolSkillSpeed(self)
+        return prop_speed + equip_aglie*0.7+ skill_speed
     elseif actor_type == ACTOR_TYPE_SUMMON then
         return formula_calc_summon_speed(self)
     end
@@ -335,7 +522,10 @@ end
 function ActorMT:CalcSpiritual()
     local actor_type = self:GetProperty(PROP_ACTOR_TYPE) 
     if actor_type == ACTOR_TYPE_PLAYER then
-        return formula_calc_spiritual(self)
+        local prop_spiritual = formula_calc_spiritual(self)
+        local skill_spiritual = self:CalcSchoolSkillSpritual()
+        local equip_spiritual = self:GetProperty(PROP_EQUIP_SPIRITUAL)
+        return prop_spiritual+ equip_spiritual+ skill_spiritual
     elseif actor_type == ACTOR_TYPE_SUMMON then
         return formula_calc_summon_spritual(self)
     end
@@ -345,7 +535,10 @@ end
 function ActorMT:CalcDodge()
     local actor_type = self:GetProperty(PROP_ACTOR_TYPE) 
     if actor_type == ACTOR_TYPE_PLAYER then
-        return formula_calc_dodge(self)
+        local prop_dodge = formula_calc_dodge(self)
+        local equip_aglie = self:GetProperty(PROP_EQUIP_AGILE)
+        local skill_dodge = self:CalcSchoolSkillDodge()
+        return prop_dodge + equip_aglie+ skill_dodge
     end
     return 0
 end
@@ -420,6 +613,15 @@ function ActorMT:UpdatePropPtsByPlan()
     self:SetProperty(PROP_BASE_FORCE, force)
     self:SetProperty(PROP_BASE_STAMINA , stamina)
     self:SetProperty(PROP_BASE_AGILITY, agility)
+
+
+
+    self:SetProperty(PROP_SCHOOL_SKILL_LV_TARGETHIT, lv) 
+    self:SetProperty(PROP_SCHOOL_SKILL_LV_DAMAGE, lv) 
+    self:SetProperty(PROP_SCHOOL_SKILL_LV_DEFEND, lv) 
+    self:SetProperty(PROP_SCHOOL_SKILL_LV_SPEED, lv) 
+    self:SetProperty(PROP_SCHOOL_SKILL_LV_DODGE, lv) 
+    self:SetProperty(PROP_SCHOOL_SKILL_LV_SPRITUAL, lv) 
 end
 
 
@@ -500,62 +702,4 @@ function ActorMT:GetSpellDamage(target)
     local lv = self:GetProperty(PROP_LV)
     local damage = lv*3 + (spell_atk-spell_def)*1.2 + 20
     return damage
-end
-
--- prop_school_skill_lv_targethit	int	0
--- prop_school_skill_lv_damage	int	0
--- prop_school_skill_lv_defend	int	0
--- prop_school_skill_lv_speed	int	0
--- prop_school_skill_lv_dodge	int	0
--- prop_school_skill_lv_spritual	int	0
--- prop_school_skill_lv_hp	int	0
--- prop_school_skill_lv_mp	int	0
-function ActorMT:CalcSchoolSkillTargethit()
-    local school = self:GetProperty(PROP_SCHOOL)
-    local skill_lv = self:GetProperty(PROP_SCHOOL_SKILL_LV_TARGETHIT)
-    local targethit = 0
-    if school == SCHOOL_DT then
-
-    elseif school == SCHOOL_LB then
-
-    elseif school == SCHOOL_PS then
-
-    end
-
-    for i=0,skill_lv do
-        if school == SCHOOL_DT then
-            targethit = targethit + 0.97 + i*0.0203
-        elseif school == SCHOOL_LB then
-            targethit = targethit + 1 + i*0.0099
-        elseif school == SCHOOL_PS then
-            targethit = targethit + i*3
-        end
-    end
-    return targethit
-end
-
-function ActorMT:CalcSchoolSkillDamage()
-    
-end
-
-function ActorMT:CalcSchoolSkillDefend()
-    
-end
-
-function ActorMT:CalcSchoolSkillSpeed()
-    
-end
-
-function ActorMT:CalcSchoolSkillDodge()
-    
-end
-function ActorMT:CalcSchoolSkillSpritual()
-    
-end
-
-function ActorMT:CalcSchoolSkillHP()
-    
-end
-function ActorMT:CalcSchoolSkillMP()
-    
 end

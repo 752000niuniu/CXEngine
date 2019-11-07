@@ -359,7 +359,14 @@ function on_actor_editor_update()
                     actor:SetProperty(PROP_BASE_FORCE, 689)
                     actor:SetProperty(PROP_BASE_STAMINA , 215 )
                     actor:SetProperty(PROP_BASE_AGILITY, 157)
-                    actor:SetProperty(PROP_LV, 145)
+                    local lv = 145
+                    actor:SetProperty(PROP_LV, lv)
+                    actor:SetProperty(PROP_SCHOOL_SKILL_LV_TARGETHIT, lv) 
+                    actor:SetProperty(PROP_SCHOOL_SKILL_LV_DAMAGE, lv) 
+                    actor:SetProperty(PROP_SCHOOL_SKILL_LV_DEFEND, lv) 
+                    actor:SetProperty(PROP_SCHOOL_SKILL_LV_SPEED, lv) 
+                    actor:SetProperty(PROP_SCHOOL_SKILL_LV_DODGE, lv) 
+                    actor:SetProperty(PROP_SCHOOL_SKILL_LV_SPRITUAL, 60) 
                 end
             end
             imgui.Text('种族:'..actor:GetRaceName())
