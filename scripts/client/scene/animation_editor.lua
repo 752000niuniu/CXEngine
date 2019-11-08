@@ -59,6 +59,7 @@ function OnSceneInit()
             [PROP_BASE_FORCE] =  215,
             [PROP_BASE_STAMINA] = 157  ,
             [PROP_BASE_AGILITY] =  689,
+            [PROP_SCHOOL] =  SCHOOL_DT,
             [PROP_LV] =  145
         })
 
