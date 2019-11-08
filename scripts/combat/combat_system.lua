@@ -520,22 +520,6 @@ function combat_system_imgui_update()
                 imgui.CloseCurrentPopup()
             end
         end)
-
-        -- local player = actor_manager_fetch_local_player()
-
-        -- if imgui.Button('横扫千军') then
-        --     player:SetProperty(PROP_USING_SKILL, 20)
-        --     imgui.CloseCurrentPopup()
-        -- end
-        -- if imgui.Button('催眠符') then
-        --     player:SetProperty(PROP_USING_SKILL, 26)
-        --     imgui.CloseCurrentPopup()
-        -- end
-        -- if imgui.Button('龙腾') then
-        --     player:SetProperty(PROP_USING_SKILL, 38)
-        --     imgui.CloseCurrentPopup()
-        -- end
-
         imgui.EndPopup('SpellSelector')
     end
     imgui.End()
