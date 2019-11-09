@@ -239,6 +239,7 @@ function OnSceneUpdate()
         
     else
         if imgui.IsMouseClicked(0) then
+            
             local player = actor_manager_fetch_local_player()
             local mx,my = input_manager_get_mouse_pos()
             local dest_x, dest_y = util_screen_pos_to_map_pos(mx, my)

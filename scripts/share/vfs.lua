@@ -47,3 +47,11 @@ end
 function vfs_get_iconpath(path)
 	return work_dir..'res/icon/'..path
 end
+
+function IsServer()
+    return SIMPLE_SERVER and true or false
+end
+
+function IsClient()
+    return SIMPLE_SERVER and false or true
+end

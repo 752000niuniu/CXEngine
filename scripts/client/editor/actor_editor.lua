@@ -34,11 +34,11 @@ local LoginDebugButtons = {
             msg.account = AccountSB:str()
             msg.password = PasswordSB:str()
             msg.name = 'Ocean藏心'
-            msg.scene_id = 1135
+            msg.scene_id = -105
             msg.role_id = 1
             msg.weapon_id = 40
-            msg.x = 200
-            msg.y = 2790
+            msg.x = 306
+            msg.y = 466
             net_send_message(PTO_C2C_LOGIN, cjson.encode(msg))
         end
     },
