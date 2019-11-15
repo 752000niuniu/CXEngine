@@ -144,7 +144,9 @@ public:
 	void RemoveUpdateCallback();
 
 	void CallLuaFunByRef(int& ref);
+	void SetRotation(float rotate) { m_Rotation = rotate; };
 private:
+	float m_Rotation;
 	bool m_bGroupEndUpdate;
 	bool m_bFrameUpdate;
 	int m_LoopCount;

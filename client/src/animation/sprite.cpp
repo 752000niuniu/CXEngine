@@ -186,6 +186,7 @@ Animation::Animation(uint64_t resoureID /*= 0*/, std::vector<PalSchemePart>* pat
 	lua_newtable(L);
 	lua_setuservalue(L, -2);
 	m_LuaRef = luaL_ref(L, LUA_REGISTRYINDEX);
+	m_Rotation = 0;
 	//lua_pop(L, 1);
 }
 
@@ -499,11 +500,11 @@ void Animation::Draw()
 		if(m_bTranslate){
 			SPRITE_RENDERER_INSTANCE->DrawFrameSprite(texture,
 				glm::vec2(m_TranslationPos.x - frame.KeyX, m_TranslationPos.y - frame.KeyY),
-				glm::vec2(frame.Width, frame.Height), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+				glm::vec2(frame.Width, frame.Height), DegreeToRadian(m_Rotation), glm::vec3(1.0f, 1.0f, 1.0f));
 		}else{
 			SPRITE_RENDERER_INSTANCE->DrawFrameSprite(texture,
 				glm::vec2(Pos.x - frame.KeyX, Pos.y - frame.KeyY),
-				glm::vec2(frame.Width, frame.Height), 0.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+				glm::vec2(frame.Width, frame.Height), DegreeToRadian(m_Rotation), glm::vec3(1.0f, 1.0f, 1.0f));
 		}
 		
 	}
@@ -1135,6 +1136,14 @@ int animation_is_frame_update(lua_State*L){
 	return 1;
 }
 
+int animation_set_rotation(lua_State* L) {
+	auto* animation = lua_check_animation(L, 1);
+	float degree = (float)lua_tonumber(L, 2);
+	animation->SetRotation(degree);
+	return 0;
+}
+
+
 int animation_index(lua_State* L) {
 	// 1 = table, 2 = key
 	const char* key = lua_tostring(L, 2);
@@ -1204,6 +1213,7 @@ luaL_Reg MT_ANIMATION[] = {
 { "SetOffsetY", animation_set_offset_y},
 { "IsGroupEndUpdate", animation_is_group_end_update},
 { "IsFrameUpdate", animation_is_frame_update},
+{ "SetRotation", animation_set_rotation},
 //{ "__gc", animation_destroy},
 { "__index", animation_index},
 { "__newindex", animation_newindex},
