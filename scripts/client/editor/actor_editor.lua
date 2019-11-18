@@ -1,5 +1,6 @@
 local AccountSB = imgui.CreateStrbuf('oceancx',256)
 local PasswordSB = imgui.CreateStrbuf('123456',256)
+local SourceSB = imgui.CreateStrbuf('print("hello")',2560)
 local PlayerNameSB = imgui.CreateStrbuf('Ocean藏心',256)
 
 local IPSB = imgui.CreateStrbuf('127.0.0.1',256)
@@ -263,6 +264,14 @@ function on_actor_editor_update()
         imgui.Text("Password   :");
         imgui.SameLine();
         imgui.InputText("##password", PasswordSB);
+
+        imgui.Text('Server:')
+        imgui.InputTextMultiline('##source', SourceSB, 400, 200,ImGuiInputTextFlags_AllowTabInput)
+        if imgui.Button('服务端执行') then
+            local code = SourceSB:str()
+            local msg = {code = code} 
+            net_send_message(PTO_C2S_DOSTRING, cjson.encode(msg) )
+        end
 
         imgui_std_horizontal_button_layout(LoginDebugButtons,function(t,k) 
             local nk,v = next(t,k)

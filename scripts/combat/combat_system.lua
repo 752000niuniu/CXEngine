@@ -513,9 +513,16 @@ function combat_system_imgui_update()
     imgui.SetNextWindowSize(350,400)
     if imgui.BeginPopup('SpellSelector') then
         local skill_tbl = content_system_get_table('skill')
-        imgui.HorizontalLayout(skill_tbl,next,function(k,v) 
+        local player = actor_manager_fetch_local_player()      
+        local school = player:GetProperty(PROP_SCHOOL)
+        local school_skill = {}
+        for id,row in pairs(skill_tbl) do
+            if row.school == school then
+                school_skill[id] = row
+            end
+        end
+        imgui.HorizontalLayout(school_skill,next,function(k,v) 
             if imgui.Button(v.name..'##'..v.ID) then
-                local player = actor_manager_fetch_local_player()      
                 player:SetProperty(PROP_USING_SKILL, v.ID)
                 imgui.CloseCurrentPopup()
             end

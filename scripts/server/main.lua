@@ -10,6 +10,7 @@ script_system_dofile('../share/actor_metatable.lua')
 -- script_system_dofile('../generator/actor_template.lua')
 
 script_system_dofile('login_system.lua')
+script_system_dofile('actor_system.lua')
 
 function on_script_system_init()
     content_system_init()
@@ -26,7 +27,16 @@ function on_script_system_deinit()
     game_server_stop()
 end
 
-function save_player_database()
+stub[PTO_C2S_DOSTRING] = function(req)
+    local func, err = load(req.code,'@client','bt',_ENV)
+    if func then
+        func()
+    else
+        cxlog_info('PTO_C2S_DOSTRING', err)
+    end
+end 
+
+stub[PTO_C2C_SAVE_PLAYER_DATABASE] = function()
     local players = actor_manager_fetch_all_players()
     local pinfos = {}
     for pid, p in pairs(players) do
@@ -55,17 +65,7 @@ function game_server_dispatch_message(pt)
     print('game_server_dispatch_message' , type, js)
     local req = cjson.decode(js)
     if stub[type] then
-        stub[type](req)
-    end
-    
-    if type == PTO_C2C_MOVE_TO_POS then
-        local player = actor_manager_fetch_player_by_id(req.pid)
-        player:SetProperty(PROP_POS,req.x,req.y)
-        net_send_message_to_all_players(PTO_C2C_MOVE_TO_POS,js)
-    elseif type == PTO_C2C_CHAT then
-        net_send_message_to_all_players(PTO_C2C_CHAT,js)
-    elseif type == PTO_C2C_SAVE_PLAYER_DATABASE then
-        save_player_database()
+        stub[type](req,js)
     end
 end
 

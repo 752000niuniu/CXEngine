@@ -795,6 +795,22 @@ int cximgui_InputText_3_sui(lua_State* L) {
     return 1;
 };
 
+int cximgui_InputTextMultiline_4_suv2i(lua_State* L) {
+	int __argi__ = 1;
+	const char* label = lua_tostring(L, __argi__++);
+	CXIMStrBuf* buf = (CXIMStrBuf*)lua_touserdata(L, __argi__++);
+	ImVec2 size_def = ImVec2(0, 0);
+	ImVec2 size;
+	size.x = (float)luaL_optnumber(L, __argi__, size_def.x);
+	size.y = (float)luaL_optnumber(L, __argi__ + 1, size_def.y);
+	if (size.x != size_def.x || size.y != size_def.y) __argi__ += 2;
+	ImGuiInputTextFlags extra_flags = (ImGuiInputTextFlags)luaL_optinteger(L, __argi__, 0);
+	if (extra_flags != 0) __argi__++;
+	bool __ret__ = ImGui::InputTextMultiline(label, buf->str, buf->size, size, extra_flags);
+	lua_pushboolean(L, __ret__);
+	return 1;
+};
+
 int cximgui_DockSpace_3_iv2i(lua_State*L) {
 	int __argi__ = 1;
 	int id = (int)lua_tointeger(L, __argi__++);
@@ -892,6 +908,7 @@ luaL_Reg cximgui_extra_methods[] = {
 	{ "CreateStrbuf", cximgui_strbuf_create },
 { "DestroyStrbuf", cximgui_strbuf_destroy },
 { "InputText",cximgui_InputText_3_sui },
+{ "InputTextMultiline",cximgui_InputTextMultiline_4_suv2i },
 { "Text", cximgui_TextUnformatted_2_ss },
 { "DockSpace", cximgui_DockSpace_3_iv2i },
 { "GetMainViewport", cximgui_GetMainViewport },

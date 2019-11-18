@@ -77,6 +77,7 @@ function init_skill_template_table()
         { name='name'},
         { name='type'},
         { name='sub_type',fmt='i',def=0},
+        { name='school',fmt='i',def=0},
         { name='combo', fmt='i', def=0},
         { name='atk_anim', fmt=res_parse_resid, def=0},
         { name='group_kill', fmt='i', def=0},
