@@ -68,15 +68,19 @@ enum EActorPropType
 end
 
 function solve()
-    local path = vfs_makepath('res/tables/actor_template.tsv')
-    cxlog_info('path',path)
-    local tbl = utils_parse_tsv_to_rows(path) 
+    local tbl  = utils_parse_tsv(vfs_get_tsvpath('actor_template'),{
+        { name='name'},
+        { name='type'},
+        { name='def'},
+        { name='sync', fmt='i', def=0},
+    })    
+
     for i,row in ipairs(tbl) do
         table.insert(actor_enums,  row.name:upper())  
+        cxlog_info('type ' , row.type)
         actor_enum_types[row.type] = true
     end
     pcall(gen_actor_enum)  
-
 end
 
 solve()

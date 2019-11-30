@@ -826,10 +826,7 @@ int actor_get_dirty_props(lua_State*L){
 		lua_seti(L, -2, i++);
 	}
 	return 1;
-
 }
-
-
 
 
 //{ "__gc",actor_destroy },

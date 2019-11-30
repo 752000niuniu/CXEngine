@@ -65,8 +65,16 @@ function read_npc_table()
 end
 
 function read_actor_template()
-    local path = vfs_get_tsvpath('actor_template')
-    local tbl,col_names = utils_parse_tsv_to_rows(path)
+    local tbl  = utils_parse_tsv(vfs_get_tsvpath('actor_template'),{
+        { name='name'},
+        { name='type'},
+        { name='def'},
+        { name='sync', fmt='i', def=0},
+    })    
+
+    for i,row in ipairs(tbl) do
+        cxlog_info('i ', i , ' name' , row.name,  row.sync)
+    end
     return tbl
 end
 

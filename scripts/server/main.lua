@@ -2,6 +2,7 @@
 
 stub = {}
 
+
 script_system_dofile('../share/enums.lua')
 script_system_dofile('../share/vfs.lua')
 script_system_dofile('../share/utils.lua')
@@ -13,14 +14,27 @@ script_system_dofile('login_system.lua')
 script_system_dofile('actor_system.lua')
 script_system_dofile('../combat/server/combat_system.lua')
 
+
+
 function server_reload()
     cxlog_info('server_reload   ')
     script_system_dofile('main.lua')
+    content_system_init()
+  
 end
 
 function on_script_system_init()
     content_system_init()
     game_server_start(45000)
+end
+
+local prop_templ_tbl
+function is_prop_sync(prop_id)
+    if not prop_templ_tbl then
+        prop_templ_tbl = content_system_get_table('actor_template')
+    end
+    cxlog_info('prop_templ_tbl[prop_id].sync  ', prop_id,prop_templ_tbl[prop_id+1].sync )
+    return prop_templ_tbl[prop_id+1].sync ~= 0
 end
 
 function on_script_system_update()
@@ -30,25 +44,24 @@ function on_script_system_update()
     
     local players = actor_manager_fetch_all_players()
     local dirty_props = {}
-    for pid, p in pairs(players) do
+    
+    for _, p in ipairs(players) do
         if p:IsDirty() then
-            dirty_props[pid] = {}
+            local pid = p:GetID()
             local props = p:GetDirtyProps()
-            for i,pidx in ipairs(props) do
-                dirty_props[pid][pidx] = p:GetProperty(pidx)
+            for i,prop_id in ipairs(props) do
+                cxlog_info('is_prop_sync ', prop_id , is_prop_sync(prop_id)) 
+                if is_prop_sync(prop_id) then
+                    table.insert(dirty_props, {pid, prop_id, p:GetProperty(prop_id)})
+                end
             end
-            cxlog_info('dirty pros ', cjson.encode(props))
-            dirty_props[pid] = props
-        end
-    end
-
-    for pid, p in pairs(players) do
-        if p:IsDirty() then
-            net_send_message(pid,PTO_S2C_SYNC_PROPS, cjson.encode(dirty_props))
             p:ClearDirty()
         end
     end
-    
+    if #dirty_props > 0 then
+        net_send_message_to_all_players(PTO_S2C_SYNC_PROPS, cjson.encode(dirty_props))
+    end
+        
     return true
 end
 

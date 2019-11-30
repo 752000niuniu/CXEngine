@@ -113,6 +113,13 @@ function game_dispatch_message(pt)
 		if not player:IsLocal() then
 			player:MoveTo(req.x,req.y)
 		end
+	elseif type == PTO_S2C_SYNC_PROPS then
+		for i, dirty_prop in ipairs(req) do
+			local pid = dirty_prop[1]
+			local p = actor_manager_fetch_player_by_id(pid)
+			p:SetProperty(dirty_prop[2] ,dirty_prop[3])
+			cxlog_info(' p ',p, ' propid ',dirty_prop[2] ,dirty_prop[3])
+		end
     end
 end
 
