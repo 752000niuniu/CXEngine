@@ -129,8 +129,21 @@ public:
 	}
 
 	ActorProp& GetProperty(int index) { return m_Props[index]; }
-	void SetProperty(int index, ActorProp prop) { m_Props[index] = prop; }
+	void SetProperty(int index, ActorProp prop) { 
+		m_Props[index] = prop; 
+		DirtyProperty(index);
+	}
+
+	void DirtyProperty(int index) {
+		m_DirtyProps.insert(index);
+	}
+
 	void RegProperty(int index, ActorProp& prop) { assert(index == m_Props.size()); m_Props.push_back(prop); }
+
+	bool IsDirty() { return m_DirtyProps.size() != 0; }
+
+	std::set<int> GetDirtyProps() { return m_DirtyProps; }
+	void ClearDirty() { m_DirtyProps.clear(); }
 protected:
 	bool m_bCalcMoveList;
 	int m_SayDuration;
@@ -141,6 +154,7 @@ protected:
 	
 	std::vector<NE::PalSchemePart> m_PatMatrix;
 	std::vector<ActorProp> m_Props;
+	std::set<int> m_DirtyProps;
 	Actor* m_Target;
 	CXString m_SayText;
 #ifndef SIMPLE_SERVER

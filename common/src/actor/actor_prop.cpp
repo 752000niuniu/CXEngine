@@ -131,13 +131,17 @@ int actor_set_prop(lua_State* L)
 		break;
 	case PROP_TYPE_VEC2:
 		float v[2];
-		v[0] = (float)lua_tonumber(L, 3);
-		v[1] = (float)lua_tonumber(L, 4);
+		for (int i = 0; i < 2; i++) {
+			lua_geti(L, 3, i+1);
+			v[i] = (float)lua_tonumber(L, -1);
+			lua_pop(L, 1);
+		}
 		prop = v;
 		break;
 	default:
 		break;
 	}
+	actor->DirtyProperty(prop_index);
 	return 0;
 }
 
@@ -164,9 +168,11 @@ int actor_get_prop(lua_State* L)
 		lua_pushstring(L, prop.s.c_str());
 		break;
 	case PROP_TYPE_VEC2:
-		lua_pushnumber(L, prop.v2[0]);
-		lua_pushnumber(L, prop.v2[1]);
-		return 2;
+		lua_newtable(L);
+		for (int i = 0; i < 2; i++) {
+			lua_pushnumber(L, prop.v2[i]);
+			lua_seti(L, -2, i+1);
+		}
 		break;
 	default:
 		break;
@@ -200,8 +206,11 @@ int actor_reg_prop(lua_State* L)
 		break;
 	case PROP_TYPE_VEC2:
 		float v[2];
-		v[0] = (float)lua_tonumber(L, 4);
-		v[1] = (float)lua_tonumber(L, 5);
+		for (int i = 0; i < 2; i++) {
+			lua_geti(L, 4, i + 1);
+			v[i] = (float)lua_tonumber(L, -1);
+			lua_pop(L, 1);
+		}
 		prop = v;
 	default:
 		break;

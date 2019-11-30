@@ -91,7 +91,7 @@ function game_dispatch_message(pt)
 			player:SetProperty(PROP_SCENE_ID,pinfo.scene_id)
 			player:SetProperty(PROP_AVATAR_ID,'JXK-KNIFE')
 			player:SetProperty(PROP_WEAPON_AVATAR_ID,'JXK-KNIFE-120-晓风残月')
-			player:SetProperty(PROP_POS, pinfo.x, pinfo.y)
+			player:SetPos(pinfo.x, pinfo.y)
 			local new_pal = get_pal_from_json('{"1":{"mat":[220,220,512,512,512,510,512,510,512],"to":40,"from":0},"2":{"mat":[211,211,230,445,292,445,306,306,206],"to":80,"from":40},"3":{"mat":[0,0,0,24,24,24,19,19,19],"to":120,"from":80},"4":{"mat":[255,0,0,0,255,0,0,0,255],"to":256,"from":120},"segments":[0,40,80,120,256]}')  
  		   	player:ChangePalMatrix(new_pal)
 

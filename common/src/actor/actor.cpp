@@ -805,6 +805,32 @@ int actor_get_attack_vec(lua_State* L) {
 	lua_pushnumber(L, vec.y);
 	return 2;
 }
+int actor_is_dirty(lua_State*L){
+	Actor* actor = lua_check_actor(L, 1);
+	lua_pushboolean(L, actor->IsDirty());
+	return 1;
+}
+int actor_clear_dirty(lua_State*L){
+	Actor* actor = lua_check_actor(L, 1);
+	actor->ClearDirty();
+	return 0;
+}
+
+int actor_get_dirty_props(lua_State*L){
+	Actor* actor = lua_check_actor(L, 1);
+	auto dirty_props = actor->GetDirtyProps();
+	lua_newtable(L);
+	int i = 1;
+	for (auto prop : dirty_props) {
+		lua_pushinteger(L, prop);
+		lua_seti(L, -2, i++);
+	}
+	return 1;
+
+}
+
+
+
 
 //{ "__gc",actor_destroy },
 luaL_Reg mt_actor[] = {
@@ -857,6 +883,9 @@ luaL_Reg mt_actor[] = {
 { "ClearFrontAnim", actor_clear_front_anim},
 {"ShowBeatNumber",actor_show_beatnumber},
 {"GetAttackVec",actor_get_attack_vec},
+{ "IsDirty",actor_is_dirty},
+{ "ClearDirty",actor_clear_dirty},
+{ "GetDirtyProps",actor_get_dirty_props},
 { NULL, NULL }
 };
 

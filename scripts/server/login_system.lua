@@ -7,7 +7,8 @@ stub[PTO_C2C_LOGIN] = function(req)
     req_player:SetProperty(PROP_SCENE_ID,req.scene_id)
     req_player:SetProperty(PROP_ROLE_ID,req.role_id)
     req_player:SetProperty(PROP_WEAPON_ID,req.weapon_id)
-    req_player:SetProperty(PROP_POS,req.x,req.y)
+    req_player:SetPos(req.x,req.y)
+    
     local players = actor_manager_fetch_all_players()    
     print('players', #players)
     for k,player in ipairs(players) do
@@ -26,7 +27,7 @@ stub[PTO_C2C_LOGIN] = function(req)
                     pinfo.scene_id = other:GetProperty(PROP_SCENE_ID)
                     pinfo.role_id = other:GetProperty(PROP_ROLE_ID)
                     pinfo.weapon_id = other:GetProperty(PROP_WEAPON_ID) 
-                    pinfo.x,pinfo.y  = other:GetProperty(PROP_POS)
+                    pinfo.x,pinfo.y  = other:GetPos()
                     table.insert(pinfos, pinfo)
                 end
             end

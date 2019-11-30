@@ -133,7 +133,7 @@ function on_game_imgui_update(name)
             actor:DrawBoundingBox()
         end
         if actor:GetProperty(PROP_SHOW_AVATAR_INFO) then
-            local x ,y  = actor:GetProperty(PROP_POS)
+            local x ,y  = actor:GetPos()
             local avatar = actor:GetAvatar()
             if not avatar then return end
             imgui.SetCursorPos(x-55,y+50)

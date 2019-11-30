@@ -26,6 +26,29 @@ end
 function on_script_system_update()
     game_server_update() --dispatch message
     combat_system_update_battle()
+
+    
+    local players = actor_manager_fetch_all_players()
+    local dirty_props = {}
+    for pid, p in pairs(players) do
+        if p:IsDirty() then
+            dirty_props[pid] = {}
+            local props = p:GetDirtyProps()
+            for i,pidx in ipairs(props) do
+                dirty_props[pid][pidx] = p:GetProperty(pidx)
+            end
+            cxlog_info('dirty pros ', cjson.encode(props))
+            dirty_props[pid] = props
+        end
+    end
+
+    for pid, p in pairs(players) do
+        if p:IsDirty() then
+            net_send_message(pid,PTO_S2C_SYNC_PROPS, cjson.encode(dirty_props))
+            p:ClearDirty()
+        end
+    end
+    
     return true
 end
 
@@ -53,7 +76,7 @@ stub[PTO_C2C_SAVE_PLAYER_DATABASE] = function()
         pinfo.scene_id = p:GetProperty(PROP_SCENE_ID)
         pinfo.role_id = p:GetProperty(PROP_ROLE_ID)
         pinfo.weapon_id = p:GetProperty(PROP_WEAPON_ID) 
-        pinfo.x,pinfo.y = p:GetProperty(PROP_POS)
+        pinfo.x,pinfo.y = p:GetPos()
         table.insert(pinfos, pinfo)
     end
     table.sort(pinfos, function(a,b) return a.pid < b.pid  end)

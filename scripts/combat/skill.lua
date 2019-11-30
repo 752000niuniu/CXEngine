@@ -193,7 +193,7 @@ function on_cast_spell( skill, actor)
                             if avatar:IsFrameUpdate() then
                                 px = px + dir_x * 49
                                 py = py + dir_y * 49
-                                actor:SetProperty(PROP_COMBAT_POS, px,py)
+                                actor:SetCombatPos(px,py)
                             end
         
                             if avatar:IsGroupEndUpdate() then
@@ -204,7 +204,7 @@ function on_cast_spell( skill, actor)
                             if px - avatar:GetFrameKeyX() < 0 then
                                 behit_action:RemoveUpdateCallback()
                                 behit_action:Stop()
-                                actor:SetProperty(PROP_COMBAT_POS,last_x,last_y)
+                                actor:SetCombatPos(last_x,last_y)
                                 actor:SetDir(last_dir)
         
                                 combat_system_current_cmd():RemoveActing(target)
@@ -214,7 +214,7 @@ function on_cast_spell( skill, actor)
                             if px - avatar:GetFrameKeyX() + avatar:GetFrameWidth() >= 800 then
                                 behit_action:RemoveUpdateCallback()
                                 behit_action:Stop()
-                                actor:SetProperty(PROP_COMBAT_POS,last_x,last_y)
+                                actor:SetCombatPos(last_x,last_y)
                                 actor:SetDir(last_dir)
                                 combat_system_current_cmd():RemoveActing(target)
                                 combat_system_remove_from_battle(target)
@@ -311,7 +311,7 @@ function on_attack_action_callback(attack_action)
                     if avatar:IsFrameUpdate() then
                         px = px + dir_x * 49
                         py = py + dir_y * 49
-                        actor:SetProperty(PROP_COMBAT_POS, px,py)
+                        actor:SetCombatPos(px,py)
                     end
     
                     if avatar:IsGroupEndUpdate() then
@@ -322,7 +322,7 @@ function on_attack_action_callback(attack_action)
                     if px - avatar:GetFrameKeyX() < 0 then
                         behit_action:RemoveUpdateCallback()
                         behit_action:Stop()
-                        actor:SetProperty(PROP_COMBAT_POS,last_x,last_y)
+                        actor:SetCombatPos(last_x,last_y)
                         actor:SetDir(last_dir)
                         combat_system_current_cmd():RemoveActing(target)
                         combat_system_remove_from_battle(target)
@@ -331,7 +331,7 @@ function on_attack_action_callback(attack_action)
                     if px - avatar:GetFrameKeyX() + avatar:GetFrameWidth() >= 800 then
                         behit_action:RemoveUpdateCallback()
                         behit_action:Stop()
-                        actor:SetProperty(PROP_COMBAT_POS,last_x,last_y)
+                        actor:SetCombatPos(last_x,last_y)
                         actor:SetDir(last_dir)
                         combat_system_current_cmd():RemoveActing(target)
                         combat_system_remove_from_battle(target)

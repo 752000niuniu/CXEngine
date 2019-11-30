@@ -82,11 +82,7 @@ end
 
 function ActorMT:SetProperties(props)
     for k,v in pairs(props) do
-        if type(v) ~='table' then
-            self:SetProperty(k,v)
-        else
-            self:SetProperty(k, table.unpack(v))
-        end
+        self:SetProperty(k,v)
     end
     local avatar = self:GetAvatar()
     draw_avatar_boundingbox(avatar)

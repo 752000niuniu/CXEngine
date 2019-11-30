@@ -219,7 +219,7 @@ function check_dest_hit_actor(dest_x, dest_y)
         if not actor:IsLocal() then
             local avatar = actor:GetAvatar()
             if not avatar then return end
-            local avx, avy = actor:GetProperty(PROP_POS)
+            local avx, avy = actor:GetPos()
             local cx =  avx - avatar:GetFrameKeyX()
             local cy =  avy - avatar:GetFrameKeyY()
             local brx = avatar:GetFrameWidth()

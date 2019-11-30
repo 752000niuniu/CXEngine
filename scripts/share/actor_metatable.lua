@@ -29,11 +29,7 @@ function actor_on_reg_props(actor)
             table.insert(v, tonumber(strx))  
             table.insert(v,tonumber(stry)) 
         end
-        if row.type ~= 'vec2' then
-            actor:RegProperty(i-1,reg_type,v)
-        else
-            actor:RegProperty(i-1,reg_type,v[1],v[2])
-        end
+        actor:RegProperty(i-1,reg_type,v)
     end
     -- for i,row in ipairs(tbl) do
     --     cxlog_info(actor:GetProperty(i-1))
@@ -42,10 +38,24 @@ end
 
 function ActorMT:GetPos()
     if self:GetProperty(PROP_IS_COMBAT) then
-        return self:GetProperty(PROP_COMBAT_POS)
+        local tPos = self:GetProperty(PROP_COMBAT_POS)
+        return tPos[1],  tPos[2]
     else
-        return self:GetProperty(PROP_POS)
+        local tPos = self:GetProperty(PROP_POS)
+        return tPos[1],  tPos[2]
     end
+end
+
+function ActorMT:SetPos(x,y)
+    if self:GetProperty(PROP_IS_COMBAT) then
+        self:SetProperty(PROP_COMBAT_POS,{x,y})
+    else
+        self:SetProperty(PROP_POS,{x,y})
+    end
+end
+
+function ActorMT:SetCombatPos(x,y)
+    self:SetProperty(PROP_COMBAT_POS,{x,y})
 end
 
 

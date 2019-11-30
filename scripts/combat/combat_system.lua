@@ -242,7 +242,7 @@ function combat_system_on_start()
     local init_actor = function(actor, pos, dir)
         actor:SetProperty(PROP_IS_COMBAT,true)
         actor:SetProperty(PROP_TURN_READY,false)
-        actor:SetProperty(PROP_COMBAT_POS,pos.x,pos.y)
+        actor:SetCombatPos(pos.x,pos.y)
         actor:SetDir(dir)
         actor:ClearAction()
         

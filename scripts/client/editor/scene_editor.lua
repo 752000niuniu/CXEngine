@@ -75,7 +75,7 @@ function on_scene_editor_update()
 
     if imgui.CollapsingHeader('PosInfo') then
         local mapx, mapy = util_screen_pos_to_map_pos(mx,my)
-        local px,py = player:GetProperty(PROP_POS)
+        local px,py = player:GetPos()
         imgui.Text(string.format("[mouse] : x=%.0f,y=%.0f world.x=%.0f,world.y=%.0f",mx,my, mapx,mapy))
         imgui.Text(string.format("[player] : x=%f,y=%f,dir=%f", px,py, player:GetDir()))
     end
@@ -102,7 +102,7 @@ function on_scene_editor_update()
                 actor:SetProperty(PROP_ACTOR_TYPE,ACTOR_TYPE_SUMMON)
                 actor:SetProperty(PROP_AVATAR_ID, v.ID)
                 actor:SetProperty(PROP_WEAPON_AVATAR_ID,'')
-                actor:SetProperty(PROP_POS, player:GetProperty(PROP_POS))
+                actor:SetPos(player:GetPos())
                 actor:SetProperty(PROP_SCENE_ID, player:GetProperty(PROP_SCENE_ID))
                 actor:SetDir(player:GetDir())
                 -- actor:ModifyHP(100)
