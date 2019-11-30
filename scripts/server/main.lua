@@ -11,6 +11,12 @@ script_system_dofile('../share/actor_metatable.lua')
 
 script_system_dofile('login_system.lua')
 script_system_dofile('actor_system.lua')
+script_system_dofile('../combat/server/combat_system.lua')
+
+function server_reload()
+    cxlog_info('server_reload   ')
+    script_system_dofile('main.lua')
+end
 
 function on_script_system_init()
     content_system_init()
@@ -19,6 +25,7 @@ end
 
 function on_script_system_update()
     game_server_update() --dispatch message
+    combat_system_update_battle()
     return true
 end
 

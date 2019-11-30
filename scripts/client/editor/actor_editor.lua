@@ -104,6 +104,27 @@ local LoginDebugButtons = {
 
 local LocalPlayerDebugButtons = {
     {
+        name = 'EnterBattleServer',
+        on_click = function()
+            local player = actor_manager_fetch_local_player()
+            if not player then return end
+            
+            
+            local msg = { atks = {player:GetID()}} 
+            net_send_message(PTO_C2S_COMBAT_START, cjson.encode(msg) )
+            
+        end
+    },
+    {
+        name = '服务端重载',
+        on_click = function()
+            local msg = {code = [[
+                server_reload()
+            ]]} 
+            net_send_message(PTO_C2S_DOSTRING, cjson.encode(msg) )            
+        end
+    },
+    {
         name = 'Say',
         on_click = function()
             local player = actor_manager_fetch_local_player()
@@ -190,7 +211,7 @@ local LocalPlayerDebugButtons = {
             local player = actor_manager_fetch_local_player()
             local anim = animation_create(ADDONWDF,0x9B3AF4E5) 
             anim:SetLoop(-1)
-            player:AddStateAnim(anim)
+            player:AddFrontAnim(anim)
         end
     }
 }
