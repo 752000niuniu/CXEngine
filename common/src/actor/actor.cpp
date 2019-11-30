@@ -32,6 +32,8 @@ Actor::Actor(uint64_t pid)
 	int res = lua_pcall(L, 1, 0, 0);
 	check_lua_error(L, res);
 
+	SetProperty(PROP_ID, pid);
+
 	m_PatMatrix.clear();
 
 	m_MoveHandle = new MoveHandle(this);

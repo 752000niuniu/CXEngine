@@ -8,35 +8,21 @@ stub[PTO_C2C_LOGIN] = function(req)
     req_player:SetProperty(PROP_ROLE_ID,req.role_id)
     req_player:SetProperty(PROP_WEAPON_ID,req.weapon_id)
     req_player:SetPos(req.x,req.y)
+    cxlog_info('GetID ', req_player:GetID())
     
-    local players = actor_manager_fetch_all_players()    
-    print('players', #players)
-    for k,player in ipairs(players) do
-        local pid = player:GetID()        
-        cxlog_info('player: ',pid)
-        if req.pid == pid then
-            local pinfos = {}
-            req.is_local = true
-            table.insert(pinfos,req)
-            local others = actor_manager_fetch_all_players()    
-            for _, other in ipairs(others) do
-                if other:GetID() ~= pid then
-                    local pinfo = {}
-                    pinfo.pid = other:GetID()
-                    pinfo.name = other:GetProperty(PROP_NAME)
-                    pinfo.scene_id = other:GetProperty(PROP_SCENE_ID)
-                    pinfo.role_id = other:GetProperty(PROP_ROLE_ID)
-                    pinfo.weapon_id = other:GetProperty(PROP_WEAPON_ID) 
-                    pinfo.x,pinfo.y  = other:GetPos()
-                    table.insert(pinfos, pinfo)
-                end
+    local actors = actor_manager_fetch_all_players()    
+    -- print('players', #players)
+    for i,actor in ipairs(actors) do
+        local pid = actor:GetID()
+        if pid == req.pid then
+            local actors_props = {}
+            for _,actor in ipairs(actors) do
+                table.insert(actors_props, actor:GetProperties())
             end
-            net_send_message(pid,PTO_C2C_PLAYER_ENTER, cjson.encode(pinfos))        
+            net_send_message(pid,PTO_C2C_PLAYER_ENTER, cjson.encode({local_pid = req.pid, actors = actors_props}))
         else
-            local pinfos = {}
-            req.is_local = false
-            table.insert(pinfos,req)
-            net_send_message(pid,PTO_C2C_PLAYER_ENTER, cjson.encode(pinfos))
-        end        
+            net_send_message(pid,PTO_C2C_PLAYER_ENTER, cjson.encode({ actors = { req_player:GetProperties() }}))
+        end
     end
 end
+

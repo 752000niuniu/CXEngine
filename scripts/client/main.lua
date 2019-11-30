@@ -82,27 +82,17 @@ function game_dispatch_message(pt)
 	local js = pt:ReadAllAsString()
 	local req = cjson.decode(js)
 	cxlog_info('game_dispatch_message', type, js)
-	local local_pinfo 
+	
 	if  type == PTO_C2C_PLAYER_ENTER then
-		local pinfos = req 
-		for k,pinfo in ipairs(pinfos) do
-			local player = actor_manager_create_actor(pinfo.pid)
-			player:SetProperty(PROP_NAME,pinfo.name)
-			player:SetProperty(PROP_SCENE_ID,pinfo.scene_id)
-			player:SetProperty(PROP_AVATAR_ID,'JXK-KNIFE')
-			player:SetProperty(PROP_WEAPON_AVATAR_ID,'JXK-KNIFE-120-晓风残月')
-			player:SetPos(pinfo.x, pinfo.y)
-			local new_pal = get_pal_from_json('{"1":{"mat":[220,220,512,512,512,510,512,510,512],"to":40,"from":0},"2":{"mat":[211,211,230,445,292,445,306,306,206],"to":80,"from":40},"3":{"mat":[0,0,0,24,24,24,19,19,19],"to":120,"from":80},"4":{"mat":[255,0,0,0,255,0,0,0,255],"to":256,"from":120},"segments":[0,40,80,120,256]}')  
- 		   	player:ChangePalMatrix(new_pal)
-
-			if pinfo.is_local then
-				local_pinfo = pinfo
+		for i,actor_info in ipairs(req.actors) do
+			local actor = actor_manager_create_actor(actor_info[PROP_ID])
+			actor:SetProperties(actor_info)
+			if req.local_pid and req.local_pid == actor:GetID()  then
+				actor_manager_set_local_player(req.local_pid)
+				scene_manager_switch_scene_by_id(actor:GetProperty(PROP_SCENE_ID))	
 			end
 		end
-		if local_pinfo then
-			actor_manager_set_local_player(local_pinfo.pid)
-			scene_manager_switch_scene_by_id(local_pinfo.scene_id)
-		end
+ 
 	elseif type == PTO_C2C_CHAT then
 		local player = actor_manager_fetch_player_by_id(req.pid)
 		if not player:IsLocal() then
@@ -117,8 +107,10 @@ function game_dispatch_message(pt)
 		for i, dirty_prop in ipairs(req) do
 			local pid = dirty_prop[1]
 			local p = actor_manager_fetch_player_by_id(pid)
-			p:SetProperty(dirty_prop[2] ,dirty_prop[3])
-			cxlog_info(' p ',p, ' propid ',dirty_prop[2] ,dirty_prop[3])
+			if p then
+				p:SetProperty(dirty_prop[2] ,dirty_prop[3])
+				cxlog_info(' p ',p, ' propid ',dirty_prop[2] ,dirty_prop[3])
+			end
 		end
     end
 end

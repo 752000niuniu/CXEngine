@@ -83,33 +83,33 @@ function OnSceneInit()
     enemyBB:SetActionID(ACTION_BATIDLE)
     
     ostime = ostime + 1
-    playerBB  = actor_manager_create_actor(ostime)
-    playerBB:SetProperties({
-        [PROP_ACTOR_TYPE] = ACTOR_TYPE_SUMMON,
-        [PROP_AVATAR_ID] = '鬼将',
-        [PROP_WEAPON_AVATAR_ID] = '',
-        [PROP_NAME] ='鬼将',
-        [PROP_POS] = {563,376},
-        [PROP_SUMMON_ATK_QUAL] = 1400,
-        [PROP_SUMMON_DEF_QUAL] = 1400,
-        [PROP_SUMMON_HEALTH_QUAL] = 4500,
-        [PROP_SUMMON_MAGIC_QUAL] =  2500,
-        [PROP_SUMMON_SPEED_QUAL] = 1200,
-        [PROP_SUMMON_DODGE_QUAL] =  1200,
-        [PROP_SUMMON_GROW_COEF] =  1.25,
-        [PROP_BASE_HEALTH] = 417 ,
-        [PROP_BASE_MAGIC] = 680 ,
-        [PROP_BASE_FORCE] = 171,
-        [PROP_BASE_STAMINA] =  171 ,
-        [PROP_BASE_AGILITY] = 171,
-        [PROP_LV] = 151
-    })
-    playerBB:SetProperty(PROP_HP, playerBB:GetMaxHP())
-    playerBB:SetProperty(PROP_MP, playerBB:GetMaxMP())
+    -- playerBB  = actor_manager_create_actor(ostime)
+    -- playerBB:SetProperties({
+    --     [PROP_ACTOR_TYPE] = ACTOR_TYPE_SUMMON,
+    --     [PROP_AVATAR_ID] = '鬼将',
+    --     [PROP_WEAPON_AVATAR_ID] = '',
+    --     [PROP_NAME] ='鬼将',
+    --     [PROP_POS] = {563,376},
+    --     [PROP_SUMMON_ATK_QUAL] = 1400,
+    --     [PROP_SUMMON_DEF_QUAL] = 1400,
+    --     [PROP_SUMMON_HEALTH_QUAL] = 4500,
+    --     [PROP_SUMMON_MAGIC_QUAL] =  2500,
+    --     [PROP_SUMMON_SPEED_QUAL] = 1200,
+    --     [PROP_SUMMON_DODGE_QUAL] =  1200,
+    --     [PROP_SUMMON_GROW_COEF] =  1.25,
+    --     [PROP_BASE_HEALTH] = 417 ,
+    --     [PROP_BASE_MAGIC] = 680 ,
+    --     [PROP_BASE_FORCE] = 171,
+    --     [PROP_BASE_STAMINA] =  171 ,
+    --     [PROP_BASE_AGILITY] = 171,
+    --     [PROP_LV] = 151
+    -- })
+    -- playerBB:SetProperty(PROP_HP, playerBB:GetMaxHP())
+    -- playerBB:SetProperty(PROP_MP, playerBB:GetMaxMP())
     
 
-    -- playerBB:ChangePalMatrix(get_pal_from_json('{"1":{"to":256,"mat":[115,115,110,163,256,239,196,91,292],"from":0},"segments":[0,256]}'))
-    playerBB:SetActionID(ACTION_BATIDLE)
+    -- -- playerBB:ChangePalMatrix(get_pal_from_json('{"1":{"to":256,"mat":[115,115,110,163,256,239,196,91,292],"from":0},"segments":[0,256]}'))
+    -- playerBB:SetActionID(ACTION_BATIDLE)
 
     ostime = ostime + 1
     player = actor_manager_create_actor(ostime)
@@ -127,8 +127,6 @@ function OnSceneInit()
         [PROP_SCHOOL] =  SCHOOL_DT,
         [PROP_LV] =  145
     })
-
-
 
     player:SetProperty(PROP_HP, player:GetMaxHP()/3)
     player:SetProperty(PROP_MP, player:GetMaxMP())
@@ -149,7 +147,11 @@ function OnSceneInit()
     player:SetTarget(enemy)
     player:StopMove()
     -- {player:GetTarget(),playerBB,enemyBB}
-    combat_system_start_battle({player},enemys)
+    
+    
+    -- combat_system_start_battle({player},enemys)
+
+
     cxlog_info(player:GetProperty(PROP_NAME), player:GetTarget():GetProperty(PROP_NAME))
 
     local all_actors = actor_manager_fetch_all_players()
@@ -241,6 +243,7 @@ function OnSceneUpdate()
         if imgui.IsMouseClicked(0) then
             
             local player = actor_manager_fetch_local_player()
+            if not player then return end
             local mx,my = input_manager_get_mouse_pos()
             local dest_x, dest_y = util_screen_pos_to_map_pos(mx, my)
             local hit_actor = check_dest_hit_actor(dest_x,dest_y)

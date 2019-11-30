@@ -21,11 +21,12 @@ enum EActorProp
 {]]..'\n')
     for i,e in ipairs(actor_enums) do
         f:write('\t'..e)
-        if i ~= #actor_enums then
+        -- if i ~= #actor_enums then
             f:write(',')
-        end
+        -- end
         f:write('\n')
     end
+    f:write('\tPROP_COUNT\n')
     f:write('};'..'\n')
 
 
@@ -57,6 +58,8 @@ enum EActorPropType
     for i,e in ipairs(actor_enums) do
         f:write(string.format('\tREG_ENUM(%s);\n',e) )
     end
+    f:write(string.format('\tREG_ENUM(PROP_COUNT);\n') )
+    
 
     f:write('//ENUM_ACTOR_PROP_TYPE\n')
     for i,k in ipairs(sort_enums_types) do
@@ -77,7 +80,6 @@ function solve()
 
     for i,row in ipairs(tbl) do
         table.insert(actor_enums,  row.name:upper())  
-        cxlog_info('type ' , row.type)
         actor_enum_types[row.type] = true
     end
     pcall(gen_actor_enum)  

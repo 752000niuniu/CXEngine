@@ -167,5 +167,10 @@ stub[PTO_C2S_COMBAT_START] = function(req)
 	-- if player then
 	-- 	cxlog_info("player ",  player:GetProperty(PROP_NAME))
 	-- end
+	-- 1V1 单挑
+	-- local pid = req.pid
+	-- PTO_C2S_COMBAT_START
+
 	
+
 end

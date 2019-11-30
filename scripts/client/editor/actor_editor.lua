@@ -112,7 +112,8 @@ local LocalPlayerDebugButtons = {
             
             local msg = { atks = {player:GetID()}} 
             net_send_message(PTO_C2S_COMBAT_START, cjson.encode(msg) )
-            
+            -- combat_system_start_battle({player},enemys)
+
         end
     },
     {

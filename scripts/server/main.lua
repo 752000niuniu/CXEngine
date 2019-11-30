@@ -12,20 +12,21 @@ script_system_dofile('../share/actor_metatable.lua')
 
 script_system_dofile('login_system.lua')
 script_system_dofile('actor_system.lua')
+script_system_dofile('scene_system.lua')
 script_system_dofile('../combat/server/combat_system.lua')
 
 
 
 function server_reload()
-    cxlog_info('server_reload   ')
+    cxlog_info('server_reload')
     script_system_dofile('main.lua')
     content_system_init()
-  
 end
 
 function on_script_system_init()
     content_system_init()
     game_server_start(45000)
+    scene_system_init()
 end
 
 local prop_templ_tbl
@@ -40,7 +41,7 @@ end
 function on_script_system_update()
     game_server_update() --dispatch message
     combat_system_update_battle()
-
+    scene_system_update()
     
     local players = actor_manager_fetch_all_players()
     local dirty_props = {}
@@ -50,7 +51,6 @@ function on_script_system_update()
             local pid = p:GetID()
             local props = p:GetDirtyProps()
             for i,prop_id in ipairs(props) do
-                cxlog_info('is_prop_sync ', prop_id , is_prop_sync(prop_id)) 
                 if is_prop_sync(prop_id) then
                     table.insert(dirty_props, {pid, prop_id, p:GetProperty(prop_id)})
                 end
@@ -59,6 +59,7 @@ function on_script_system_update()
         end
     end
     if #dirty_props > 0 then
+        cxlog_info('sync dirty props', #dirty_props) 
         net_send_message_to_all_players(PTO_S2C_SYNC_PROPS, cjson.encode(dirty_props))
     end
         
@@ -67,6 +68,7 @@ end
 
 
 function on_script_system_deinit()
+    scene_system_stop()
     game_server_stop()
 end
 

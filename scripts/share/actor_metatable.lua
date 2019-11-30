@@ -86,6 +86,22 @@ function ActorMT:FaceTo(target)
     target:ReverseDir()
 end
 
+function ActorMT:SetProperties(props)
+    for k,v in pairs(props) do
+        self:SetProperty(k,v)
+    end
+end
+
+function ActorMT:GetProperties()
+    local props = {}
+    for prop_id=0,PROP_COUNT-1 do
+        props[prop_id] = self:GetProperty(prop_id)
+        cxlog_info('GetProperties ', prop_id, props[prop_id])
+    end
+    return props
+end
+
+
 
 COEF = {
     [RACE_HUMAN] = {

@@ -71,10 +71,6 @@ function read_actor_template()
         { name='def'},
         { name='sync', fmt='i', def=0},
     })    
-
-    for i,row in ipairs(tbl) do
-        cxlog_info('i ', i , ' name' , row.name,  row.sync)
-    end
     return tbl
 end
 

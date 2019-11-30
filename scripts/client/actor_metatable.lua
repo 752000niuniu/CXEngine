@@ -80,13 +80,7 @@ function ActorMT:DrawBoundingBox()
     draw_avatar_boundingbox(avatar)
 end
 
-function ActorMT:SetProperties(props)
-    for k,v in pairs(props) do
-        self:SetProperty(k,v)
-    end
-    local avatar = self:GetAvatar()
-    draw_avatar_boundingbox(avatar)
-end
+
 
 function ActorMT:GetAvatarRect()
     local avatar = self:GetAvatar()
