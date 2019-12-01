@@ -96,7 +96,7 @@ function ActorMT:GetProperties()
     local props = {}
     for prop_id=0,PROP_COUNT-1 do
         props[prop_id] = self:GetProperty(prop_id)
-        cxlog_info('GetProperties ', prop_id, props[prop_id])
+        -- cxlog_info('GetProperties ', prop_id, props[prop_id])
     end
     return props
 end

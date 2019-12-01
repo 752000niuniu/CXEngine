@@ -43,6 +43,8 @@ function on_script_system_init()
 	actor_manager_init()
 	combat_system_init()
 	asm_system_init()
+
+
 end
 
 function on_script_system_update()
@@ -85,12 +87,13 @@ function game_dispatch_message(pt)
 	
 	if  type == PTO_C2C_PLAYER_ENTER then
 		for i,actor_info in ipairs(req.actors) do
-			local actor = actor_manager_create_actor(actor_info[PROP_ID])
+			local actor = actor_manager_create_actor(actor_info[tostring(PROP_ID)])
 			actor:SetProperties(actor_info)
-			if req.local_pid and req.local_pid == actor:GetID()  then
-				actor_manager_set_local_player(req.local_pid)
-				scene_manager_switch_scene_by_id(actor:GetProperty(PROP_SCENE_ID))	
-			end
+		end
+		if req.local_pid then
+			actor_manager_set_local_player(req.local_pid)
+			local player = actor_manager_fetch_player_by_id(req.local_pid)
+			scene_manager_switch_scene_by_id(player:GetProperty(PROP_SCENE_ID))	
 		end
  
 	elseif type == PTO_C2C_CHAT then
@@ -104,14 +107,14 @@ function game_dispatch_message(pt)
 			player:MoveTo(req.x,req.y)
 		end
 	elseif type == PTO_S2C_SYNC_PROPS then
-		for i, dirty_prop in ipairs(req) do
-			local pid = dirty_prop[1]
-			local p = actor_manager_fetch_player_by_id(pid)
-			if p then
-				p:SetProperty(dirty_prop[2] ,dirty_prop[3])
-				cxlog_info(' p ',p, ' propid ',dirty_prop[2] ,dirty_prop[3])
-			end
-		end
+		-- for i, dirty_prop in ipairs(req) do
+		-- 	local pid = dirty_prop[1]
+		-- 	local p = actor_manager_fetch_player_by_id(pid)
+		-- 	if p then
+		-- 		p:SetProperty(dirty_prop[2] ,dirty_prop[3])
+		-- 		cxlog_info(' p ',p, ' propid ',dirty_prop[2] ,dirty_prop[3])
+		-- 	end
+		-- end
     end
 end
 

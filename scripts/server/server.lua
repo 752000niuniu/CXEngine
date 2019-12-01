@@ -11,12 +11,13 @@ function read_player_database()
         file = io.open(path,'r')
     end
     local data = file:read('a')
-    file:close()
+	file:close()
 	if data~='' then
 		local db =  cjson.decode(data)
 		if db then
 			for i,v in ipairs(db) do
 				player_database[v.pid] = v
+				-- print('read_player_database '  ..v.pid , cjson.encode(v))
 			end
 		end
 	end
@@ -46,6 +47,7 @@ function server_thread_on_message(conn, buf, netq)
 				pinfo.account = msg.account
 				pinfo.password = msg.password
 				player_database[pinfo.pid] = pinfo
+				print('pinfo ' , cjson.encode(pinfo))
 			elseif type == PTO_C2C_LOGIN then
 				buf:Consume(4)
 				local msgjs = buf:ReadAsString(len-4)

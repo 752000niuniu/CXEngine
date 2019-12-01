@@ -31,7 +31,7 @@ Actor::Actor(uint64_t pid)
 	lua_push_actor(L, this);
 	int res = lua_pcall(L, 1, 0, 0);
 	check_lua_error(L, res);
-
+	
 	SetProperty(PROP_ID, pid);
 
 	m_PatMatrix.clear();

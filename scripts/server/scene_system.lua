@@ -1,7 +1,7 @@
 function scene_system_init()
     local ostime = os.time()
-    playerBB  = actor_manager_create_actor(ostime)
-    playerBB:SetProperties({
+    local npc  = actor_manager_create_actor(ostime)
+    npc:SetProperties({
         [PROP_ACTOR_TYPE] = ACTOR_TYPE_SUMMON,
         [PROP_AVATAR_ID] = '鬼将',
         [PROP_WEAPON_AVATAR_ID] = '',
@@ -22,10 +22,10 @@ function scene_system_init()
         [PROP_LV] = 151,
         [PROP_SCENE_ID] = -105,
     })
-    playerBB:SetProperty(PROP_HP, playerBB:GetMaxHP())
-    playerBB:SetProperty(PROP_MP, playerBB:GetMaxMP())
-    
+    npc:SetProperty(PROP_HP, playerBB:GetMaxHP())
+    npc:SetProperty(PROP_MP, playerBB:GetMaxMP())
 
+    
 end
 
 function scene_system_update()

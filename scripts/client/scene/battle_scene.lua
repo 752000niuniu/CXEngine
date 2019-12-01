@@ -51,7 +51,7 @@ function OnSceneInit()
 		player:SetProperty(PROP_ROLE_ID,1)
 		player:SetProperty(PROP_WEAPON_ID,40)
 		player:SetDir(2)
-		actor_manager_set_local_player(player:GetID())
+		-- actor_manager_set_local_player(player:GetID())
 	else 
 		player:SetDir(2)
 	end

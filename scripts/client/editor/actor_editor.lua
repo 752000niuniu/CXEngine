@@ -20,7 +20,7 @@ end
 
 local LoginDebugButtons = {
     {
-        name  = 'Sigin Up',
+        name  = 'Sign Up',
         on_click = function()
             local msg = {}
             msg.account = AccountSB:str()
@@ -29,7 +29,7 @@ local LoginDebugButtons = {
         end
     },
     {
-        name  = 'Sigin In',
+        name  = 'Sign In',
         on_click = function()
             local msg = {}
             msg.account = AccountSB:str()

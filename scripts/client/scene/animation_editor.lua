@@ -135,7 +135,7 @@ function OnSceneInit()
     -- player:ChangePalMatrix(new_pal)
     player:SetActionID(ACTION_BATIDLE)
     
-    actor_manager_set_local_player(player:GetID())
+    -- actor_manager_set_local_player(player:GetID())
     player:SetDir(0)
     player:ReverseDir()
 
@@ -143,7 +143,6 @@ function OnSceneInit()
     for i,actor in ipairs(actors) do
        actor:SetProperty(PROP_SCENE_ID,-105)
     end
-    local player = actor_manager_fetch_local_player()
     player:SetTarget(enemy)
     player:StopMove()
     -- {player:GetTarget(),playerBB,enemyBB}
@@ -197,6 +196,18 @@ function OnSceneInit()
             
         end)
     end
+
+    
+	local msg = {}
+	msg.account = 'oceancx'
+	msg.password = '123456'
+	msg.name = 'Ocean藏心'
+	msg.scene_id = -105
+	msg.role_id = 1
+	msg.weapon_id = 40
+	msg.x = 306
+	msg.y = 466
+	net_send_message(PTO_C2C_LOGIN, cjson.encode(msg))
 end
 
 local actor_dir = 0
