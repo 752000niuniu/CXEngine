@@ -22,8 +22,8 @@ function scene_system_init()
         [PROP_LV] = 151,
         [PROP_SCENE_ID] = -105,
     })
-    npc:SetProperty(PROP_HP, playerBB:GetMaxHP())
-    npc:SetProperty(PROP_MP, playerBB:GetMaxMP())
+    npc:SetProperty(PROP_HP, npc:GetMaxHP())
+    npc:SetProperty(PROP_MP, npc:GetMaxMP())
 
     
 end
