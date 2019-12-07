@@ -6,10 +6,6 @@
 	path = internals/nlohmann
 	url = https://github.com/oceancx/nlohmann.git
 	branch = master
-[submodule "internals/cxbase"]
-	path = internals/cxbase
-	url = https://github.com/oceancx/cxbase.git
-	branch = master
 [submodule "internals/ezio-cmake"]
 	path = internals/ezio-cmake
 	url = https://github.com/oceancx/ezio-cmake.git
