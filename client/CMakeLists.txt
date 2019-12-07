@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.10)
 project (SimpleEngine LANGUAGES C CXX)
 
-find_package(CXBase)
+find_package(CXLua)
 find_package(GLEW CONFIG)
 find_package(glfw3)
 find_package(freetype CONFIG)
@@ -113,7 +113,7 @@ target_link_libraries(SimpleEngine
     glfw
     GLEW
     freetype
-    CXBase::CXBase
+    CXLua::CXLua
     IMGui::IMGui
     luadbg_static
     gsm

@@ -68,6 +68,8 @@ enum EActorPropType
 
     f:write([[#undef REG_ENUM
 };]]..'\n')
+    f:flush()
+    f:close()
 end
 
 function solve()
@@ -83,6 +85,7 @@ function solve()
         actor_enum_types[row.type] = true
     end
     pcall(gen_actor_enum)  
+    cxlog_info('ActorProp生成完成！')
 end
 
 solve()

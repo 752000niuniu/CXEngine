@@ -65,41 +65,7 @@ local LoginDebugButtons = {
             luadbg_listen(9527) 
         end
     },
-    {
-        name  = '启动DebugAdapter',
-        on_click = function()
-            local path = vfs_makepath('internals/luadebugger/vscode/Debug/vsdbgadapter.exe')
-            local cwd = vfs_makepath('internals/luadebugger/vscode/')
-            cwd = format_path(cwd) 
-            local cmd = string.format('start %s --cwd=%s',path,cwd )
-            os.execute(cmd)
-        end
-    },
-    {
-        name  = '启动服务器',
-        on_click = function()
-            local path = vfs_makepath('bin/Debug/SimpleServer.exe')
-            local cwd = vfs_makepath('') 
-            cwd = format_path(cwd) 
-            local cmd = string.format('start %s --cwd=%s',path,cwd )
-            os.execute(cmd)
-        end
-    },
-    {
-        name  = '安装vscode插件',
-        on_click = function()
-            local dir = vfs_makepath('')
-            local cmd = string.format('sh  %sinternals/luadebugger/install_extension.sh %s',dir,dir)
-            print(cmd)
-            os.execute(cmd)
-        end
-    },
-    {
-        name  = '重新生成ActorProp',
-        on_click = function()
-            script_system_dofile('generator/actor_template.lua')
-        end
-    }
+    
 }
 
 local LocalPlayerDebugButtons = {

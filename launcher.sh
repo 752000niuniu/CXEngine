@@ -1,0 +1,1 @@
+start bin/Debug/cxluax.exe --cwd=`pwd`/ --script_path=scripts/launcher/

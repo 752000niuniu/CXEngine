@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(cxluax)
 
-find_package(CXBase)
+find_package(CXLua)
 find_package(GLEW CONFIG)
 find_package(glfw3)
 find_package(IMGui)
@@ -55,7 +55,7 @@ target_link_libraries(cxluax
 PRIVATE
   glfw
   GLEW
-  CXBase::CXBase
+  CXLua::CXLua
   IMGui::IMGui
   luadbg_static
 )
