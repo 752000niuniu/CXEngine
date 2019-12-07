@@ -11,4 +11,3 @@ PTO_C2S_DOSTRING                        = enum_next()
 PTO_C2S_COMBAT_START                    = enum_next()
 PTO_C2S_COMBAT_CMD                      = enum_next()
 PTO_S2C_SYNC_PROPS                      = enum_next()
-

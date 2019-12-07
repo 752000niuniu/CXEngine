@@ -4,6 +4,7 @@ set(GAME_SOURCES_CPP ${_GAME_SOURCES_CPP} PARENT_SCOPE)
 set(GAME_SOURCES_HEADER ${_GAME_SOURCES_HEADER} PARENT_SCOPE)
 
 set(GAME_COMMON_SRCS
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/protocol.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/combat/combat.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/combat/skill.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/imgui/cximgui.cpp

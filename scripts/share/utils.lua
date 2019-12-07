@@ -1,10 +1,10 @@
 
-function utils_fetch_sort_keys(tbl)
+function utils_fetch_sort_keys(tbl, sortfunc)
     local kset = {}
     for k,v in pairs(tbl) do
         table.insert(kset,k)
     end
-    table.sort(kset)
+    table.sort(kset, sortfunc)
     return kset
 end
 

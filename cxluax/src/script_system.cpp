@@ -52,14 +52,13 @@ void script_system_prepare_init()
 	luaL_requirelib(L, "cjson", luaopen_cjson);
 	luaopen_filesystem(L);
 	luaopen_script_system(L);
-	luaopen_tsv(L);
+	
 	luaopen_cximgui(L);
 	luaopen_logger(L);
-	luaopen_ne_support(L);
 	
-	luaopen_net_thread_queue(L);
-	luaopen_netlib(L);
+	
 	luaopen_window(L);
+	luaopen_cxlua(L);
 }
 
 void script_system_dofile(const char *file)
