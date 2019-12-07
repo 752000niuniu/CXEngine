@@ -159,18 +159,11 @@ stub[PTO_C2S_COMBAT_START] = function(req)
 		队长发起战斗后, 队员接受到 进入战斗cmd 都进入战斗 
 		服务器收到发起战斗后, 创建battle 以及交战双方, 然后把进入战斗消息下发给客户端
 	]]--
-	-- local battle = combat_system_create_battle()
-	-- cxlog_info("req ",  cjson.encode(req))
-	-- local pid = math.tointeger(req.atks[1])
-	-- cxlog_info("pid ",  pid)
-	-- local player = actor_manager_fetch_player_by_id(pid)
-	-- if player then
-	-- 	cxlog_info("player ",  player:GetProperty(PROP_NAME))
-	-- end
-	-- 1V1 单挑
-	-- local pid = req.pid
-	-- PTO_C2S_COMBAT_START
-
+	 
+	-- 1V1 单挑 
+	local atk = actor_manager_fetch_player_by_id(req.atk)
+	local def = actor_manager_fetch_player_by_id(req.def)
+	
 	
 
 end

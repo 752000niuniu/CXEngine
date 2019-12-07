@@ -101,6 +101,9 @@ function ActorMT:GetProperties()
     return props
 end
 
+function ActorMT:GetName()
+    return self:GetProperty(PROP_NAME)
+end
 
 
 COEF = {
