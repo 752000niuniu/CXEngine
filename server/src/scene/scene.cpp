@@ -3,14 +3,14 @@
 #include "logger.h"
 #include "cxrandom.h"
 #include "combat/combat.h"
-#include "script_system.h"
+#include <script_system.h>
 #include "profile.h"
 #include "scene_manager.h"
 #include "cxmath.h"
 #include "actor/action.h"
 #include "combat/Skill.h"
 #include <algorithm>
-#include "script_system.h"
+#include <script_system.h>
 #include "utils.h" 
 #include "window.h"
 

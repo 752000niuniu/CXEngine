@@ -1,7 +1,7 @@
 #include "net.h"
 
 #include <stdio.h>
-#include "script_system.h"
+#include <script_system.h>
 #include "kbase/at_exit_manager.h"
 #include "ezio/io_context.h"
 #include "ezio/io_service_context.h"

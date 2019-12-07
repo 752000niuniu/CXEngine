@@ -3,7 +3,7 @@
 #include <algorithm>
 
 #include "logger.h"
-#include "script_system.h"
+#include <script_system.h>
 
 
 TimerManager::TimerManager()

@@ -7,7 +7,7 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 #include "time/time.h"
-#include "script_system.h"
+#include <script_system.h>
 #include "input_manager.h"
 #include "file_loading.h"
 #include "scene/scene_manager.h"

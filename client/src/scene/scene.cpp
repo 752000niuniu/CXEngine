@@ -5,7 +5,7 @@
 #include "cxrandom.h"
 #include "graphics/Renderer.h"
 #include "combat/Combat.h"
-#include "script_system.h"
+#include <script_system.h>
 #include "profile.h"
 #include "scene_manager.h"
 #include "input_manager.h"
@@ -15,7 +15,7 @@
 #include "resource_manager.h"
 #include <algorithm>
 #include "net.h"
-#include "script_system.h"
+#include <script_system.h>
 #include "utils.h"
 #include "actor/actor_manager.h"
 #include "lua_bind.h"

@@ -1,6 +1,6 @@
 #include "scene_manager.h"
 #include "cxrandom.h"
-#include "script_system.h"
+#include <script_system.h>
 #include "profile.h"
 #include "scene.h"
 #include "cxmath.h"

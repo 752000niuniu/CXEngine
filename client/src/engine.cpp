@@ -4,7 +4,7 @@
 #include "cube_batch.h"
 #include "time/timer_manager.h"
 #include "input_manager.h"
-#include "script_system.h"
+#include <script_system.h>
 #include "scene/scene_manager.h"
 #include "window.h"
 #include "resource_manager.h"

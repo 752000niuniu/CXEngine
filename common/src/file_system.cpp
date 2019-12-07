@@ -2,11 +2,12 @@
 #if defined(_WIN32)
 #include <corecrt_io.h>
 #endif
-#include "script_system.h"
+#include <script_system.h>
 #include "utils.h"
 
-static String VFS_WORK_PATH="";
-
+static String VFS_WORK_DIR="";
+static String VFS_SCRIPT_DIR = "";
+static String VFS_SHARE_SCRIPT_DIR = "";
 FileSystem::FileSystem()
 {
 
@@ -19,7 +20,7 @@ FileSystem::~FileSystem()
 
 std::string FileSystem::GetPath()
 {
-	return VFS_WORK_PATH;
+	return VFS_WORK_DIR;
 }
 
 std::string FileSystem::MakePath(String rpath)
@@ -64,11 +65,7 @@ std::string FileSystem::GetShaderPath(std::string path)
 }
 std::string FileSystem::GetLuaPath(std::string path)
 {
-#ifdef SIMPLE_SERVER
-	return GetPath() + "scripts/server/" + path;
-#else
-	return GetPath() + "scripts/client/" + path;
-#endif // SIMPLE_SERVER
+	return VFS_SCRIPT_DIR + path;
 }
 std::string FileSystem::GetWDFPath(std::string path)
 {
@@ -98,7 +95,7 @@ void FileSystem::InitWorkPath()
 	std::string cwd = script_system_get_config("cwd");
 	if (cwd != "nil")
 	{
-		VFS_WORK_PATH = cwd;
+		VFS_WORK_DIR = cwd;
 	}
 	else {
 		std::string path = script_system_get_config("argv0");
@@ -111,8 +108,28 @@ void FileSystem::InitWorkPath()
 		{
 			PATH_SEP = "/";
 		}
-		VFS_WORK_PATH = path.substr(0, path.find_last_of(PATH_SEP)) + PATH_SEP;
+		VFS_WORK_DIR = path.substr(0, path.find_last_of(PATH_SEP)) + PATH_SEP;
 	}
+
+	std::string script_path = script_system_get_config("script_path");
+	if (script_path == "nil") {
+#ifdef SIMPLE_SERVER
+		VFS_SCRIPT_DIR = VFS_WORK_DIR + "scripts/server/";
+#else
+		VFS_SCRIPT_DIR = VFS_WORK_DIR + "scripts/client/"; 
+#endif // SIMPLE_SERVER
+	}
+	else {
+		VFS_SCRIPT_DIR = VFS_WORK_DIR+script_path;
+	}
+
+	std::string share_script_path = script_system_get_config("share_script_path");
+	if (share_script_path == "nil") {
+		VFS_SHARE_SCRIPT_DIR = VFS_WORK_DIR+"scripts/share/";
+	}
+	else {
+		VFS_SHARE_SCRIPT_DIR = VFS_WORK_DIR+share_script_path;
+	}	
 }
 
 std::vector<std::string> VFS_ListFiles(std::string path)
@@ -214,14 +231,14 @@ int vfs_list_files(lua_State* L)
 int vfs_set_workdir(lua_State* L)
 {
 	const char* path = luaL_checkstring(L, 1);
-	VFS_WORK_PATH = path;
+	VFS_WORK_DIR = path;
 	return 0;
 }
 
 
 int vfs_get_workdir(lua_State* L)
 {
-	lua_pushstring(L, VFS_WORK_PATH.c_str());
+	lua_pushstring(L, VFS_WORK_DIR.c_str());
 	return 1;
 }
 

@@ -5,7 +5,7 @@
 #include "actor/actor_manager.h"
 #include "scene/scene_manager.h"
 #include "combat/combat.h"
-#include "script_system.h"
+#include <script_system.h>
 
 BaseScene::BaseScene(int id, String name)
 :m_Name(name),

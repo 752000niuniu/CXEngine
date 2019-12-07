@@ -1,5 +1,5 @@
 #pragma once
-#include "script_system.h"
+#include <script_system.h>
 //thread load files, use filepath and user defined parse function to do files loading
 // report loading progress and when done notify main thread.
 // cache files 

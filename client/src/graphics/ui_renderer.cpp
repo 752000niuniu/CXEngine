@@ -5,7 +5,7 @@
 #include "window.h"
 #include "file_system.h"
 #include "input_manager.h"
-#include "script_system.h"
+#include <script_system.h>
 #include "animation/sprite.h"
 #include "logger.h"
 #include "cxmath.h"

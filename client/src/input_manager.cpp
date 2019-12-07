@@ -1,5 +1,5 @@
 #include "input_manager.h"
-#include "script_system.h"
+#include <script_system.h>
 #include "cxmath.h"
 #include "scene/scene_manager.h"
 #include "window.h"

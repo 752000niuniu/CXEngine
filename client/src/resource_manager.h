@@ -10,7 +10,7 @@
 
 
 #include "graphics/texture.h"
-#include "script_system.h"
+#include <script_system.h>
 #include "tsv.h"
 #include <NESupport.h>
 

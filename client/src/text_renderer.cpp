@@ -4,7 +4,7 @@
 #include "window.h"
 #include "profile.h"
 #include <assert.h>
-#include "script_system.h"
+#include <script_system.h>
 #include "file_loading.h"
 #include "utils.h"
 #include "input_manager.h"

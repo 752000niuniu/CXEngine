@@ -1,4 +1,4 @@
-#include "script_system.h"
+#include <script_system.h>
 
 #include "define_types.h"
 #include "singleton.h"

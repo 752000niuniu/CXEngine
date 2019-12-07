@@ -1,5 +1,5 @@
 #include "logger.h"
-#include "script_system.h"
+#include <script_system.h>
 #include "utils.h"
 
 void log_print(const char *str) 

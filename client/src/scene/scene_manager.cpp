@@ -2,7 +2,7 @@
 #include "cxrandom.h"
 #include "scene/was_viewer_scene.h"
 #include "scene/ui_scene.h"
-#include "script_system.h"
+#include <script_system.h>
 #include "profile.h"
 #include "scene.h"
 #include "input_manager.h"
