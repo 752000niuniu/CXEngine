@@ -42,6 +42,7 @@ end
 function BattleMT:StartBattle()
 	self.state = BATTLE_START
 	self.turn = 0
+	cxlog_info('BATTLE_START')
 end
 
 function BattleMT:Update()
@@ -54,6 +55,7 @@ function BattleMT:Update()
 			actor:SetProperty(PROP_COMBAT_BATTLE_ID,self.id)
 		end
 		self.state = BATTLE_TURN_STAND_BY
+		cxlog_info('BATTLE_TURN_STAND_BY')
 	elseif self.state == BATTLE_TURN_STAND_BY then
 		local ready = true
 		for i,actor in ipairs(self.actors) do
@@ -64,6 +66,7 @@ function BattleMT:Update()
 		end
 		if ready then
 			self.state = BTTALE_TURN_EXECUTE
+			cxlog_info('BTTALE_TURN_EXECUTE')
 		end
 	elseif self.state  == BTTALE_TURN_EXECUTE then
 		for i,actor in ipairs(self.actors) do
@@ -86,8 +89,10 @@ function BattleMT:Update()
 		end
 		if atk_all_dead or def_all_dead then
 			self.state = BTTALE_END
+			cxlog_info('BTTALE_END')
 		else
 			self.state = BTTALE_TURN_NEXT
+			cxlog_info('BTTALE_TURN_NEXT')
 		end
 	elseif self.state == BTTALE_TURN_NEXT then
 		self.turn = self.turn + 1
@@ -95,7 +100,9 @@ function BattleMT:Update()
             actor:SetProperty(PROP_TURN_READY,false)
 		end
 		self.state = BATTLE_TURN_STAND_BY
+		cxlog_info('BATTLE_TURN_STAND_BY')
 	elseif self.state == BATTLE_END then
+		cxlog_info('BATTLE_END')
 		actor:SetProperty(PROP_IS_COMBAT,false)
 		actor:SetProperty(PROP_TURN_READY,false)
 		actor:SetProperty(PROP_COMBAT_BATTLE_ID,0)
@@ -120,15 +127,17 @@ stub[PTO_C2S_COMBAT_CMD] = function(actor, cmd)
 end
 
 function combat_system_create_battle(atk_actors, dfd_actors)
-	local battle = BattleMT.new()
+	local battle = BattleMT:new()
 	battle.id = os.time()
 	local team_id = os.time()
 	for i,actor in ipairs(atk_actors) do
+		actor:SetProperty(PROP_COMBAT_BATTLE_ID ,battle.id)
 		battle:AddActor(actor,team_id,TEAM_TYPE_ATTACKER)
     end
 
     team_id = team_id + 1
 	for i,actor in ipairs(dfd_actors) do
+		actor:SetProperty(PROP_COMBAT_BATTLE_ID ,battle.id)
 		battle:AddActor(actor,team_id,TEAM_TYPE_DEFENDER)
 	end
 	battle:StartBattle()
@@ -164,6 +173,6 @@ stub[PTO_C2S_COMBAT_START] = function(req)
 	local atk = actor_manager_fetch_player_by_id(req.atk)
 	local def = actor_manager_fetch_player_by_id(req.def)
 	
-	
-
+	combat_system_create_battle({atk},{def})
+	net_send_message_to_all_players(PTO_S2C_COMBAT_START,cjson.encode(req) )
 end

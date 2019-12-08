@@ -163,7 +163,12 @@ function game_dispatch_message(pt)
 		-- 		cxlog_info(' p ',p, ' propid ',dirty_prop[2] ,dirty_prop[3])
 		-- 	end
 		-- end
-    end
+	elseif type == PTO_S2C_COMBAT_START then
+		-- combat_system_start_battle()
+		local atk = actor_manager_fetch_player_by_id(req.atk)
+		local def = actor_manager_fetch_player_by_id(req.def)
+		combat_system_start_battle({atk},{def})
+    end	
 end
 
 function input_manager_on_mouse_move(mx, my)
