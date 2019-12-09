@@ -42,7 +42,7 @@ prop_dir_count	int	8
 prop_is_move	bool	false	
 prop_move_velocity	float	150	
 prop_can_move	bool	true	
-prop_is_combat	bool	false	
+prop_is_combat	bool	false	1
 prop_target_id	uint64	0	
 prop_cast_id	uint64	0	
 prop_is_calc_move_list	bool	false	
@@ -54,10 +54,10 @@ prop_combat_backup_pos	vec2	{0,0}
 prop_combat_target_pos	vec2	{0,0}	
 prop_combat_acting	bool	false	
 prop_combat_battle_id	uint64	0	
-prop_team_type	int	0	
+prop_team_type	int	0	1
 prop_team_id	uint64	0	
 prop_using_skill	int	0	
-prop_turn_ready	bool	false	
+prop_turn_ready	bool	false	1
 prop_asm_atk_combo	int	1	
 prop_asm_behit_anim	uint64	0	
 prop_asm_damage	float	0	

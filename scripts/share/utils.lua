@@ -398,3 +398,16 @@ function show_next_tree_node(node)
 		end
 	end
 end
+
+function IsServer()
+    return process_is_server()
+end
+
+function IsClient()
+    return not process_is_server()
+end
+
+function prop_id_to_name(prop_id)
+    local tbl = content_system_get_table('actor_template')
+    return tbl[prop_id+1].name
+end

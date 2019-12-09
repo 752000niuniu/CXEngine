@@ -13,7 +13,7 @@ script_system_dofile('../share/actor_metatable.lua')
 script_system_dofile('login_system.lua')
 script_system_dofile('actor_system.lua')
 script_system_dofile('scene_system.lua')
-script_system_dofile('../combat/server/combat_system.lua')
+script_system_dofile('../combat/combat_system.lua')
 
 
 
@@ -36,7 +36,6 @@ function is_prop_sync(prop_id)
     if not prop_templ_tbl then
         prop_templ_tbl = content_system_get_table('actor_template')
     end
-    cxlog_info('prop_templ_tbl[prop_id].sync  ', prop_id,prop_templ_tbl[prop_id+1].sync )
     return prop_templ_tbl[prop_id+1].sync ~= 0
 end
 

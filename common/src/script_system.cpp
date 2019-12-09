@@ -175,6 +175,14 @@ const char* lua_file_path(const char* luafile)
 	return v.c_str();
 }
 
+bool process_is_server(){
+#ifdef SIMPLE_SERVER
+	return true;
+#else
+	return false;
+#endif
+}
+
 void luaopen_script_system(lua_State* L)
 {
 
@@ -190,4 +198,5 @@ void luaopen_script_system(lua_State* L)
 	script_system_register_function(L, script_system_get_config);
 
 	script_system_register_function(L, lua_file_path);
+	script_system_register_function(L, process_is_server);
 }

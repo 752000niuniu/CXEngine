@@ -823,3 +823,4 @@ function ActorMT:SetGlobalStandardEquip(lv, is_enforce)
     self:SetProperty(PROP_EQUIP_AGILE, total_aglie) 
 
 end
+

@@ -184,7 +184,7 @@ function check_dest_hit_actor(dest_x, dest_y)
     local hit_actor = nil
     local actors = actor_manager_fetch_all_players()
     for i,actor in ipairs(actors) do
-        cxlog_info('check_dest_hit_actor', actor:GetProperty(PROP_NAME))
+        -- cxlog_info('check_dest_hit_actor', actor:GetProperty(PROP_NAME))
         if not actor:IsLocal() then
             local avatar = actor:GetAvatar()
             if not avatar then return end

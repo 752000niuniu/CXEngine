@@ -38,7 +38,7 @@ stub[PTO_S2C_SYNC_PROPS] = function(req)
 		local p = actor_manager_fetch_player_by_id(pid)
 		if p then
 			p:SetProperty(dirty_prop[2] ,dirty_prop[3])
-			cxlog_info(' p ',p, ' propid ',dirty_prop[2] ,dirty_prop[3])
+			cxlog_info(' p ',p, ' propid ', prop_id_to_name( dirty_prop[2]) ,dirty_prop[3])
 		end
 	end
 end
