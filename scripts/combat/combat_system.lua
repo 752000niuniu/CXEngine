@@ -171,14 +171,8 @@ function calc_combat_enemy_pos(ratio_x, ratio_y)
 end
 
 function check_turn_ready()
-    local ready = true
-    for i,actor in ipairs(BattleActors) do
-        if not actor:GetProperty(PROP_TURN_READY) then
-            ready = false
-            break
-        end
-    end
-    return ready
+    local player = actor_manager_fetch_local_player()
+    return player:GetProperty(PROP_TURN_READY)
 end
 
 function combat_system_init()
@@ -215,21 +209,24 @@ function combat_system_actor_on_click(actor, button, x, y)
         local player = actor_manager_fetch_local_player()
         player:SetTarget(actor)
         player:SetProperty(PROP_USING_SKILL, 1)
-    
-        local cmd = CommandMT:new()
-        cmd:Init(player)
-        table.insert(Commands,cmd)
-        player:SetProperty(PROP_TURN_READY, true)        
-        auto_ready_other_actors()
+
+        local msg = {}
+        msg.type = 'ATK'
+        msg.master = player:GetID()
+        msg.target = actor:GetID()
+        msg.skill = 1
+        net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
+        
+        
     elseif ACTOR_CLICK_MODE == ACTOR_CLICK_MODE_SPELL then
-        local player = actor_manager_fetch_local_player()
-        player:SetTarget(actor)
+        -- local player = actor_manager_fetch_local_player()
+        -- player:SetTarget(actor)
     
-        local cmd = CommandMT:new()
-        cmd:Init(player)
-        table.insert(Commands,cmd)
-        player:SetProperty(PROP_TURN_READY, true)        
-        auto_ready_other_actors()
+        -- local cmd = CommandMT:new()
+        -- cmd:Init(player)
+        -- table.insert(Commands,cmd)
+        -- player:SetProperty(PROP_TURN_READY, true)        
+        -- auto_ready_other_actors()
     end
 
     ACTOR_CLICK_MODE = ACTOR_CLICK_MODE_ATTACK
@@ -240,8 +237,6 @@ local actor_on_click_cb = {}
 function combat_system_on_start()
     ui_renderer_clear()
     local init_actor = function(actor, pos, dir)
-        actor:SetProperty(PROP_IS_COMBAT,true)
-        actor:SetProperty(PROP_TURN_READY,false)
         actor:SetCombatPos(pos.x,pos.y)
         actor:SetDir(dir)
         actor:ClearAction()
@@ -345,10 +340,6 @@ function combat_system_update()
     而 npc的输入来自随机
     敌对玩家的输入来自网络
 ]]
-        if check_turn_ready() then
-            BattleState = BTTALE_TURN_EXECUTE
-            cxlog_info('BTTALE_TURN_EXECUTE')
-        end
     elseif BattleState == BTTALE_TURN_EXECUTE then
 --[[
     处理每一条战斗指令,
@@ -387,9 +378,6 @@ function combat_system_update()
         CurrentTurn = CurrentTurn + 1 
 
         for i,actor in ipairs(BattleActors) do
-            actor:SetProperty(PROP_TURN_READY,false)
-        end
-        for i,actor in ipairs(BattleActors) do
             actor:BufferNextTurn(CurrentTurn)
         end
         BattleState = BATTLE_TURN_STAND_BY
@@ -426,19 +414,13 @@ end
 function combat_system_start_battle(atk_actors, dfd_actors)
     scene_set_combat(true)
     BattleActors = {}
-
     local team_id = os.time()
-    
     for i,actor in ipairs(atk_actors) do
-        actor:SetProperty(PROP_TEAM_TYPE, TEAM_TYPE_ATTACKER)
-        actor:SetProperty(PROP_TEAM_ID, team_id)
         table.insert(BattleActors, actor)
     end
 
     team_id = team_id + 1
     for i,actor in ipairs(dfd_actors) do
-        actor:SetProperty(PROP_TEAM_TYPE, TEAM_TYPE_DEFENDER)
-        actor:SetProperty(PROP_TEAM_ID, team_id)
         table.insert(BattleActors, actor)
     end
     BattleState = BATTLE_START
@@ -564,3 +546,21 @@ function combat_system_imgui_update()
     end
 end
 
+local stub = net_manager_stub()
+
+stub[PTO_S2C_COMBAT_START] = function(req)
+    local atk = actor_manager_fetch_player_by_id(req.atk)
+    local def = actor_manager_fetch_player_by_id(req.def)
+    local player = actor_manager_fetch_local_player()
+    if player:GetID() == atk:GetID() or def:GetID() == player:GetID() then
+        combat_system_start_battle({atk},{def})
+    end
+end 
+
+stub[PTO_S2C_COMBAT_EXECUTE] = function(req)
+    BattleState = BTTALE_TURN_EXECUTE
+end
+
+stub[BATTLE_TURN_STAND_BY] = function(req)
+    BattleState = BATTLE_TURN_STAND_BY
+end

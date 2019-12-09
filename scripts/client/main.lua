@@ -9,6 +9,9 @@ script_system_dofile('../share/content_system.lua')
 script_system_dofile('../share/actor_metatable.lua')
 
 script_system_dofile 'actor_metatable.lua'
+
+script_system_dofile('net_manager.lua')
+
 script_system_dofile('../combat/combat_system.lua')
 script_system_dofile 'scene_manager.lua'
 script_system_dofile 'actor_manager.lua'
@@ -122,54 +125,6 @@ function actor_ev_on_click(actor, button, x, y)
 	end
 end
 
-function game_dispatch_message(pt)
-	local type = pt:ReadAsInt()
-	local js = pt:ReadAllAsString()
-	local req = cjson.decode(js)
-	cxlog_info('game_dispatch_message', type, js)
-	
-	if  type == PTO_C2C_PLAYER_ENTER then
-		for i,actor_info in ipairs(req.actors) do
-			local actor = actor_manager_create_actor(actor_info[tostring(PROP_ID)])
-			actor:SetProperties(actor_info)
-
-			actor_reg_event(actor, ACTOR_EV_ON_CLICK, actor_ev_on_click)
-			actor_reg_event(actor, ACTOR_EV_ON_HOVER, function(actor, x, y)
-				
-			end)
-		end
-		if req.local_pid then
-			actor_manager_set_local_player(req.local_pid)
-			local player = actor_manager_fetch_player_by_id(req.local_pid)
-			scene_manager_switch_scene_by_id(player:GetProperty(PROP_SCENE_ID))	
-		end
- 
-	elseif type == PTO_C2C_CHAT then
-		local player = actor_manager_fetch_player_by_id(req.pid)
-		if not player:IsLocal() then
-			player:Say(req.msg)
-		end
-	elseif type == PTO_C2C_MOVE_TO_POS then
-		local player = actor_manager_fetch_player_by_id(req.pid)
-		if not player:IsLocal() then
-			player:MoveTo(req.x,req.y)
-		end
-	elseif type == PTO_S2C_SYNC_PROPS then
-		-- for i, dirty_prop in ipairs(req) do
-		-- 	local pid = dirty_prop[1]
-		-- 	local p = actor_manager_fetch_player_by_id(pid)
-		-- 	if p then
-		-- 		p:SetProperty(dirty_prop[2] ,dirty_prop[3])
-		-- 		cxlog_info(' p ',p, ' propid ',dirty_prop[2] ,dirty_prop[3])
-		-- 	end
-		-- end
-	elseif type == PTO_S2C_COMBAT_START then
-		-- combat_system_start_battle()
-		local atk = actor_manager_fetch_player_by_id(req.atk)
-		local def = actor_manager_fetch_player_by_id(req.def)
-		combat_system_start_battle({atk},{def})
-    end	
-end
 
 function input_manager_on_mouse_move(mx, my)
 	-- cxlog_info('input_manager_on_mouse_move', mx, my)
