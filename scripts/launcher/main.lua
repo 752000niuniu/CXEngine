@@ -49,9 +49,8 @@ function on_imgui_update()
 		print(cmd)
 		os.execute(cmd)
 	end
-	if imgui.Button('生成Protocol') then
-		script_system_dofile('../generator/protocol.lua')
-		
-	end
+	-- if imgui.Button('生成Protocol') then
+	-- 	script_system_dofile('../generator/protocol.lua')	
+	-- end
 	imgui.End()
 end

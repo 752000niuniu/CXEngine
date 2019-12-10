@@ -18,7 +18,6 @@ function CommandMT:Init(battle, actor, skill_id)
     self.acting_actors = {}
 end
 
-
 function CommandMT:AddTarget(actor)
     table.insert(self.targets, actor)
 end
@@ -139,7 +138,6 @@ function calc_combat_enemy_pos(ratio_x, ratio_y)
 	}
 end
 
-
 function combat_system_init()
     BattleBG = animation_create(ADDONWDF, 0xE3B87E0F)
     local ratio_x = game_get_width()/ 640 
@@ -188,13 +186,11 @@ function combat_system_actor_on_click(actor, button, x, y)
         -- cmd:Init(player)
         -- table.insert(Commands,cmd)
     end
-
     ACTOR_CLICK_MODE = ACTOR_CLICK_MODE_ATTACK
 end
 
 
 local actor_on_click_cb = {}
-
 function combat_reset_actor(actor)
     actor:SetProperty(PROP_ASM_BUFF_ANIM, 0)
     -- actor:SetActionID(ACTION_IDLE)
@@ -239,7 +235,6 @@ function combat_system_draw()
     for i,actor in ipairs(drawActors) do
         actor:Draw()
     end
-
     animation_manager_draw()
 end
 
@@ -291,6 +286,7 @@ function combat_system_imgui_update()
     if imgui.Button('逃跑##player') then
         on_battle_end(battle)
     end
+
     imgui.SetNextWindowSize(350,400)
     if imgui.BeginPopup('SpellSelector') then
         local skill_tbl = content_system_get_table('skill')
@@ -414,7 +410,6 @@ function on_battle_start(self)
 end
 
 function on_battle_turn_stand_by(self)
-    cxlog_info('on_battle_turn_stand_by')
     --[[
     每帧update都看player是不是输入了指令
     local player的指令输入来自键盘 或者  鼠标
@@ -464,7 +459,6 @@ function on_battle_turn_next(self)
     -- for i,actor in ipairs(self.actors) do
     --     actor:BufferNextTurn(self.turn)
     -- end
-    
     self.state = BATTLE_TURN_STAND_BY
 end
 

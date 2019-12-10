@@ -77,7 +77,6 @@ void script_system_prepare_init()
 	luaL_requirelib(L, "cjson", luaopen_cjson);
 	luaopen_filesystem(L);
 	luaopen_script_system(L);
-	luaopen_tsv(L);
 	luaopen_cximgui(L);
 	luaopen_logger(L);
 	luaopen_ne_support(L);
@@ -88,8 +87,8 @@ void script_system_prepare_init()
 	luaopen_actor(L);
 	luaopen_actor_manager(L);
 	luaopen_net_thread_queue(L);
-	luaopen_netlib(L);
 	luaopen_protocol(L);
+	luaopen_cxlua(L);
 #ifndef SIMPLE_SERVER
 	luaopen_game(L);
 	luaopen_resource_manager(L);

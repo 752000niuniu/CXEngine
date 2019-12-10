@@ -23,7 +23,6 @@ struct ServerPacket
 	Buffer* buff;
 	TCPConnectionPtr conn;
 };
-std::thread* ServerThread;
 GameServer* CXGameServer = NULL;
 
 
@@ -53,6 +52,7 @@ GameServer::GameServer(EventLoop* loop, SocketAddress addr, const char* name)
 	:m_EventLoop(loop),
 	m_Server(loop,addr,name)
 {
+	m_L = script_system_get_luastate();
 	m_Server.set_on_connection(std::bind(&GameServer::OnConnection, this, std::placeholders::_1));
 	m_Server.set_on_message(std::bind(&GameServer::OnMessage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	cxlog_info("server init at %s\n",addr.ToHostPort().c_str());
@@ -63,16 +63,15 @@ GameServer::~GameServer()
 
 }
 
+void main_game_update() {
+	if (!script_system_update()) {
+		g_MainLoop.Quit();
+	}
+}
+
 void GameServer::Start()
 {
-	m_L = luaL_newstate();
-	luaL_openlibs(m_L);
-	luaL_requirelib(m_L, "cjson", luaopen_cjson);
-	luaopen_netlib(m_L);
-	luaopen_net_thread_queue(m_L);
-	luaopen_protocol(m_L);
-	luaopen_filesystem(m_L);
-	thread_init_script_system(m_L);
+	m_EventLoop->RunTaskEvery(main_game_update, TimeDuration(16));
 
 	script_system_register_function(m_L, script_system_dofile);
 	script_system_register_luac_function(m_L, insert_pid_connection_pair);
@@ -165,18 +164,17 @@ void GameServer::OnMessage(const TCPConnectionPtr& conn, Buffer& buf, TimePoint 
 	check_lua_error(m_L, res);
 }
 
+
 void game_server_run(int port) {
-	kbase::AtExitManager exit_manager;
-	ezio::IOServiceContext::Init();
-	ezio::EventLoop loop;
+	
 	ezio::SocketAddress addr(port);
-	CXGameServer = new GameServer(&loop, addr, "GameServer");
+	CXGameServer = new GameServer(&g_MainLoop, addr, "GameServer");
 	CXGameServer->Start();
-	loop.Run();
+	g_MainLoop.Run();
 }
 
 void game_server_start(int port) {
-	ServerThread = new std::thread(game_server_run,  port);
+	game_server_run(port);
 }
 
 int game_server_update(lua_State* L) {
@@ -196,7 +194,6 @@ int game_server_update(lua_State* L) {
 void game_server_stop() 
 {
 	CXGameServer->Stop();
-	ServerThread->join();
 }
 
 void net_send_message(uint64_t pid, int proto, const char* msg) {
@@ -257,22 +254,10 @@ int erase_pid_connection_pair(lua_State*L ) {
 void luaopen_game_server(lua_State* L)
 {
 	thread_init_script_system(L);
+	
 
 	script_system_register_function(L, game_server_start);
 	script_system_register_luac_function(L, game_server_update);
 	script_system_register_function(L, game_server_stop);
 }
 
-void main_game_update() {
-	if (!script_system_update()) {
-		g_MainLoop.Quit();
-	}
-}
-
-void game_main_run()
-{
-	script_system_init();
-	g_MainLoop.RunTaskEvery(main_game_update, TimeDuration(16));
-	g_MainLoop.Run();
-	script_system_deinit();
-}

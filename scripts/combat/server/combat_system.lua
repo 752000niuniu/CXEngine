@@ -76,8 +76,6 @@ function on_battle_end(self)
     actor:SetProperty(PROP_IS_COMBAT,false)
     actor:SetProperty(PROP_TURN_READY,false)
 	actor:SetProperty(PROP_COMBAT_BATTLE_ID,0)
-	
-	
 end
 
 function combat_system_fetch_battle(id)
@@ -88,7 +86,6 @@ function combat_system_fetch_battle(id)
 	end
 end
 
-
 function combat_system_current_turn(actor)
 	local battle_id = actor:GetProperty(PROP_COMBAT_BATTLE_ID)
 	local battle = combat_system_fetch_battle(battle_id)
@@ -98,7 +95,6 @@ function combat_system_current_turn(actor)
         return 0
     end
 end    
-
 
 function combat_system_create_battle(atk_actors, dfd_actors)
 	local battle = BattleMT:new()

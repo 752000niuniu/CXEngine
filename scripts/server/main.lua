@@ -4,6 +4,7 @@ stub = {}
 
 
 script_system_dofile('../share/enums.lua')
+script_system_dofile('../share/enums_protocol.lua')
 script_system_dofile('../share/vfs.lua')
 script_system_dofile('../share/utils.lua')
 script_system_dofile('../share/content_system.lua')
@@ -32,7 +33,6 @@ function on_script_system_init()
     init_skills()
     init_buffers()
     
-    game_server_start(45000)
     scene_system_init()
 end
 
