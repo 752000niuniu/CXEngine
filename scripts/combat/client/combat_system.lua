@@ -1,7 +1,3 @@
-dofile(vfs_get_luapath('../combat/skill.lua') )
-dofile(vfs_get_luapath('../combat/buffer.lua') )
-
-
 
 local CommandMT = {}
 function CommandMT:new(o)
@@ -11,9 +7,11 @@ function CommandMT:new(o)
     return o
 end
 
-function CommandMT:Init(actor)
+function CommandMT:Init(battle, actor, skill_id)
+    self.battle = battle
     self.state = COMMAND_STATE_PREPARE
     self.type =  COMMAND_TYPE_ATTACK
+    self.skill_id = skill_id
     self.master = actor
     self.main_target = actor:GetTarget()
     self.targets = { self.main_target }
@@ -74,9 +72,10 @@ function CommandMT:IsActing()
 end
 
 function CommandMT:StartCast()
-    local actor = self.master
-    local skill_id = actor:GetProperty(PROP_USING_SKILL)
-    actor:CastSkill(skill_id,CurrentTurn)
+    if self.battle then
+        local actor = self.master
+        actor:CastSkill(self.skill_id,self.battle.turn)
+    end
 end
 
 function CommandMT:Update()
@@ -102,9 +101,10 @@ local ACTOR_CLICK_MODE_ATTACK = 1
 local ACTOR_CLICK_MODE_SPELL = 2
 local ACTOR_CLICK_MODE  = ACTOR_CLICK_MODE_ATTACK
 
+local battle_commands = {}
+
 local skill_template_table  = {}
 local buffer_template_table = {}
-local ActorBuffers = {}
 local battle    
 BattleBG = BattleBG or nil
 combat_self_pos = combat_self_pos or {}
@@ -148,14 +148,25 @@ function combat_system_init()
     combat_enemy_pos =  calc_combat_enemy_pos(ratio_x, ratio_y)
     skill_template_table = content_system_get_table('skill')
     buffer_template_table = content_system_get_table('buffer')
+    -- cxlog_info('combat_system_init',cjson.encode(skill_template_table))
     init_skills()
     init_buffers()
-    -- cxlog_info('combat_system_init',cjson.encode(skill_template_table))
 end
 
-    
+function combat_system_current_turn()
+    if battle then
+        return battle.turn
+    else
+        return 0
+    end
+end    
+
+function combat_system_current_cmd()
+    return battle_commands[1]
+end
+
 function combat_system_actor_on_click(actor, button, x, y)
-    if BattleState ~= BATTLE_TURN_STAND_BY then return end
+    if not battle or battle.state ~= BATTLE_TURN_STAND_BY then return end
     if ACTOR_CLICK_MODE == ACTOR_CLICK_MODE_ATTACK then
         local player = actor_manager_fetch_local_player()
         player:SetTarget(actor)
@@ -165,10 +176,10 @@ function combat_system_actor_on_click(actor, button, x, y)
         msg.type = 'ATK'
         msg.master = player:GetID()
         msg.target = actor:GetID()
-        msg.skill = 1
+        msg.skill_id = 1
         net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
         
-        
+
     elseif ACTOR_CLICK_MODE == ACTOR_CLICK_MODE_SPELL then
         -- local player = actor_manager_fetch_local_player()
         -- player:SetTarget(actor)
@@ -176,8 +187,6 @@ function combat_system_actor_on_click(actor, button, x, y)
         -- local cmd = CommandMT:new()
         -- cmd:Init(player)
         -- table.insert(Commands,cmd)
-        -- player:SetProperty(PROP_TURN_READY, true)        
-        -- auto_ready_other_actors()
     end
 
     ACTOR_CLICK_MODE = ACTOR_CLICK_MODE_ATTACK
@@ -196,9 +205,9 @@ function combat_reset_actor(actor)
     actor:ClearFrontAnim()
     actor:PushAction(ACTION_IDLE)
     local avatar = actor:GetAvatar()
-    cxlog_info('combat_system_on_end reset actor',actor:GetProperty(PROP_NAME) , avatar)
     actor_reg_event(actor, ACTOR_EV_ON_CLICK, actor_on_click_cb[actor:GetID()])
 end
+
 
 function check_battle_end()
     if not battle then return true end
@@ -250,14 +259,9 @@ function combat_system_imgui_update()
         -- test_local_player_cast(51)
         local player = actor_manager_fetch_local_player()
         player:SetProperty(PROP_USING_SKILL, cast_id)
-
         local cmd = CommandMT:new()
         cmd:Init(player)
-
         table.insert(Commands,cmd)
-
-        player:SetProperty(PROP_TURN_READY, true)
-        auto_ready_other_actors()
     end
 
     if imgui.Button('特技##player') then
@@ -285,8 +289,7 @@ function combat_system_imgui_update()
     end
 
     if imgui.Button('逃跑##player') then
-        combat_system_on_end()
-        scene_set_combat(false)
+        on_battle_end(battle)
     end
     imgui.SetNextWindowSize(350,400)
     if imgui.BeginPopup('SpellSelector') then
@@ -367,12 +370,22 @@ end
 
 stub[PTO_S2C_COMBAT_EXECUTE] = function(req)
     battle.state = BTTALE_TURN_EXECUTE 
+
+    for i,req_cmd in ipairs(req.cmds) do
+        local actor = actor_manager_fetch_player_by_id(req_cmd.master)
+        local target = actor_manager_fetch_player_by_id(req_cmd.target)
+        local cmd = CommandMT:new()
+        cmd:Init(battle,actor,req_cmd.skill_id )
+        table.insert(battle_commands,cmd)
+    end
 end
 
 
 function on_battle_start(self)
+    cxlog_info('on_battle_start')
     ui_renderer_clear()
     local init_actor = function(actor, pos, dir)
+        actor:SetProperty(PROP_HP,20)
         actor:SetCombatPos(pos.x,pos.y)
         actor:SetDir(dir)
         actor:ClearAction()
@@ -401,6 +414,7 @@ function on_battle_start(self)
 end
 
 function on_battle_turn_stand_by(self)
+    cxlog_info('on_battle_turn_stand_by')
     --[[
     每帧update都看player是不是输入了指令
     local player的指令输入来自键盘 或者  鼠标
@@ -423,21 +437,20 @@ function on_battle_turn_execute(self)
     防御指令
 ]]
         
-    if #self.cmds > 0 then
-        local cmd = self.cmds[1]
+    if #battle_commands > 0 then
+        local cmd = battle_commands[1]
         if not cmd.master:IsDead() then
-            CurrentCmd = cmd
             cmd:Update()
             if cmd:IsFinished() then
-                table.remove(self.cmds,1)
+                table.remove(battle_commands,1)
             end
         else
-            table.remove(self.cmds,1)
+            table.remove(battle_commands,1)
         end
     else 
         if check_battle_end() then
-            self.state = BTTALE_END
-            cxlog_info('BTTALE_END')
+            self.state = BATTLE_END
+            cxlog_info('BATTLE_END')
         else
             self.state = BTTALE_TURN_NEXT
             cxlog_info('BTTALE_TURN_NEXT')
@@ -446,26 +459,24 @@ function on_battle_turn_execute(self)
 end
 
 function on_battle_turn_next(self)
+    cxlog_info('on_battle_turn_next')
     self.turn = self.turn + 1
     -- for i,actor in ipairs(self.actors) do
     --     actor:BufferNextTurn(self.turn)
     -- end
+    
     self.state = BATTLE_TURN_STAND_BY
-    cxlog_info('BATTLE_TURN_STAND_BY')
 end
 
 function on_battle_end(self)
-    if battle then
-        for i,actor in ipairs(battle.actors) do
-            combat_reset_actor(actor)
-        end
+     cxlog_info('on_battle_end')
+    for i,actor in ipairs(self.actors) do
+        combat_reset_actor(actor)
     end
     
     animation_manager_clear()
     scene_set_combat(false)
-
     self.state = BATTLE_DEFAULT
-    cxlog_info('BATTLE_DEFAULT')
 end
 
 function combat_system_update()
@@ -476,5 +487,16 @@ function combat_system_update()
             actor:Update()
         end
         animation_manager_update()
+    end
+end
+
+function combat_system_remove_from_battle(_actor_)
+    if not battle then return end
+    for i,actor in ipairs(battle.actors) do
+        if actor:GetID() == _actor_:GetID() then
+            combat_reset_actor(actor)
+            table.remove(battle.actors,i) 
+            return
+        end
     end
 end

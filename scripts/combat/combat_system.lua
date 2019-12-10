@@ -1,4 +1,6 @@
 
+
+
 PERFRAME_TIME = 0.016*2.5  
 
 BATTLE_DEFAULT = 0
@@ -18,8 +20,6 @@ COMMAND_TYPE_CAST = 2
 
 TEAM_TYPE_ATTACKER = 1
 TEAM_TYPE_DEFENDER = 2
-
-
 
 BattleMT = {}
 function BattleMT:new(o)
@@ -50,9 +50,7 @@ function BattleMT:StartBattle()
 	cxlog_info('BATTLE_START')
 end
 
-
 function BattleMT:Update()
-    cxlog_info('BattleMT:Update', self.state)
     if self.state == BATTLE_DEFAULT then
 		return 
     elseif self.state == BATTLE_START then
@@ -68,11 +66,17 @@ function BattleMT:Update()
 	end
 end
 
-
 if IsServer() then
     script_system_dofile('../combat/server/combat_system.lua')
+    dofile(vfs_get_luapath('../combat/server/skill.lua') )
+    dofile(vfs_get_luapath('../combat/server/buffer.lua') )
 end
 
 if IsClient() then
     script_system_dofile('../combat/client/combat_system.lua')
+    dofile(vfs_get_luapath('../combat/client/skill.lua') )
+    dofile(vfs_get_luapath('../combat/client/buffer.lua') )
+
+    
 end
+ 

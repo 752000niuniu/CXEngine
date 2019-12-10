@@ -431,7 +431,9 @@ function ActorMT:CastSkill(skill_id)
 
     if skill.type == 'atk' then
         if skill.group_kill > 0 then
-            on_cast_group_attack(skill, actor)
+            if IsClient() then
+                on_cast_group_attack(skill, actor)
+            end
         else
             skill.atk_cnt = 0
             skill.atk_damage = {}
@@ -450,7 +452,9 @@ function ActorMT:CastSkill(skill_id)
                     break
                 end
             end
-            on_cast_attack(skill, actor)
+            if IsClient() then
+                on_cast_attack(skill, actor)
+            end
         end
     elseif skill.type == 'spell' then
         local to_self_group = false

@@ -1,8 +1,8 @@
-
 local Battles = {}
 
 function on_battle_start(self)
-    for i,actor in ipairs(self.actors) do
+	for i,actor in ipairs(self.actors) do
+		actor:SetProperty(PROP_HP,20)
         actor:SetProperty(PROP_IS_COMBAT,true)
         actor:SetProperty(PROP_TURN_READY,false)
         actor:SetProperty(PROP_COMBAT_BATTLE_ID,self.id)
@@ -20,13 +20,21 @@ function on_battle_turn_stand_by(self)
         end
     end
     if ready then
-        self.state = BTTALE_TURN_EXECUTE
-        for i,actor in ipairs(self.actors) do
-            local msg = {}
-            msg.pid = actor:GetID()
-            -- msg.cmds = self.cmds
-            net_send_message(msg.pid, PTO_S2C_COMBAT_EXECUTE, cjson.encode(msg))
-        end
+		self.state = BTTALE_TURN_EXECUTE
+		for i,cmd in ipairs(self.cmds) do
+			local master = actor_manager_fetch_player_by_id(cmd.master)
+			local target = actor_manager_fetch_player_by_id(cmd.target)
+			master:SetTarget(target)
+			master:CastSkill(cmd.skill_id)
+			cxlog_info('cmd ', cjson.encode(cmd))
+		end
+		for i,actor in ipairs(self.actors) do
+			local pid = actor:GetID()
+			local msg = { cmds = self.cmds} 
+			-- msg.pid = actor:GetID()
+			-- msg.cmds = self.cmds
+			net_send_message(pid, PTO_S2C_COMBAT_EXECUTE, cjson.encode(msg))
+		end
         cxlog_info('BTTALE_TURN_EXECUTE')
     end
 end
@@ -55,8 +63,10 @@ end
 function on_battle_turn_next(self)
     self.turn = self.turn + 1
     for i,actor in ipairs(self.actors) do
-        actor:SetProperty(PROP_TURN_READY,false)
-    end
+		actor:SetProperty(PROP_TURN_READY,false)
+		cxlog_info(actor:GetName(), actor:GetProperty(PROP_HP))
+	end
+	self.cmds = {}
     self.state = BATTLE_TURN_STAND_BY
     cxlog_info('BATTLE_TURN_STAND_BY')
 end
@@ -65,7 +75,9 @@ function on_battle_end(self)
     cxlog_info('BATTLE_END')
     actor:SetProperty(PROP_IS_COMBAT,false)
     actor:SetProperty(PROP_TURN_READY,false)
-    actor:SetProperty(PROP_COMBAT_BATTLE_ID,0)
+	actor:SetProperty(PROP_COMBAT_BATTLE_ID,0)
+	
+	
 end
 
 function combat_system_fetch_battle(id)
@@ -75,6 +87,18 @@ function combat_system_fetch_battle(id)
 		end
 	end
 end
+
+
+function combat_system_current_turn(actor)
+	local battle_id = actor:GetProperty(PROP_COMBAT_BATTLE_ID)
+	local battle = combat_system_fetch_battle(battle_id)
+    if battle then
+        return battle.turn
+    else
+        return 0
+    end
+end    
+
 
 function combat_system_create_battle(atk_actors, dfd_actors)
 	local battle = BattleMT:new()
@@ -120,33 +144,25 @@ stub[PTO_C2S_COMBAT_START] = function(req)
 	-- 1V1 单挑 
 	local atk = actor_manager_fetch_player_by_id(req.atk)
 	local def = actor_manager_fetch_player_by_id(req.def)
+
+	atk:SetProperty(PROP_HP, 10)
+	def:SetProperty(PROP_HP, 10)
+
 	combat_system_create_battle({atk},{def})
 	net_send_message_to_all_players(PTO_S2C_COMBAT_START,cjson.encode(req) )
 end
 
 stub[PTO_C2S_COMBAT_CMD] = function(req)
-	-- local battle_id = actor:GetProperty(PROP_COMBAT_BATTLE_ID)
-	-- local battle = combat_system_fetch_battle(battle_id)
-	-- if battle then
-	-- 	battle:AddCommand(cmd)
-	-- 	actor:SetProperty(PROP_TURN_READY, true)
-	-- end
-
 	if req.type == 'ATK' then
-		-- local cmd = CommandMT:new()
-        -- cmd:Init(player)
-		-- table.insert(Commands,cmd)
 		local master = actor_manager_fetch_player_by_id(req.master)  
 		local battle_id = master:GetProperty(PROP_COMBAT_BATTLE_ID)
 		local battle = combat_system_fetch_battle(battle_id)	
 
 		if battle then
-			-- local cmd = CommandMT:new()
-			-- battle:AddCommand(cmd)
+			battle:AddCommand(req)
 			master:SetProperty(PROP_TURN_READY, true)
 			local target = actor_manager_fetch_player_by_id(req.target)  
 			target:SetProperty(PROP_TURN_READY,true)
 		end
-        -- auto_ready_other_actors()
 	end
 end

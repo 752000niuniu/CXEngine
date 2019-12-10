@@ -21,12 +21,17 @@ function server_reload()
     cxlog_info('server_reload')
     script_system_dofile('main.lua')
     content_system_init()
+    init_skills()
+    init_buffers()
 end
 
 function on_script_system_init()
     -- os.execute('start '..vfs_getpath()..'bin/Debug/SimpleEngine.exe --cwd=' .. vfs_getpath())
 
     content_system_init()
+    init_skills()
+    init_buffers()
+    
     game_server_start(45000)
     scene_system_init()
 end
