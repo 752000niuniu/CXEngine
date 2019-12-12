@@ -16,7 +16,7 @@ script_system_dofile('actor_system.lua')
 script_system_dofile('scene_system.lua')
 script_system_dofile('../combat/combat_system.lua')
 
-
+luadbg_listen(9528)
 
 function server_reload()
     cxlog_info('server_reload')

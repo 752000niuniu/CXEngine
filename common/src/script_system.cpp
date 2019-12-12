@@ -86,7 +86,6 @@ void script_system_prepare_init()
 	luaopen_scene_manager(L);
 	luaopen_actor(L);
 	luaopen_actor_manager(L);
-	luaopen_net_thread_queue(L);
 	luaopen_protocol(L);
 	luaopen_cxlua(L);
 #ifndef SIMPLE_SERVER

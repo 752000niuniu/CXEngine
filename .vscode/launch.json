@@ -21,11 +21,19 @@
             "launchcmd": "D:\\Github\\SimpleEngine\\SimpleEngine.exe"
         },
         {
-            "name": "Attach",
+            "name": "Client",
             "type": "cxlua",
             "request": "attach",
             "ip": "127.0.0.1",
             "port": 9527
+            // "debugServer": 4711
+        },
+        {
+            "name": "Server",
+            "type": "cxlua",
+            "request": "attach",
+            "ip": "127.0.0.1",
+            "port": 9528
             // "debugServer": 4711
         }
     ]
