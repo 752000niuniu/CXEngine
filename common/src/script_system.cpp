@@ -36,16 +36,9 @@
 #include "cxlua.h"
 #include "actor/action.h"
 
-
-
-
-
-
 static lua_State* L = nullptr;
 void luaopen_script_system(lua_State* L);
 
-#define luaL_requirelib(L,name,fn) (luaL_requiref(L, name, fn, 1),lua_pop(L, 1))
-extern "C" int luaopen_cjson(lua_State *L);
 
 using GameConfig = std::map<std::string, std::string>;
 GameConfig g_GameConfig;
@@ -74,7 +67,6 @@ void script_system_prepare_init()
 	L = luaL_newstate();
 	luaL_openlibs(L);
 	luaopen_luadbg(L);
-	luaL_requirelib(L, "cjson", luaopen_cjson);
 	luaopen_filesystem(L);
 	luaopen_script_system(L);
 	luaopen_cximgui(L);

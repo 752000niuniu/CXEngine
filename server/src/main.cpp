@@ -9,14 +9,13 @@
 
 int main(int argc, char const *argv[])
 {
+	kbase::AtExitManager exit_manager;
+	ezio::IOServiceContext::Init();
 	script_system_read_config(argc, argv);
+	
 	FileSystem::InitWorkPath();
 	script_system_prepare_init();
 	script_system_dofile("main.lua");
-
-	kbase::AtExitManager exit_manager;
-	ezio::IOServiceContext::Init();
-
 	script_system_init();
 	game_server_start(45000);
 	script_system_deinit();
