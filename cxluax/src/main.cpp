@@ -11,7 +11,7 @@ int main(int argc, char const *argv[])
 	script_system_read_config(argc, argv);
 	FileSystem::InitWorkPath();
 	script_system_prepare_init();
-	script_system_dofile("main.lua");
+	script_system_run_main_script();
 	script_system_init();
 	g_MainLoop.RunTaskEvery([]() {
 		if (!script_system_update()) {

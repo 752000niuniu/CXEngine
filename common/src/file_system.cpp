@@ -242,10 +242,18 @@ int vfs_get_workdir(lua_State* L)
 	return 1;
 }
 
+int vfs_get_luapath(lua_State* L)
+{
+	const char* path = lua_tostring(L, 1);
+	lua_pushstring(L, FileSystem::GetLuaPath(path).c_str());
+	return 1;
+}
 void luaopen_filesystem(lua_State*L)
 {
 	script_system_register_function(L, fs_get_tsv_path);
 	script_system_register_luac_function(L, vfs_list_files);
 	script_system_register_luac_function(L, vfs_set_workdir);
 	script_system_register_luac_function(L, vfs_get_workdir);
+	script_system_register_luac_function(L, vfs_get_luapath);
+
 }

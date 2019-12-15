@@ -3,7 +3,9 @@ script_system_dofile('../share/vfs.lua')
 script_system_dofile('../share/utils.lua')
 
 
+
 on_script_system_init = function()
+	-- script_system_dofile1('../share/enums.lua')
 	iw_init()
 	iw_set_font(vfs_get_workdir()..'/res/font/simsun.ttc')
 end
@@ -33,11 +35,16 @@ function on_imgui_update()
 		os.execute(string.format('start %sbin/Debug/SimpleServer.exe --cwd=%s', vfs_get_workdir(),vfs_get_workdir()))
 	end
 
-	if imgui.Button('启动DebugAdapter') then
+	if imgui.Button('启动DA 4711') then
 		local path = vfs_makepath('internals/luadebugger/vscode/Debug/vsdbgadapter.exe')
 		local cwd = vfs_makepath('internals/luadebugger/vscode/')
-		cwd = format_path(cwd) 
-		local cmd = string.format('start %s --cwd=%s',path,cwd )
+		local cmd = string.format('start %s --cwd=%s --port=4711',path,cwd)
+		os.execute(cmd)
+	end
+	if imgui.Button('启动DA 4712') then
+		local path = vfs_makepath('internals/luadebugger/vscode/Debug/vsdbgadapter.exe')
+		local cwd = vfs_makepath('internals/luadebugger/vscode/')
+		local cmd = string.format('start %s --cwd=%s --port=4712',path,cwd)
 		os.execute(cmd)
 	end
 	if imgui.Button('重新生成ActorProp') then

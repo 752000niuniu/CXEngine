@@ -18,7 +18,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/include PREFIX "Source Files"  FIL
 add_executable(cxluax
   ${PRIVATE_HEADERS}
   src/main.cpp
-  src/script_system.cpp
+  ${COMMON_SOURCE_DIR}/script_system.cpp
   ${COMMON_SOURCE_DIR}/file_loading.cpp
   ${COMMON_SOURCE_DIR}/file_system.cpp
   ${COMMON_SOURCE_DIR}/logger.cpp
@@ -47,6 +47,7 @@ target_compile_definitions(cxluax
     -DGLEW_STATIC
     -DIMGUI_IMPL_OPENGL_LOADER_GLEW
     -DWORK_DIR="${ENGINE_DIR}/"
+    -DCXLUAX
 )
 
 set_target_properties(cxluax PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "src/pch/precompile.h")

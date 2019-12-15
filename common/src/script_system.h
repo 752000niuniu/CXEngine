@@ -6,7 +6,8 @@ void script_system_read_config(int argc, char const *argv[]);
 
 void script_system_prepare_init();
 
-void script_system_dofile(const char* file);
+void script_system_run_main_script();
+
 
 std::string script_system_get_config(const char* key);
 

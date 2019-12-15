@@ -1,5 +1,6 @@
 #pragma once
 #include <map>
+#include "timer.h"
 #include <functional>
 #include "singleton.h"
 
@@ -34,8 +35,8 @@ public:
 	float64 GetTimerAccurateTime(const tstring & name) const;
 
 private:
-	std::map<const tstring, Timer> m_TimerContainer;
-	std::map<const tstring, Timer> m_GarbageContainer;
+	std::map<const tstring, ::Timer> m_TimerContainer;
+	std::map<const tstring, ::Timer> m_GarbageContainer;
 
 	TimerManager(const TimerManager& yRef);
 	TimerManager(TimerManager&& yRef);

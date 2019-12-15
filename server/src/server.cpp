@@ -73,7 +73,6 @@ void GameServer::Start()
 {
 	m_EventLoop->RunTaskEvery(main_game_update, TimeDuration(16));
 
-	script_system_register_function(m_L, script_system_dofile);
 	script_system_register_luac_function(m_L, insert_pid_connection_pair);
 	script_system_register_luac_function(m_L, erase_pid_connection_pair);
 

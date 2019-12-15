@@ -411,3 +411,31 @@ function prop_id_to_name(prop_id)
     local tbl = content_system_get_table('actor_template')
     return tbl[prop_id+1].name
 end
+
+function format_lua_path(path)
+    print('format_lua_path',path)
+    if string.find(path, '@') == 1 then
+        path = string.sub(path, 2)
+    end
+
+    local lua_subpaths = {} 
+    path = path..'/'
+    local i = 1
+    for subpath in path:gmatch('(.-)[\\/]') do
+        if i == 1 then
+            subpath = subpath:lower()
+        end
+        if subpath == '..' then
+            table.remove(lua_subpaths)
+        else
+            table.insert(lua_subpaths,subpath)
+        end
+        i = i + 1
+    end
+    path = table.concat(lua_subpaths,'\\')
+    print(path)
+    return path
+end
+
+
+
