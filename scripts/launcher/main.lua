@@ -47,6 +47,30 @@ function on_imgui_update()
 		local cmd = string.format('start %s --cwd=%s --port=4712',path,cwd)
 		os.execute(cmd)
 	end
+
+	if imgui.Button('生成luadbg.inl') then
+		local debuggee_path = vfs_makepath('internals/luadebugger/luadbg/debuggee.lua') 
+		local debugger_path = vfs_makepath('internals/luadebugger/luadbg/debugger.lua') 
+		local luadbg_inl_path = vfs_makepath('internals/luadebugger/luadbg/src/luadbg.inl') 
+		local luadbg_inl_file = io.open(luadbg_inl_path,'w+')
+		luadbg_inl_file:write([[const char* debuggee_code = "--__debuggee_code__"]]..'\n')
+		local lines = {}
+		for line in io.lines(debuggee_path) do
+			table.insert(lines, string.format('%q',line)..'"\\n"')
+		end
+		luadbg_inl_file:write(table.concat(lines,'\n')..';\n')
+		luadbg_inl_file:write('\n')
+
+		luadbg_inl_file:write([[const char* debugger_code = "--__debugger_code__"]]..'\n')
+		lines = {}
+		for line in io.lines(debugger_path) do
+			table.insert(lines, string.format('%q',line)..'"\\n"')
+		end
+		luadbg_inl_file:write(table.concat(lines,'\n')..';\n')
+		luadbg_inl_file:write('\n')
+		luadbg_inl_file:close()
+	end
+
 	if imgui.Button('重新生成ActorProp') then
 		script_system_dofile('../generator/actor_template.lua')
 	end
