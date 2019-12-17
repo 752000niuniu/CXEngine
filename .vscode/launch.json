@@ -27,7 +27,7 @@
             "ip": "127.0.0.1",
             "port": 9527,
             "cwd" : "e:\\Github\\SimpleEngine\\",
-            "debugServer": 4712
+            "debugServer": 4711
         },
         {
             "name": "Server",
@@ -36,7 +36,23 @@
             "ip": "127.0.0.1",
             "port": 9528,
             "cwd" : "e:\\Github\\SimpleEngine\\",
-            "debugServer": 4711
-        }
+            "debugServer": 4712
+        },
+        {
+            "name": "ServerSTDIO",
+            "type": "cxlua",
+            "request": "attach",
+            "ip": "127.0.0.1",
+            "port": 9528,
+            "cwd": "e:\\Github\\SimpleEngine\\"
+        },
+        {
+            "name": "ClientSTDIO",
+            "type": "cxlua",
+            "request": "attach",
+            "ip": "127.0.0.1",
+            "port": 9527,
+            "cwd": "e:\\Github\\SimpleEngine\\"
+        },
     ]
 }
