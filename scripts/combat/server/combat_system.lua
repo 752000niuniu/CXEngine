@@ -123,11 +123,13 @@ function combat_system_update_battle()
 	for i,battle in ipairs(Battles) do
 		battle:Update()
 	end
+	local bts = {}
 	for i,battle in ipairs(Battles) do
-		if battle.state == BATTLE_END then
-			table.remove(Battles, i)
+		if battle.state ~= BATTLE_END then
+			table.insert(bts,battle)
 		end
 	end
+	Battles = bts
 end
 
 stub[PTO_C2S_COMBAT_START] = function(req)
