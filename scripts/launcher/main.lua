@@ -5,7 +5,6 @@ script_system_dofile('../share/utils.lua')
 
 
 on_script_system_init = function()
-	-- script_system_dofile1('../share/enums.lua')
 	iw_init()
 	iw_set_font(vfs_get_workdir()..'/res/font/simsun.ttc')
 end

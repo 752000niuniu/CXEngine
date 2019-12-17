@@ -413,26 +413,22 @@ function prop_id_to_name(prop_id)
 end
 
 function format_lua_path(path)
-    print('format_lua_path',path)
-    if string.find(path, '@') == 1 then
+     if string.find(path, '@') == 1 then
         path = string.sub(path, 2)
     end
-
-    local lua_subpaths = {} 
+    local subpaths = {} 
     path = path..'/'
-    local i = 1
     for subpath in path:gmatch('(.-)[\\/]') do
-        if i == 1 then
+        if #subpaths == 0 then
             subpath = subpath:lower()
         end
         if subpath == '..' then
-            table.remove(lua_subpaths)
+            table.remove(subpaths)
         else
-            table.insert(lua_subpaths,subpath)
+            table.insert(subpaths,subpath)
         end
-        i = i + 1
     end
-    path = table.concat(lua_subpaths,'\\')
+    path = table.concat(subpaths,'\\')
     print(path)
     return path
 end
