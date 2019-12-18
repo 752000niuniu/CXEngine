@@ -5,28 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "mock",
-            "request": "launch",
-            "name": "Ask for file name",
-            "program": "${workspaceFolder}/${command:AskForProgramName}",
-            "stopOnEntry": true,
-            "debugServer": 4711
-        },
-        {
-            "name": "Launch",
-            "type": "cxlua",
-            "request": "launch",
-            "ip": "127.0.0.1",
-            "port": 9527,
-            "launchcmd": "D:\\Github\\SimpleEngine\\SimpleEngine.exe"
-        },
-        {
             "name": "Client",
             "type": "cxlua",
             "request": "attach",
             "ip": "127.0.0.1",
             "port": 9527,
-            "cwd" : "e:\\Github\\SimpleEngine\\",
+            "cwd": "${workspaceFolder}\\",
             "debugServer": 4711
         },
         {
@@ -35,7 +19,7 @@
             "request": "attach",
             "ip": "127.0.0.1",
             "port": 9528,
-            "cwd" : "e:\\Github\\SimpleEngine\\",
+            "cwd": "${workspaceFolder}\\",
             "debugServer": 4712
         },
         {
@@ -44,7 +28,7 @@
             "request": "attach",
             "ip": "127.0.0.1",
             "port": 9528,
-            "cwd": "e:\\Github\\SimpleEngine\\"
+            "cwd": "${workspaceFolder}\\"
         },
         {
             "name": "ClientSTDIO",
@@ -52,7 +36,7 @@
             "request": "attach",
             "ip": "127.0.0.1",
             "port": 9527,
-            "cwd": "e:\\Github\\SimpleEngine\\"
+            "cwd": "${workspaceFolder}\\"
         },
     ]
 }
