@@ -215,8 +215,9 @@ function on_actor_editor_update()
         script_system_dofile('ui_renderer.lua')
         script_system_dofile('input_manager.lua')
         scene_manager_reload()
-        
+        game_map_reset_map_offset()
         collectgarbage()
+
     end
 
     imgui.Text("Pos :");

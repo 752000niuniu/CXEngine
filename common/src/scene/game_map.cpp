@@ -277,6 +277,13 @@ int GameMap::GetMapOffsetY()
 	return m_MapOffsetY;
 }
 
+void GameMap::ResetMapOffset()
+{
+	m_MapOffsetX = 0;
+	m_MapOffsetY = 0;
+}
+
+
 #ifndef SIMPLE_SERVER
 void GameMap::Draw(int playerX, int playerY)
 {

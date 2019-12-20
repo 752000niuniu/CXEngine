@@ -49,6 +49,7 @@ public:
 
 	int GetMapOffsetY();
 
+	void ResetMapOffset();
 #ifndef SIMPLE_SERVER
 	void Draw(int playerX, int playerY);
 	void DrawMask(int playerX, int playerY, int playerHeight);

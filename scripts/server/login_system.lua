@@ -1,7 +1,9 @@
 
 
 stub[PTO_C2C_LOGIN] = function(req)
-	print('pto_c2s_login req', cjson.encode(req))
+    print('pto_c2s_login req', cjson.encode(req))
+
+
     local req_player = actor_manager_create_actor(req.pid)
    
     req_player:SetProperties({

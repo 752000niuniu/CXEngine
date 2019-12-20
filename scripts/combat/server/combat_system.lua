@@ -2,7 +2,6 @@ local Battles = {}
 
 function on_battle_start(self)
 	for i,actor in ipairs(self.actors) do
-		actor:SetProperty(PROP_HP,20)
         actor:SetProperty(PROP_IS_COMBAT,true)
         actor:SetProperty(PROP_TURN_READY,false)
         actor:SetProperty(PROP_COMBAT_BATTLE_ID,self.id)
@@ -72,10 +71,12 @@ function on_battle_turn_next(self)
 end
 
 function on_battle_end(self)
-    cxlog_info('BATTLE_END')
-    actor:SetProperty(PROP_IS_COMBAT,false)
-    actor:SetProperty(PROP_TURN_READY,false)
-	actor:SetProperty(PROP_COMBAT_BATTLE_ID,0)
+	cxlog_info('BATTLE_END')
+	for i,actor in ipairs(self.actors) do
+		actor:SetProperty(PROP_IS_COMBAT,false)
+		actor:SetProperty(PROP_TURN_READY,false)
+		actor:SetProperty(PROP_COMBAT_BATTLE_ID,0)
+	end
 end
 
 function combat_system_fetch_battle(id)
@@ -143,8 +144,10 @@ stub[PTO_C2S_COMBAT_START] = function(req)
 	local atk = actor_manager_fetch_player_by_id(req.atk)
 	local def = actor_manager_fetch_player_by_id(req.def)
 
-	atk:SetProperty(PROP_HP, 10)
-	def:SetProperty(PROP_HP, 10)
+	atk:SetProperty(PROP_HP, atk:GetMaxHP()/2)
+	def:SetProperty(PROP_HP, def:GetMaxHP()/2)
+	req.atk_hp = atk:GetProperty(PROP_HP)
+	req.def_hp = def:GetProperty(PROP_HP)
 
 	combat_system_create_battle({atk},{def})
 	net_send_message_to_all_players(PTO_S2C_COMBAT_START,cjson.encode(req) )

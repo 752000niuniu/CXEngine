@@ -38,7 +38,6 @@ private:
 	lua_State* m_L;
 };
 
-void game_main_run();
 
 void game_server_start(int port);
 void game_server_stop();

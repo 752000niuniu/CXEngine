@@ -38,6 +38,8 @@ public:
 	virtual bool HandleMessage(const Telegram& msg) { return false; };
 
 	virtual void SetDir(int dir);
+
+	uint64_t GetID() { return GetProperty(PROP_ID).toUInt64(); }
 	int GetDir();
 	int GetDirByDegree(float degree);
 	Pos  GetAttackVec();

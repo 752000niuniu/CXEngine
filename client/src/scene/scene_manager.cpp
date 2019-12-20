@@ -412,6 +412,15 @@ void scene_set_map(int mapid)
 	}
 }
 
+void game_map_reset_map_offset(){
+	auto* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
+	if (scene) {
+		if(scene->GetGameMap()){
+			scene->GetGameMap()->ResetMapOffset();
+		}
+	}
+}
+
 void luaopen_scene_manager(lua_State* L)
 {
 	script_system_register_function(L, scene_manager_init);
@@ -424,6 +433,7 @@ void luaopen_scene_manager(lua_State* L)
 	script_system_register_function(L, scene_is_combat);
 	script_system_register_function(L, scene_set_combat);
 	script_system_register_function(L, scene_set_map);
+	script_system_register_function(L, game_map_reset_map_offset);
 
 	script_system_register_luac_function(L, scene_manager_get_imgui_cursor_pos);
 

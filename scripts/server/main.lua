@@ -2,6 +2,7 @@
 
 stub = {}
 
+luadbg_listen(9528)
 
 script_system_dofile('../share/enums.lua')
 script_system_dofile('../share/enums_protocol.lua')
@@ -11,12 +12,12 @@ script_system_dofile('../share/content_system.lua')
 script_system_dofile('../share/actor_metatable.lua')
 -- script_system_dofile('../generator/actor_template.lua')
 
+script_system_dofile('server.lua')
 script_system_dofile('login_system.lua')
 script_system_dofile('actor_system.lua')
 script_system_dofile('scene_system.lua')
 script_system_dofile('../combat/combat_system.lua')
 
-luadbg_listen(9528)
 
 function server_reload()
     cxlog_info('server_reload')

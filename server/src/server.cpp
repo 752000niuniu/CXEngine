@@ -76,14 +76,7 @@ void GameServer::Start()
 	script_system_register_luac_function(m_L, insert_pid_connection_pair);
 	script_system_register_luac_function(m_L, erase_pid_connection_pair);
 
-
-	char path[512];
-	sprintf(path, "%s/scripts/server/%s", FileSystem::GetPath().c_str(), "server.lua");
-	if (luaL_dofile(m_L, path) != LUA_OK) {
-		const char* msg = lua_tostring(m_L, -1);
-		cxlog_err(msg);
-		return;
-	}
+	
 
 	script_system_call_function(m_L, "server_thread_start");
 	m_Server.Start();
@@ -146,7 +139,13 @@ void GameServer::OnConnection(const TCPConnectionPtr& conn)
 	}else {
 		for (auto& it : g_PlayerConnections) {
 			if (it.second == conn.get()) {
-				g_PlayerConnections.erase(it.first);
+				uint64_t pid = it.first;
+				g_PlayerConnections.erase(pid);
+
+				lua_getglobal(m_L, "server_on_disconnect");
+				lua_pushinteger(m_L, pid);
+				int res = lua_pcall(m_L, 1, 0, 0);
+				check_lua_error(m_L, res);
 				break;
 			}
 		}
@@ -163,17 +162,11 @@ void GameServer::OnMessage(const TCPConnectionPtr& conn, Buffer& buf, TimePoint 
 	check_lua_error(m_L, res);
 }
 
-
-void game_server_run(int port) {
-	
+void game_server_start(int port) {
 	ezio::SocketAddress addr(port);
 	CXGameServer = new GameServer(&g_MainLoop, addr, "GameServer");
 	CXGameServer->Start();
 	g_MainLoop.Run();
-}
-
-void game_server_start(int port) {
-	game_server_run(port);
 }
 
 int game_server_update(lua_State* L) {
