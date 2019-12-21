@@ -27,12 +27,16 @@ function on_battle_turn_stand_by(self)
 			master:CastSkill(cmd.skill_id)
 			cxlog_info('cmd ', cjson.encode(cmd))
 		end
-		for i,actor in ipairs(self.actors) do
-			local pid = actor:GetID()
-			local msg = { cmds = self.cmds} 
-			-- msg.pid = actor:GetID()
-			-- msg.cmds = self.cmds
-			net_send_message(pid, PTO_S2C_COMBAT_EXECUTE, cjson.encode(msg))
+		if #self.cmds > 0 then
+			for i,actor in ipairs(self.actors) do
+				local pid = actor:GetID()
+				local msg = { cmds = self.cmds} 
+				-- msg.pid = actor:GetID()
+				-- msg.cmds = self.cmds
+				if actor:GetProperty(PROP_ACTOR_TYPE)  == ACTOR_TYPE_PLAYER then
+					net_send_message(pid, PTO_S2C_COMBAT_EXECUTE, cjson.encode(msg))
+				end
+			end
 		end
         cxlog_info('BTTALE_TURN_EXECUTE')
     end
@@ -162,7 +166,15 @@ stub[PTO_C2S_COMBAT_CMD] = function(req)
 		if battle then
 			battle:AddCommand(req)
 			master:SetProperty(PROP_TURN_READY, true)
+
 			local target = actor_manager_fetch_player_by_id(req.target)  
+			local cmd = {
+        		type = 'ATK',
+        		master = target:GetID(),
+        		target = master:GetID(),
+        		skill_id = 1
+			}
+			battle:AddCommand(cmd)
 			target:SetProperty(PROP_TURN_READY,true)
 		end
 	end

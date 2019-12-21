@@ -76,7 +76,5 @@ if IsClient() then
     script_system_dofile('../combat/client/combat_system.lua')
     dofile(vfs_get_luapath('../combat/client/skill.lua') )
     dofile(vfs_get_luapath('../combat/client/buffer.lua') )
-
-    
 end
  

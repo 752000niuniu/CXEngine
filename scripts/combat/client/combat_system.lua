@@ -373,6 +373,7 @@ stub[PTO_S2C_COMBAT_EXECUTE] = function(req)
     for i,req_cmd in ipairs(req.cmds) do
         local actor = actor_manager_fetch_player_by_id(req_cmd.master)
         local target = actor_manager_fetch_player_by_id(req_cmd.target)
+        actor:SetTarget(target)
         local cmd = CommandMT:new()
         cmd:Init(battle,actor,req_cmd.skill_id )
         table.insert(battle_commands,cmd)
