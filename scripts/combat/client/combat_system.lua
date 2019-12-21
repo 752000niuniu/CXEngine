@@ -165,27 +165,23 @@ end
 
 function combat_system_actor_on_click(actor, button, x, y)
     if not battle or battle.state ~= BATTLE_TURN_STAND_BY then return end
-    if ACTOR_CLICK_MODE == ACTOR_CLICK_MODE_ATTACK then
-        local player = actor_manager_fetch_local_player()
-        player:SetTarget(actor)
-        player:SetProperty(PROP_USING_SKILL, 1)
-
-        local msg = {}
-        msg.type = 'ATK'
-        msg.master = player:GetID()
-        msg.target = actor:GetID()
-        msg.skill_id = 1
-        net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
-        
-
-    elseif ACTOR_CLICK_MODE == ACTOR_CLICK_MODE_SPELL then
-        -- local player = actor_manager_fetch_local_player()
-        -- player:SetTarget(actor)
     
-        -- local cmd = CommandMT:new()
-        -- cmd:Init(player)
-        -- table.insert(Commands,cmd)
+    local player = actor_manager_fetch_local_player()
+    if player==actor then return end
+    player:SetTarget(actor)
+
+    if  ACTOR_CLICK_MODE == ACTOR_CLICK_MODE_ATTACK then
+        player:SetProperty(PROP_USING_SKILL,1)
     end
+
+    local msg = {}
+    msg.type = 'ATK'
+    msg.master = player:GetID()
+    msg.target = actor:GetID()
+    msg.skill_id = player:GetProperty(PROP_USING_SKILL)
+    net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
+
+    
     ACTOR_CLICK_MODE = ACTOR_CLICK_MODE_ATTACK
 end
 
@@ -251,12 +247,6 @@ function combat_system_imgui_update()
     if imgui.Button('法术##player') then
         imgui.OpenPopup('SpellSelector')
         ACTOR_CLICK_MODE = ACTOR_CLICK_MODE_SPELL
-        -- test_local_player_cast(51)
-        local player = actor_manager_fetch_local_player()
-        player:SetProperty(PROP_USING_SKILL, cast_id)
-        local cmd = CommandMT:new()
-        cmd:Init(player)
-        table.insert(Commands,cmd)
     end
 
     if imgui.Button('特技##player') then

@@ -149,7 +149,7 @@ stub[PTO_C2S_COMBAT_START] = function(req)
 	local def = actor_manager_fetch_player_by_id(req.def)
 
 	atk:SetProperty(PROP_HP, atk:GetMaxHP()/2)
-	def:SetProperty(PROP_HP, def:GetMaxHP()/2)
+	def:SetProperty(PROP_HP, def:GetMaxHP())
 	req.atk_hp = atk:GetProperty(PROP_HP)
 	req.def_hp = def:GetProperty(PROP_HP)
 
