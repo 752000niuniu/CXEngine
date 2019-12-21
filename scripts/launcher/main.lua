@@ -21,11 +21,21 @@ on_script_system_deinit = function()
 	iw_deinit()
 end
 
+local show_demo = false
 function on_imgui_update()
 	imgui.Begin('NewWindow')
+	
+
 	if imgui.Button('Reload') then
 		script_system_dofile('main.lua')
 	end
+
+	res,show_demo = imgui.Checkbox('Demo',show_demo)
+	if show_demo then
+		imgui.ShowDemoWindow()
+	end
+
+	
 	if imgui.Button('启动客户端') then
 		os.execute(string.format('start %sbin/Debug/SimpleEngine.exe --cwd=%s', vfs_get_workdir(),vfs_get_workdir()))
 	end
@@ -45,6 +55,9 @@ function on_imgui_update()
 		local cwd = vfs_makepath('internals/luadebugger/vscode/')
 		local cmd = string.format('start %s --cwd=%s --port=4712',path,cwd)
 		os.execute(cmd)
+	end
+	if imgui.Button('生成imguiBinding') then
+		script_system_dofile('../generator/imgui_binding_generator.lua')
 	end
 
 	if imgui.Button('生成luadbg.inl') then
@@ -72,6 +85,11 @@ function on_imgui_update()
 
 	if imgui.Button('重新生成ActorProp') then
 		script_system_dofile('../generator/actor_template.lua')
+	end
+
+	if imgui.Button('table_template') then
+		-- script_system_dofile('generator/table_template.lua')
+		-- generate_avatar_role_tsv()
 	end
 	if imgui.Button('安装VSCode插件') then
 		local dir = vfs_makepath('')

@@ -22,20 +22,17 @@ script_system_dofile('ui_renderer.lua')
 script_system_dofile('event_system.lua')
 script_system_dofile('input_manager.lua')
 
--- script_system_dofile('generator/imgui_binding_generator.lua')
--- script_system_dofile('generator/table_template.lua')
--- script_system_dofile('../generator/actor_template.lua')
--- script_system_dofile('parser.lua')
+script_system_dofile('addon_manager.lua')
+
 
 luadbg_listen(9527)
-IsCombat = false
---聊天背景框 wzife 39D3BD99 
+-- luadbg_enable_log(true)
+
 function main()
     window_system_init(SCREEN_WIDTH,SCREEN_HEIGHT); window_system_show()	
 end
 
 function on_script_system_init()
-    -- generate_avatar_role_tsv()
     content_system_init()
     net_manager_init('127.0.0.1', 45000)
     text_renderer_init()
@@ -48,11 +45,11 @@ function on_script_system_init()
 	actor_manager_init()
 	combat_system_init()
 	asm_system_init()
-
-
+	load_all_addons()
 end
 
 function on_script_system_update()
+	input_manager_update()
     net_manager_update()
     timer_manager_update()
     resource_manager_update()
@@ -73,63 +70,5 @@ function on_script_system_deinit()
     actor_manager_deinit()
 end
 
-function on_player_send_chat_message(msg)
-	local player = actor_manager_fetch_local_player()
-	player:Say(msg)
-	clear_chat_text_cache()
-
-	local req = {}
-	req.pid = player:GetID()
-	req.msg = msg
-	net_send_message(PTO_C2C_CHAT, cjson.encode(req))
-end
-function actor_ev_on_click(actor, button, x, y)
-	cxlog_info('ACTOR_EV_ON_CLICK',button,x,y)
-	if not actor:IsLocal() then
-		local player = actor_manager_fetch_local_player()
-		if player then
-			player:SetTarget(actor)
-		end
-		npc_dialog_show(true,'神州上下祸劫频生，灵石是否重补苍天裂痕，', {
-			{ 
-				txt = '我是找你打架的',
-				func = function()
-					local msg = {}
-					msg.atk = player:GetID()
-					msg.def = actor:GetID()
-					net_send_message(PTO_C2S_COMBAT_START, cjson.encode(msg))
-
-					
-					local player = actor_manager_fetch_local_player()
-					local target = player:GetTarget()
-					player:SetProperty(PROP_HP, player:GetMaxHP()/3)
-					target:SetProperty(PROP_HP, target:GetMaxHP()/3)
-					player:StopMove()
-	
-					-- combat_system_start_battle({player},{target})
-	
-					cxlog_info(player:GetProperty(PROP_NAME), target:GetProperty(PROP_NAME))
-				end
-			},
-			{ 
-				txt ='相信你是冤枉的',
-				func=function()
-					cxlog_info('相信你是冤枉的')
-				end
-			},
-			{ 
-				txt='告辞',
-				func=function()
-					cxlog_info('告辞')
-				end
-			}
-		})
-	end
-end
-
-
-function input_manager_on_mouse_move(mx, my)
-	-- cxlog_info('input_manager_on_mouse_move', mx, my)
-end
 
 main()

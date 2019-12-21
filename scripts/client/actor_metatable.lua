@@ -80,8 +80,6 @@ function ActorMT:DrawBoundingBox()
     draw_avatar_boundingbox(avatar)
 end
 
-
-
 function ActorMT:GetAvatarRect()
     local avatar = self:GetAvatar()
     if not avatar then return 0,0,0,0 end

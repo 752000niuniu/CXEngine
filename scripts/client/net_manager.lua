@@ -1,6 +1,19 @@
 
 stub = stub or {}
 
+
+function on_player_send_chat_message(msg)
+	local player = actor_manager_fetch_local_player()
+	player:Say(msg)
+	clear_chat_text_cache()
+
+	local req = {}
+	req.pid = player:GetID()
+	req.msg = msg
+	net_send_message(PTO_C2C_CHAT, cjson.encode(req))
+end
+
+
 stub[PTO_C2C_PLAYER_ENTER] = function(req)
 	for i,actor_info in ipairs(req.actors) do
 		local actor = actor_manager_create_actor(actor_info[tostring(PROP_ID)])
@@ -57,3 +70,5 @@ end
 function net_manager_stub()
 	return stub
 end
+
+

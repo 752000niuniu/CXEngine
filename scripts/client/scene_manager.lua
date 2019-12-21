@@ -142,5 +142,6 @@ function on_game_imgui_update(name)
             imgui.EndGroup()
         end
     end
+    addon_manager_imgui_update()
 end
 
