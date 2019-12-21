@@ -137,6 +137,8 @@ function combat_system_update_battle()
 	Battles = bts
 end
 
+
+
 stub[PTO_C2S_COMBAT_START] = function(req)
 	--[[
 		客户端发起一场战斗, PVP / PVE , 先做PVE
@@ -158,24 +160,34 @@ stub[PTO_C2S_COMBAT_START] = function(req)
 end
 
 stub[PTO_C2S_COMBAT_CMD] = function(req)
-	if req.type == 'ATK' then
-		local master = actor_manager_fetch_player_by_id(req.master)  
-		local battle_id = master:GetProperty(PROP_COMBAT_BATTLE_ID)
-		local battle = combat_system_fetch_battle(battle_id)	
+	local master = actor_manager_fetch_player_by_id(req.master)  
+	local battle_id = master:GetProperty(PROP_COMBAT_BATTLE_ID)
+	local battle = combat_system_fetch_battle(battle_id)	
 
-		if battle then
-			battle:AddCommand(req)
-			master:SetProperty(PROP_TURN_READY, true)
+	if battle then
+		battle:AddCommand(req)
+		master:SetProperty(PROP_TURN_READY, true)
 
-			local target = actor_manager_fetch_player_by_id(req.target)  
-			local cmd = {
-        		type = 'ATK',
-        		master = target:GetID(),
-        		target = master:GetID(),
-        		skill_id = 1
-			}
-			battle:AddCommand(cmd)
-			target:SetProperty(PROP_TURN_READY,true)
-		end
+		local target = actor_manager_fetch_player_by_id(req.target)  
+		local cmd = {
+			type = 'ATK',
+			master = target:GetID(),
+			target = master:GetID(),
+			skill_id = 1
+		}
+		battle:AddCommand(cmd)
+		target:SetProperty(PROP_TURN_READY,true)
+	end
+end
+
+
+stub[PTO_C2S_COMBAT_CMD_PVP] = function(req)
+	local master = actor_manager_fetch_player_by_id(req.master)  
+	local battle_id = master:GetProperty(PROP_COMBAT_BATTLE_ID)
+	local battle = combat_system_fetch_battle(battle_id)	
+
+	if battle then
+		battle:AddCommand(req)
+		master:SetProperty(PROP_TURN_READY, true)
 	end
 end

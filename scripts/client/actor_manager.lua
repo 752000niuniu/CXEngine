@@ -53,14 +53,7 @@ function actor_ev_on_click(actor, button, x, y)
 
 					
 					local player = actor_manager_fetch_local_player()
-					local target = player:GetTarget()
-					player:SetProperty(PROP_HP, player:GetMaxHP()/3)
-					target:SetProperty(PROP_HP, target:GetMaxHP()/3)
 					player:StopMove()
-	
-					-- combat_system_start_battle({player},{target})
-	
-					cxlog_info(player:GetProperty(PROP_NAME), target:GetProperty(PROP_NAME))
 				end
 			},
 			{ 

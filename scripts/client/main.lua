@@ -25,7 +25,7 @@ script_system_dofile('input_manager.lua')
 script_system_dofile('addon_manager.lua')
 
 
-luadbg_listen(9527)
+-- luadbg_listen(9527)
 -- luadbg_enable_log(true)
 
 function main()

@@ -179,7 +179,7 @@ function combat_system_actor_on_click(actor, button, x, y)
     msg.master = player:GetID()
     msg.target = actor:GetID()
     msg.skill_id = player:GetProperty(PROP_USING_SKILL)
-    net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
+    net_send_message(PTO_C2S_COMBAT_CMD_PVP, cjson.encode(msg) )
 
     
     ACTOR_CLICK_MODE = ACTOR_CLICK_MODE_ATTACK
@@ -315,11 +315,7 @@ function combat_system_imgui_update()
     -- end
     -- imgui.End()
 
-    if  imgui.KeysMod('ALT') and imgui.IsKeyReleased(string.byte('A'))  then
-        local player = actor_manager_fetch_local_player()
-        player:GetTarget():SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF,0x1D3FF13C))
-        player:PlayAttack()
-    end
+  
 
 
     for i,actor in ipairs(battle.actors) do

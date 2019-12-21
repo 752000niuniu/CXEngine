@@ -75,4 +75,19 @@ function addon_manager_imgui_update()
         end
     end
 
+    if imgui.KeysMod('ALT') and imgui.IsKeyReleased(string.byte('A'))  then
+        local player = actor_manager_fetch_local_player()
+        if not player then return end
+        if player:GetProperty(PROP_IS_COMBAT) then return end
+        local mx,my = input_manager_get_mouse_pos()
+        local dest_x, dest_y = util_screen_pos_to_map_pos(mx, my)
+        local hit_actor = check_dest_hit_actor(dest_x,dest_y)
+        if hit_actor then
+            local msg = {}
+            msg.atk = player:GetID()
+            msg.def = hit_actor:GetID()
+            net_send_message(PTO_C2S_COMBAT_START, cjson.encode(msg))
+            player:StopMove()
+        end
+    end
 end
