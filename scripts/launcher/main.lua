@@ -3,6 +3,14 @@ script_system_dofile('../share/vfs.lua')
 script_system_dofile('../share/utils.lua')
 
 
+local AccountSB = imgui.CreateStrbuf('oceancx',256)
+local PasswordSB = imgui.CreateStrbuf('123456',256)
+local IPSB = imgui.CreateStrbuf('127.0.0.1',256)
+local PortSB = imgui.CreateStrbuf('45000',256)
+local DbgPortSB = imgui.CreateStrbuf('9527',256)
+local PlayerNameSB = imgui.CreateStrbuf('Ocean藏心',256)
+local PosX = imgui.CreateStrbuf('200',128)
+local PosY = imgui.CreateStrbuf('2790',128)
 
 on_script_system_init = function()
 	iw_init()
@@ -35,9 +43,42 @@ function on_imgui_update()
 		imgui.ShowDemoWindow()
 	end
 
+	imgui.Text('IP  :')
+	imgui.SameLine()
+	imgui.InputText('##IP', IPSB)
+
+	imgui.Text('Port  :')
+	imgui.SameLine()
+	imgui.InputText('##Port', PortSB)
+
+	imgui.Text('DbgPort  :')
+	imgui.SameLine()
+	imgui.InputText('##DbgPort', DbgPortSB)
+
+	imgui.Text("Account   :");
+	imgui.SameLine();
+	imgui.InputText("##account", AccountSB);
+
+	imgui.Text("Password   :");
+	imgui.SameLine();
+	imgui.InputText("##password", PasswordSB);
+
+
 	
 	if imgui.Button('启动客户端') then
-		os.execute(string.format('start %sbin/Debug/SimpleEngine.exe --cwd=%s', vfs_get_workdir(),vfs_get_workdir()))
+		local exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'
+		local cmd = {
+			'start '..exepath,
+			'--cwd='..vfs_get_workdir(),
+			'--host='..IPSB:str(),
+			'--port='..PortSB:str(),
+			'--dbg_port='..DbgPortSB:str(),
+			'--user='..AccountSB:str(),
+			'--pass='..PasswordSB:str(),
+		}
+		cmd = table.concat(cmd,' ')
+		cxlog_info(cmd)
+		os.execute(cmd)
 	end
 
 	if imgui.Button('启动服务器') then

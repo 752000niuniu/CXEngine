@@ -154,16 +154,7 @@ function OnSceneInit()
     cxlog_info(player:GetProperty(PROP_NAME), player:GetTarget():GetProperty(PROP_NAME))
 
     
-	local msg = {}
-	msg.account = 'oceancx'
-	msg.password = '123456'
-	msg.name = 'Ocean藏心'
-	msg.scene_id = -105
-	msg.role_id = 1
-	msg.weapon_id = 40
-	msg.x = 306
-	msg.y = 466
-	net_send_message(PTO_C2C_LOGIN, cjson.encode(msg))
+
 end
 
 local actor_dir = 0

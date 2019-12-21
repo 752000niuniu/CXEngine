@@ -24,17 +24,20 @@ script_system_dofile('input_manager.lua')
 
 script_system_dofile('addon_manager.lua')
 
+SERVER_HOST = command_arg_opt_str('host','127.0.0.1')
+SERVER_PORT = command_arg_opt_int('port', 45000)
+DBG_PORT = command_arg_opt_int('dbg_port', 9527)
 
--- luadbg_listen(9527)
--- luadbg_enable_log(true)
+luadbg_listen(DBG_PORT)
 
 function main()
-    window_system_init(SCREEN_WIDTH,SCREEN_HEIGHT); window_system_show()	
+	window_system_init(SCREEN_WIDTH,SCREEN_HEIGHT)
+	window_system_show()	
 end
 
 function on_script_system_init()
     content_system_init()
-    net_manager_init('127.0.0.1', 45000)
+    net_manager_init(SERVER_HOST, SERVER_PORT)
     text_renderer_init()
     timer_manager_init()
     input_manager_init()

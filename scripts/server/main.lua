@@ -10,14 +10,12 @@ script_system_dofile('../share/vfs.lua')
 script_system_dofile('../share/utils.lua')
 script_system_dofile('../share/content_system.lua')
 script_system_dofile('../share/actor_metatable.lua')
--- script_system_dofile('../generator/actor_template.lua')
 
 script_system_dofile('server.lua')
 script_system_dofile('login_system.lua')
 script_system_dofile('actor_system.lua')
 script_system_dofile('scene_system.lua')
 script_system_dofile('../combat/combat_system.lua')
-
 
 function server_reload()
     cxlog_info('server_reload')
@@ -28,12 +26,9 @@ function server_reload()
 end
 
 function on_script_system_init()
-    -- os.execute('start '..vfs_getpath()..'bin/Debug/SimpleEngine.exe --cwd=' .. vfs_getpath())
-
     content_system_init()
     init_skills()
     init_buffers()
-    
     scene_system_init()
 end
 
@@ -46,7 +41,7 @@ function is_prop_sync(prop_id)
 end
 
 function on_script_system_update()
-    game_server_update() --dispatch message
+    game_server_update()  
     combat_system_update_battle()
     scene_system_update()
     
@@ -88,28 +83,7 @@ stub[PTO_C2S_DOSTRING] = function(req)
     end
 end 
 
-stub[PTO_C2C_SAVE_PLAYER_DATABASE] = function()
-    local players = actor_manager_fetch_all_players()
-    local pinfos = {}
-    for pid, p in pairs(players) do
-        local pinfo = {}
-        pinfo.pid = p:GetID()
-        pinfo.name = p:GetProperty(PROP_NAME)
-        pinfo.scene_id = p:GetProperty(PROP_SCENE_ID)
-        pinfo.role_id = p:GetProperty(PROP_ROLE_ID)
-        pinfo.weapon_id = p:GetProperty(PROP_WEAPON_ID) 
-        pinfo.x,pinfo.y = p:GetPos()
-        table.insert(pinfos, pinfo)
-    end
-    table.sort(pinfos, function(a,b) return a.pid < b.pid  end)
-    	
-	local path = vfs_get_workdir() .. '/res/storage/player.data'
-	local fw = io.open(path,'w')
-    if not fw then return end
-    cxlog_info('cjson.encode(pinfos)', cjson.encode(pinfos))
-	fw:write(cjson.encode(pinfos))
-	fw:close()
-end
+
 
 function game_server_dispatch_message(pt)
     local type = pt:ReadAsInt()

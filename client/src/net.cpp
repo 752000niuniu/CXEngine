@@ -25,6 +25,8 @@
 using namespace ezio;
 
 NetThreadQueue g_ReadPacketQueue;
+static bool g_ServerConnected = false;
+static bool g_LastServerConnected = false;
 
 class NetClient
 {
@@ -89,6 +91,7 @@ void NetClient::OnConnection(const TCPConnectionPtr& conn)
 {
 	const char* state = conn->connected() ? "connected" : "disconnected";
 	cxlog_info("Connection %s is %s\n", conn->peer_addr().ToHostPort().c_str(), state);
+	g_ServerConnected = conn->connected();
 }
 
 void NetClient::OnMessage(const TCPConnectionPtr& conn, Buffer& buf, TimePoint time)
@@ -154,6 +157,13 @@ void NetThread::Init(const char* ip, int port)
 
 void NetThread::Update(lua_State* L )
 {
+	if (g_LastServerConnected != g_ServerConnected) {
+		g_LastServerConnected = g_ServerConnected;	
+		lua_getglobal(L, "game_server_on_connection");
+		lua_pushboolean(L, g_ServerConnected);
+		int res = lua_pcall(L, 1, 0, 0);
+		check_lua_error(L, res);
+	}
 	while (!g_ReadPacketQueue.Empty(NetThreadQueue::Read))
 	{
 		Buffer& pt = g_ReadPacketQueue.Front(NetThreadQueue::Read);

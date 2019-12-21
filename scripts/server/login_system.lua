@@ -1,7 +1,11 @@
 
 
 stub[PTO_C2C_LOGIN] = function(req)
-    print('pto_c2s_login req', cjson.encode(req))
+    local req_player = actor_manager_create_actor(req.pid)
+    local props = fetch_player_database_props(req.pid)
+    if props then
+        req_player:SetProperties(props)
+    end
 
     local req_player = actor_manager_create_actor(req.pid)
     req_player:SetProperties({
@@ -21,7 +25,7 @@ stub[PTO_C2C_LOGIN] = function(req)
         [PROP_LV] =  145
     })
 
-    cxlog_info('GetID ', req_player:GetID())
+    -- cxlog_info('GetID ', req_player:GetID())
     
     local actors = actor_manager_fetch_all_players()    
     -- print('players', #players)

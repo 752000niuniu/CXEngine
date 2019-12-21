@@ -179,7 +179,7 @@ function combat_system_actor_on_click(actor, button, x, y)
     msg.master = player:GetID()
     msg.target = actor:GetID()
     msg.skill_id = player:GetProperty(PROP_USING_SKILL)
-    net_send_message(PTO_C2S_COMBAT_CMD_PVP, cjson.encode(msg) )
+    net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
 
     
     ACTOR_CLICK_MODE = ACTOR_CLICK_MODE_ATTACK

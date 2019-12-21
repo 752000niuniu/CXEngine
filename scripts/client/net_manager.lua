@@ -67,6 +67,31 @@ function game_dispatch_message(pt)
 	end
 end
 
+USER_ACCOUNT = command_arg_opt_str('user', 'oceancx')
+USER_PASSWORD = command_arg_opt_str('pass', '123456')
+function game_server_on_connection(connected)
+	if connected then
+		local msg = {}
+		msg.account = USER_ACCOUNT
+		msg.password = USER_PASSWORD
+		msg.name = 'Ocean藏心'
+		msg.scene_id = -105
+		msg.role_id = 1
+		msg.weapon_id = 40
+		msg.x = 306
+		msg.y = 466
+		net_send_message(PTO_C2C_LOGIN, cjson.encode(msg))
+	else
+		os.execute('exit()')
+	end
+end
+
+function game_server_on_disconnect()
+
+end
+
+
+
 function net_manager_stub()
 	return stub
 end

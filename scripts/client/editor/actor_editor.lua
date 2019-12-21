@@ -34,22 +34,19 @@ local LoginDebugButtons = {
             local msg = {}
             msg.account = AccountSB:str()
             msg.password = PasswordSB:str()
-            msg.name = 'Ocean藏心'
-            msg.scene_id = -105
-            msg.role_id = 1
-            msg.weapon_id = 40
-            msg.x = 306
-            msg.y = 466
             net_send_message(PTO_C2C_LOGIN, cjson.encode(msg))
         end
     },
     {
         name  = '刷新角色数据库',
         on_click = function()
-            local player = actor_manager_fetch_local_player()
-            local msg = {}
-            msg.pid = player:GetID()
-            net_send_message(PTO_C2C_SAVE_PLAYER_DATABASE, cjson.encode(msg))
+            net_send_message(PTO_C2C_SAVE_PLAYER_DATABASE,cjson.encode({}))
+        end
+    }, 
+    {
+        name  = '刷新账号数据库',
+        on_click = function()
+            net_send_message(PTO_C2C_SAVE_ACCOUNT_DATABASE,cjson.encode({}))
         end
     },
     {
