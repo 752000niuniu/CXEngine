@@ -2,6 +2,8 @@ function load_all_addons()
     script_system_dofile('addon/bag.lua')
     script_system_dofile('addon/props.lua')
     script_system_dofile('addon/hud.lua')
+    script_system_dofile('addon/quest.lua')
+    script_system_dofile('addon/action.lua')
 end
 
 
@@ -36,11 +38,20 @@ function addon_manager_imgui_update()
 	if imgui.KeysMod('ALT') and imgui.IsKeyPressed(string.byte('W')) then
 		ui_toggle_show_props()
     end
+
+    if imgui.KeysMod('ALT') and imgui.IsKeyPressed(string.byte('Q')) then
+		ui_toggle_show_quest()
+    end
+
+    if imgui.KeysMod('ALT') and imgui.IsKeyPressed(string.byte('D')) then
+		ui_toggle_show_action()
+    end
     
     ui_show_bag()
     ui_show_props()
     ui_hud_update()
-    
+    ui_show_quest()
+    ui_show_action()
 
 
     if not imgui.IsAnyItemHovered() then
@@ -63,4 +74,5 @@ function addon_manager_imgui_update()
             end
         end
     end
+
 end
