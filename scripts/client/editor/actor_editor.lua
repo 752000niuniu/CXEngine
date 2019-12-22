@@ -50,6 +50,15 @@ local LoginDebugButtons = {
         end
     },
     {
+        name  = '创建角色',
+        on_click = function()
+            local player = actor_manager_fetch_local_player()
+            if player then
+                net_send_message(PTO_C2S_CREATE_PLAYER,cjson.encode(player:GetProperties()))
+            end
+        end
+    }, 
+    {
         name  = '重连服务器',
         on_click = function()
             net_manager_reconnect()
@@ -101,6 +110,13 @@ local LocalPlayerDebugButtons = {
         on_click = function()
             local player = actor_manager_fetch_local_player()
             player:SetProperty(PROP_NAME,PlayerNameSB:str())
+        end
+    },
+    {
+        name = 'SetScene',
+        on_click = function()
+            local player = actor_manager_fetch_local_player()
+            player:SetProperty(PROP_SCENE_ID,scene_manager_get_current_scene_id())
         end
     },
     {

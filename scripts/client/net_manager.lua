@@ -26,8 +26,6 @@ stub[PTO_C2C_PLAYER_ENTER] = function(req)
 	end
 	if req.local_pid then
 		actor_manager_set_local_player(req.local_pid)
-		local player = actor_manager_fetch_player_by_id(req.local_pid)
-		scene_manager_switch_scene_by_id(player:GetProperty(PROP_SCENE_ID))	
 	end
 end
 

@@ -7,6 +7,7 @@
 #include <script_system.h>
 #include <file_loading.h>
 #include <logger.h>
+#include "cxlua.h"
 
 static int m_WindowWidth;
 static int m_WindowHeight;
@@ -87,7 +88,7 @@ void iw_init(){
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 #endif
 	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-	std::string floatConfig = script_system_get_config("window_float");
+	std::string floatConfig = command_arg_opt_str("window_float","0");
 	glfwWindowHint(GLFW_FLOATING, floatConfig == "1");
 
 	s_pWindow = glfwCreateWindow(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT, "CXLUAX", nullptr, nullptr);

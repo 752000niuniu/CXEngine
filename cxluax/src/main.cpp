@@ -4,13 +4,14 @@
 #include <ezio/tcp_server.h>
 #include <kbase/at_exit_manager.h>
 #include <ezio/io_service_context.h>
+#include "cxlua.h"
 
 
 
 ezio::EventLoop g_MainLoop;
-int main(int argc, char const *argv[])
+int main(int argc, char  *argv[])
 {
-	script_system_read_config(argc, argv);
+	handle_command_args(argc, argv);
 
 	kbase::AtExitManager exit_manager;
 	ezio::IOServiceContext::Init();

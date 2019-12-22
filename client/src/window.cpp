@@ -12,6 +12,7 @@
 #include "file_loading.h"
 #include "scene/scene_manager.h"
 #include "logger.h"
+#include "cxlua.h"
 
 static const float MS_PER_UPDATE = 1000 / 60.f / 1000;
 #define GAME_SCREEN_WIDTH 800
@@ -86,7 +87,7 @@ void Window::Init(int w,int h)
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 #endif
 	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);	
-	std::string floatConfig = script_system_get_config("window_float");
+	std::string floatConfig = command_arg_opt_str("window_float", "0");;
 	glfwWindowHint(GLFW_FLOATING, floatConfig == "1");
 
 	m_pWindow = glfwCreateWindow(w, h, "SimpleEngine", nullptr, nullptr);

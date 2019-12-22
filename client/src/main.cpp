@@ -3,11 +3,12 @@
 #include "kbase/at_exit_manager.h"
 #include "ezio/io_service_context.h"
 #include "file_system.h"
+#include "cxlua.h"
 
-int main(int argc, char const *argv[])
+int main(int argc, char *argv[])
 {
-	script_system_read_config(argc, argv);
-	
+	handle_command_args(argc,argv);
+
 	kbase::AtExitManager exit_manager;
 	ezio::IOServiceContext::Init();
 	FileSystem::InitWorkPath();

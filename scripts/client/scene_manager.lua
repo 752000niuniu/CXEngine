@@ -59,6 +59,10 @@ end
 
 function on_scene_manager_init_scene(name)
     current_scene_name = name
+    local player = actor_manager_fetch_local_player()
+    if player then
+        scene_manager_switch_scene_by_id(player:GetProperty(PROP_SCENE_ID))	
+    end
     actor_manager_set_scene(scene_manager_get_current_scene_id())
     if scene_list[name] then
         scene_list[name].OnSceneInit() 

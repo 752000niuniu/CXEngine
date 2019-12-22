@@ -5,15 +5,17 @@
 #include "ezio/io_service_context.h"
 #include <script_system.h>
 #include "file_system.h"
+#include "cxlua.h"
 
 
 
 
-int main(int argc, char const *argv[])
+int main(int argc, char *argv[])
 {
+	handle_command_args(argc, argv);
+
 	kbase::AtExitManager exit_manager;
 	ezio::IOServiceContext::Init();
-	script_system_read_config(argc, argv);
 	
 	FileSystem::InitWorkPath();
 	script_system_prepare_init();

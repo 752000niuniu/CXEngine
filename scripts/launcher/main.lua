@@ -67,7 +67,7 @@ function on_imgui_update()
 	
 	if imgui.Button('启动客户端') then
 		local exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'
-		local cmd = {
+		local tcmd = {
 			'start '..exepath,
 			'--cwd='..vfs_get_workdir(),
 			'--host='..IPSB:str(),
@@ -76,13 +76,15 @@ function on_imgui_update()
 			'--user='..AccountSB:str(),
 			'--pass='..PasswordSB:str(),
 		}
-		cmd = table.concat(cmd,' ')
+		local cmd = table.concat(tcmd,' ')
 		cxlog_info(cmd)
 		os.execute(cmd)
 	end
 
 	if imgui.Button('启动服务器') then
-		os.execute(string.format('start %sbin/Debug/SimpleServer.exe --cwd=%s', vfs_get_workdir(),vfs_get_workdir()))
+		local cmd = string.format('start %sbin/Debug/SimpleServer.exe --cwd=%s', vfs_get_workdir(),vfs_get_workdir())
+		cxlog_info(cmd)
+		os.execute(cmd)
 	end
 
 	if imgui.Button('启动DA 4711') then

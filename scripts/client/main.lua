@@ -27,7 +27,6 @@ script_system_dofile('addon_manager.lua')
 SERVER_HOST = command_arg_opt_str('host','127.0.0.1')
 SERVER_PORT = command_arg_opt_int('port', 45000)
 DBG_PORT = command_arg_opt_int('dbg_port', 9527)
-
 luadbg_listen(DBG_PORT)
 
 function main()

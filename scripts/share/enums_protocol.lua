@@ -17,3 +17,5 @@ PTO_S2C_SYNC_PROPS                      = enum_next()
 
 PTO_C2S_NPC_DIALOG                      = enum_next()
 PTO_S2C_NPC_DIALOG                      = enum_next()
+
+PTO_C2S_CREATE_PLAYER                      = enum_next()

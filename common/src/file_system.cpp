@@ -4,6 +4,7 @@
 #endif
 #include <script_system.h>
 #include "utils.h"
+#include "cxlua.h"
 
 static String VFS_WORK_DIR="";
 static String VFS_SCRIPT_DIR = "";
@@ -92,13 +93,13 @@ std::string FileSystem::GetIconPath(std::string path)
 
 void FileSystem::InitWorkPath()
 {
-	std::string cwd = script_system_get_config("cwd");
+	std::string cwd = command_arg_get("cwd");
 	if (cwd != "nil")
 	{
 		VFS_WORK_DIR = cwd;
 	}
 	else {
-		std::string path = script_system_get_config("argv0");
+		std::string path = command_arg_get("argv0");
 		std::string PATH_SEP("");
 		std::string CWD = "";
 		if (path.find_last_of("\\") != std::string::npos) {
@@ -111,7 +112,7 @@ void FileSystem::InitWorkPath()
 		VFS_WORK_DIR = path.substr(0, path.find_last_of(PATH_SEP)) + PATH_SEP;
 	}
 
-	std::string script_path = script_system_get_config("script_path");
+	std::string script_path = command_arg_opt_str("script_path","nil");
 	if (script_path == "nil") {
 #ifdef SIMPLE_SERVER
 		VFS_SCRIPT_DIR = VFS_WORK_DIR + "scripts/server/";
@@ -123,7 +124,7 @@ void FileSystem::InitWorkPath()
 		VFS_SCRIPT_DIR = VFS_WORK_DIR+script_path;
 	}
 
-	std::string share_script_path = script_system_get_config("share_script_path");
+	std::string share_script_path = command_arg_opt_str("share_script_path","nil");
 	if (share_script_path == "nil") {
 		VFS_SHARE_SCRIPT_DIR = VFS_WORK_DIR+"scripts/share/";
 	}

@@ -48,28 +48,6 @@ static lua_State* L = nullptr;
 void luaopen_script_system(lua_State* L);
 
 
-using GameConfig = std::map<std::string, std::string>;
-GameConfig g_GameConfig;
-
-void script_system_read_config(int argc, char const *argv[])
-{
-	g_GameConfig["argv0"] = argv[0];
-	for (int i = 1; i < argc; i++)
-	{
-		std::string argi = argv[i];
-		cxlog_info("%s\n", argi.c_str());
-
-		if(argi.substr(0,2) == "--"){
-			argi = argi.substr(2, argi.size());
-			auto kv = utils::split(argi, '=');
-			g_GameConfig[kv[0]] = kv[1];
-		}else if(argi.substr(0, 1) == "-") {
-			argi = argi.substr(1, argi.size());
-			g_GameConfig[argi] = "";
-		}
-	}
-}
-
 void script_system_prepare_init()
 {
 	L = luaL_newstate();
@@ -123,19 +101,6 @@ void script_system_run_main_script()
 	if (!check_lua_error(L, res, FileSystem::GetLuaPath("main.lua").c_str()))
 	{
 		DebugBreak();
-	}
-}
-
-std::string script_system_get_config(const char* key)
-{
-	auto it = g_GameConfig.find(key);
-	if (it != g_GameConfig.end())
-	{
-		return it->second;
-	}
-	else
-	{
-		return "nil";
 	}
 }
 
@@ -205,7 +170,6 @@ void luaopen_script_system(lua_State* L)
 #endif
 #undef REG_ENUM
 
-	script_system_register_function(L, script_system_get_config);
 	script_system_register_function(L, lua_file_path);
 	script_system_register_function(L, process_is_server);
 }
