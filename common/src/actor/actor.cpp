@@ -350,13 +350,12 @@ void Actor::OnHover(float x, float y)
 bool Actor::OnClick(int button, int x, int y)
 {
 	lua_State* L = script_system_get_luastate();
-	lua_getglobal(L, "actor_fire_event");
+	lua_getglobal(L, "actor_ev_on_click");
 	lua_push_actor(L, this);
-	lua_pushinteger(L, ACTOR_EV_ON_CLICK);
 	lua_pushinteger(L, button);
 	lua_pushnumber(L, x);
 	lua_pushnumber(L, y);
-	int res = lua_pcall(L, 5, 1, 0);
+	int res = lua_pcall(L, 4, 1, 0);
 	check_lua_error(L, res);
 	bool clicked = (bool)lua_toboolean(L, 1);
 	return clicked;

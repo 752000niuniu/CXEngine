@@ -81,6 +81,24 @@ function on_imgui_update()
 		os.execute(cmd)
 	end
 
+	if imgui.Button('启动客户端2') then
+		local exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'
+		local dbg_port = math.tointeger(DbgPortSB:str())
+
+		local tcmd = {
+			'start '..exepath,
+			'--cwd='..vfs_get_workdir(),
+			'--host='..IPSB:str(),
+			'--port='..PortSB:str(),
+			'--dbg_port='..(dbg_port+10),
+			'--user='..AccountSB:str()..'2',
+			'--pass='..PasswordSB:str(),
+		}
+		local cmd = table.concat(tcmd,' ')
+		cxlog_info(cmd)
+		os.execute(cmd)
+	end
+
 	if imgui.Button('启动服务器') then
 		local cmd = string.format('start %sbin/Debug/SimpleServer.exe --cwd=%s', vfs_get_workdir(),vfs_get_workdir())
 		cxlog_info(cmd)

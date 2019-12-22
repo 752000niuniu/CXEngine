@@ -1,5 +1,5 @@
-SCREEN_WIDTH = 1200
-SCREEN_HEIGHT = 800
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
 DefaultMapID = 1001
 
 
@@ -47,7 +47,7 @@ function on_script_system_init()
 	actor_manager_init()
 	combat_system_init()
 	asm_system_init()
-	load_all_addons()
+    load_all_addons()
 end
 
 function on_script_system_update()

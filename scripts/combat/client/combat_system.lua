@@ -151,6 +151,9 @@ function combat_system_init()
     init_buffers()
 end
 
+function combat_system_fetch_battle(actor)
+    return battle
+end
 function combat_system_current_turn()
     if battle then
         return battle.turn
@@ -163,11 +166,10 @@ function combat_system_current_cmd()
     return battle_commands[1]
 end
 
-function combat_system_actor_on_click(actor, button, x, y)
+function combat_system_actor_ev_on_click(actor, button, x, y)
     if not battle or battle.state ~= BATTLE_TURN_STAND_BY then return end
     
     local player = actor_manager_fetch_local_player()
-    if player==actor then return end
     player:SetTarget(actor)
 
     if  ACTOR_CLICK_MODE == ACTOR_CLICK_MODE_ATTACK then
@@ -186,18 +188,14 @@ function combat_system_actor_on_click(actor, button, x, y)
 end
 
 
-local actor_on_click_cb = {}
 function combat_reset_actor(actor)
     actor:SetProperty(PROP_ASM_BUFF_ANIM, 0)
-    -- actor:SetActionID(ACTION_IDLE)
     actor:SetProperty(PROP_IS_COMBAT,false)
     actor:SetProperty(PROP_CAN_MOVE,true)
     actor:ClearAction()
     actor:ClearBackAnim()
     actor:ClearFrontAnim()
-    actor:PushAction(ACTION_IDLE)
-    local avatar = actor:GetAvatar()
-    actor_reg_event(actor, ACTOR_EV_ON_CLICK, actor_on_click_cb[actor:GetID()])
+    actor:PushAction(ACTION_IDLE)    
 end
 
 
@@ -374,12 +372,10 @@ function on_battle_start(self)
         actor:SetCombatPos(pos.x,pos.y)
         actor:SetDir(dir)
         actor:ClearAction()
-        
-        actor:PushAction(ACTION_BATIDLE)
+        actor:SetProperty(PROP_IS_COMBAT,true)
 
-        actor_on_click_cb[actor:GetID()] = actor_reg_event(actor, ACTOR_EV_ON_CLICK, function(actor, button, x, y)
-            combat_system_actor_on_click(actor,button,x,y)
-        end)
+
+        actor:PushAction(ACTION_BATIDLE)
     end
 
     local player = actor_manager_fetch_local_player()

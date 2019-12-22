@@ -103,7 +103,7 @@ function on_battle_end(self)
 	end
 end
 
-function combat_system_fetch_battle(id)
+function combat_system_fetch_battle_by_id(id)
 	for i,battle in ipairs(Battles) do
 		if battle.id == id then
 			return battle
@@ -111,9 +111,14 @@ function combat_system_fetch_battle(id)
 	end
 end
 
+function combat_system_fetch_battle(actor)
+	local battle_id = actor:GetProperty(PROP_COMBAT_BATTLE_ID)
+	return combat_system_fetch_battle_by_id(battle_id)
+end
+
 function combat_system_current_turn(actor)
 	local battle_id = actor:GetProperty(PROP_COMBAT_BATTLE_ID)
-	local battle = combat_system_fetch_battle(battle_id)
+	local battle = combat_system_fetch_battle_by_id(battle_id)
     if battle then
         return battle.turn
     else
@@ -184,7 +189,7 @@ end
 stub[PTO_C2S_COMBAT_CMD] = function(req)
 	local master = actor_manager_fetch_player_by_id(req.master)  
 	local battle_id = master:GetProperty(PROP_COMBAT_BATTLE_ID)
-	local battle = combat_system_fetch_battle(battle_id)	
+	local battle = combat_system_fetch_battle_by_id(battle_id)	
 
 	if battle then
 		battle:AddCommand(req)

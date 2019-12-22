@@ -19,10 +19,7 @@ stub[PTO_C2C_PLAYER_ENTER] = function(req)
 		local actor = actor_manager_create_actor(actor_info[tostring(PROP_ID)])
 		actor:SetProperties(actor_info)
 
-		actor_reg_event(actor, ACTOR_EV_ON_CLICK, actor_ev_on_click)
-		actor_reg_event(actor, ACTOR_EV_ON_HOVER, function(actor, x, y)
-			
-		end)
+		-- actor_reg_event(actor, ACTOR_EV_ON_CLICK, actor_ev_on_click)
 	end
 	if req.local_pid then
 		actor_manager_set_local_player(req.local_pid)
@@ -94,4 +91,15 @@ function net_manager_stub()
 	return stub
 end
 
+
+function net_manager_player_dostring(code)
+	local player = actor_manager_fetch_local_player()
+	if player then
+		local req = {
+			pid = player:GetID(),
+			code = code
+		}
+		net_send_message(PTO_C2S_PLAYER_DOSTRING,cjson.encode(req))
+	end
+end
 

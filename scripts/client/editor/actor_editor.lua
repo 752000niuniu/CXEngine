@@ -10,13 +10,6 @@ local PosX = imgui.CreateStrbuf('200',128)
 local PosY = imgui.CreateStrbuf('2790',128)
 local show_demo = false
 
-local function format_path(path)
-    if string.find(path, '@') == 1 then
-        path = string.sub(path, 2)
-    end
-    path = string.gsub(path,'\\','/')
-    return string.lower(path)
-end
 
 local LoginDebugButtons = {
     {
@@ -37,41 +30,6 @@ local LoginDebugButtons = {
             net_send_message(PTO_C2C_LOGIN, cjson.encode(msg))
         end
     },
-    {
-        name  = '刷新角色数据库',
-        on_click = function()
-            net_send_message(PTO_C2C_SAVE_PLAYER_DATABASE,cjson.encode({}))
-        end
-    }, 
-    {
-        name  = '刷新账号数据库',
-        on_click = function()
-            net_send_message(PTO_C2C_SAVE_ACCOUNT_DATABASE,cjson.encode({}))
-        end
-    },
-    {
-        name  = '创建角色',
-        on_click = function()
-            local player = actor_manager_fetch_local_player()
-            if player then
-                net_send_message(PTO_C2S_CREATE_PLAYER,cjson.encode(player:GetProperties()))
-            end
-        end
-    }, 
-    {
-        name  = '重连服务器',
-        on_click = function()
-            net_manager_reconnect()
-        end
-    },
-    {
-        name  = '监听调试器',
-        on_click = function()
-            luadbg_stop()
-            luadbg_listen(9527) 
-        end
-    },
-    
 }
 
 local LocalPlayerDebugButtons = {
@@ -85,16 +43,6 @@ local LocalPlayerDebugButtons = {
             local msg = { atks = {player:GetID()}} 
             net_send_message(PTO_C2S_COMBAT_START, cjson.encode(msg) )
             -- combat_system_start_battle({player},enemys)
-
-        end
-    },
-    {
-        name = '服务端重载',
-        on_click = function()
-            local msg = {code = [[
-                server_reload()
-            ]]} 
-            net_send_message(PTO_C2S_DOSTRING, cjson.encode(msg) )            
         end
     },
     {
@@ -216,25 +164,7 @@ function on_actor_editor_update()
         imgui.ShowDemoWindow(show_demo)
     end
     imgui.SameLine()
-    if imgui.Button('Reload') then
-        actor_manager_clear_all()
-        script_system_dofile('../share/enums.lua')
-        script_system_dofile('actor_metatable.lua')
-        script_system_dofile('../share/actor_metatable.lua')
-        script_system_dofile('../share/utils.lua')
-        script_system_dofile('../combat/combat_system.lua')
-        combat_system_init()
-        script_system_dofile('editor/imgui_editor.lua')
-        script_system_dofile('ui_renderer.lua')
-        script_system_dofile('input_manager.lua')
-        scene_manager_reload()
-        game_map_reset_map_offset()
-        script_system_dofile('input_manager.lua')
-        script_system_dofile('addon_manager.lua')
-        load_all_addons()
-        collectgarbage()
-
-    end
+   
 
     imgui.Text("Pos :");
     imgui.SameLine()

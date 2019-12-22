@@ -92,14 +92,16 @@ function ActorMT:CastSkill(skill_id)
             end
         end
     elseif skill.type == 'spell' then
+        
         local to_self_group = false
         if skill.sub_type == SKILL_SUBTYPE_DEFAULT or skill.sub_type == SKILL_SUBTYPE_SEAL then
             to_self_group = false
         elseif skill.sub_type == SKILL_SUBTYPE_HEAL or skill.sub_type == SKILL_SUBTYPE_AUXI then
             to_self_group = true
         end
+        local battle = combat_system_fetch_battle(self)
         local targets = {}
-        for i, actor in ipairs(BattleActors) do
+        for i, actor in ipairs(battle.actors) do
             if to_self_group then
                 if actor:GetProperty(PROP_TEAM_TYPE) == self:GetProperty(PROP_TEAM_TYPE) then
                     table.insert(targets,actor)

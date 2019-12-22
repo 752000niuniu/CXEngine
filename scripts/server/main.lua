@@ -37,7 +37,7 @@ function is_prop_sync(prop_id)
     if not prop_templ_tbl then
         prop_templ_tbl = content_system_get_table('actor_template')
     end
-    return prop_templ_tbl[prop_id+1].sync ~= 0
+    return prop_templ_tbl[prop_id+1].sync ~= 0 
 end
 
 function on_script_system_update()
@@ -83,6 +83,21 @@ stub[PTO_C2S_DOSTRING] = function(req)
     end
 end 
 
+stub[PTO_C2S_PLAYER_DOSTRING] = function(req)
+    local pid = req.pid
+    local player = actor_manager_fetch_player_by_id(pid)
+    local env = { player = player}
+    setmetatable(env,{__index = _ENV})
+    local func, err = load(req.code,'@player_dostring','bt',env)
+    if func then
+        local ok,ret = pcall(func)
+        if not ok then
+            cxlog_info(ret)
+        end
+    else
+        cxlog_info('PTO_C2S_PLAYER_DOSTRING', err)
+    end
+end 
 
 
 function game_server_dispatch_message(pt)
