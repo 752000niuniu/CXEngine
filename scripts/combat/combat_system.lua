@@ -1,5 +1,19 @@
 
+if IsServer() then
+    script_system_dofile('../combat/server/combat_system.lua')
+    script_system_dofile('../combat/server/skill.lua') 
+    script_system_dofile('../combat/server/buffer.lua') 
+end
 
+if IsClient() then
+    script_system_dofile('../combat/client/combat_system.lua')
+    script_system_dofile('../combat/client/skill.lua')
+    script_system_dofile('../combat/client/buffer.lua')
+end
+ 
+
+script_system_dofile('../combat/skill.lua')
+script_system_dofile('../combat/buffer.lua')
 
 PERFRAME_TIME = 0.016*2.5  
 
@@ -65,16 +79,3 @@ function BattleMT:Update()
         on_battle_end(self)
 	end
 end
-
-if IsServer() then
-    script_system_dofile('../combat/server/combat_system.lua')
-    dofile(vfs_get_luapath('../combat/server/skill.lua') )
-    dofile(vfs_get_luapath('../combat/server/buffer.lua') )
-end
-
-if IsClient() then
-    script_system_dofile('../combat/client/combat_system.lua')
-    dofile(vfs_get_luapath('../combat/client/skill.lua') )
-    dofile(vfs_get_luapath('../combat/client/buffer.lua') )
-end
- 
