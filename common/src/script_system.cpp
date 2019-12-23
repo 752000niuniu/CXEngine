@@ -67,6 +67,8 @@ void script_system_prepare_init()
 	luaopen_scene_manager(L);
 	luaopen_protocol(L);
 	luaopen_cxlua(L);
+#else
+	luaopen_cxlua(L);
 #endif // !CXLUAX
 #ifdef SIMPLE_ENGINE
 	luaopen_game(L);
