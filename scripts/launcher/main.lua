@@ -13,6 +13,8 @@ local PosX = imgui.CreateStrbuf('200',128)
 local PosY = imgui.CreateStrbuf('2790',128)
 
 on_script_system_init = function()
+	newthread_dofile(vfs_get_luapath('client.lua'))
+
 	iw_init()
 	iw_set_font(vfs_get_workdir()..'/res/font/simsun.ttc')
 end
@@ -28,6 +30,8 @@ end
 on_script_system_deinit = function()
 	iw_deinit()
 end
+
+
 
 local show_demo = false
 function on_imgui_update()
@@ -62,7 +66,6 @@ function on_imgui_update()
 	imgui.Text("Password   :");
 	imgui.SameLine();
 	imgui.InputText("##password", PasswordSB);
-
 
 	
 	if imgui.Button('启动客户端') then
@@ -161,5 +164,22 @@ function on_imgui_update()
 	-- if imgui.Button('生成Protocol') then
 	-- 	script_system_dofile('../generator/protocol.lua')	
 	-- end
+	if imgui.Button('登陆') then
+		local client = 
+	end
 	imgui.End()
+end
+
+do
+	at_exit_manager_init()
+	io_service_context_init()
+	local event_loop = ez_event_loop_create()
+	on_script_system_init()
+	event_loop:RunTaskEvery(function()
+		if not on_script_system_update() then
+			event_loop:Quit()
+		end
+	end,16)
+	event_loop:Run()
+	on_script_system_deinit()
 end

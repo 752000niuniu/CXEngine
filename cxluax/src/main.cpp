@@ -5,26 +5,16 @@
 #include <kbase/at_exit_manager.h>
 #include <ezio/io_service_context.h>
 #include "cxlua.h"
+#include "net_thread_queue.h"
 
 
-
-ezio::EventLoop g_MainLoop;
 int main(int argc, char  *argv[])
 {
 	handle_command_args(argc, argv);
 
-	kbase::AtExitManager exit_manager;
-	ezio::IOServiceContext::Init();
 	FileSystem::InitWorkPath();
 	script_system_prepare_init();
 	script_system_run_main_script();
-	script_system_init();
-	g_MainLoop.RunTaskEvery([]() {
-		if (!script_system_update()) {
-			g_MainLoop.Quit();
-		}
-	}, ezio::TimeDuration(16));
-	g_MainLoop.Run();
-	script_system_deinit();
+	
 	return 0;
 }
