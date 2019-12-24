@@ -1,4 +1,4 @@
-const char* script_system_lua_code = R"_(--line alignment
+static const char* script_system_lua_code = R"_(--line alignment
 function script_system_dofile(relative_path, env)
     local path = vfs_get_luapath(relative_path)
     local subpaths = {} 

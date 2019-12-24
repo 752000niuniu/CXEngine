@@ -29,7 +29,7 @@ function on_scene_manager_init()
     scene_manager_add_custom_scene(-106, "PackageUnpacker");
     
     for i,v in ipairs(scene_lua_files) do
-        local path = lua_file_path(v.file)
+        local path = vfs_get_luapath(v.file)
         local module = {
             exports = {},
             env = _ENV
@@ -86,7 +86,7 @@ function scene_manager_reload(name)
     name = name or current_scene_name
     for i,v in ipairs(scene_lua_files) do
         if v.name == name then
-            local path = lua_file_path(v.file)
+            local path = vfs_get_luapath(v.file)
             local module = {
                 exports = {},
                 env = _ENV

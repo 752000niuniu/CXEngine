@@ -142,12 +142,6 @@ any script_system_get_globle(const char* name)
 	return v;
 }
 
-const char* lua_file_path(const char* luafile)
-{
-	static std::string v;
-	v = FileSystem::GetLuaPath(luafile);
-	return v.c_str();
-}
 
 bool process_is_server(){
 #ifdef SIMPLE_SERVER
@@ -172,6 +166,5 @@ void luaopen_script_system(lua_State* L)
 #endif
 #undef REG_ENUM
 
-	script_system_register_function(L, lua_file_path);
 	script_system_register_function(L, process_is_server);
 }

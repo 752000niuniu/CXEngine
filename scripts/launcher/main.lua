@@ -1,7 +1,7 @@
 script_system_dofile('../share/enums.lua')
 script_system_dofile('../share/vfs.lua')
 script_system_dofile('../share/utils.lua')
-
+script_system_dofile('../share/enums_protocol.lua')
 
 local AccountSB = imgui.CreateStrbuf('oceancx',256)
 local PasswordSB = imgui.CreateStrbuf('123456',256)
@@ -13,14 +13,26 @@ local PosX = imgui.CreateStrbuf('200',128)
 local PosY = imgui.CreateStrbuf('2790',128)
 
 on_script_system_init = function()
-	newthread_dofile(vfs_get_luapath('client.lua'))
-
+	-- newthread_dofile(vfs_get_luapath('client.lua'))
+	run_client_thread()
 	iw_init()
 	iw_set_font(vfs_get_workdir()..'/res/font/simsun.ttc')
 end
 
 on_script_system_update = function()
 	if iw_should_close() then return false end
+	if not shared_netq:empty(0) then
+		local pt = shared_netq:front(0)
+		local type = pt:ReadAsInt()
+		local js = pt:ReadAllAsString()
+		local req = cjson.decode(js)
+		cxlog_info('read msg ', js)
+
+		shared_netq:pop_front(0)
+	end
+
+
+
 	iw_begin_render()
 	on_imgui_update()
 	iw_end_render()
@@ -31,6 +43,16 @@ on_script_system_deinit = function()
 	iw_deinit()
 end
 
+function net_send_message(pt, msg)
+	cxlog_info('net_send_message',pt ,msg)
+	local buf = ezio_buffer_create()
+	buf:WriteInt(pt)
+	buf:WriteString(msg)
+	local cnt = buf:readable_size()
+	buf:PrependInt(cnt)
+	shared_netq:push_back(1,buf,buf:readable_size())
+	ezio_buffer_destroy(buf)
+end
 
 
 local show_demo = false
@@ -165,7 +187,10 @@ function on_imgui_update()
 	-- 	script_system_dofile('../generator/protocol.lua')	
 	-- end
 	if imgui.Button('登陆') then
-		local client = 
+		local msg = {}
+		msg.account = 'oceancx'
+		msg.password = '123456'
+		net_send_message(PTO_C2C_LOGIN, cjson.encode(msg))
 	end
 	imgui.End()
 end
