@@ -766,7 +766,7 @@ function ActorMT:GetSpellDamage(target)
     local spell_atk = self:CalcSpiritual()
     local spell_def = target:CalcDefend()
     local lv = self:GetProperty(PROP_LV)
-    local damage = lv*3 + (spell_atk-spell_def)*1.2 + 20
+    local damage = math.max(1,lv*3 + (spell_atk-spell_def)*1.2 + 20)
     return damage
 end
 
