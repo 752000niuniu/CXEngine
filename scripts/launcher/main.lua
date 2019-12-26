@@ -2,6 +2,11 @@ script_system_dofile('../share/enums.lua')
 script_system_dofile('../share/vfs.lua')
 script_system_dofile('../share/utils.lua')
 script_system_dofile('../share/enums_protocol.lua')
+CX_MSG_HEADER_LEN = 4 
+
+local event_loop  
+local cx_client 
+local shared_netq
 
 local AccountSB = imgui.CreateStrbuf('oceancx',256)
 local PasswordSB = imgui.CreateStrbuf('123456',256)
@@ -12,36 +17,6 @@ local PlayerNameSB = imgui.CreateStrbuf('Ocean藏心',256)
 local PosX = imgui.CreateStrbuf('200',128)
 local PosY = imgui.CreateStrbuf('2790',128)
 
-on_script_system_init = function()
-	-- newthread_dofile(vfs_get_luapath('client.lua'))
-	run_client_thread()
-	iw_init()
-	iw_set_font(vfs_get_workdir()..'/res/font/simsun.ttc')
-end
-
-on_script_system_update = function()
-	if iw_should_close() then return false end
-	if not shared_netq:empty(0) then
-		local pt = shared_netq:front(0)
-		local type = pt:ReadAsInt()
-		local js = pt:ReadAllAsString()
-		local req = cjson.decode(js)
-		cxlog_info('read msg ', js)
-
-		shared_netq:pop_front(0)
-	end
-
-
-
-	iw_begin_render()
-	on_imgui_update()
-	iw_end_render()
-	return true
-end
-
-on_script_system_deinit = function()
-	iw_deinit()
-end
 
 function net_send_message(pt, msg)
 	cxlog_info('net_send_message',pt ,msg)
@@ -57,6 +32,25 @@ end
 
 local show_demo = false
 function on_imgui_update()
+	if not shared_netq:empty(0) then
+		local pt = shared_netq:front(0)
+		local type = pt:ReadAsInt()
+		local js = pt:ReadAllAsString()
+		local req = cjson.decode(js)
+		cxlog_info('read msg ', js)
+
+		shared_netq:pop_front(0)
+	end
+
+	if cx_client:IsConnected() then 
+		while not shared_netq:empty(1) do
+			local req = shared_netq:front(1)
+			local conn = cx_client:connection()
+			conn:Send(req)
+			shared_netq:pop_front(1)
+		end
+	end
+
 	imgui.Begin('NewWindow')
 	
 
@@ -198,13 +192,44 @@ end
 do
 	at_exit_manager_init()
 	io_service_context_init()
-	local event_loop = ez_event_loop_create()
-	on_script_system_init()
-	event_loop:RunTaskEvery(function()
-		if not on_script_system_update() then
-			event_loop:Quit()
+
+	iw_init()
+	iw_set_font(vfs_get_workdir()..'/res/font/simsun.ttc')
+
+	event_loop = ez_event_loop_create()
+	cx_client = ez_tcp_client_create(event_loop, '127.0.0.1',45000,'Launcher')
+	shared_netq = net_thread_queue_create()
+	cx_client:set_on_connection(function(conn)
+		-- local buf = ezio_buffer_create()
+		-- buf:WriteString(cjson.encode({ type='debuggee', event='connection_state', connected = conn:connected(), addr = conn:tohostport()  }))
+		-- shared_netq:push_back(0,buf,buf:readable_size())
+		-- ezio_buffer_destroy(buf)
+	end)
+
+	cx_client:set_on_message(function(conn, buf, ts)
+		while buf:readable_size() >= CX_MSG_HEADER_LEN do
+			local len = buf:PeekAsInt()
+			if buf:readable_size() >= len + CX_MSG_HEADER_LEN then
+				buf:Consume(CX_MSG_HEADER_LEN)
+				shared_netq:push_back(0, buf, buf:readable_size())
+				buf:Consume(len)
+			else
+				break
+			end
 		end
+	end)
+
+	cx_client:Connect()
+	
+	event_loop:RunTaskEvery(function()
+		if iw_should_close() then 
+			event_loop:Quit()
+			return
+		end
+		iw_begin_render()
+		on_imgui_update()
+		iw_end_render()
 	end,16)
 	event_loop:Run()
-	on_script_system_deinit()
+	iw_deinit()
 end
