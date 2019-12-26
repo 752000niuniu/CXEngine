@@ -192,6 +192,8 @@ end
 do
 	at_exit_manager_init()
 	io_service_context_init()
+	luadbg_listen(9529)
+	luadbg_enable_log(true)
 
 	iw_init()
 	iw_set_font(vfs_get_workdir()..'/res/font/simsun.ttc')
@@ -200,10 +202,7 @@ do
 	cx_client = ez_tcp_client_create(event_loop, '127.0.0.1',45000,'Launcher')
 	shared_netq = net_thread_queue_create()
 	cx_client:set_on_connection(function(conn)
-		-- local buf = ezio_buffer_create()
-		-- buf:WriteString(cjson.encode({ type='debuggee', event='connection_state', connected = conn:connected(), addr = conn:tohostport()  }))
-		-- shared_netq:push_back(0,buf,buf:readable_size())
-		-- ezio_buffer_destroy(buf)
+		-- cxlog_info('conn-connected : ', conn:connected())
 	end)
 
 	cx_client:set_on_message(function(conn, buf, ts)

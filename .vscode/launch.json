@@ -38,5 +38,14 @@
             "port": 9527,
             "cwd": "${workspaceFolder}\\"
         },
+        {
+            "name": "LauncherSTDIO",
+            "type": "cxlua",
+            "request": "attach",
+            "ip": "127.0.0.1",
+            "port": 9529,
+            "cwd": "${workspaceFolder}\\",
+            "debugServer": 4711
+        },
     ]
 }
