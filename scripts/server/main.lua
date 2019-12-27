@@ -2,7 +2,7 @@
 
 stub = {}
 
-luadbg_listen(9528)
+luadbg_listen(9500)
 
 script_system_dofile('../share/enums.lua')
 script_system_dofile('../share/enums_protocol.lua')

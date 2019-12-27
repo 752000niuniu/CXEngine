@@ -9,7 +9,7 @@
             "type": "cxlua",
             "request": "attach",
             "ip": "127.0.0.1",
-            "port": 9527,
+            "port": 9600,
             "cwd": "${workspaceFolder}\\",
             "debugServer": 4711
         },
@@ -18,7 +18,7 @@
             "type": "cxlua",
             "request": "attach",
             "ip": "127.0.0.1",
-            "port": 9528,
+            "port": 9500,
             "cwd": "${workspaceFolder}\\",
             "debugServer": 4712
         },
@@ -27,7 +27,7 @@
             "type": "cxlua",
             "request": "attach",
             "ip": "127.0.0.1",
-            "port": 9528,
+            "port": 9500,
             "cwd": "${workspaceFolder}\\"
         },
         {
@@ -35,7 +35,7 @@
             "type": "cxlua",
             "request": "attach",
             "ip": "127.0.0.1",
-            "port": 9527,
+            "port": 9600,
             "cwd": "${workspaceFolder}\\"
         },
         {
@@ -43,7 +43,7 @@
             "type": "cxlua",
             "request": "attach",
             "ip": "127.0.0.1",
-            "port": 9529,
+            "port": 9400,
             "cwd": "${workspaceFolder}\\",
             "debugServer": 4711
         },
@@ -52,12 +52,12 @@
             "type": "cxlua",
             "request": "launch",
             "ip": "127.0.0.1",
-            "port": 9528,
+            "port": 9600,
             "cwd": "${workspaceFolder}\\",
             // "debugServer": 4711,
-            "program" : "bin\\Debug\\SimpleServer.exe",
+            "program" : "bin\\Debug\\SimpleEngine.exe",
             "args" : [
-                "--script_path=scripts/server/"
+                "--script_path=scripts/client/"
             ]
         }
     ]
