@@ -47,5 +47,18 @@
             "cwd": "${workspaceFolder}\\",
             "debugServer": 4711
         },
+        {
+            "name": "launch",
+            "type": "cxlua",
+            "request": "launch",
+            "ip": "127.0.0.1",
+            "port": 9528,
+            "cwd": "${workspaceFolder}\\",
+            // "debugServer": 4711,
+            "program" : "bin\\Debug\\SimpleServer.exe",
+            "args" : [
+                "--script_path=scripts/server/"
+            ]
+        }
     ]
 }
