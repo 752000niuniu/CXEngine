@@ -12,7 +12,7 @@ local AccountSB = imgui.CreateStrbuf('oceancx',256)
 local PasswordSB = imgui.CreateStrbuf('123456',256)
 local IPSB = imgui.CreateStrbuf('127.0.0.1',256)
 local PortSB = imgui.CreateStrbuf('45000',256)
-local DbgPortSB = imgui.CreateStrbuf('9527',256)
+local DbgPortSB = imgui.CreateStrbuf('9600',256)
 local PlayerNameSB = imgui.CreateStrbuf('Ocean藏心',256)
 local PosX = imgui.CreateStrbuf('200',128)
 local PosY = imgui.CreateStrbuf('2790',128)
@@ -28,7 +28,6 @@ function net_send_message(pt, msg)
 	shared_netq:push_back(1,buf,buf:readable_size())
 	ezio_buffer_destroy(buf)
 end
-
 
 local show_demo = false
 function on_imgui_update()
@@ -52,8 +51,6 @@ function on_imgui_update()
 	end
 
 	imgui.Begin('NewWindow')
-	
-
 	if imgui.Button('Reload') then
 		script_system_dofile('main.lua')
 	end
@@ -83,7 +80,6 @@ function on_imgui_update()
 	imgui.SameLine();
 	imgui.InputText("##password", PasswordSB);
 
-	
 	if imgui.Button('启动客户端') then
 		local exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'
 		local tcmd = {
@@ -192,7 +188,7 @@ end
 do
 	at_exit_manager_init()
 	io_service_context_init()
-	luadbg_listen(9529)
+	luadbg_listen(9400)
 	luadbg_enable_log(true)
 
 	iw_init()
