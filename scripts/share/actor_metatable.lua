@@ -616,7 +616,6 @@ function ActorMT:SetPropsByPlan(plan)
     local actor_type = self:GetProperty(PROP_ACTOR_TYPE)
     local race = self:GetProperty(PROP_RACE)
 
-
     local health = 0 
     local magic = 0 
     local force = 0 
@@ -680,8 +679,6 @@ function ActorMT:UpdatePropPtsByPlan()
     self:SetProperty(PROP_BASE_STAMINA , stamina)
     self:SetProperty(PROP_BASE_AGILITY, agility)
 
-
-
     self:SetProperty(PROP_SCHOOL_SKILL_LV_TARGETHIT, lv) 
     self:SetProperty(PROP_SCHOOL_SKILL_LV_DAMAGE, lv) 
     self:SetProperty(PROP_SCHOOL_SKILL_LV_DEFEND, lv) 
@@ -703,7 +700,6 @@ local ACTOR_TYPE_COEF_PVE = 0.9
 local ACTOR_TYPE_COEF_EVP = 0.8
 local ACTOR_TYPE_COEF_EVE = 1
 function formula_calc_atk_base_damage(atk, def, is_critical, is_combo, combo_coef, actor_type_coef)
-    
     local base = atk - def
     if is_combo then
         base = combo_coef*atk - def --第一次0.75 第二次0.5
@@ -821,6 +817,17 @@ function ActorMT:SetGlobalStandardEquip(lv, is_enforce)
     self:SetProperty(PROP_EQUIP_DEFEND, total_defend) 
     self:SetProperty(PROP_EQUIP_SPIRITUAL, total_spritual) 
     self:SetProperty(PROP_EQUIP_AGILE, total_aglie) 
-
 end
 
+
+function ActorMT:IsPlayer()
+    return self:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_PLAYER
+end
+
+function ActorMT:IsNpc()
+    return self:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_NPC
+end
+
+function ActorMT:IsSummon()
+    return self:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_SUMMON
+end

@@ -18,7 +18,6 @@ function on_battle_start(self)
 			table.insert(self.npc_actors, actor)
 		end
 	end
-
 end
 
 function on_battle_turn_stand_by(self)
@@ -162,8 +161,6 @@ function combat_system_update_battle()
 	Battles = bts
 end
 
-
-
 stub[PTO_C2S_COMBAT_START] = function(req)
 	--[[
 		客户端发起一场战斗, PVP / PVE , 先做PVE
@@ -184,13 +181,10 @@ stub[PTO_C2S_COMBAT_START] = function(req)
 	net_send_message_to_all_players(PTO_S2C_COMBAT_START,cjson.encode(req) )
 end
 
-
-
 stub[PTO_C2S_COMBAT_CMD] = function(req)
 	local master = actor_manager_fetch_player_by_id(req.master)  
 	local battle_id = master:GetProperty(PROP_COMBAT_BATTLE_ID)
 	local battle = combat_system_fetch_battle_by_id(battle_id)	
-
 	if battle then
 		battle:AddCommand(req)
 		master:SetProperty(PROP_TURN_READY, true)

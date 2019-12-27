@@ -149,6 +149,68 @@ function init_equip_templ_table()
     return ret
 end
 
+local function prop_name_to_id(name)
+    local v = load(string.format('do return %s end',name:upper()))()
+    return v
+end
+
+function init_npc_table()
+    local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('npc'),{
+        { name = 'prop_actor_type' },
+        { name = 'prop_avatar_id' },
+        { name = 'prop_weapon_avatar_id' },
+        { name = 'prop_name' },
+        { name = 'prop_pos' },
+        { name = 'prop_summon_atk_qual' },
+        { name = 'prop_summon_def_qual' },
+        { name = 'prop_summon_health_qual' },
+        { name = 'prop_summon_magic_qual' },
+        { name = 'prop_summon_speed_qual' },
+        { name = 'prop_summon_dodge_qual' },
+        { name = 'prop_summon_grow_coef' },
+        { name = 'prop_base_health' },
+        { name = 'prop_base_magic' },
+        { name = 'prop_base_force' },
+        { name = 'prop_base_stamina' },
+        { name = 'prop_base_agility' },
+        { name = 'prop_lv' },
+        { name = 'prop_scene_id' }
+    })
+
+    local actor_tbl = content_system_get_table('actor_template')
+    local prop_tbl = {}
+    for i,row in ipairs(actor_tbl) do
+        prop_tbl[row.name] = row.type
+    end
+    local npc_props = {}
+    for i,npc in ipairs(tbl) do
+        local props = {}
+        for j,prop_name in ipairs(col_names) do
+            local prop_id = prop_name_to_id(prop_name)
+            local prop_valstr = npc[prop_name]
+            local type = prop_tbl[prop_name]
+            local v
+            if type == 'bool' then
+                v = prop_valstr == 'true'
+            elseif type == 'int' or type == 'uint64' then
+                v = math.tointeger(prop_valstr)
+            elseif type == 'float' then
+                v = tonumber(prop_valstr)
+            elseif type == 'str' then
+                v = prop_valstr
+            elseif type == 'vec2' then
+                local strx,stry = string.match(prop_valstr,'{(.-),(.-)}')
+                v = {}
+                table.insert(v, tonumber(strx))  
+                table.insert(v, tonumber(stry)) 
+            end
+            props[prop_id] =  v
+        end
+        table.insert(npc_props, props)
+    end
+    return npc_props
+end
+
 function content_system_init()
     content_system_set_table('role', read_tsv_index_by_main_key('avatar_role',false,'ID'))
     content_system_set_table('weapon', read_tsv_index_by_main_key('avatar_weapon',false,'ID'))
@@ -162,6 +224,8 @@ function content_system_init()
 
     content_system_set_table('school', init_school_templ_table())
     content_system_set_table('equip', init_equip_templ_table())
+
+    content_system_set_table('npc', init_npc_table())
     
     
 end

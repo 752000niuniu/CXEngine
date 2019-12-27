@@ -44,8 +44,7 @@ function on_script_system_update()
     game_server_update()  
     combat_system_update_battle()
     scene_system_update()
-    
-    local players = actor_manager_fetch_all_players()
+    local players = actor_manager_fetch_all_actors()
     local dirty_props = {}
     
     for _, p in ipairs(players) do
@@ -64,10 +63,8 @@ function on_script_system_update()
         cxlog_info('sync dirty props', #dirty_props) 
         net_send_message_to_all_players(PTO_S2C_SYNC_PROPS, cjson.encode(dirty_props))
     end
-        
     return true
 end
-
 
 function on_script_system_deinit()
     scene_system_stop()
@@ -98,7 +95,6 @@ stub[PTO_C2S_PLAYER_DOSTRING] = function(req)
         cxlog_info('PTO_C2S_PLAYER_DOSTRING', err)
     end
 end 
-
 
 function game_server_dispatch_message(pt)
     local type = pt:ReadAsInt()

@@ -87,7 +87,7 @@ local LocalPlayerDebugButtons = {
         name = 'NormalAttack',
         on_click  = function()
             local player = actor_manager_fetch_local_player()
-            local players = actor_manager_fetch_all_players()
+            local players = actor_manager_fetch_all_actors()
             player:GetTarget():SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF,0x1D3FF13C ))
             player:PlayAttack()
 
@@ -97,7 +97,7 @@ local LocalPlayerDebugButtons = {
         name = 'CritAttack',
         on_click  = function()
             local player = actor_manager_fetch_local_player()
-            local players = actor_manager_fetch_all_players()
+            local players = actor_manager_fetch_all_actors()
             player:GetTarget():SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(ADDONWDF, 0xECD0E003))
             player:SetProperty(PROP_ASM_BUFF_ANIM, 0)
             player:PlayAttack()
@@ -107,7 +107,7 @@ local LocalPlayerDebugButtons = {
         name = '横扫千军',
         on_click  = function()
             local player = actor_manager_fetch_local_player()
-            local players = actor_manager_fetch_all_players()
+            local players = actor_manager_fetch_all_actors()
             player:GetTarget():SetProperty(PROP_ASM_BEHIT_ANIM, res_encode(MAGICWDF, 0xACA4A54A))            
             player:SetProperty(PROP_ASM_ATK_COMBO, 3)
             player:SetProperty(PROP_ASM_BUFF_ANIM, res_encode(WADDONWDF,0xD9463A0C))
@@ -217,7 +217,7 @@ function on_actor_editor_update()
     end
 
     if imgui.CollapsingHeader('Players') then
-        local players = actor_manager_fetch_all_players()
+        local players = actor_manager_fetch_all_actors()
         imgui.HorizontalLayout(players,next,function(k,v) 
             if imgui.Button(v:GetProperty(PROP_AVATAR_ID)..'##'..v:GetID()) then
                 actor_manager_set_local_player(v:GetID())
@@ -229,7 +229,7 @@ function on_actor_editor_update()
     end  
     
     if imgui.CollapsingHeader('Targets') then
-        local players = actor_manager_fetch_all_players()
+        local players = actor_manager_fetch_all_actors()
         imgui.HorizontalLayout(players,next,function(k,v) 
             if imgui.Button(v:GetProperty(PROP_AVATAR_ID)..'##Targets'..v:GetID()) then
                 local player = actor_manager_fetch_local_player()

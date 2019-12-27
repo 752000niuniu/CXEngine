@@ -7,26 +7,6 @@ stub[PTO_C2C_LOGIN] = function(req)
         req_player:SetProperties(props)
     end
 
-    -- local req_player = actor_manager_create_actor(req.pid)
-    -- req_player:SetProperties({
-    --     [PROP_ACTOR_TYPE] = ACTOR_TYPE_PLAYER,
-    --     [PROP_AVATAR_ID] = 'JMW-AXE',
-    --     [PROP_WEAPON_AVATAR_ID] = 'JMW-AXE-060-X',
-    --     [PROP_NAME] = req.name,
-    --     [PROP_SCENE_ID] = req.scene_id,
-    --     [PROP_ROLE_ID] = req.role_id,
-    --     [PROP_WEAPON_ID] = req.weapon_id,
-    --     [PROP_POS] = {req.x,req.y},
-    --     [PROP_BASE_HEALTH] =  333 ,
-    --     [PROP_BASE_MAGIC] = 157 ,
-    --     [PROP_BASE_FORCE] = 2689 ,
-    --     [PROP_BASE_STAMINA] = 157  ,
-    --     [PROP_BASE_AGILITY] =  215,
-    --     [PROP_LV] =  145
-    -- })
-
-    -- cxlog_info('GetID ', req_player:GetID())
-    
     local actors = actor_manager_fetch_all_players()    
     -- print('players', #players)
     for i,actor in ipairs(actors) do
@@ -41,5 +21,15 @@ stub[PTO_C2C_LOGIN] = function(req)
             net_send_message(pid,PTO_C2C_PLAYER_ENTER, cjson.encode({ actors = { req_player:GetProperties() }}))
         end
     end
+
+    local actors_props = {}
+    local actors = actor_manager_fetch_all_actors()   
+    for i,actor in ipairs(actors) do
+        if not actor:IsPlayer() then
+            table.insert(actors_props, actor:GetProperties())
+        end
+    end
+    net_send_message(req.pid,PTO_C2C_NPC_ENTER, cjson.encode({ npcs = actors_props}))
+
 end
 

@@ -131,7 +131,7 @@ function on_game_imgui_update(name)
         end
     end
 
-    local actors = actor_manager_fetch_all_players()
+    local actors = actor_manager_fetch_all_actors()
     for i,actor in ipairs(actors) do
         if actor:GetProperty(PROP_SHOW_BOUNDINGBOX) then
             actor:DrawBoundingBox()

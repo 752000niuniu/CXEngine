@@ -26,6 +26,14 @@ stub[PTO_C2C_PLAYER_ENTER] = function(req)
 	end
 end
 
+stub[PTO_C2C_NPC_ENTER] = function(req)
+	for i,actor_info in ipairs(req.npcs) do
+		local actor = actor_manager_create_actor(actor_info[tostring(PROP_ID)])
+		actor:SetProperties(actor_info)
+	end
+end
+
+
 stub[PTO_C2C_CHAT] = function(req)
 	local player = actor_manager_fetch_player_by_id(req.pid)
 	if not player:IsLocal() then

@@ -139,7 +139,7 @@ function OnSceneInit()
     player:SetDir(0)
     player:ReverseDir()
 
-    local actors = actor_manager_fetch_all_players()
+    local actors = actor_manager_fetch_all_actors()
     for i,actor in ipairs(actors) do
        actor:SetProperty(PROP_SCENE_ID,-105)
     end

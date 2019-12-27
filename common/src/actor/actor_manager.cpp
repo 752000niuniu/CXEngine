@@ -137,11 +137,26 @@ int lua_actor_manager_fetch_all_players(lua_State*L) {
 	lua_newtable(L);
 	int i = 1;
 	for(auto& it : g_Players){
+		if(it.second->GetProperty(PROP_ACTOR_TYPE).toInt() == ACTOR_TYPE_PLAYER){
+			lua_push_actor(L, it.second);
+			lua_seti(L, -2, i++);
+		}
+	}
+	return 1;
+}
+
+
+int lua_actor_manager_fetch_all_actors(lua_State* L) {
+	lua_newtable(L);
+	int i = 1;
+	for (auto& it : g_Players) {
 		lua_push_actor(L, it.second);
 		lua_seti(L, -2, i++);
 	}
 	return 1;
 }
+
+
 
 int lua_actor_manager_clear_all(lua_State*L){
 	for (auto& it : g_Players) {
@@ -160,6 +175,7 @@ void luaopen_actor_manager(lua_State* L) {
 	script_system_register_luac_function_with_name(L, "actor_manager_fetch_player_by_id", lua_actor_manager_fetch_player_by_id);
 	script_system_register_luac_function_with_name(L, "scene_manager_fetch_local_player", lua_actor_manager_fetch_local_player);
 	script_system_register_luac_function_with_name(L, "actor_manager_fetch_all_players", lua_actor_manager_fetch_all_players);
+	script_system_register_luac_function_with_name(L, "actor_manager_fetch_all_actors", lua_actor_manager_fetch_all_actors);
 
 	script_system_register_function(L, actor_manager_update);
 	script_system_register_function(L, actor_manager_draw);

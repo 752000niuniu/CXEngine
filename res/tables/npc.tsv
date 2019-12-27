@@ -1,0 +1,5 @@
+prop_actor_type	prop_avatar_id	prop_weapon_avatar_id	prop_name	prop_pos	prop_summon_atk_qual	prop_summon_def_qual	prop_summon_health_qual	prop_summon_magic_qual	prop_summon_speed_qual	prop_summon_dodge_qual	prop_summon_grow_coef	prop_base_health	prop_base_magic	prop_base_force	prop_base_stamina	prop_base_agility	prop_lv	prop_scene_id
+*0																		
+2	鬼将		鬼将	{563,376}	1400	1400	4500	2500	1200	1200	1.25	417	680	171	171	171	151	-105
+2	鬼将		鬼将2	{563,376}	1400	1400	4500	2500	1200	1200	1.25	417	680	171	171	171	151	-105
+2	鬼将		鬼将3	{563,376}	1400	1400	4500	2500	1200	1200	1.25	417	680	171	171	171	151	-105

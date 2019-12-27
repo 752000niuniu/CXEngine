@@ -28,7 +28,7 @@ function read_player_database()
 end
 
 stub[PTO_C2C_SAVE_PLAYER_DATABASE] = function()
-    local players = actor_manager_fetch_all_players()
+    local players = actor_manager_fetch_all_actors()
 	local pinfos = {}
     for pid, p in pairs(players) do
         if p:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_PLAYER then
