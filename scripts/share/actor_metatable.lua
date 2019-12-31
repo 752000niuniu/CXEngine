@@ -825,7 +825,7 @@ function ActorMT:IsPlayer()
 end
 
 function ActorMT:IsNpc()
-    return self:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_NPC
+    return not self:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_PLAYER
 end
 
 function ActorMT:IsSummon()

@@ -37,17 +37,11 @@ end
 
 function actor_ev_on_click(actor, button, x, y)
 	cxlog_info('ACTOR_EV_ON_CLICK',button,x,y)
-	if actor:IsNpc() then
-		local player = actor_manager_fetch_local_player()
-		local msg = {}
-		msg.pid = player:GetID()
-		msg.target = actor:GetID()
-		net_send_message(PTO_C2S_CLICK_NPC, cjson.encode(msg) )
-	
-		
+	local player = actor_manager_fetch_local_player()
+    local msg = {}
+    msg.pid = player:GetID()
+    msg.target = actor:GetID()
+    net_send_message(PTO_C2S_CLICK_NPC, cjson.encode(msg) )
 
-		
-		
-	end
 end
 
