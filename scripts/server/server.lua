@@ -81,14 +81,7 @@ end
 
 function server_on_disconnect(pid)
 	cxlog_info('server_on_disconnect',pid)
-	local actor = actor_manager_fetch_player_by_id(pid)
-	if actor:GetProperty(PROP_IS_COMBAT) then
-		local battle_id = actor:GetProperty(PROP_COMBAT_BATTLE_ID)
-		local battle = combat_system_fetch_battle_by_id(battle_id)
-		if battle then
-			on_battle_end(battle)
-		end
-	end
+	combat_system_battle_on_actor_leave(pid)
 end
 
 local idincr = 1

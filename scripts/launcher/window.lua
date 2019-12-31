@@ -161,5 +161,41 @@ function on_imgui_update()
 		msg.password = '123456'
 		net_send_message(PTO_C2C_LOGIN, cjson.encode(msg))
 	end
+
+	if imgui.Button('登陆2') then
+		local msg = {}
+		msg.account = 'oceancx2'
+		msg.password = '123456'
+		net_send_message(PTO_C2C_LOGIN, cjson.encode(msg))
+	end
+
+	if imgui.Button('战斗') then
+		local msg = {}
+		msg.atk = 1576985785
+		msg.def =1576942487
+		net_send_message(PTO_C2S_COMBAT_START, cjson.encode(msg))
+
+	end
+	
+	if imgui.Button('战斗命令1') then
+
+		local msg = {}
+		msg.type = 'ATK'
+		msg.master = 1576985785
+		msg.target = 1576942487  
+		msg.skill_id = 1
+		net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
+	end
+
+	if imgui.Button('战斗命令2') then
+		local msg = {}
+		msg.type = 'ATK'
+		msg.master = 1576942487 
+		msg.target = 1576985785
+		msg.skill_id = 1
+		net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
+	end
+
 	imgui.End()
+
 end
