@@ -74,14 +74,38 @@ graph TD;
 	F--N-->AA-->BTTALE_TURN_NEXT
 	BTTALE_TURN_EXECUTE--战斗指令序列处理-->BTTALE_TURN_NEXT;
 	BTTALE_TURN_NEXT--是否战斗结束-->BATTLE_END;
+
 ```
 
+Battle
+
+AddActor
+RemoveActor
+GetTeamActors
+AddCommand
+RemoveCommand
+ChangeBattleState
 
 
+Command
+type 吃药 暗器 物品。。。
+data
+skill
+
+Actor
+
+GetBattle
+GetTeam
+GetTargetTeam
+GetSummon
+ChangeSummon
+SetSummon
+Type : NPC player
+
+Skill
 
 
-
-
+Buff
 
 
 
