@@ -7,7 +7,6 @@ function ActorMT:GetBattle()
 	return __battles__[battle_id]
 end
 
-
 function combat_system_create_battle(atk_actor, def_actor)
 	local battle = BattleMT:new()
 

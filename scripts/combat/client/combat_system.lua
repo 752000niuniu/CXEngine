@@ -159,8 +159,6 @@ function combat_system_init()
     init_buffers()
 end
 
-
-
 function combat_system_current_cmd()
     return battle_commands[1]
 end
@@ -170,6 +168,14 @@ function combat_system_actor_ev_on_click(actor, button, x, y)
     local battle = player:GetBattle()
     if not battle or battle.state ~= BATTLE_TURN_STAND_BY then return end
     
+    local actor_in_battle = false
+    for i,bat_actor in ipairs(battle.actors) do
+        if bat_actor:GetID() == actor:GetID() then
+            actor_in_battle = true
+        end
+    end
+    if not actor_in_battle then return end
+
     local player = actor_manager_fetch_local_player()
     player:SetTarget(actor)
 
