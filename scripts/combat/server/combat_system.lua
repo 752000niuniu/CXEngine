@@ -1,6 +1,4 @@
-
 __battles__ = __battles__ or {}
-
 
 local ActorMT = actor_get_metatable()
 
@@ -63,15 +61,10 @@ end
 stub[PTO_C2S_COMBAT_START] = function(req)
 	local atk = actor_manager_fetch_player_by_id(req.atk)
 	local def = actor_manager_fetch_player_by_id(req.def)
-	atk:SetProperty(PROP_HP, atk:GetMaxHP())
-	def:SetProperty(PROP_HP, def:GetMaxHP())
-	req.atk_hp = atk:GetProperty(PROP_HP)
-	req.def_hp = def:GetProperty(PROP_HP)
-
 	local battle = combat_system_create_battle(atk,def)
 	battle:StartBattle()
 	local resp = req
-	resp.battle = battle
+	resp.battle = battle:Serialize()
 	net_send_message_to_all_players(PTO_S2C_COMBAT_START,cjson.encode(resp))
 end
 
@@ -90,6 +83,6 @@ function combat_system_battle_on_actor_leave(pid)
 	local actor = actor_manager_fetch_player_by_id(pid)
 	local battle = actor:GetBattle()
 	if battle then
-		on_battle_end(battle)
+		battle:EndBattle()
 	end
 end

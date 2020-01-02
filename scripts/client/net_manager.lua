@@ -1,6 +1,4 @@
-
 stub = stub or {}
-
 
 function on_player_send_chat_message(msg)
 	local player = actor_manager_fetch_local_player()
@@ -13,12 +11,10 @@ function on_player_send_chat_message(msg)
 	net_send_message(PTO_C2C_CHAT, cjson.encode(req))
 end
 
-
 stub[PTO_C2C_PLAYER_ENTER] = function(req)
 	for i,actor_info in ipairs(req.actors) do
 		local actor = actor_manager_create_actor(actor_info[tostring(PROP_ID)])
 		actor:SetProperties(actor_info)
-
 		-- actor_reg_event(actor, ACTOR_EV_ON_CLICK, actor_ev_on_click)
 	end
 	if req.local_pid then
@@ -55,19 +51,6 @@ stub[PTO_S2C_SYNC_PROPS] = function(req)
 		if p then
 			p:SetProperty(dirty_prop[2] ,dirty_prop[3])
 			cxlog_info(' p ',p, ' propid ', prop_id_to_name( dirty_prop[2]) ,dirty_prop[3])
-		end
-	end
-end
-
-stub[PTO_S2C_CLICK_NPC] = function(req)
-	local player = actor_manager_fetch_player_by_id(req.pid)
-    local target = actor_manager_fetch_player_by_id(req.target)
-    if player and target then
-		player:SetTarget(target)
-		if player:GetProperty(PROP_IS_COMBAT) then
-			combat_system_actor_ev_on_click(target)
-		else
-			npc_on_show_dialog(player, target)
 		end
 	end
 end

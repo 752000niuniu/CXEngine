@@ -17,21 +17,3 @@ stub[PTO_C2S_CREATE_PLAYER] = function(req, js)
     actor:SetProperties(props)
 end
 
-
-
-teams = {}
-stub[PTO_C2S_MAKE_TEAM] = function(req,js)
-    local leader = actor_manager_fetch_player_by_id(req.leader) 
-    local member = actor_manager_fetch_player_by_id(req.member) 
-    local team = {}
-    team.leader = req.leader
-    team.id = os.time()
-    team.members = { req.leader, req.member }
-    table.insert(teams, team)
-    -- leader:SetTeam(team.id)
-    -- member:SetTeam(team.id)
-
-    net_send_message_to_all_players(PTO_S2C_MAKE_TEAM, cjson.encode(team))
-end
-
-

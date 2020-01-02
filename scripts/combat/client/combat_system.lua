@@ -1,5 +1,12 @@
 __battles__ = __battles__ or {}
 
+local ActorMT = actor_get_metatable()
+
+function ActorMT:GetBattle()
+	local battle_id = self:GetProperty(PROP_COMBAT_BATTLE_ID)
+	return __battles__[battle_id]
+end
+
 local CommandMT = {}
 function CommandMT:new(o)
     o = o or {}
@@ -105,7 +112,7 @@ local battle_commands = {}
 
 local skill_template_table  = {}
 local buffer_template_table = {}
-local battle    
+  
 BattleBG = BattleBG or nil
 combat_self_pos = combat_self_pos or {}
 combat_enemy_pos = combat_enemy_pos or {}
@@ -154,6 +161,8 @@ end
 
 
 function combat_system_current_turn()
+    local player = actor_manager_fetch_local_player()
+    local battle = player:GetBattle()
     if battle then
         return battle.turn
     else
@@ -166,12 +175,14 @@ function combat_system_current_cmd()
 end
 
 function combat_system_actor_ev_on_click(actor, button, x, y)
+    local player = actor_manager_fetch_local_player()
+    local battle = player:GetBattle()
     if not battle or battle.state ~= BATTLE_TURN_STAND_BY then return end
     
     local player = actor_manager_fetch_local_player()
     player:SetTarget(actor)
 
-    if  ACTOR_CLICK_MODE == ACTOR_CLICK_MODE_ATTACK then
+    if ACTOR_CLICK_MODE == ACTOR_CLICK_MODE_ATTACK then
         player:SetProperty(PROP_USING_SKILL,1)
     end
 
@@ -182,7 +193,6 @@ function combat_system_actor_ev_on_click(actor, button, x, y)
     msg.skill_id = player:GetProperty(PROP_USING_SKILL)
     net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
 
-    
     ACTOR_CLICK_MODE = ACTOR_CLICK_MODE_ATTACK
 end
 
@@ -199,6 +209,8 @@ end
 
 
 function check_battle_end()
+    local player = actor_manager_fetch_local_player()
+    local battle = player:GetBattle()
     if not battle then return true end
     local atk_all_dead = true
     local def_all_dead = true
@@ -216,6 +228,8 @@ end
 
 
 function combat_system_draw()
+    local player = actor_manager_fetch_local_player()
+    local battle = player:GetBattle()
     if not battle then return end
     BattleBG:Draw()
 
@@ -231,8 +245,9 @@ function combat_system_draw()
     animation_manager_draw()
 end
 
-
 function combat_system_imgui_update()
+    local player = actor_manager_fetch_local_player()
+    local battle = player:GetBattle()
     if not battle or battle.state ~= BATTLE_TURN_STAND_BY then return end
 
 	imgui.Begin('Menu',menu_show)
@@ -311,10 +326,6 @@ function combat_system_imgui_update()
 
     -- end
     -- imgui.End()
-
-  
-
-
     for i,actor in ipairs(battle.actors) do
         local x,y,w,h = actor:GetAvatarRect()
         imgui.SetCursorPos(x,y-10)
@@ -325,25 +336,23 @@ function combat_system_imgui_update()
 end
 
 local stub = net_manager_stub()
-
-stub[PTO_S2C_COMBAT_START] = function(req)
-    local atk = actor_manager_fetch_player_by_id(req.atk)
-    local def = actor_manager_fetch_player_by_id(req.def)
-    atk:SetProperty(PROP_HP, req.atk_hp)
-    def:SetProperty(PROP_HP, req.def_hp)
-    
-    __battles__[req.battle.id] = battle
+stub[PTO_S2C_COMBAT_START] = function(resp)
+    local battle = BattleMT:new()
+    battle:Deserialize(resp.battle)
+    __battles__[battle.id] = battle
 
     local player = actor_manager_fetch_local_player()
     for i, actor in ipairs(battle.actors) do
         if player:GetID() == actor:GetID() then
-            scene_set_combat(true)
+            battle:StartBattle()
             return
         end
     end
 end 
 
 stub[PTO_S2C_COMBAT_EXECUTE] = function(req)
+    local player = actor_manager_fetch_local_player()
+    local battle = player:GetBattle()
     battle.state = BTTALE_TURN_EXECUTE 
 
     for i,req_cmd in ipairs(req.cmds) do
@@ -366,7 +375,6 @@ function on_battle_start(self)
         actor:ClearAction()
         actor:SetProperty(PROP_IS_COMBAT,true)
 
-
         actor:PushAction(ACTION_BATIDLE)
     end
 
@@ -381,7 +389,7 @@ function on_battle_start(self)
             init_actor(actor, pos, DIR_SE)
         end
     end
-    battle.state = BATTLE_TURN_STAND_BY 
+    self.state = BATTLE_TURN_STAND_BY 
     cxlog_info('BATTLE_TURN_STAND_BY')
     -- skill_on_turn(CurrentTurn)
 end
@@ -451,9 +459,12 @@ function on_battle_end(self)
 end
 
 function combat_system_update()
+    local player = actor_manager_fetch_local_player()
+    local battle = player:GetBattle()
     if battle then
-        battle:Update()
-        
+        if battle.state == BTTALE_TURN_EXECUTE then
+            on_battle_turn_execute(battle)
+        end
         for i,actor in ipairs(battle.actors) do
             actor:Update()
         end
@@ -462,6 +473,8 @@ function combat_system_update()
 end
 
 function combat_system_remove_from_battle(_actor_)
+    local player = actor_manager_fetch_local_player()
+    local battle = player:GetBattle()
     if not battle then return end
     for i,actor in ipairs(battle.actors) do
         if actor:GetID() == _actor_:GetID() then

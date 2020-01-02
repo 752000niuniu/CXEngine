@@ -5,7 +5,7 @@ function npc_on_show_dialog(player, target)
 				func = function()
 					local msg = {}
 					msg.atk = player:GetID()
-					msg.def = actor:GetID()
+					msg.def = target:GetID()
 					net_send_message(PTO_C2S_COMBAT_START, cjson.encode(msg))
 
 					local player = actor_manager_fetch_local_player()

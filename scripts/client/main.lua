@@ -14,7 +14,7 @@ script_system_dofile 'actor_metatable.lua'
 
 script_system_dofile('net_manager.lua')
 
--- script_system_dofile('../combat/combat_system.lua')
+script_system_dofile('../combat/combat_system.lua')
 script_system_dofile 'scene_manager.lua'
 script_system_dofile 'actor_manager.lua'
 script_system_dofile('action/action.lua')
@@ -48,7 +48,7 @@ function on_script_system_init()
     imgui_init()
     scene_manager_init()
 	actor_manager_init()
-	-- combat_system_init()
+	combat_system_init()
 	asm_system_init()
     load_all_addons()
 end

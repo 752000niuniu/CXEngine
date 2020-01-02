@@ -7,7 +7,6 @@ local PlayerNameSB = imgui.CreateStrbuf('Ocean藏心',256)
 local PosX = imgui.CreateStrbuf('200',128)
 local PosY = imgui.CreateStrbuf('2790',128)
 
-
 function on_imgui_update()
 	if not shared_netq:empty(0) then
 		local pt = shared_netq:front(0)
@@ -197,5 +196,4 @@ function on_imgui_update()
 	end
 
 	imgui.End()
-
 end

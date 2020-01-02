@@ -53,7 +53,7 @@ prop_combat_dir	int	0
 prop_combat_backup_pos	vec2	{0,0}	
 prop_combat_target_pos	vec2	{0,0}	
 prop_combat_acting	bool	false	
-prop_combat_battle_id	uint64	0	
+prop_combat_battle_id	uint64	0	1
 prop_team_type	int	0	1
 prop_team_id	uint64	0	1
 prop_using_skill	int	0	
@@ -86,5 +86,5 @@ prop_summon_magic_qual	float	0
 prop_summon_speed_qual	float	0	
 prop_summon_dodge_qual	float	0	
 prop_summon_grow_coef	float	0	
-prop_team_id	uint64	0	""
-prop_battle_id	uint64	0	""
+prop_team_id	uint64	0	
+prop_battle_id	uint64	0	

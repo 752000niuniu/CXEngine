@@ -197,7 +197,10 @@ function ui_show_bag()
 
     if imgui.CollapsingHeader('CMD') then
         if imgui.Button('满血') then
-            player:SetProperty(PROP_HP, player:GetMaxHP())
+            net_manager_player_dostring(string.format([[ 
+                player:SetProperty(PROP_HP, %d) 
+            ]], player:GetMaxHP() ))
+
         end
 
         if imgui.Button('同步位置') then

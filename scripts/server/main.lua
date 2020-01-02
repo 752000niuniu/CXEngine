@@ -16,7 +16,7 @@ script_system_dofile('login_system.lua')
 script_system_dofile('actor_system.lua')
 script_system_dofile('scene_system.lua')
 script_system_dofile('team_system.lua')
--- script_system_dofile('../combat/combat_system.lua')
+script_system_dofile('../combat/combat_system.lua')
 
 function server_reload()
     cxlog_info('server_reload')
@@ -42,8 +42,7 @@ function is_prop_sync(prop_id)
 end
 
 function on_script_system_update()
-    game_server_update()  
-    -- combat_system_update_battle()
+    game_server_update()   
     scene_system_update()
     local players = actor_manager_fetch_all_actors()
     local dirty_props = {}

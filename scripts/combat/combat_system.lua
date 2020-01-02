@@ -48,6 +48,30 @@ function BattleMT:new(o)
     return o
 end
 
+function BattleMT:Serialize()
+    local info = {}
+    info.id = self.id
+    info.actors = {}
+    for i, actor in ipairs(self.actors) do
+        table.insert(info.actors, actor:GetID())
+    end
+    info.state = self.state
+    info.turn = self.turn
+    return info
+end
+
+function BattleMT:Deserialize(info)
+    self.id = info.id
+    self.actors = {}
+    for i,actor_id in ipairs(info.actors) do
+        local actor = actor_manager_fetch_player_by_id(actor_id)
+        table.insert(self.actors, actor)
+    end
+    self.state = info.state
+    self.turn = info.turn
+    return self
+end
+
 function BattleMT:AddActor(actor, team_type)
     actor:SetProperty(PROP_TEAM_TYPE, team_type)
     actor:SetProperty(PROP_COMBAT_BATTLE_ID, self.id)
@@ -83,7 +107,6 @@ function BattleMT:StartBattle()
             actor:SetProperty(PROP_TURN_READY,false)
         end
         self.state = BATTLE_TURN_STAND_BY
-
         self.player_actors = {}
         self.npc_actors = {}
         for i,actor in ipairs(self.actors) do
@@ -95,7 +118,19 @@ function BattleMT:StartBattle()
             end
         end
     else
-
+        scene_set_combat(true)
+        self.state = BATTLE_TURN_STAND_BY
+        self.player_actors = {}
+        self.npc_actors = {}
+        for i,actor in ipairs(self.actors) do
+            if actor:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_PLAYER then
+                table.insert(self.player_actors, actor)
+            else
+                actor:SetProperty(PROP_TURN_READY, true)
+                table.insert(self.npc_actors, actor)
+            end
+        end
+        on_battle_start(self)
     end
 end
 
@@ -111,7 +146,11 @@ end
 function BattleMT:NextTurn()
     self.turn = self.turn + 1
     for i,actor in ipairs(self.actors) do
-		actor:SetProperty(PROP_TURN_READY,false)
+        if actor:GetProperty(PROP_ACTOR_TYPE) ~= ACTOR_TYPE_PLAYER then
+            actor:SetProperty(PROP_TURN_READY,true)
+        else
+            actor:SetProperty(PROP_TURN_READY,false)
+        end
 		cxlog_info(actor:GetName(), actor:GetProperty(PROP_HP))
 	end
 	self.cmds = {}
@@ -163,7 +202,6 @@ function BattleMT:ExecuteTurn()
 
     end
 end
-
 
 function BattleMT:CheckStandBy()
     local ready = true
