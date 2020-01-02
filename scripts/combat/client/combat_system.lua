@@ -1,3 +1,4 @@
+__battles__ = __battles__ or {}
 
 local CommandMT = {}
 function CommandMT:new(o)
@@ -331,21 +332,14 @@ stub[PTO_S2C_COMBAT_START] = function(req)
     atk:SetProperty(PROP_HP, req.atk_hp)
     def:SetProperty(PROP_HP, req.def_hp)
     
-    local player = actor_manager_fetch_local_player()
-    if player:GetID() == atk:GetID() or def:GetID() == player:GetID() then
-        scene_set_combat(true)
-        battle = BattleMT:new()
-        
-        local team_id = os.time()
-        for i,actor in ipairs({atk}) do
-            table.insert(battle.actors, actor)
-        end
+    __battles__[req.battle.id] = battle
 
-        team_id = team_id + 1
-        for i,actor in ipairs({def}) do
-            table.insert(battle.actors, actor)
+    local player = actor_manager_fetch_local_player()
+    for i, actor in ipairs(battle.actors) do
+        if player:GetID() == actor:GetID() then
+            scene_set_combat(true)
+            return
         end
-        battle.state = BATTLE_START
     end
 end 
 

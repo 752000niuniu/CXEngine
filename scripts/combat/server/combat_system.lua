@@ -51,8 +51,7 @@ function combat_system_create_battle(atk_actor, def_actor)
 	else
 		battle:AddActor(def_actor, TEAM_TYPE_DEFENDER)
 	end
-	
-	battle:StartBattle()
+
 	__battles__[battle.id] = battle
 	return battle
 end
@@ -69,8 +68,11 @@ stub[PTO_C2S_COMBAT_START] = function(req)
 	req.atk_hp = atk:GetProperty(PROP_HP)
 	req.def_hp = def:GetProperty(PROP_HP)
 
-	combat_system_create_battle(atk,def)
-	net_send_message_to_all_players(PTO_S2C_COMBAT_START,cjson.encode(req))
+	local battle = combat_system_create_battle(atk,def)
+	battle:StartBattle()
+	local resp = req
+	resp.battle = battle
+	net_send_message_to_all_players(PTO_S2C_COMBAT_START,cjson.encode(resp))
 end
 
 stub[PTO_C2S_COMBAT_CMD] = function(req)
