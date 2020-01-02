@@ -3,7 +3,6 @@ local SKILL_SUBTYPE_SEAL = 1
 local SKILL_SUBTYPE_HEAL = 2
 local SKILL_SUBTYPE_AUXI = 3
 
-
 local SkillMT = {}
 local skill_table = {}
 function SkillMT:new(o)
@@ -20,8 +19,6 @@ end
 function SkillMT:GetType()
     return skill_table[self.tid].type
 end
-
-
 
 local skill_env = {
     __index = _ENV
