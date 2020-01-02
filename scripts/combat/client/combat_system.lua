@@ -377,12 +377,16 @@ function on_battle_start(self)
 
     local player = actor_manager_fetch_local_player()
     local self_team_type = player:GetProperty(PROP_TEAM_TYPE)
+    local self_pos_i = 1
+    local enemy_pos_i = 1
     for i,actor in ipairs(self.actors) do
         if actor:GetProperty(PROP_TEAM_TYPE) == self_team_type then
-            local pos = combat_self_pos[i]
+            local pos = combat_self_pos[self_pos_i]
+            self_pos_i = self_pos_i + 1
             init_actor(actor, pos, DIR_NW)
         else
-            local pos =  combat_enemy_pos[i]
+            local pos =  combat_enemy_pos[enemy_pos_i]
+            enemy_pos_i = enemy_pos_i + 1
             init_actor(actor, pos, DIR_SE)
         end
     end

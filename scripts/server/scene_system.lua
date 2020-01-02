@@ -6,15 +6,14 @@ function scene_system_init()
     local npc_table = content_system_get_table('npc')
     local npcs = {}
     for i, props in ipairs(npc_table) do
-        local npc = actor_manager_create_actor(ostime)
+        local npc = actor_manager_create_actor(utils_next_uid('npc'))
         npc:SetProperties(props)    
-        ostime = ostime + 1
         table.insert(npcs, npc)
     end
 
     local team 
     for i, npc in ipairs(npcs) do
-        if i <= 5 then
+        if i <= 10 then
             if i == 1 then
                 team = team_system_create_team(npc)
             else

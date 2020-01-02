@@ -28,8 +28,8 @@ end
 
 function on_script_system_init()
     content_system_init()
-    -- init_skills()
-    -- init_buffers()
+    init_skills()
+    init_buffers()
     scene_system_init()
 end
 
