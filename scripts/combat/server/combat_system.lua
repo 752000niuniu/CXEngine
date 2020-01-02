@@ -7,27 +7,6 @@ function ActorMT:GetBattle()
 	return __battles__[battle_id]
 end
 
-function combat_system_fetch_battle_by_id(id)
-	for i,battle in ipairs(__battles__) do
-		if battle.id == id then
-			return battle
-		end
-	end
-end
-
-function combat_system_fetch_battle(actor)
-	return actor:GetBattle()
-end
-
-function combat_system_current_turn(actor)
-	local battle_id = actor:GetProperty(PROP_COMBAT_BATTLE_ID)
-	local battle = combat_system_fetch_battle_by_id(battle_id)
-    if battle then
-        return battle.turn
-    else
-        return 0
-    end
-end    
 
 function combat_system_create_battle(atk_actor, def_actor)
 	local battle = BattleMT:new()

@@ -60,9 +60,11 @@ function ActorMT:CastSkill(skill_id)
     local actor = self
     local skill_tpl = skill_table[skill_id]
     if not skill_tpl then return end
+    local battle = self:GetBattle()
+    if not battle then return end
     local skill = SkillMT:new()
     skill.tid = skill_id
-    skill.turn = combat_system_current_turn(actor)
+    skill.turn = battle.turn
     skill.templ = skill_tpl
     skill.group_kill = skill.templ.group_kill
     skill.combo = skill.templ.combo
@@ -102,7 +104,6 @@ function ActorMT:CastSkill(skill_id)
         elseif skill.sub_type == SKILL_SUBTYPE_HEAL or skill.sub_type == SKILL_SUBTYPE_AUXI then
             to_self_group = true
         end
-        local battle = combat_system_fetch_battle(self)
         local targets = {}
         for i, actor in ipairs(battle.actors) do
             if to_self_group then

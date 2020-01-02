@@ -137,22 +137,37 @@ end
 function BattleMT:EndBattle()
 	self.state = BATTLE_END
     cxlog_info('BATTLE_END')
-	for i,actor in ipairs(self.actors) do
-		actor:SetProperty(PROP_IS_COMBAT,false)
-		actor:SetProperty(PROP_COMBAT_BATTLE_ID,0)
-	end
+    if IsServer() then
+        for i,actor in ipairs(self.actors) do
+            actor:SetProperty(PROP_IS_COMBAT,false)
+            actor:SetProperty(PROP_COMBAT_BATTLE_ID,0)
+        end    
+    else
+        for i,actor in ipairs(self.actors) do
+            combat_reset_actor(actor)
+        end
+        
+        animation_manager_clear()
+        scene_set_combat(false)
+        self.state = BATTLE_DEFAULT
+    end
 end
 
 function BattleMT:NextTurn()
     self.turn = self.turn + 1
-    for i,actor in ipairs(self.actors) do
-        if actor:GetProperty(PROP_ACTOR_TYPE) ~= ACTOR_TYPE_PLAYER then
-            actor:SetProperty(PROP_TURN_READY,true)
-        else
-            actor:SetProperty(PROP_TURN_READY,false)
+    if IsServer() then
+        for i,actor in ipairs(self.actors) do
+            if actor:GetProperty(PROP_ACTOR_TYPE) ~= ACTOR_TYPE_PLAYER then
+                actor:SetProperty(PROP_TURN_READY,true)
+            else
+                actor:SetProperty(PROP_TURN_READY,false)
+            end
+            cxlog_info(actor:GetName(), actor:GetProperty(PROP_HP))
         end
-		cxlog_info(actor:GetName(), actor:GetProperty(PROP_HP))
-	end
+    end
+     -- for i,actor in ipairs(self.actors) do
+    --     actor:BufferNextTurn(self.turn)
+    -- end
 	self.cmds = {}
     self.state = BATTLE_TURN_STAND_BY
 	cxlog_info('BATTLE_TURN_STAND_BY')

@@ -160,15 +160,6 @@ function combat_system_init()
 end
 
 
-function combat_system_current_turn()
-    local player = actor_manager_fetch_local_player()
-    local battle = player:GetBattle()
-    if battle then
-        return battle.turn
-    else
-        return 0
-    end
-end    
 
 function combat_system_current_cmd()
     return battle_commands[1]
@@ -394,29 +385,8 @@ function on_battle_start(self)
     -- skill_on_turn(CurrentTurn)
 end
 
-function on_battle_turn_stand_by(self)
-    --[[
-    每帧update都看player是不是输入了指令
-    local player的指令输入来自键盘 或者  鼠标
-    而 npc的输入来自随机
-    敌对玩家的输入来自网络
-]]
-end
 
 function on_battle_turn_execute(self)
-    --[[
-    处理每一条战斗指令,
-    每条战斗指令,代表某个actor的演出
-    处理完战斗指令,所有的actor演出结束
-    战斗指令的先后顺序代表actor的先后顺序
-
-    攻击指令
-        攻击对象 攻击效果
-    施法指令
-        
-    防御指令
-]]
-        
     if #battle_commands > 0 then
         local cmd = battle_commands[1]
         if not cmd.master:IsDead() then
@@ -429,34 +399,13 @@ function on_battle_turn_execute(self)
         end
     else 
         if check_battle_end() then
-            self.state = BATTLE_END
-            cxlog_info('BATTLE_END')
+            self:EndBattle()
         else
-            self.state = BTTALE_TURN_NEXT
-            cxlog_info('BTTALE_TURN_NEXT')
+            self:NextTurn()
         end
     end
 end
 
-function on_battle_turn_next(self)
-    cxlog_info('on_battle_turn_next')
-    self.turn = self.turn + 1
-    -- for i,actor in ipairs(self.actors) do
-    --     actor:BufferNextTurn(self.turn)
-    -- end
-    self.state = BATTLE_TURN_STAND_BY
-end
-
-function on_battle_end(self)
-     cxlog_info('on_battle_end')
-    for i,actor in ipairs(self.actors) do
-        combat_reset_actor(actor)
-    end
-    
-    animation_manager_clear()
-    scene_set_combat(false)
-    self.state = BATTLE_DEFAULT
-end
 
 function combat_system_update()
     local player = actor_manager_fetch_local_player()

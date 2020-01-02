@@ -174,7 +174,8 @@ function init_npc_table()
         { name = 'prop_base_stamina' },
         { name = 'prop_base_agility' },
         { name = 'prop_lv' },
-        { name = 'prop_scene_id' }
+        { name = 'prop_scene_id' },
+        { name = 'prop_hp' }
     })
 
     local actor_tbl = content_system_get_table('actor_template')
