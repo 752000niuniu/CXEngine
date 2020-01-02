@@ -11,7 +11,6 @@ local cbx_draw_cell = false
 local cbx_draw_map  = true
 local cbx_draw_announcement = true
 
-    
 local checkbox_names = {
     {   name = 'DrawMap', cb  = function(v) v.res,cbx_draw_map = imgui.Checkbox(v.name, cbx_draw_map) end },
     {   name = 'DrawCell', cb = function(v) v.res,cbx_draw_cell = imgui.Checkbox(v.name, cbx_draw_cell) end },
@@ -19,8 +18,6 @@ local checkbox_names = {
     {   name = 'DrawMask', cb = function(v) v.res,cbx_draw_mask = imgui.Checkbox(v.name, cbx_draw_mask) end },
     {   name = 'DrawAnnouncement', cb = function(v) v.res,cbx_draw_announcement = imgui.Checkbox(v.name, cbx_draw_announcement) end},
 }
-
-
 
 function on_scene_editor_update()
     local player = actor_manager_fetch_local_player()

@@ -98,6 +98,43 @@ function BattleMT:AddCommand(actor, cmd)
 	table.insert(self.cmds, cmd)
 end
 
+function BattleMT:RandomSelectEnemy(self_actor)
+    local enemies = {}
+    for i, actor in ipairs(self.actors) do
+        if self_actor:GetProperty(PROP_TEAM_TYPE) ~= actor:GetProperty(PROP_TEAM_TYPE) then
+            table.insert(enemies, actor)
+        end
+    end
+    return enemies[math.random(1,#enemies)]
+end
+
+function BattleMT:AutoCommand(actor)
+    if actor:IsPlayer() then return end
+    actor:SetProperty(PROP_TURN_READY, true)
+
+    local cmd = {}
+    local rand = math.random(1,3)
+    if rand == 1 then
+        return
+    elseif rand == 2 then
+        local target = self:RandomSelectEnemy(actor)
+        cmd.type = 'ATK'
+        cmd.master = actor:GetID()
+        cmd.target = target:GetID()
+        cmd.skill_id = 1
+        table.insert(self.cmds, cmd)
+    elseif rand == 3 then
+        local target = self:RandomSelectEnemy(actor)
+        cmd.type = 'ATK'
+        cmd.master = actor:GetID()
+        cmd.target = target:GetID()
+        cmd.skill_id = 10
+        table.insert(self.cmds, cmd)
+    end
+end
+
+
+
 function BattleMT:StartBattle()
 	self.state = BATTLE_START
 	self.turn = 0
@@ -107,29 +144,15 @@ function BattleMT:StartBattle()
             actor:SetProperty(PROP_TURN_READY,false)
         end
         self.state = BATTLE_TURN_STAND_BY
-        self.player_actors = {}
-        self.npc_actors = {}
         for i,actor in ipairs(self.actors) do
-            if actor:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_PLAYER then
-                table.insert(self.player_actors, actor)
-            else
-                actor:SetProperty(PROP_TURN_READY, true)
-                table.insert(self.npc_actors, actor)
+            if not actor:IsPlayer() then
+                self:AutoCommand(actor)
             end
         end
     else
         scene_set_combat(true)
         self.state = BATTLE_TURN_STAND_BY
-        self.player_actors = {}
-        self.npc_actors = {}
-        for i,actor in ipairs(self.actors) do
-            if actor:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_PLAYER then
-                table.insert(self.player_actors, actor)
-            else
-                actor:SetProperty(PROP_TURN_READY, true)
-                table.insert(self.npc_actors, actor)
-            end
-        end
+        
         on_battle_start(self)
     end
 end
@@ -155,12 +178,12 @@ end
 
 function BattleMT:NextTurn()
     self.turn = self.turn + 1
+	self.cmds = {}
+    self.state = BATTLE_TURN_STAND_BY
     if IsServer() then
         for i,actor in ipairs(self.actors) do
-            if actor:GetProperty(PROP_ACTOR_TYPE) ~= ACTOR_TYPE_PLAYER then
-                actor:SetProperty(PROP_TURN_READY,true)
-            else
-                actor:SetProperty(PROP_TURN_READY,false)
+            if not actor:IsPlayer() then
+                self:AutoCommand(actor)
             end
             cxlog_info(actor:GetName(), actor:GetProperty(PROP_HP))
         end
@@ -168,8 +191,6 @@ function BattleMT:NextTurn()
      -- for i,actor in ipairs(self.actors) do
     --     actor:BufferNextTurn(self.turn)
     -- end
-	self.cmds = {}
-    self.state = BATTLE_TURN_STAND_BY
 	cxlog_info('BATTLE_TURN_STAND_BY')
 end
 
@@ -184,12 +205,14 @@ function BattleMT:ExecuteTurn()
             cxlog_info('cmd ', cjson.encode(cmd))
         end
         if #self.cmds > 0 then
-            for i,actor in ipairs(self.player_actors) do
-                local pid = actor:GetID()
-                local msg = { cmds = self.cmds} 
-                -- msg.pid = actor:GetID()
-                -- msg.cmds = self.cmds
-                net_send_message(pid, PTO_S2C_COMBAT_EXECUTE, cjson.encode(msg))
+            for i,actor in ipairs(self.actors) do
+                if actor:IsPlayer() then
+                    local pid = actor:GetID()
+                    local msg = { cmds = self.cmds} 
+                    -- msg.pid = actor:GetID()
+                    -- msg.cmds = self.cmds
+                    net_send_message(pid, PTO_S2C_COMBAT_EXECUTE, cjson.encode(msg))
+                end
             end
         end
 

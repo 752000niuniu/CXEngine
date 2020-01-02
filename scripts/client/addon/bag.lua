@@ -199,8 +199,7 @@ function ui_show_bag()
         if imgui.Button('满血') then
             net_manager_player_dostring(string.format([[ 
                 player:SetProperty(PROP_HP, %d) 
-            ]], player:GetMaxHP() ))
-
+            ]], 10000 ))
         end
 
         if imgui.Button('同步位置') then

@@ -283,7 +283,7 @@ function combat_system_imgui_update()
     end
 
     if imgui.Button('逃跑##player') then
-        on_battle_end(battle)
+        battle:EndBattle()
     end
 
     imgui.SetNextWindowSize(350,400)

@@ -20,7 +20,7 @@ function combat_system_create_battle(atk_actor, def_actor)
 	end
 
 	if def_actor:HasTeam() then
-		local team = atk_actor:GetTeam()
+		local team = def_actor:GetTeam()
 		for i,mem in ipairs(team:GetMembers()) do
 			battle:AddActor(mem, TEAM_TYPE_DEFENDER)
 		end
