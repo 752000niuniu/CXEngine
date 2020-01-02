@@ -133,8 +133,6 @@ function BattleMT:AutoCommand(actor)
     end
 end
 
-
-
 function BattleMT:StartBattle()
 	self.state = BATTLE_START
 	self.turn = 0
@@ -152,7 +150,6 @@ function BattleMT:StartBattle()
     else
         scene_set_combat(true)
         self.state = BATTLE_TURN_STAND_BY
-        
         on_battle_start(self)
     end
 end

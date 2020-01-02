@@ -66,25 +66,23 @@ prop_asm_buff_anim	uint64	0
 prop_asm_play_behit	bool	true	
 prop_asm_runto_x	float	0	
 prop_asm_runto_y	float	0	
-prop_hp	float	0	
-prop_mp	float	0	
-prop_sp	float	0	
-prop_lv	int	0	
+prop_hp	float	0	1
+prop_mp	float	0	1
+prop_sp	float	0	1
+prop_lv	int	0	1
 prop_add_prop_plan	str	1,1,1,1,1	
 prop_exp	float	0	
-prop_base_force	int	0	
-prop_base_health	int	0	
-prop_base_stamina	int	0	
-prop_base_agility	int	0	
-prop_base_magic	int	0	
-prop_summon_take_level	int	0	
-prop_summon_battle_level	int	0	
-prop_summon_atk_qual	float	0	
-prop_summon_def_qual	float	0	
-prop_summon_health_qual	float	0	
-prop_summon_magic_qual	float	0	
-prop_summon_speed_qual	float	0	
-prop_summon_dodge_qual	float	0	
-prop_summon_grow_coef	float	0	
-prop_team_id	uint64	0	
-prop_battle_id	uint64	0	
+prop_base_force	int	0	1
+prop_base_health	int	0	1
+prop_base_stamina	int	0	1
+prop_base_agility	int	0	1
+prop_base_magic	int	0	1
+prop_summon_take_level	int	0	1
+prop_summon_battle_level	int	0	1
+prop_summon_atk_qual	float	0	1
+prop_summon_def_qual	float	0	1
+prop_summon_health_qual	float	0	1
+prop_summon_magic_qual	float	0	1
+prop_summon_speed_qual	float	0	1
+prop_summon_dodge_qual	float	0	1
+prop_summon_grow_coef	float	0	1

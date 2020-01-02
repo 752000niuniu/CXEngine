@@ -44,7 +44,7 @@ int lua_cxlog_warn(lua_State* L)
 
 void Logger::Print(const char *format, ...)
 {
-	char* logstr = new char[4096];
+	char* logstr = new char[8192];
 	va_list ap;
 	va_start(ap, format);
 	vsprintf(logstr, format, ap);

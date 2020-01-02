@@ -202,6 +202,19 @@ function ui_show_bag()
             ]], 10000 ))
         end
 
+        if imgui.Button('升级') then
+            net_manager_player_dostring(string.format([[ 
+                player:SetProperty(PROP_LV, 100) 
+                player:SetProperty(PROP_HP,1000) 
+
+                player:SetProperty(PROP_BASE_FORCE,200) 
+                player:SetProperty(PROP_BASE_HEALTH,200) 
+                player:SetProperty(PROP_BASE_STAMINA,200) 
+                player:SetProperty(PROP_BASE_AGILITY,200) 
+                player:SetProperty(PROP_BASE_MAGIC,200) 
+            ]]))
+        end
+
         if imgui.Button('同步位置') then
             game_map_reset_map_offset()
             net_manager_player_dostring(string.format([[ 

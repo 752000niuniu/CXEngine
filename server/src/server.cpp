@@ -43,9 +43,7 @@ extern "C"  int luaopen_cjson(lua_State *L);
 
 void thread_init_script_system(lua_State*L) {
 	
-	script_system_register_function(L, net_send_message);
-	script_system_register_luac_function(L, net_send_message_to_players);
-	script_system_register_luac_function(L, net_send_message_to_all_players);
+	
 }
 
 GameServer::GameServer(EventLoop* loop, SocketAddress addr, const char* name)
@@ -188,10 +186,17 @@ void game_server_stop()
 	CXGameServer->Stop();
 }
 
-void net_send_message(uint64_t pid, int proto, const char* msg) {
+
+int net_send_message(lua_State* L) {
+	uint64_t pid = (uint64_t)lua_tointeger(L, 1);
+	int proto = (int)lua_tointeger(L, 2);
+	const char* msg = lua_tostring(L, 3);
 	cxlog_info("net_send_message pid:%lld proto:%d js:%s\n", pid, proto, msg);
 	CXGameServer->SendMessageToPlayer(pid, proto, msg);
+	return 0;
 }
+
+
 
 int net_send_message_to_players(lua_State* L) {
 	std::vector<uint64_t> pids;
@@ -245,8 +250,9 @@ int erase_pid_connection_pair(lua_State*L ) {
 
 void luaopen_game_server(lua_State* L)
 {
-	thread_init_script_system(L);
-	
+	script_system_register_luac_function(L, net_send_message);
+	script_system_register_luac_function(L, net_send_message_to_players);
+	script_system_register_luac_function(L, net_send_message_to_all_players);
 
 	script_system_register_function(L, game_server_start);
 	script_system_register_luac_function(L, game_server_update);
