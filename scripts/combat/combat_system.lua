@@ -11,7 +11,6 @@ if IsClient() then
     script_system_dofile('../combat/client/buffer.lua')
 end
  
-
 script_system_dofile('../combat/skill.lua')
 script_system_dofile('../combat/buffer.lua')
 
@@ -38,6 +37,7 @@ TEAM_TYPE_DEFENDER = 2
 BattleMT = {}
 function BattleMT:new(o)
     o = o or {
+        id = utils_next_uid('battle'),
 		actors = {},
 		cmds = {},
         state = BATTLE_DEFAULT,
@@ -48,34 +48,131 @@ function BattleMT:new(o)
     return o
 end
 
-function BattleMT:AddActor(actor, team_id, team_type)
-	actor:SetProperty(PROP_TEAM_ID, team_id)
-	actor:SetProperty(PROP_TEAM_TYPE, team_type)
+function BattleMT:AddActor(actor, team_type)
+    actor:SetProperty(PROP_TEAM_TYPE, team_type)
+    actor:SetProperty(PROP_COMBAT_BATTLE_ID, self.id)
 	table.insert(self.actors,actor)
 end
 
-function BattleMT:AddCommand(cmd)
+function BattleMT:RemoveActor(actor)
+    for i,_actor in ipairs(self.actors) do
+        if actor:GetID() == _actor:GetID() then
+            actor:SetProperty(PROP_COMBAT_BATTLE_ID, 0)
+            actor:SetProperty(PROP_IS_COMBAT, false)
+            table.remove(self.actors,i)
+            break
+        end
+    end
+end
+
+function BattleMT:GetTurn()
+    return self.turn
+end
+
+function BattleMT:AddCommand(actor, cmd)
+    actor:SetProperty(PROP_TURN_READY, true)
 	table.insert(self.cmds, cmd)
 end
 
 function BattleMT:StartBattle()
 	self.state = BATTLE_START
 	self.turn = 0
-	cxlog_info('BATTLE_START')
+    if IsServer() then
+        for i,actor in ipairs(self.actors) do
+            actor:SetProperty(PROP_IS_COMBAT,true)
+            actor:SetProperty(PROP_TURN_READY,false)
+        end
+        self.state = BATTLE_TURN_STAND_BY
+
+        self.player_actors = {}
+        self.npc_actors = {}
+        for i,actor in ipairs(self.actors) do
+            if actor:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_PLAYER then
+                table.insert(self.player_actors, actor)
+            else
+                actor:SetProperty(PROP_TURN_READY, true)
+                table.insert(self.npc_actors, actor)
+            end
+        end
+    else
+
+    end
 end
 
-function BattleMT:Update()
-    if self.state == BATTLE_DEFAULT then
-		return 
-    elseif self.state == BATTLE_START then
-        on_battle_start(self)	
-    elseif self.state == BATTLE_TURN_STAND_BY then
-        on_battle_turn_stand_by(self)
-    elseif self.state  == BTTALE_TURN_EXECUTE then
-        on_battle_turn_execute(self)
-    elseif self.state == BTTALE_TURN_NEXT then
-        on_battle_turn_next(self)
-    elseif self.state == BATTLE_END then
-        on_battle_end(self)
+function BattleMT:EndBattle()
+	self.state = BATTLE_END
+    cxlog_info('BATTLE_END')
+	for i,actor in ipairs(self.actors) do
+		actor:SetProperty(PROP_IS_COMBAT,false)
+		actor:SetProperty(PROP_COMBAT_BATTLE_ID,0)
 	end
 end
+
+function BattleMT:NextTurn()
+    self.turn = self.turn + 1
+    for i,actor in ipairs(self.actors) do
+		actor:SetProperty(PROP_TURN_READY,false)
+		cxlog_info(actor:GetName(), actor:GetProperty(PROP_HP))
+	end
+	self.cmds = {}
+    self.state = BATTLE_TURN_STAND_BY
+	cxlog_info('BATTLE_TURN_STAND_BY')
+end
+
+function BattleMT:ExecuteTurn()
+    self.state = BTTALE_TURN_EXECUTE
+    if IsServer() then
+        for i,cmd in ipairs(self.cmds) do
+            local master = actor_manager_fetch_player_by_id(cmd.master)
+            local target = actor_manager_fetch_player_by_id(cmd.target)
+            master:SetTarget(target)
+            master:CastSkill(cmd.skill_id)
+            cxlog_info('cmd ', cjson.encode(cmd))
+        end
+        if #self.cmds > 0 then
+            for i,actor in ipairs(self.player_actors) do
+                local pid = actor:GetID()
+                local msg = { cmds = self.cmds} 
+                -- msg.pid = actor:GetID()
+                -- msg.cmds = self.cmds
+                net_send_message(pid, PTO_S2C_COMBAT_EXECUTE, cjson.encode(msg))
+            end
+        end
+
+        local atk_all_dead = true
+        local def_all_dead = true
+        for i,actor in ipairs(self.actors) do
+            if not actor:IsDead() then
+                if actor:GetProperty(PROP_TEAM_TYPE) == TEAM_TYPE_ATTACKER then
+                    atk_all_dead = false
+                else
+                    def_all_dead = false
+                end
+            end
+        end
+        if atk_all_dead or def_all_dead then
+            self.state = BTTALE_END
+            cxlog_info('BTTALE_END')
+            self:EndBattle()
+        else
+            self.state = BTTALE_TURN_NEXT
+            cxlog_info('BTTALE_TURN_NEXT')
+            self:NextTurn()
+        end
+    else
+
+    end
+end
+
+
+function BattleMT:CheckStandBy()
+    local ready = true
+	for i,actor in ipairs(self.actors) do
+        if not actor:GetProperty(PROP_TURN_READY) then
+            ready = false
+            break
+        end
+    end
+    return ready
+end
+

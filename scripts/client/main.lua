@@ -14,7 +14,7 @@ script_system_dofile 'actor_metatable.lua'
 
 script_system_dofile('net_manager.lua')
 
-script_system_dofile('../combat/combat_system.lua')
+-- script_system_dofile('../combat/combat_system.lua')
 script_system_dofile 'scene_manager.lua'
 script_system_dofile 'actor_manager.lua'
 script_system_dofile('action/action.lua')
@@ -23,6 +23,8 @@ script_system_dofile('event_system.lua')
 script_system_dofile('input_manager.lua')
 
 script_system_dofile('addon_manager.lua')
+
+script_system_dofile('module/team.lua')
 
 SERVER_HOST = command_arg_opt_str('host','127.0.0.1')
 SERVER_PORT = command_arg_opt_int('port', 45000)
@@ -45,7 +47,7 @@ function on_script_system_init()
     imgui_init()
     scene_manager_init()
 	actor_manager_init()
-	combat_system_init()
+	-- combat_system_init()
 	asm_system_init()
     load_all_addons()
 end

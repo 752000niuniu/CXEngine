@@ -25,7 +25,6 @@ stub[PTO_C2S_CLICK_NPC] = function(req)
     local player = actor_manager_fetch_player_by_id(req.pid)
     local target = actor_manager_fetch_player_by_id(req.target)
     if player and target then
-       
-        net_send_message(req.pid, PTO_S2C_CLICK_NPC)
+        net_send_message(req.pid, PTO_S2C_CLICK_NPC, cjson.encode(req))
     end
 end 

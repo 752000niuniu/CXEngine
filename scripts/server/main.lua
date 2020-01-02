@@ -15,7 +15,8 @@ script_system_dofile('server.lua')
 script_system_dofile('login_system.lua')
 script_system_dofile('actor_system.lua')
 script_system_dofile('scene_system.lua')
-script_system_dofile('../combat/combat_system.lua')
+script_system_dofile('team_system.lua')
+-- script_system_dofile('../combat/combat_system.lua')
 
 function server_reload()
     cxlog_info('server_reload')
@@ -27,8 +28,8 @@ end
 
 function on_script_system_init()
     content_system_init()
-    init_skills()
-    init_buffers()
+    -- init_skills()
+    -- init_buffers()
     scene_system_init()
 end
 
@@ -42,7 +43,7 @@ end
 
 function on_script_system_update()
     game_server_update()  
-    combat_system_update_battle()
+    -- combat_system_update_battle()
     scene_system_update()
     local players = actor_manager_fetch_all_actors()
     local dirty_props = {}

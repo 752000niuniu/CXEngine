@@ -25,3 +25,22 @@ PTO_C2S_CREATE_PLAYER                      = enum_next()
 
 PTO_C2S_CLICK_NPC                         = enum_next()
 PTO_S2C_CLICK_NPC                         = enum_next()
+
+PTO_C2S_TEAM_CREATE                         = enum_next()
+
+PTO_S2C_TEAM_CREATE                         = enum_next()
+
+PTO_C2S_TEAM_ENTER_TEAM                        = enum_next()
+PTO_C2S_TEAM_LEAVE_TEAM                         = enum_next()
+PTO_C2S_TEAM_CHANGE_LEADER                         = enum_next()
+
+PTO_C2S_TEAM_DISMISS                         = enum_next()
+PTO_S2C_TEAM_DISMISS = enum_next()
+
+PTO_C2S_TEAM_ADD_MEMBER                         = enum_next()
+PTO_S2C_TEAM_ADD_MEMBER                         = enum_next()
+PTO_C2S_TEAM_REMOVE_MEMBER                        = enum_next()
+PTO_S2C_TEAM_REMOVE_MEMBER                        = enum_next()
+
+PTO_C2S_FETCH_TEAM = enum_next()
+PTO_S2C_FETCH_TEAM = enum_next()

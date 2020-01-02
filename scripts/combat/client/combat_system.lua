@@ -151,9 +151,7 @@ function combat_system_init()
     init_buffers()
 end
 
-function combat_system_fetch_battle(actor)
-    return battle
-end
+
 function combat_system_current_turn()
     if battle then
         return battle.turn

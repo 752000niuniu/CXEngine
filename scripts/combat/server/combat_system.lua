@@ -1,109 +1,16 @@
-local Battles = {}
 
-function on_battle_start(self)
-	for i,actor in ipairs(self.actors) do
-        actor:SetProperty(PROP_IS_COMBAT,true)
-        actor:SetProperty(PROP_TURN_READY,false)
-        actor:SetProperty(PROP_COMBAT_BATTLE_ID,self.id)
-    end
-    self.state = BATTLE_TURN_STAND_BY
-	cxlog_info('BATTLE_TURN_STAND_BY')
+__battles__ = __battles__ or {}
 
-	self.player_actors = {}
-	self.npc_actors = {}
-	for i,actor in ipairs(self.actors) do
-		if actor:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_PLAYER then
-			table.insert(self.player_actors, actor)
-		else
-			table.insert(self.npc_actors, actor)
-		end
-	end
-end
 
-function on_battle_turn_stand_by(self)
-	local ready = true
-	for i,actor in ipairs(self.player_actors) do
-        if not actor:GetProperty(PROP_TURN_READY) then
-            ready = false
-            break
-        end
-    end
-	if ready then
-		for i,actor in ipairs(self.npc_actors) do
-			-- local cmd = {
-			-- 	type = 'ATK',
-			-- 	master = target:GetID(),
-			-- 	target = master:GetID(),
-			-- 	skill_id = 1
-			-- }
-			-- battle:AddCommand(cmd)
-			actor:SetProperty(PROP_TURN_READY,true)
-		end
-		
-		self.state = BTTALE_TURN_EXECUTE
-		for i,cmd in ipairs(self.cmds) do
-			local master = actor_manager_fetch_player_by_id(cmd.master)
-			local target = actor_manager_fetch_player_by_id(cmd.target)
-			master:SetTarget(target)
-			master:CastSkill(cmd.skill_id)
-			cxlog_info('cmd ', cjson.encode(cmd))
-		end
-		if #self.cmds > 0 then
-			for i,actor in ipairs(self.player_actors) do
-				local pid = actor:GetID()
-				local msg = { cmds = self.cmds} 
-				-- msg.pid = actor:GetID()
-				-- msg.cmds = self.cmds
-				net_send_message(pid, PTO_S2C_COMBAT_EXECUTE, cjson.encode(msg))
-			end
-		end
-        cxlog_info('BTTALE_TURN_EXECUTE')
-    end
-end
+local ActorMT = actor_get_metatable()
 
-function on_battle_turn_execute(self)
-    local atk_all_dead = true
-    local def_all_dead = true
-    for i,actor in ipairs(self.actors) do
-        if not actor:IsDead() then
-            if actor:GetProperty(PROP_TEAM_TYPE) == TEAM_TYPE_ATTACKER then
-                atk_all_dead = false
-            else
-                def_all_dead = false
-            end
-        end
-    end
-    if atk_all_dead or def_all_dead then
-        self.state = BTTALE_END
-        cxlog_info('BTTALE_END')
-    else
-        self.state = BTTALE_TURN_NEXT
-        cxlog_info('BTTALE_TURN_NEXT')
-    end
-end
-
-function on_battle_turn_next(self)
-    self.turn = self.turn + 1
-    for i,actor in ipairs(self.actors) do
-		actor:SetProperty(PROP_TURN_READY,false)
-		cxlog_info(actor:GetName(), actor:GetProperty(PROP_HP))
-	end
-	self.cmds = {}
-    self.state = BATTLE_TURN_STAND_BY
-    cxlog_info('BATTLE_TURN_STAND_BY')
-end
-
-function on_battle_end(self)
-	cxlog_info('BATTLE_END')
-	for i,actor in ipairs(self.actors) do
-		actor:SetProperty(PROP_IS_COMBAT,false)
-		actor:SetProperty(PROP_TURN_READY,false)
-		actor:SetProperty(PROP_COMBAT_BATTLE_ID,0)
-	end
+function ActorMT:GetBattle()
+	local battle_id = self:GetProperty(PROP_COMBAT_BATTLE_ID)
+	return __battles__[battle_id]
 end
 
 function combat_system_fetch_battle_by_id(id)
-	for i,battle in ipairs(Battles) do
+	for i,battle in ipairs(__battles__) do
 		if battle.id == id then
 			return battle
 		end
@@ -111,8 +18,7 @@ function combat_system_fetch_battle_by_id(id)
 end
 
 function combat_system_fetch_battle(actor)
-	local battle_id = actor:GetProperty(PROP_COMBAT_BATTLE_ID)
-	return combat_system_fetch_battle_by_id(battle_id)
+	return actor:GetBattle()
 end
 
 function combat_system_current_turn(actor)
@@ -125,50 +31,37 @@ function combat_system_current_turn(actor)
     end
 end    
 
-function combat_system_create_battle(atk_actors, dfd_actors)
+function combat_system_create_battle(atk_actor, def_actor)
 	local battle = BattleMT:new()
-	battle.id = os.time()
-	local team_id = os.time()
-	for i,actor in ipairs(atk_actors) do
-		actor:SetProperty(PROP_COMBAT_BATTLE_ID ,battle.id)
-		battle:AddActor(actor,team_id,TEAM_TYPE_ATTACKER)
-    end
 
-    team_id = team_id + 1
-	for i,actor in ipairs(dfd_actors) do
-		actor:SetProperty(PROP_COMBAT_BATTLE_ID ,battle.id)
-		battle:AddActor(actor,team_id,TEAM_TYPE_DEFENDER)
+	if atk_actor:HasTeam() then
+		local team = atk_actor:GetTeam()
+		for i,mem in ipairs(team:GetMembers()) do
+			battle:AddActor(mem, TEAM_TYPE_ATTACKER)
+		end
+	else
+		battle:AddActor(atk_actor,TEAM_TYPE_ATTACKER)
 	end
+
+	if def_actor:HasTeam() then
+		local team = atk_actor:GetTeam()
+		for i,mem in ipairs(team:GetMembers()) do
+			battle:AddActor(mem, TEAM_TYPE_DEFENDER)
+		end
+	else
+		battle:AddActor(def_actor, TEAM_TYPE_DEFENDER)
+	end
+	
 	battle:StartBattle()
-	table.insert(Battles,battle)
+	__battles__[battle.id] = battle
 	return battle
 end
 
 function combat_system_remove_battle(battle_id)
-	
-end
-
-function combat_system_update_battle()
-	for i,battle in ipairs(Battles) do
-		battle:Update()
-	end
-	local bts = {}
-	for i,battle in ipairs(Battles) do
-		if battle.state ~= BATTLE_END then
-			table.insert(bts,battle)
-		end
-	end
-	Battles = bts
+	__battles__[battle.id]  = nil
 end
 
 stub[PTO_C2S_COMBAT_START] = function(req)
-	--[[
-		客户端发起一场战斗, PVP / PVE , 先做PVE
-		客户端队伍 VS 生成NPC队伍
-		队长发起战斗后, 队员接受到 进入战斗cmd 都进入战斗 
-		服务器收到发起战斗后, 创建battle 以及交战双方, 然后把进入战斗消息下发给客户端
-	]]--
-	-- 1V1 单挑 
 	local atk = actor_manager_fetch_player_by_id(req.atk)
 	local def = actor_manager_fetch_player_by_id(req.def)
 
@@ -177,27 +70,27 @@ stub[PTO_C2S_COMBAT_START] = function(req)
 	req.atk_hp = atk:GetProperty(PROP_HP)
 	req.def_hp = def:GetProperty(PROP_HP)
 
-	combat_system_create_battle({atk},{def})
+	combat_system_create_battle(atk,def)
 	net_send_message_to_all_players(PTO_S2C_COMBAT_START,cjson.encode(req) )
 end
 
+
+
 stub[PTO_C2S_COMBAT_CMD] = function(req)
 	local master = actor_manager_fetch_player_by_id(req.master)  
-	local battle_id = master:GetProperty(PROP_COMBAT_BATTLE_ID)
-	local battle = combat_system_fetch_battle_by_id(battle_id)	
+	local battle =  master:GetBattle()
 	if battle then
-		battle:AddCommand(req)
-		master:SetProperty(PROP_TURN_READY, true)
+		battle:AddCommand(master, req)
+		if battle:CheckStandBy() then
+			battle:ExecuteTurn()
+		end
 	end
 end
 
 function combat_system_battle_on_actor_leave(pid)
 	local actor = actor_manager_fetch_player_by_id(pid)
-	if actor:GetProperty(PROP_IS_COMBAT) then
-		local battle_id = actor:GetProperty(PROP_COMBAT_BATTLE_ID)
-		local battle = combat_system_fetch_battle_by_id(battle_id)
-		if battle then
-			on_battle_end(battle)
-		end
+	local battle = actor:GetBattle()
+	if battle then
+		on_battle_end(battle)
 	end
 end

@@ -83,6 +83,21 @@ function ui_show_bag()
         end
     end
 
+    if imgui.Button('创建队伍') then
+        local player = actor_manager_fetch_local_player()
+        if player then
+            player:CreateTeam()
+        end
+    end
+    imgui.SameLine()
+    if imgui.Button('离开队伍') then
+        local player = actor_manager_fetch_local_player()
+        if player then
+            player:DismissTeam()
+        end
+    end
+
+
     if imgui.CollapsingHeader('MyPal') then
         if COLOR_SCHEMES then
             for i=1,#COLOR_SCHEMES.segments-1 do
