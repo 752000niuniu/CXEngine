@@ -59,6 +59,9 @@ function ui_show_bag()
         script_system_dofile('addon_manager.lua')
         load_all_addons()
 
+        script_system_dofile('module/team.lua')
+        script_system_dofile('module/dialog.lua')
+
         game_server_on_connection(true)
         
         collectgarbage()

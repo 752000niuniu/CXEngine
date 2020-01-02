@@ -25,6 +25,7 @@ script_system_dofile('input_manager.lua')
 script_system_dofile('addon_manager.lua')
 
 script_system_dofile('module/team.lua')
+script_system_dofile('module/dialog.lua')
 
 SERVER_HOST = command_arg_opt_str('host','127.0.0.1')
 SERVER_PORT = command_arg_opt_int('port', 45000)

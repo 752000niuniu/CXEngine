@@ -64,17 +64,14 @@ end
 stub[PTO_C2S_COMBAT_START] = function(req)
 	local atk = actor_manager_fetch_player_by_id(req.atk)
 	local def = actor_manager_fetch_player_by_id(req.def)
-
-	atk:SetProperty(PROP_HP, atk:GetMaxHP()/2)
+	atk:SetProperty(PROP_HP, atk:GetMaxHP())
 	def:SetProperty(PROP_HP, def:GetMaxHP())
 	req.atk_hp = atk:GetProperty(PROP_HP)
 	req.def_hp = def:GetProperty(PROP_HP)
 
 	combat_system_create_battle(atk,def)
-	net_send_message_to_all_players(PTO_S2C_COMBAT_START,cjson.encode(req) )
+	net_send_message_to_all_players(PTO_S2C_COMBAT_START,cjson.encode(req))
 end
-
-
 
 stub[PTO_C2S_COMBAT_CMD] = function(req)
 	local master = actor_manager_fetch_player_by_id(req.master)  
