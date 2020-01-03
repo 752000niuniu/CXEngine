@@ -112,11 +112,11 @@ function BattleMT:AutoCommand(actor)
     if actor:IsPlayer() then return end
     actor:SetProperty(PROP_TURN_READY, true)
 
-    local cmd = {}
-    local rand = math.random(1,3)
-    if rand == 1 then
+    local rand = math.random(1,10)
+    if rand >= 4 then
         return
     elseif rand == 2 then
+        local cmd = {}
         local target = self:RandomSelectEnemy(actor)
         cmd.type = 'ATK'
         cmd.master = actor:GetID()
@@ -124,6 +124,7 @@ function BattleMT:AutoCommand(actor)
         cmd.skill_id = 1
         table.insert(self.cmds, cmd)
     elseif rand == 3 then
+        local cmd = {}
         local target = self:RandomSelectEnemy(actor)
         cmd.type = 'ATK'
         cmd.master = actor:GetID()
@@ -163,7 +164,6 @@ function BattleMT:EndBattle()
         
         animation_manager_clear()
         scene_set_combat(false)
-        self.state = BATTLE_DEFAULT
     end
 end
 

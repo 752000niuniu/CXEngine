@@ -50,7 +50,7 @@ function init_skills()
     end
 end
 
-
+__skills__ = __skills__ or {}
 
 local ActorMT = actor_get_metatable()
 function ActorMT:CastSkill(skill_id)
@@ -66,7 +66,7 @@ function ActorMT:CastSkill(skill_id)
     skill.group_kill = skill.templ.group_kill
     skill.combo = skill.templ.combo
     skill.type = skill.templ.type
-
+    
     if skill.type == 'atk' then
 		if skill.group_kill > 0 then
 			if IsClient() then
@@ -151,4 +151,9 @@ function ActorMT:CastSkill(skill_id)
 			on_cast_spell(skill,actor)
 		end
     end
+end
+
+
+function ActorMT:IsUsingSkill()
+    return self:GetProperty(PROP_IS_USING_SKILL)
 end

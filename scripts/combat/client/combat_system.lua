@@ -7,6 +7,7 @@ function ActorMT:GetBattle()
 	return __battles__[battle_id]
 end
 
+local battle_commands = {}
 local CommandMT = {}
 function CommandMT:new(o)
     o = o or {}
@@ -25,7 +26,6 @@ function CommandMT:Init(battle, actor, skill_id)
     self.targets = { self.main_target }
     self.acting_actors = {}
 end
-
 
 function CommandMT:GetState()
     return self.state
@@ -63,7 +63,6 @@ end
 function CommandMT:IsActing()
     return #self.acting_actors > 0
 end
-
 function CommandMT:StartCast()
     if self.battle then
         local actor = self.master
@@ -94,7 +93,7 @@ local ACTOR_CLICK_MODE_ATTACK = 1
 local ACTOR_CLICK_MODE_SPELL = 2
 local ACTOR_CLICK_MODE  = ACTOR_CLICK_MODE_ATTACK
 
-local battle_commands = {}
+
 
 BattleBG = BattleBG or nil
 combat_self_pos = combat_self_pos or {}
@@ -184,7 +183,6 @@ function combat_reset_actor(actor)
     actor:PushAction(ACTION_IDLE)    
 end
 
-
 function combat_system_draw()
     local player = actor_manager_fetch_local_player()
     local battle = player:GetBattle()
@@ -202,8 +200,6 @@ function combat_system_draw()
     end
     animation_manager_draw()
 end
-
-
 
 
 function combat_system_imgui_update()
@@ -353,7 +349,6 @@ function on_battle_start(self)
     end
 end
 
-
 function combat_system_update()
     local player = actor_manager_fetch_local_player()
     local battle = player:GetBattle()
@@ -372,6 +367,7 @@ function combat_system_update()
             else 
                 if battle:CheckEnd() then
                     battle:EndBattle()
+                    return
                 else
                     battle:NextTurn()
                 end

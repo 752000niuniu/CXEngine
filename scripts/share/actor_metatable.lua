@@ -831,3 +831,4 @@ end
 function ActorMT:IsSummon()
     return self:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_SUMMON
 end
+
