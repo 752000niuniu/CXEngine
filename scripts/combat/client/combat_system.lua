@@ -8,86 +8,6 @@ function ActorMT:GetBattle()
 end
 
 local battle_commands = {}
-local CommandMT = {}
-function CommandMT:new(o)
-    o = o or {}
-    self.__index = self 
-    setmetatable(o, self)
-    return o
-end
-
-function CommandMT:Init(battle, actor, skill_id)
-    self.battle = battle
-    self.state = COMMAND_STATE_PREPARE
-    self.type =  COMMAND_TYPE_ATTACK
-    self.skill_id = skill_id
-    self.master = actor
-    self.main_target = actor:GetTarget()
-    self.targets = { self.main_target }
-    self.acting_actors = {}
-end
-
-function CommandMT:GetState()
-    return self.state
-end
-
-function CommandMT:GetMaster()
-    return self.master
-end
-
-function CommandMT:GetType()
-    return self.type
-end
-
-function CommandMT:AddActing(actor)
-    for i,v in ipairs(self.acting_actors) do
-        if v:GetID() == actor:GetID() then
-            return
-        end
-    end
-    table.insert(self.acting_actors,actor)
-end
-
-function CommandMT:RemoveActing(actor)
-    for i,v in ipairs(self.acting_actors) do
-        if v:GetID() == actor:GetID() then
-            table.remove(self.acting_actors, i)
-            if #self.acting_actors == 0 then
-                self.state = COMMAND_STATE_STOP
-            end
-            return 
-        end
-    end
-end
-
-function CommandMT:IsActing()
-    return #self.acting_actors > 0
-end
-function CommandMT:StartCast()
-    if self.battle then
-        local actor = self.master
-        actor:CastSkill(self.skill_id,self.battle.turn)
-    end
-end
-
-function CommandMT:Update()
-    if self.state == COMMAND_STATE_PREPARE then
-        if self.master:IsDead() then
-            self.state = COMMAND_STATE_STOP
-            return
-        end
-        self:StartCast()
-        self.state = COMMAND_STATE_PALY
-    elseif self.state == COMMAND_STATE_PALY then
-        
-    elseif self.state == COMMAND_STATE_STOP then
-        
-    end    
-end
-
-function CommandMT:IsFinished()
-    return self.state == COMMAND_STATE_STOP
-end
 
 local ACTOR_CLICK_MODE_ATTACK = 1
 local ACTOR_CLICK_MODE_SPELL = 2
@@ -298,7 +218,7 @@ stub[PTO_S2C_COMBAT_START] = function(resp)
     local battle = BattleMT:new()
     battle:Deserialize(resp.battle)
     __battles__[battle.id] = battle
-
+    
     local player = actor_manager_fetch_local_player()
     for i, actor in ipairs(battle.actors) do
         if player:GetID() == actor:GetID() then
@@ -311,15 +231,13 @@ end
 stub[PTO_S2C_COMBAT_EXECUTE] = function(req)
     local player = actor_manager_fetch_local_player()
     local battle = player:GetBattle()
-    battle.state = BTTALE_TURN_EXECUTE 
     for i,req_cmd in ipairs(req.cmds) do
         local actor = actor_manager_fetch_player_by_id(req_cmd.master)
         local target = actor_manager_fetch_player_by_id(req_cmd.target)
         actor:SetTarget(target)
-        local cmd = CommandMT:new()
-        cmd:Init(battle,actor,req_cmd.skill_id )
-        table.insert(battle_commands,cmd)
+        table.insert(battle_commands,req_cmd)
     end
+    battle.state = BTTALE_TURN_EXECUTE 
 end
 
 function on_battle_start(self)
@@ -356,13 +274,20 @@ function combat_system_update()
         if battle.state == BTTALE_TURN_EXECUTE then
             if #battle_commands > 0 then
                 local cmd = battle_commands[1]
-                if not cmd.master:IsDead() then
-                    cmd:Update()
-                    if cmd:IsFinished() then
+                local actor = actor_manager_fetch_player_by_id(cmd.master)
+                local skill = actor:GetUsingSkill()
+                if not skill then
+                    if not actor:IsDead() then
+                        local target = actor_manager_fetch_player_by_id(cmd.target)
+                        actor:CastSkill(cmd.skill_id) 
+                    else
                         table.remove(battle_commands,1)
                     end
-                else
-                    table.remove(battle_commands,1)
+                else 
+                    if skill.caster_end and skill.target_end then
+                        actor:EndUsingSkill()
+                        table.remove(battle_commands,1)
+                    end
                 end
             else 
                 if battle:CheckEnd() then

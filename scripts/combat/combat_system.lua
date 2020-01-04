@@ -136,7 +136,12 @@ end
 
 function BattleMT:StartBattle()
 	self.state = BATTLE_START
-	self.turn = 0
+    self.turn = 0
+    
+    for i,actor in ipairs(self.actors) do
+        actor:SetProperty(PROP_COMBAT_BATTLE_ID,self.id)
+    end    
+
     if IsServer() then
         for i,actor in ipairs(self.actors) do
             actor:SetProperty(PROP_IS_COMBAT,true)
@@ -147,6 +152,17 @@ function BattleMT:StartBattle()
         on_battle_start(self)
     end
     self:NextTurn()
+end
+
+function BattleMT:CheckAllIdle()
+    local all_idle = true
+    for i,actor in ipairs(self.actors) do
+        if actor:GetActionID() ~= ACTION_BATIDLE and   actor:GetActionID() ~= ACTION_IDLE then
+            all_idle = false
+            break
+        end
+    end
+    return all_idle
 end
 
 function BattleMT:EndBattle()

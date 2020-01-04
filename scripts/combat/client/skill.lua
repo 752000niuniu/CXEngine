@@ -38,6 +38,13 @@ function calc_run_to_pos(actor, target)
     end
 end
 
+function skill_target_end_counter(skill)
+    skill.target_counter = skill.target_counter - 1
+    if skill.target_counter == 0 then
+        skill.target_end = true
+    end
+end
+
 function on_cast_spell( skill, actor)
     if skill.templ.SkillOnStart then
         skill.templ.SkillOnStart(skill, actor)
@@ -46,6 +53,7 @@ function on_cast_spell( skill, actor)
     cast_action:Reset()
     cast_action:SetLoop(-1)
     cast_action:AddFrameCallback(cast_action:GetGroupFrameCount()/2,function()
+        skill.target_counter = skill.spell_cnt
         for i=1,skill.spell_cnt do
             local target = skill.spell_actors[i]
             local damage = skill.spell_damage[i]
@@ -148,7 +156,7 @@ function on_cast_spell( skill, actor)
                                 actor:SetCombatPos(last_x,last_y)
                                 actor:SetDir(last_dir)
         
-                                combat_system_current_cmd():RemoveActing(target)
+                                skill_target_end_counter(skill)
                                 combat_system_remove_from_battle(target)
                             end
         
@@ -157,15 +165,14 @@ function on_cast_spell( skill, actor)
                                 behit_action:Stop()
                                 actor:SetCombatPos(last_x,last_y)
                                 actor:SetDir(last_dir)
-                                combat_system_current_cmd():RemoveActing(target)
+                                skill_target_end_counter(skill)
                                 combat_system_remove_from_battle(target)
                             end
                         end)
                     else
-                        combat_system_current_cmd():RemoveActing(target)
+                        skill_target_end_counter(skill)
                     end
                 end)
-                combat_system_current_cmd():AddActing(target)
                 target:PushAction(ACTION_BEHIT)
                 target:MoveActionToBack()
             end
@@ -173,9 +180,8 @@ function on_cast_spell( skill, actor)
         end
     end)
     cast_action:AddStopCallback(function()
-        combat_system_current_cmd():RemoveActing(actor)
+        skill.caster_end = true    
     end)
-    combat_system_current_cmd():AddActing(actor)
     actor:PushAction(ACTION_CAST)
     actor:MoveActionToBack()
 end
@@ -265,8 +271,8 @@ function on_attack_action_callback(attack_action)
                         behit_action:Stop()
                         actor:SetCombatPos(last_x,last_y)
                         actor:SetDir(last_dir)
-                        combat_system_current_cmd():RemoveActing(target)
                         combat_system_remove_from_battle(target)
+                        skill.target_end = true        
                     end
     
                     if px - avatar:GetFrameKeyX() + avatar:GetFrameWidth() >= 800 then
@@ -274,21 +280,20 @@ function on_attack_action_callback(attack_action)
                         behit_action:Stop()
                         actor:SetCombatPos(last_x,last_y)
                         actor:SetDir(last_dir)
-                        combat_system_current_cmd():RemoveActing(target)
                         combat_system_remove_from_battle(target)
+                        skill.target_end = true   
                     end
                 end)
             else
                 local dir_x ,dir_y = actor:GetAttackVec()
                 target:MoveOnScreenWithDuration(-dir_x*24,-dir_y*24,PERFRAME_TIME*2,true)
-                combat_system_current_cmd():RemoveActing(target)
+                skill.target_end = true   
             end
         else 
             local dir_x ,dir_y = actor:GetAttackVec()
             target:MoveOnScreenWithDuration(-dir_x*24,-dir_y*24,PERFRAME_TIME*2,true)
         end
     end)
-    combat_system_current_cmd():AddActing(target)
     target:PushAction(ACTION_BEHIT)
     target:MoveActionToBack()
 end
@@ -349,10 +354,9 @@ function on_cast_attack(skill, actor)
 
     runback_action:AddStopCallback(function()
         actor:ReverseDir()
-        combat_system_current_cmd():RemoveActing(actor)     
+        skill.caster_end = true        
     end)
 
-    combat_system_current_cmd():AddActing(actor) 
     actor:PushAction(ACTION_RUNBACK)
     actor:MoveActionToBack()
 end

@@ -6,7 +6,9 @@ local SKILL_SUBTYPE_AUXI = 3
 local SkillMT = {}
 local skill_table = {}
 function SkillMT:new(o)
-    o = o or {}
+    o = o or {
+        id = utils_next_uid('skill')
+    }
     self.__index = self 
     setmetatable(o, self)
     return o
@@ -59,7 +61,13 @@ function ActorMT:CastSkill(skill_id)
     if not skill_tpl then return end
     local battle = self:GetBattle()
     if not battle then return end
+    cxlog_info('cast skill ',skill_id)
     local skill = SkillMT:new()
+    __skills__[skill.id] = skill
+    self:SetUsingSkill(skill.id)
+
+    skill.caster_end = false
+    skill.target_end = false
     skill.tid = skill_id
     skill.turn = battle.turn
     skill.templ = skill_tpl
@@ -153,6 +161,20 @@ function ActorMT:CastSkill(skill_id)
     end
 end
 
+function ActorMT:SetUsingSkill(skill_uid)
+    self:SetProperty(PROP_USING_SKILL, skill_uid)
+end
+
+function ActorMT:GetUsingSkill()
+    local id = self:GetProperty(PROP_USING_SKILL)
+    return __skills__[id]
+end
+
+function ActorMT:EndUsingSkill()
+    local id = self:GetProperty(PROP_USING_SKILL)
+    __skills__[id] = nil
+    self:SetProperty(PROP_USING_SKILL, 0)
+end
 
 function ActorMT:IsUsingSkill()
     return self:GetProperty(PROP_IS_USING_SKILL)
