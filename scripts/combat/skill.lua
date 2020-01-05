@@ -97,7 +97,7 @@ function ActorMT:CastSkill(skill_id)
                     skill.atk_cnt = i
                     break
                 end
-			end
+            end
 			if IsClient() then
                 on_cast_attack(skill, actor)
             end

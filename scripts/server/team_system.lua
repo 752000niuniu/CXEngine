@@ -116,7 +116,7 @@ end
 stub[PTO_C2S_TEAM_CREATE] = function(req)
     local actor = actor_manager_fetch_player_by_id(req.pid) 
     local team = actor:CreateTeam()
-    cxlog_info('team', cjson.encode(team))
+    cxlog_info(actor:GetName()..'创建了队伍 '..team.id)
     local resp = {
         pid = req.pid,
         team = team
@@ -129,6 +129,7 @@ stub[PTO_C2S_TEAM_DISMISS] = function(req)
     local team = actor:GetTeam()
     local team_id = team.id
     actor:DismissTeam()
+    cxlog_info(actor:GetName()..'解散了队伍 '..team.id)
     req.team_id = team_id
     net_send_message_to_all_players(PTO_S2C_TEAM_DISMISS, cjson.encode(req))
 end
@@ -138,7 +139,7 @@ stub[PTO_C2S_TEAM_ADD_MEMBER] = function(req)
     local team = __teams__[team_id]
     local mem_actor = actor_manager_fetch_player_by_id(req.member_id)
     team:AddMember(mem_actor)
-    
+    cxlog_info(mem_actor:GetName()..'加入了队伍 '..team.id)
     local resp = {
         team = team
     }
@@ -150,7 +151,7 @@ stub[PTO_C2S_TEAM_REMOVE_MEMBER] = function(req)
     local team = __teams__[team_id]
     local mem_actor = actor_manager_fetch_player_by_id(req.member_id)
     team:RemoveMember(mem_actor)
-    
+    cxlog_info(mem_actor:GetName()..'离开了队伍 '..team.id)
     local resp = {
         team = team
     }

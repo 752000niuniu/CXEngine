@@ -73,9 +73,10 @@ function BattleMT:Deserialize(info)
 end
 
 function BattleMT:AddActor(actor, team_type)
+    cxlog_info('Battle:AddActor', self.id, actor:GetName(),team_type==TEAM_TYPE_ATTACKER and 'atk' or 'def')
     actor:SetProperty(PROP_TEAM_TYPE, team_type)
     actor:SetProperty(PROP_COMBAT_BATTLE_ID, self.id)
-	table.insert(self.actors,actor)
+    table.insert(self.actors,actor)
 end
 
 function BattleMT:RemoveActor(actor)

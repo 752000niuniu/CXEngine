@@ -57,9 +57,6 @@ function combat_system_init()
     init_buffers()
 end
 
-function combat_system_current_cmd()
-    return battle_commands[1]
-end
 
 function combat_system_actor_ev_on_click(actor, button, x, y)
     local player = actor_manager_fetch_local_player()
@@ -80,6 +77,8 @@ function combat_system_actor_ev_on_click(actor, button, x, y)
     msg.master = player:GetID()
     msg.target = actor:GetID()
     msg.skill_id = player:GetProperty(PROP_USING_SKILL)
+    assert(msg.skill_id ~= 0)
+
     net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
 
     ACTOR_CLICK_MODE = ACTOR_CLICK_MODE_ATTACK
@@ -226,6 +225,7 @@ stub[PTO_S2C_COMBAT_EXECUTE] = function(req)
     for i,req_cmd in ipairs(req.cmds) do
         local actor = actor_manager_fetch_player_by_id(req_cmd.master)
         local target = actor_manager_fetch_player_by_id(req_cmd.target)
+        assert(req_cmd.skill_id~=0)
         actor:SetTarget(target)
         table.insert(battle_commands,req_cmd)
     end
@@ -303,13 +303,8 @@ function combat_system_remove_from_battle(_actor_)
     local player = actor_manager_fetch_local_player()
     local battle = player:GetBattle()
     if not battle then return end
-    for i,actor in ipairs(battle.actors) do
-        if actor:GetID() == _actor_:GetID() then
-            combat_reset_actor(actor)
-            table.remove(battle.actors,i) 
-            return
-        end
-    end
+    combat_reset_actor(_actor_)
+    battle:RemoveActor(_actor_)
 end
 
 stub[PTO_S2C_COMBAT_LEAVE_BATTLE] = function(resp)

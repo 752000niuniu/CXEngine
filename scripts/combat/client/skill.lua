@@ -45,7 +45,7 @@ function skill_target_end_counter(skill)
     end
 end
 
-function on_cast_spell( skill, actor)
+function on_cast_spell(skill, actor)
     if skill.templ.SkillOnStart then
         skill.templ.SkillOnStart(skill, actor)
     end
@@ -53,7 +53,15 @@ function on_cast_spell( skill, actor)
     cast_action:Reset()
     cast_action:SetLoop(-1)
     cast_action:AddFrameCallback(cast_action:GetGroupFrameCount()/2,function()
-        skill.target_counter = skill.spell_cnt
+        skill.target_counter = 0 
+        local battle = actor:GetBattle()
+        for i=1,skill.spell_cnt do
+            local target = skill.spell_actors[i]
+            if battle:InBattle(target) then
+                skill.target_counter = skill.target_counter + 1
+            end
+        end
+      
         for i=1,skill.spell_cnt do
             local target = skill.spell_actors[i]
             local damage = skill.spell_damage[i]
@@ -180,10 +188,14 @@ function on_cast_spell( skill, actor)
         end
     end)
     cast_action:AddStopCallback(function()
-        skill.caster_end = true    
+        skill.caster_end = true  
+        if skill.target_counter == 0 then
+            skill.target_end = true
+        end  
     end)
     actor:PushAction(ACTION_CAST)
     actor:MoveActionToBack()
+    cxlog_info('on_cast_spell MoveActionToBack')
 end
 
 function attack_get_keyframe(actor)
@@ -354,7 +366,11 @@ function on_cast_attack(skill, actor)
 
     runback_action:AddStopCallback(function()
         actor:ReverseDir()
-        skill.caster_end = true        
+        skill.caster_end = true     
+        local battle = actor:GetBattle()
+        if not battle:InBattle(target) then
+            skill.target_end = true
+        end
     end)
 
     actor:PushAction(ACTION_RUNBACK)
