@@ -14,7 +14,6 @@ local ACTOR_CLICK_MODE_SPELL = 2
 local ACTOR_CLICK_MODE  = ACTOR_CLICK_MODE_ATTACK
 
 
-
 BattleBG = BattleBG or nil
 combat_self_pos = combat_self_pos or {}
 combat_enemy_pos = combat_enemy_pos or {}
@@ -54,7 +53,6 @@ function combat_system_init()
 	local ratio_y = game_get_height()/ 480
     combat_self_pos =  calc_combat_self_pos(ratio_x, ratio_y)
     combat_enemy_pos =  calc_combat_enemy_pos(ratio_x, ratio_y)
-    -- cxlog_info('combat_system_init',cjson.encode(skill_template_table))
     init_skills()
     init_buffers()
 end
@@ -68,13 +66,7 @@ function combat_system_actor_ev_on_click(actor, button, x, y)
     local battle = player:GetBattle()
     if not battle or battle.state ~= BATTLE_TURN_STAND_BY then return end
     
-    local actor_in_battle = false
-    for i,bat_actor in ipairs(battle.actors) do
-        if bat_actor:GetID() == actor:GetID() then
-            actor_in_battle = true
-        end
-    end
-    if not actor_in_battle then return end
+    if not battle:InBattle(actor) then return end
 
     local player = actor_manager_fetch_local_player()
     player:SetTarget(actor)
@@ -277,13 +269,14 @@ function combat_system_update()
                 local actor = actor_manager_fetch_player_by_id(cmd.master)
                 local skill = actor:GetUsingSkill()
                 if not skill then
-                    if not actor:IsDead() then
+                    if battle:InBattle(actor) then
                         local target = actor_manager_fetch_player_by_id(cmd.target)
                         actor:CastSkill(cmd.skill_id) 
                     else
-                        table.remove(battle_commands,1)
+                        table.remove(battle_commands,1)    
                     end
                 else 
+                    cxlog_info('skill ', skill.id , skill.caster_end, skill.target_end, skill.tid, cjson.encode(cmd))
                     if skill.caster_end and skill.target_end then
                         actor:EndUsingSkill()
                         table.remove(battle_commands,1)

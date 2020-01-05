@@ -47,6 +47,7 @@ stub[PTO_C2S_COMBAT_START] = function(req)
 	net_send_message_to_all_players(PTO_S2C_COMBAT_START,cjson.encode(resp))
 end
 
+
 stub[PTO_C2S_COMBAT_CMD] = function(req)
 	local master = actor_manager_fetch_player_by_id(req.master)
 	local battle =  master:GetBattle()
@@ -79,6 +80,12 @@ stub[PTO_C2S_COMBAT_CMD] = function(req)
 			battle:NextTurn()
 		end
 	end
+end
+
+
+
+stub[PTO_C2S_COMBAT_END_BATTLE] = function(req) 
+	
 end
 
 function combat_system_battle_on_actor_leave(pid)

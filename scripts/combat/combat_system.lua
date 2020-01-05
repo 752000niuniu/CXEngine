@@ -140,11 +140,11 @@ function BattleMT:StartBattle()
     
     for i,actor in ipairs(self.actors) do
         actor:SetProperty(PROP_COMBAT_BATTLE_ID,self.id)
+        actor:SetProperty(PROP_IS_COMBAT,true)
     end    
 
     if IsServer() then
         for i,actor in ipairs(self.actors) do
-            actor:SetProperty(PROP_IS_COMBAT,true)
             actor:SetProperty(PROP_TURN_READY,false)
         end
     else
@@ -165,14 +165,28 @@ function BattleMT:CheckAllIdle()
     return all_idle
 end
 
+    
+
+function BattleMT:InBattle(__actor__)
+    local actor_in_battle = false
+    for i,bat_actor in ipairs(self.actors) do
+        if bat_actor:GetID() == __actor__:GetID() then
+            actor_in_battle = true
+            break
+        end
+    end
+    return actor_in_battle
+end
+
 function BattleMT:EndBattle()
 	self.state = BATTLE_END
     cxlog_info('BATTLE_END')
+    for i,actor in ipairs(self.actors) do
+        actor:SetProperty(PROP_IS_COMBAT,false)
+        actor:SetProperty(PROP_COMBAT_BATTLE_ID,0)
+    end    
     if IsServer() then
-        for i,actor in ipairs(self.actors) do
-            actor:SetProperty(PROP_IS_COMBAT,false)
-            actor:SetProperty(PROP_COMBAT_BATTLE_ID,0)
-        end    
+        
     else
         for i,actor in ipairs(self.actors) do
             combat_reset_actor(actor)

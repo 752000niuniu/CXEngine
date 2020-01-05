@@ -47,3 +47,7 @@ PTO_S2C_FETCH_TEAM = enum_next()
 
 PTO_C2S_COMBAT_LEAVE_BATTLE = enum_next()
 PTO_S2C_COMBAT_LEAVE_BATTLE = enum_next()
+
+
+PTO_C2S_COMBAT_END_BATTLE = enum_next()
+PTO_S2C_COMBAT_END_BATTLE = enum_next()
