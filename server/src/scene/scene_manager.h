@@ -83,7 +83,7 @@ private:
 };
 
 #define SCENE_MANAGER_INSTANCE SceneManager::GetInstance()
-
+bool scene_is_combat();
 Player* scene_find_player(const char* player_name);
 void scene_set_player(const char* player_name);
 void scene_add_player_by_templ_name(const char* templ_name, int actorType);

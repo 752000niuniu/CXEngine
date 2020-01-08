@@ -78,6 +78,7 @@ function on_cast_spell(skill, actor)
                     skill.templ.SkillOnSpell(skill, actor, target)
                 end
                 anim:AddStopCallback(function()
+                    skill_target_end_counter(skill)
                     if skill.templ.SkillOnAfterSpell then
                         skill.templ.SkillOnAfterSpell(skill, actor, target)
                     end 
@@ -95,6 +96,7 @@ function on_cast_spell(skill, actor)
                 end
                 anim:AddStopCallback(function()
                     target:ShowBeatNumber(-damage)
+                    skill_target_end_counter(skill)
                     if skill.templ.SkillOnAfterSpell then
                         skill.templ.SkillOnAfterSpell(skill, actor, target)
                     end 
@@ -283,8 +285,8 @@ function on_attack_action_callback(attack_action)
                         behit_action:Stop()
                         actor:SetCombatPos(last_x,last_y)
                         actor:SetDir(last_dir)
-                        combat_system_remove_from_battle(target)
                         skill.target_end = true        
+                        combat_system_remove_from_battle(target)
                     end
     
                     if px - avatar:GetFrameKeyX() + avatar:GetFrameWidth() >= 800 then
@@ -292,8 +294,8 @@ function on_attack_action_callback(attack_action)
                         behit_action:Stop()
                         actor:SetCombatPos(last_x,last_y)
                         actor:SetDir(last_dir)
-                        combat_system_remove_from_battle(target)
                         skill.target_end = true   
+                        combat_system_remove_from_battle(target)
                     end
                 end)
             else

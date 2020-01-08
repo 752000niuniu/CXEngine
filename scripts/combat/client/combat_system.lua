@@ -1,4 +1,5 @@
 __battles__ = __battles__ or {}
+battle = nil
 
 local ActorMT = actor_get_metatable()
 
@@ -59,8 +60,6 @@ end
 
 
 function combat_system_actor_ev_on_click(actor, button, x, y)
-    local player = actor_manager_fetch_local_player()
-    local battle = player:GetBattle()
     if not battle or battle.state ~= BATTLE_TURN_STAND_BY then return end
     
     if not battle:InBattle(actor) then return end
@@ -95,8 +94,6 @@ function combat_reset_actor(actor)
 end
 
 function combat_system_draw()
-    local player = actor_manager_fetch_local_player()
-    local battle = player:GetBattle()
     if not battle then return end
     BattleBG:Draw()
 
@@ -114,8 +111,6 @@ end
 
 
 function combat_system_imgui_update()
-    local player = actor_manager_fetch_local_player()
-    local battle = player:GetBattle()
     if not battle or battle.state ~= BATTLE_TURN_STAND_BY then return end
 
 	imgui.Begin('Menu',menu_show)
@@ -157,6 +152,7 @@ function combat_system_imgui_update()
         
         -- battle:EndBattle()
     end
+    
 
     imgui.SetNextWindowSize(350,400)
     if imgui.BeginPopup('SpellSelector') then
@@ -171,6 +167,7 @@ function combat_system_imgui_update()
         end
         imgui.HorizontalLayout(school_skill,next,function(k,v) 
             if imgui.Button(v.name..'##'..v.ID) then
+                local player = actor_manager_fetch_local_player()
                 player:SetProperty(PROP_USING_SKILL, v.ID)
                 imgui.CloseCurrentPopup()
             end
@@ -206,8 +203,9 @@ end
 
 local stub = net_manager_stub()
 stub[PTO_S2C_COMBAT_START] = function(resp)
-    local battle = BattleMT:new()
+    battle = BattleMT:new()
     battle:Deserialize(resp.battle)
+
     __battles__[battle.id] = battle
     
     local player = actor_manager_fetch_local_player()
@@ -220,8 +218,6 @@ stub[PTO_S2C_COMBAT_START] = function(resp)
 end 
 
 stub[PTO_S2C_COMBAT_EXECUTE] = function(req)
-    local player = actor_manager_fetch_local_player()
-    local battle = player:GetBattle()
     for i,req_cmd in ipairs(req.cmds) do
         local actor = actor_manager_fetch_player_by_id(req_cmd.master)
         local target = actor_manager_fetch_player_by_id(req_cmd.target)
@@ -260,8 +256,6 @@ function on_battle_start(self)
 end
 
 function combat_system_update()
-    local player = actor_manager_fetch_local_player()
-    local battle = player:GetBattle()
     if battle then
         if battle.state == BTTALE_TURN_EXECUTE then
             if #battle_commands > 0 then
@@ -299,10 +293,13 @@ function combat_system_update()
     end
 end
 
+function combat_system_get_battle()
+    return battle
+end
+
 function combat_system_remove_from_battle(_actor_)
-    local player = actor_manager_fetch_local_player()
-    local battle = player:GetBattle()
     if not battle then return end
+
     combat_reset_actor(_actor_)
     battle:RemoveActor(_actor_)
 end

@@ -12,7 +12,6 @@ BaseScene::BaseScene(int id, String name)
 m_SceneID(id),
 m_Map(nullptr),
 m_Loaded(false),
-m_IsCombat(false),
 m_MapID(0)
 {
 	
@@ -29,17 +28,17 @@ BaseScene::~BaseScene()
 
 void BaseScene::Update()
 {
-	if (m_IsCombat) {
+	if (scene_is_combat()) {
 		script_system_call_function(script_system_get_luastate(), "combat_system_update");
-	}
-	else {
+	}else{
 		actor_manager_update();
 	}
 }
+
 #ifndef SIMPLE_SERVER
 void BaseScene::Draw()
 {
-	if (m_IsCombat) {
+	if (scene_is_combat()) {
 		script_system_call_function(script_system_get_luastate(), "combat_system_draw");
 	}
 	else {
@@ -106,8 +105,4 @@ void BaseScene::UnLoad()
 	}
 }
 
-void BaseScene::SetCombat(bool combat)
-{
-	m_IsCombat = combat;
-}
 

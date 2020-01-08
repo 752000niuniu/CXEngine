@@ -5,6 +5,7 @@
 #include "scene/base_scene.h"
 #include "scene/game_map.h"
 #include "action.h"
+#include <scene/scene_manager.h>
 
 MoveHandle::MoveHandle(Actor* actor)
 	:m_Actor(actor)
@@ -122,7 +123,7 @@ void MoveHandle::MoveTo(float x, float y)
 		return;
 	}
 
-	if(m_Actor->GetScene()->IsCombat()){
+	if(scene_is_combat()){
 		m_BackupMoveList.clear();
 		m_MoveList.clear();
 	}

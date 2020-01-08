@@ -333,6 +333,16 @@ BaseScene* scene_manager_fetch_scene(int sceneID)
 	return nullptr;
 }
 
+
+bool scene_is_combat()
+{
+	auto* actor = actor_manager_fetch_local_player();
+	if (actor) {
+		return actor->IsCombat();
+	}
+	return false;
+}
+
 void luaopen_scene_manager(lua_State* L)
 {
 	script_system_register_function(L, scene_manager_init);

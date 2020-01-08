@@ -388,20 +388,14 @@ int scene_manager_get_current_scene_id(){
 
 bool scene_is_combat()
 {
-	auto* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if (scene) {
-		return scene->IsCombat();
+	auto* actor = actor_manager_fetch_local_player();
+	if(actor){
+		return actor->IsCombat();
 	}
 	return false;
 }
 
-void scene_set_combat(bool combat)
-{
-	auto* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if (scene) {
-		return scene->SetCombat(combat);
-	}
-}
+
 
 
 void scene_set_map(int mapid)
@@ -431,7 +425,6 @@ void luaopen_scene_manager(lua_State* L)
 	script_system_register_function(L, scene_manager_add_custom_scene);
 
 	script_system_register_function(L, scene_is_combat);
-	script_system_register_function(L, scene_set_combat);
 	script_system_register_function(L, scene_set_map);
 	script_system_register_function(L, game_map_reset_map_offset);
 

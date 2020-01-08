@@ -43,7 +43,7 @@ ID	name	type	sub_type	school	combo	atk_anim	group_kill	cast_anim	act_turn
 41	HS_佛门普渡	spell	2	3		6-1989B002			
 42	HS_唧唧歪歪	spell		3		6-C12C2663	5		
 43	HS_我佛慈悲	spell	2	3		6-203B8773			
-44	HS_推拿	spell	2	3		6-03139F50			
+44	HS_推拿	spell	2	3		6-03139F50	3		
 45	HS_正骨	spell	2	3		6-E869B98A			
 46	HS_神佑复生	spell		3		6-DA22B637			
 47	HS_紫气东来	spell		3		6-A742E8AB			

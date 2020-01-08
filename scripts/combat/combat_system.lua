@@ -149,7 +149,6 @@ function BattleMT:StartBattle()
             actor:SetProperty(PROP_TURN_READY,false)
         end
     else
-        scene_set_combat(true)
         on_battle_start(self)
     end
     self:NextTurn()
@@ -194,7 +193,6 @@ function BattleMT:EndBattle()
         end
         
         animation_manager_clear()
-        scene_set_combat(false)
     end
 end
 

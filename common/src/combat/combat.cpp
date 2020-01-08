@@ -170,26 +170,11 @@ void combat_system_end_battle()
 }
 
 
-void combat_system_switch_battle(bool enter)
-{
-	auto* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if (scene) {
-		if (enter) {
-			scene->SetCombat(true);
-			script_system_call_function(script_system_get_luastate(), "combat_system_on_start");
-		}
-		else {
-			scene->SetCombat(false);
-			script_system_call_function(script_system_get_luastate(), "combat_system_on_end");
-		}
-	}
-}
 
 void luaopen_combat_system(lua_State* L)
 {
 	script_system_register_luac_function(L, combat_system_add_actor);
 	script_system_register_function(L, combat_system_start_battle);
 	script_system_register_function(L, combat_system_end_battle);
-	script_system_register_function(L, combat_system_switch_battle);
 	
 }

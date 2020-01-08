@@ -54,9 +54,6 @@ public:
 
 	void UnLoad();
 
-	void SetCombat(bool combat);
-	bool IsCombat() { return m_IsCombat; };
-
 protected:
 	virtual void OnLoad() {} ;
 
@@ -86,7 +83,6 @@ protected:
 
 	GameMap* m_Map;
 
-	bool m_IsCombat;
 
 };
 
