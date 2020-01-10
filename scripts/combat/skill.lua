@@ -1,7 +1,3 @@
-SKILL_SUBTYPE_DEFAULT = 0
-SKILL_SUBTYPE_SEAL = 1
-SKILL_SUBTYPE_HEAL = 2
-SKILL_SUBTYPE_AUXI = 3
 
 local SkillMT = {}
 local skill_table = {}
@@ -76,7 +72,7 @@ function ActorMT:CastSkill(skill_id)
     skill.type = skill.templ.type
     
     if skill.type == 'atk' then
-		if skill.group_kill > 0 then
+        if skill.group_kill > 0 then
 			if IsClient() then
                 on_cast_group_attack(skill, actor)
             end

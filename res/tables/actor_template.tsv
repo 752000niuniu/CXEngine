@@ -88,3 +88,4 @@ prop_summon_speed_qual	float	0	1
 prop_summon_dodge_qual	float	0	1
 prop_summon_grow_coef	float	0	1
 prop_is_using_skill	bool	false	
+prop_life_state	int	0	

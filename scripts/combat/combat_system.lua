@@ -1,18 +1,4 @@
 
-if IsServer() then
-    script_system_dofile('../combat/server/combat_system.lua')
-    script_system_dofile('../combat/server/skill.lua') 
-    script_system_dofile('../combat/server/buffer.lua') 
-end
-
-if IsClient() then
-    script_system_dofile('../combat/client/combat_system.lua')
-    script_system_dofile('../combat/client/skill.lua')
-    script_system_dofile('../combat/client/buffer.lua')
-end
- 
-script_system_dofile('../combat/skill.lua')
-script_system_dofile('../combat/buffer.lua')
 
 PERFRAME_TIME = 0.016*2.5  
 
@@ -33,6 +19,23 @@ COMMAND_TYPE_CAST = 2
 
 TEAM_TYPE_ATTACKER = 1
 TEAM_TYPE_DEFENDER = 2
+
+SKILL_SUBTYPE_DEFAULT = 0
+SKILL_SUBTYPE_SEAL = 1
+SKILL_SUBTYPE_HEAL = 2
+SKILL_SUBTYPE_AUXI = 3
+
+
+ACTOR_LIFE_ALIVE = 0
+ACTOR_LIFE_DEAD = 1
+ACTOR_LIFE_FLY = 2
+
+script_system_dofile('../combat/skill.lua')
+script_system_dofile('../combat/buffer.lua')
+
+if IsClient() then
+    script_system_dofile('../combat/client/skill.lua')
+end
 
 BattleMT = {}
 function BattleMT:new(o)
@@ -70,6 +73,15 @@ function BattleMT:Deserialize(info)
     self.state = info.state
     self.turn = info.turn
     return self
+end
+
+
+function BattleMT:FindActor(actor_id)
+    for i,actor in ipairs(self.actors) do
+        if actor_id == actor:GetID() then
+            return actor
+        end
+    end
 end
 
 function BattleMT:AddActor(actor, team_type)
@@ -157,7 +169,7 @@ end
 function BattleMT:CheckAllIdle()
     local all_idle = true
     for i,actor in ipairs(self.actors) do
-        if actor:GetActionID() ~= ACTION_BATIDLE and   actor:GetActionID() ~= ACTION_IDLE then
+        if actor:GetActionID() ~= ACTION_BATIDLE and actor:GetActionID() ~= ACTION_IDLE then
             all_idle = false
             break
         end
@@ -237,4 +249,13 @@ function BattleMT:CheckEnd()
         end
     end
     return  atk_all_dead or def_all_dead
+end
+
+
+if IsServer() then
+    script_system_dofile('../combat/server/combat_system.lua')
+end
+
+if IsClient() then
+    script_system_dofile('../combat/client/combat_system.lua')
 end

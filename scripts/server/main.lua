@@ -22,14 +22,13 @@ function server_reload()
     cxlog_info('server_reload')
     script_system_dofile('main.lua')
     content_system_init()
-    init_skills()
-    init_buffers()
+    combat_system_init()
 end
 
 function on_script_system_init()
     content_system_init()
-    init_skills()
-    init_buffers()
+    combat_system_init()
+    
     scene_system_init()
 end
 

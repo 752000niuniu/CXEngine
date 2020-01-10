@@ -658,3 +658,33 @@ skill 对象用来做表现
 
 
 --聊天背景框 wzife 39D3BD99 
+
+
+1. 攻击性技能
+
+逻辑 ： 
+    Atk HP+ 
+    Def HP-
+    combo攻击 Def--
+    群体攻击 Def_HP1- Def_HP2- 
+    Def倒地（死亡），Def被击飞
+    被保护Def_HP1- Def_HP2-
+
+表现 ：
+    单体攻击 群体攻击
+
+2. 辅助性技能
+
+逻辑：Caster HP+
+    Caster1_HP+ Caster2_HP+
+    防御 攻击 增加 
+    法防 灵力增加 增加BUFF
+    抗封
+    解封
+    复活
+    
+表现：
+
+3. 控制技能
+
+逻辑：无法物理攻击 无法法术攻击 催眠 无法使用特技 
