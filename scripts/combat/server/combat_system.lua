@@ -103,7 +103,7 @@ function ActorMT:CastSkill(skill_id)
             end
             local target = actor:GetTarget()
             for i=1, skill.atk_cnt do
-                local damage = actor:GetAttackDamage(false,false,0,1)
+                local damage = actor:GetAttackDamage(target, false,false,0,1)
                 table.insert(skill.atk_damage, damage)
                 target:ModifyHP(-damage)
                 if target:IsDead() then
@@ -204,54 +204,93 @@ function skill_init_by_templ(skill, templ)
 	skill.SkillOnAfterSpell = templ.SkillOnAfterSpell	
 end
 
-function battle_get_group_kill_targets(battle, skill)
-	return skill.target
+function battle_get_group_kill_targets(battle, group_kill, main_target)
+	local targets = {}
+	if not main_target:IsDead() then
+		table.insert(targets, main_target)
+	end
+
+	local candidates = {}
+	for i,actor in ipairs(battle.actors) do
+		if actor:GetProperty(PROP_TEAM_TYPE) == main_target:GetProperty(PROP_TEAM_TYPE)
+			and not actor:IsDead() 
+			and actor:GetID() ~= main_target:GetID() then
+			table.insert(candidates, actor)
+		end
+	end
+
+	table.sort(candidates, function(a,b) return a:CalcSpeed() > b:CalcSpeed() end)
+	for i=1,group_kill-1 do
+		local which = math.random(1,#candidates)
+		table.insert(targets, candidates[which])
+		table.remove(candidates,which)
+	end
+
+	return targets
 end
 
 function on_skill_start_atk(skill)
 	--[[
 		提前确定单体攻击 还是群体攻击 以及攻击目标
 		默认实现就是单体攻击 
+		选定目标
 	]]
+	assert(skill.target, 'atk has no target')
 
-	--选定目标
-	skill.atk_targets = {}
-	if skill.group_kill > 0 then
-		skill.atk_targets =  battle_get_group_kill_targets(skill.battle, skill)
-	else
-		skill.atk_targets = { skill.target }
-	end	
-	
-	--单个目标攻击 单个目标伤害计算，连击伤害计算，连击次数计算
 	local perform_cmds = {}
-	for i, target in ipairs(skill.atk_targets) do
-		--[[
-			is combo
-			is dead
-		]]
+	if skill.group_kill > 0 then
+		local atk_targets = battle_get_group_kill_targets(skill.battle, skill.group_kill, skill.target)
+		for i,target in ipairs(atk_targets) do
+			local perform_cmd = {}
+			perform_cmd.type = 'atk'
+			perform_cmd.master = skill.master:GetID()
+			perform_cmd.target = target:GetID()
+			perform_cmd.combo = 0	
+			local hp_delta = skill.master:GetAttackDamage(target, false,false,0,1)
+			target:ModifyHP(-hp_delta)
+			perform_cmd.hp_deltas = {hp_delta}
+			if target:IsDead() then
+				if target:GetProperty(PROP_ACTOR_TYPE) ~= ACTOR_TYPE_PLAYER then
+					skill.battle:RemoveActor(target)
+					perform_cmd.target_dead_state = ACTOR_LIFE_FLY
+				else
+					perform_cmd.target_dead_state = ACTOR_LIFE_DEAD
+				end
+			else
+				perform_cmd.target_life_state = ACTOR_LIFE_ALIVE
+			end
+			table.insert(perform_cmds, perform_cmd)
+		end
+	else
 		local perform_cmd = {}
 		perform_cmd.type = 'atk'
-		perform_cmd.atk = skill.master
-		perform_cmd.def = skill.target
-		perform_cmd.atk_cnt = 0
-		perform_cmd.atk_perform = {
-			{
-				is_anti_shake = true,
-				is_anti_atk = true,
-				is_suck_blood = true,
-				is_cri_atk = true,
-				def_life_state = 0,
-				is_fly,
-				is_colaps
-			}
-		}
+		perform_cmd.master = skill.master:GetID()
+		perform_cmd.target = target:GetID()
+		perform_cmd.combo  = skill.combo
+		perform_cmd.hp_deltas = {}
+		for i=1,skill.combo do
+			local hp_delta = skill.master:GetAttackDamage(skill.target, false,false,0,1)
+			target:ModifyHP(-hp_delta)
+			table.insert(perform_cmd.hp_deltas, hp_delta)
+			if target:IsDead() then
+				perform_cmd.combo  = i
+				break
+			end
+		end
+		if target:IsDead() then
+			if target:GetProperty(PROP_ACTOR_TYPE) ~= ACTOR_TYPE_PLAYER then
+				skill.battle:RemoveActor(target)
+				perform_cmd.target_dead_state = ACTOR_LIFE_FLY
+			else
+				perform_cmd.target_dead_state = ACTOR_LIFE_DEAD
+			end
+		else
+			perform_cmd.target_life_state = ACTOR_LIFE_ALIVE
+		end
 		table.insert(perform_cmds, perform_cmd)
-		--[[
-			如果target死亡 设置target状态
-			如果targetfly 移除target
-			 
-		]]
 	end
+
+	skill.perform_cmds = skill.perform_cmds
 end
 
 function on_skill_start_spell(skill)
@@ -271,6 +310,9 @@ function on_skill_start_def(skill)
 end
 
 function on_skill_start(skill)
+	skill.target_end = false
+	skill.caster_end = false
+
 	skill.SkillOnStart(skill)
 	if skill.type == 'atk' then
 		on_skill_start_atk(skill)
@@ -302,24 +344,22 @@ function process_using_skill(battle, master_id, target_id, skill_id)
 	skill.templ = skill_table[skill_id]
 	skill_init_by_templ(skill, skill.templ)			
 
-	skill.target_end = false
-	skill.caster_end = false
-	
 	on_skill_start(skill)
-	
+	return skill.perform_cmds
 end
 
 function handle_turn_commands(battle)
+	local perform_cmds = {}
 	for i,cmd in ipairs(battle.cmds) do
-		process_using_skill(battle,cmd.master,cmd.target,cmd.skill_id)
+		local perform_cmd = process_using_skill(battle,cmd.master,cmd.target,cmd.skill_id)
+		table.insert(perform_cmds, perform_cmd)
 	end
 
-	if #battle.cmds > 0 then
+	if #perform_cmds > 0 then
 		for i,actor in ipairs(battle.actors) do
 			if actor:IsPlayer() then
 				local pid = actor:GetID()
-				local msg = { cmds = battle.cmds} 
-				net_send_message(pid, PTO_S2C_COMBAT_EXECUTE, cjson.encode(msg))
+				net_send_message(pid, PTO_S2C_COMBAT_EXECUTE, cjson.encode(perform_cmds))
 			end
 		end
 	end

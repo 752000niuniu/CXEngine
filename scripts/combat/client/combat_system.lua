@@ -47,7 +47,7 @@ function ActorMT:CastSkill(skill_id)
             end
             local target = actor:GetTarget()
             for i=1, skill.atk_cnt do
-                local damage = actor:GetAttackDamage(false,false,0,1)
+                local damage = actor:GetAttackDamage(target, false,false,0,1)
                 table.insert(skill.atk_damage, damage)
                 target:ModifyHP(-damage)
                 if target:IsDead() then
@@ -346,16 +346,29 @@ stub[PTO_S2C_COMBAT_START] = function(resp)
     end
 end 
 
+-- stub[PTO_S2C_COMBAT_EXECUTE] = function(req)
+--     for i,req_cmd in ipairs(req.cmds) do
+--         local actor = actor_manager_fetch_player_by_id(req_cmd.master)
+--         local target = actor_manager_fetch_player_by_id(req_cmd.target)
+--         assert(req_cmd.skill_id~=0)
+--         actor:SetTarget(target)
+--         table.insert(battle_commands,req_cmd)
+--     end
+--     battle.state = BTTALE_TURN_EXECUTE 
+-- end
+
 stub[PTO_S2C_COMBAT_EXECUTE] = function(req)
-    for i,req_cmd in ipairs(req.cmds) do
-        local actor = actor_manager_fetch_player_by_id(req_cmd.master)
-        local target = actor_manager_fetch_player_by_id(req_cmd.target)
-        assert(req_cmd.skill_id~=0)
-        actor:SetTarget(target)
-        table.insert(battle_commands,req_cmd)
+    for i,perform_cmd in ipairs(req) do
+        -- local actor = actor_manager_fetch_player_by_id(req_cmd.master)
+        -- local target = actor_manager_fetch_player_by_id(req_cmd.target)
+        -- assert(req_cmd.skill_id~=0)
+        -- actor:SetTarget(target)
+        table.insert(battle_commands,perform_cmd)
     end
     battle.state = BTTALE_TURN_EXECUTE 
 end
+
+
 
 function on_battle_start(self)
     ui_renderer_clear()
