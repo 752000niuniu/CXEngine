@@ -272,10 +272,44 @@ void timer_manager_deinit()
 	TIMER_MANAGER_INTANCE->DeleteSingleton();
 }
 
+int timer_create(lua_State* L){
+	const char* name = lua_tostring(L, 1);
+	float target_time = (float)lua_tonumber(L, 2);
+	int opt_argn = 3;
+	bool counter_down = true;
+	if (lua_isboolean(L, opt_argn)) {
+		counter_down = lua_toboolean(L, opt_argn++);
+	}
+	bool loop = false;
+	if (lua_isboolean(L, opt_argn)) {
+		loop = lua_toboolean(L, opt_argn++);
+	}
+	int ref = -1;
+	if (lua_isfunction(L, opt_argn)) {
+		lua_pushvalue(L, opt_argn);
+		ref = luaL_ref(L, LUA_REGISTRYINDEX);
+		TIMER_MANAGER_INTANCE->CreateTimer(name, target_time, counter_down, loop, [ref]() {
+			if (ref != -1) {
+				lua_State* L = script_system_get_luastate();
+				lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
+				int res = lua_pcall(L, 0, 0, 0);
+				check_lua_error(L, res);
+				luaL_unref(L, LUA_REGISTRYINDEX, ref);
+			}});
+	}
+	return 0;
+}
+
+void timer_remove(){
+
+}
 
 void luaopen_timer_manager(lua_State* L)
 {
 	script_system_register_function(L, timer_manager_init);
 	script_system_register_function(L, timer_manager_update);
 	script_system_register_function(L, timer_manager_deinit);
+
+	script_system_register_luac_function(L, timer_create);
+	script_system_register_function(L, timer_remove);
 }

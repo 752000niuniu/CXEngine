@@ -20,6 +20,8 @@ private:
 	Engine();
 	double m_DeltaTime;
 	double m_LastTime;
+
+	
 };
 
 #define ENGINE_INSTANCE Engine::GetInstance()

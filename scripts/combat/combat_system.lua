@@ -28,7 +28,13 @@ SKILL_SUBTYPE_AUXI = 3
 
 ACTOR_LIFE_ALIVE = 0
 ACTOR_LIFE_DEAD = 1
-ACTOR_LIFE_FLY = 2
+ACTOR_LIFE_DEAD_FLY = 2
+
+SKILL_STATE_DEFAULT = 0
+SKILL_STATE_START = 1
+SKILL_STATE_EXECUTE = 2
+SKILL_STATE_END = 3
+
 
 script_system_dofile('../combat/skill.lua')
 script_system_dofile('../combat/buffer.lua')

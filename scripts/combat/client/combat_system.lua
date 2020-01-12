@@ -357,13 +357,10 @@ end
 --     battle.state = BTTALE_TURN_EXECUTE 
 -- end
 
-stub[PTO_S2C_COMBAT_EXECUTE] = function(req)
-    for i,perform_cmd in ipairs(req) do
-        -- local actor = actor_manager_fetch_player_by_id(req_cmd.master)
-        -- local target = actor_manager_fetch_player_by_id(req_cmd.target)
-        -- assert(req_cmd.skill_id~=0)
-        -- actor:SetTarget(target)
-        table.insert(battle_commands,perform_cmd)
+stub[PTO_S2C_COMBAT_EXECUTE] = function(all_skills)
+    for i,skill in ipairs(all_skills) do
+        skill.state = SKILL_STATE_DEFAULT
+        table.insert(battle_commands,skill)
     end
     battle.state = BTTALE_TURN_EXECUTE 
 end
@@ -397,26 +394,17 @@ function on_battle_start(self)
     end
 end
 
+
+
 function combat_system_update()
     if battle then
         if battle.state == BTTALE_TURN_EXECUTE then
             if #battle_commands > 0 then
-                local cmd = battle_commands[1]
-                local actor = actor_manager_fetch_player_by_id(cmd.master)
-                local skill = actor:GetUsingSkill()
-                if not skill then
-                    if battle:InBattle(actor) then
-                        local target = actor_manager_fetch_player_by_id(cmd.target)
-                        actor:CastSkill(cmd.skill_id) 
-                    else
-                        table.remove(battle_commands,1)    
-                    end
-                else 
-                    cxlog_info('skill ', skill.id , skill.caster_end, skill.target_end, skill.tid, cjson.encode(cmd))
-                    if skill.caster_end and skill.target_end then
-                        actor:EndUsingSkill()
-                        table.remove(battle_commands,1)
-                    end
+                local skill = battle_commands[1]
+                if skill.state == SKILL_STATE_DEFAULT then
+                    on_using_skill(skill)
+                elseif skill.state == SKILL_STATE_END then
+                    table.remove(battle_commands,1)    
                 end
             else 
                 if battle:CheckEnd() then
