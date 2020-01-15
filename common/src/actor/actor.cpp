@@ -708,7 +708,34 @@ int actor_push_action(lua_State*L) {
 	Actor* actor = lua_check_actor(L, 1);
 	int action = (int)lua_tointeger(L, 2);
 #ifndef SIMPLE_SERVER
-	actor->GetASM()->PushAction(action);
+	int n = lua_gettop(L);
+	int argn = 3;
+	ActionInfo info;
+	info.actionID = action;
+	while (argn <= n) {
+		CXString type = lua_tostring(L, argn++);
+		if (type == "move") {
+			info.move_dur = (float)lua_tonumber(L, argn++);
+			info.dx = (float)lua_tonumber(L, argn++);
+			info.dy = (float)lua_tonumber(L, argn++);
+		}
+		else if (type == "loop") {
+			info.loop = (bool)lua_toboolean(L, argn++);
+			info.loopCount = (int)lua_tointeger(L, argn++);
+		}
+		else if (type == "update") {
+			if (lua_isfunction(L, argn)) {
+				lua_pushvalue(L, argn);
+				int ref = luaL_ref(L, LUA_REGISTRYINDEX);
+				info.updateCB = ref;
+			}
+			argn++;
+		}
+		else if (type == "interval") {
+			info.interval = (float)lua_tonumber(L, argn++);
+		}
+	}
+	actor->GetASM()->PushAction(info);
 #endif
 	return 0;
 }

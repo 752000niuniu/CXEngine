@@ -1,6 +1,6 @@
 ID	name	type	sub_type	school	combo	atk_anim	group_kill	cast_anim	act_turn
 *0		atk	0	0	0				
-1	普攻	atk				0-1D3FF13C			
+1	普攻	atk			2	0-1D3FF13C	3		
 2	DF_冤魂不散	spell		9		6-4EA6D4BF			
 3	DF_判官令	spell		9		6-241C668A			
 4	DF_勘察令	spell		9		6-1AAB80F2			

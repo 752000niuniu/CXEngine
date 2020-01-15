@@ -261,7 +261,7 @@ stub[PTO_C2S_COMBAT_CMD] = function(req)
 
 	if battle:CheckStandBy() then
 		battle.state = BTTALE_TURN_EXECUTE
-		handle_turn_old_commands(battle)
+		handle_turn_commands(battle)
 
 		if battle:CheckEnd() then
 			battle:EndBattle()

@@ -82,7 +82,9 @@ void MoveHandle::Update()
 			if (!m_Actor->IsCombat()) {
 #ifndef SIMPLE_SERVER 
 				m_Actor->GetASM()->ClearAction();
-				m_Actor->GetASM()->PushAction(ACTION_IDLE);
+				ActionInfo info;
+				info.actionID = ACTION_IDLE;
+				m_Actor->GetASM()->PushAction(info);
 #endif
 			}
 		}
@@ -141,7 +143,9 @@ void MoveHandle::MoveTo(float x, float y)
 	if(!m_Actor->IsCombat()){
 #ifndef SIMPLE_SERVER 
 		m_Actor->GetASM()->ClearAction();
-		m_Actor->GetASM()->PushAction(ACTION_WALK);
+		ActionInfo info;
+		info.actionID = ACTION_WALK;
+		m_Actor->GetASM()->PushAction(info);
 #endif
 	}
 	

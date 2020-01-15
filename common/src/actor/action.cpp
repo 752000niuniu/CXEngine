@@ -514,10 +514,10 @@ ActionStateMachine::ActionStateMachine(Actor* _actor)
 	m_AvatarID = m_Actor->GetProperty(PROP_AVATAR_ID).toString();
 	m_ActionID = ACTION_IDLE;
 	m_bMoveActionToBack = false;
-	m_ActionQueue.push_back(ACTION_IDLE);
+	ActionInfo info;
+	info.actionID = ACTION_IDLE;
+	m_ActionQueue.push_back(info);
 	m_BeatNumber = new BeatNumber();
-
-	
 }
 
 ActionStateMachine::~ActionStateMachine()
@@ -563,32 +563,42 @@ void ActionStateMachine::Update()
 	}
 
 	if (m_bMoveActionToBack) {
-		int action = m_ActionQueue.front();
+		auto info = m_ActionQueue.front();
 		m_ActionQueue.pop_front();
-		m_ActionQueue.push_back(action);
+		m_ActionQueue.push_back(info);
 		m_bMoveActionToBack = false;
 		if (!m_ActionQueue.empty()) {
-			m_ActionID = m_ActionQueue.front();
+			auto info = m_ActionQueue.front();
+			m_ActionID = info.actionID;
 			auto* avatar = GetAvatar(m_ActionID);
 			avatar->Replay();
+			if (info.interval > 0) {
+				avatar->FrameInterval = info.interval;
+			}
+			if (info.dx != 0 || info.dy != 0) {
+				m_Actor->GetMoveHandle()->MoveOnScreenWithDuration(Pos(info.dx, info.dy), info.move_dur, true);
+			}
 		}
 	}
 
 	m_ActionID = -1;
 	if (!m_ActionQueue.empty()) {
-		m_ActionID = m_ActionQueue.front();
+		auto info = m_ActionQueue.front();
+		m_ActionID = info.actionID;
 	}
 	auto* avatar = GetAvatar(m_ActionID);
 	if (!avatar)return;
 	avatar->Update();
 	if (avatar->GetState() == ANIMATION_STOP) {
 		cxlog_info("pop action %d\n", m_ActionID);
-		int frontID = m_ActionQueue.front();
+		auto info = m_ActionQueue.front();
+		int frontID = info.actionID;
 		if (m_ActionID == frontID) {
 			m_ActionQueue.pop_front();
 		}
 		if (!m_ActionQueue.empty()) {
-			m_ActionID = m_ActionQueue.front();
+			auto info = m_ActionQueue.front();
+			m_ActionID = info.actionID;
 			avatar = GetAvatar(m_ActionID);
 			avatar->Replay();
 		}

@@ -111,6 +111,18 @@ private:
 	int m_State;
 };
 
+struct ActionInfo
+{
+	float move_dur = 0;
+	float dx = 0;
+	float dy = 0;
+	bool loop = false;
+	int loopCount = 0;
+	int actionID = ACTION_IDLE;
+	int updateCB = -1;
+	float interval = -1;
+};
+
 class ActionStateMachine
 {
 public:
@@ -145,11 +157,14 @@ public:
 	void ClearBackAnim();
 
 	void MoveActionToBack() { m_bMoveActionToBack = true; }
-	void PushAction(int action) { m_ActionQueue.push_back(action); }
+	void PushAction(ActionInfo& info) { 
+		m_ActionQueue.push_back(info); 
+	}
 	void ClearAction() { m_ActionQueue.clear(); }
 	int GetCurrentAction() { 
 		if (m_ActionQueue.empty())return -1;
-		return m_ActionQueue.front();
+		auto info = m_ActionQueue.front();
+		return info.actionID;
 	}
 	BeatNumber* GetBeatNumber();
 private:
@@ -167,7 +182,8 @@ private:
 	deque<Animation*> m_FrontAnimQueue;
 	deque<Animation*> m_BackAnimQueue;
 	bool		m_bMoveActionToBack;
-	deque<int> m_ActionQueue;
+	deque<ActionInfo> m_ActionQueue;
+
 	BeatNumber* m_BeatNumber;
 };
 #endif // !SIMPLE_SERVER

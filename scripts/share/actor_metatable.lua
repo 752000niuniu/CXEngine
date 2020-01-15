@@ -737,9 +737,8 @@ function formula_calc_atk_night_damage(damage, is_night)
     end
 end
 
-function ActorMT:GetAttackDamage(is_critical, is_combo, combo_coef, actor_type_coef)
+function ActorMT:GetAttackDamage(target, is_critical, is_combo, combo_coef, actor_type_coef)
     local atk = self:CalcAttack()
-    local target = self:GetTarget()
     local def = target:CalcDefend()
     local damage = formula_calc_atk_base_damage(atk, def, is_critical, is_combo, combo_coef, actor_type_coef)
     damage = formula_calc_atk_float_damage(atk,damage)

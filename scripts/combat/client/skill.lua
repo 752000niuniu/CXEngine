@@ -210,107 +210,109 @@ function attack_get_keyframe(actor)
     return key_frame
 end
 
-function on_attack_action_callback(attack_action)
-    local actor = attack_action.actor 
-    local target = attack_action.target 
-    local skill  = attack_action.skill 
-    skill.atk_counter = skill.atk_counter + 1
+-- function on_attack_action_callback(attack_action)
+--     local actor = attack_action.actor 
+--     local target = attack_action.target 
+--     local skill  = attack_action.skill 
+--     skill.atk_counter = skill.atk_counter + 1
 
-    if skill.templ.SkillOnHit then
-        skill.templ.SkillOnHit(skill, actor)
-    end
+--     if skill.templ.SkillOnHit then
+--         skill.templ.SkillOnHit(skill, actor)
+--     end
 
-    local behit_action = target:GetAvatar(ACTION_BEHIT)
-    behit_action:Reset()
-    behit_action:SetLoop(-1)
-    behit_action:AddFrameCallback(1, function()
-        local avatar = target:GetAvatar()
-        local pack, was = res_decode(skill.templ.atk_anim)
-        local anim = animation_create(pack,was)
-        anim:SetLoop(-1)
-        local offy =  -avatar:GetFrameKeyY() + avatar:GetFrameHeight() / 2.0
-        anim:SetOffsetY(offy)  
-        target:AddFrontAnim(anim)
+--     local behit_action = target:GetAvatar(ACTION_BEHIT)
+--     behit_action:Reset()
+--     behit_action:SetLoop(-1)
+--     behit_action:AddFrameCallback(1, function()
+--         local avatar = target:GetAvatar()
+--         local pack, was = res_decode(skill.templ.atk_anim)
+--         local anim = animation_create(pack,was)
+--         anim:SetLoop(-1)
+--         local offy =  -avatar:GetFrameKeyY() + avatar:GetFrameHeight() / 2.0
+--         anim:SetOffsetY(offy)  
+--         target:AddFrontAnim(anim)
 
-        local damage = skill.atk_damage[skill.atk_counter]
-        target:ShowBeatNumber(-damage)
+--         local damage = skill.atk_damage[skill.atk_counter]
+--         target:ShowBeatNumber(-damage)
 
-        -- actor:ShowBeatNumber(damage)
+--         -- actor:ShowBeatNumber(damage)
 
-        attack_action:Pause(math.floor(anim:GetGroupFrameTime()* 1000))
-        behit_action:Pause(math.floor(anim:GetGroupFrameTime()* 1000))
+--         attack_action:Pause(math.floor(anim:GetGroupFrameTime()* 1000))
+--         behit_action:Pause(math.floor(anim:GetGroupFrameTime()* 1000))
 
-        local dir_x ,dir_y = actor:GetAttackVec()
-        target:MoveOnScreenWithDuration(dir_x*24,dir_y*24, anim:GetGroupFrameTime() ,true)
-    end)
+--         local dir_x ,dir_y = actor:GetAttackVec()
+--         target:MoveOnScreenWithDuration(dir_x*24,dir_y*24, anim:GetGroupFrameTime() ,true)
+--     end)
     
-    behit_action:AddStopCallback(function()
-        if skill.atk_counter == skill.atk_cnt then
-            if target:IsDead() then
-                behit_action:Reset()
-                behit_action:Play()
-                behit_action:SetLoop(0)
+--     behit_action:AddStopCallback(function()
+--         if skill.atk_counter == skill.atk_cnt then
+--             if target:IsDead() then
+--                 behit_action:Reset()
+--                 behit_action:Play()
+--                 behit_action:SetLoop(0)
     
-                local last_x, last_y = target:GetPos()
-                local last_dir = target:GetDir()
-                local dx, dy = 0,0
-                local dir_x ,dir_y = actor:GetAttackVec()
-                local fly_x ,fly_y = 0,0 
-                behit_action:AddUpdateCallback(function()
-                    local actor = target
+--                 local last_x, last_y = target:GetPos()
+--                 local last_dir = target:GetDir()
+--                 local dx, dy = 0,0
+--                 local dir_x ,dir_y = actor:GetAttackVec()
+--                 local fly_x ,fly_y = 0,0 
+--                 behit_action:AddUpdateCallback(function()
+--                     local actor = target
                 
-                    local px, py = actor:GetPos()
-                    local avatar = actor:GetAvatar()
-                    if py - avatar:GetFrameKeyY() <= 0 then
-                        dir_y = -dir_y
-                    end
+--                     local px, py = actor:GetPos()
+--                     local avatar = actor:GetAvatar()
+--                     if py - avatar:GetFrameKeyY() <= 0 then
+--                         dir_y = -dir_y
+--                     end
     
-                    if py - avatar:GetFrameKeyY() + avatar:GetFrameHeight()  >= 600 then
-                        dir_y = -dir_y
-                    end
+--                     if py - avatar:GetFrameKeyY() + avatar:GetFrameHeight()  >= 600 then
+--                         dir_y = -dir_y
+--                     end
                     
-                    if avatar:IsFrameUpdate() then
-                        px = px + dir_x * 49
-                        py = py + dir_y * 49
-                        actor:SetCombatPos(px,py)
-                    end
+--                     if avatar:IsFrameUpdate() then
+--                         px = px + dir_x * 49
+--                         py = py + dir_y * 49
+--                         actor:SetCombatPos(px,py)
+--                     end
     
-                    if avatar:IsGroupEndUpdate() then
-                        local dir = actor:GetDir()
-                        dir = math_next_dir4(dir)
-                        actor:SetDir(dir)
-                    end
-                    if px - avatar:GetFrameKeyX() < 0 then
-                        behit_action:RemoveUpdateCallback()
-                        behit_action:Stop()
-                        actor:SetCombatPos(last_x,last_y)
-                        actor:SetDir(last_dir)
-                        skill.target_end = true        
-                        combat_system_remove_from_battle(target)
-                    end
+--                     if avatar:IsGroupEndUpdate() then
+--                         local dir = actor:GetDir()
+--                         dir = math_next_dir4(dir)
+--                         actor:SetDir(dir)
+--                     end
+--                     if px - avatar:GetFrameKeyX() < 0 then
+--                         behit_action:RemoveUpdateCallback()
+--                         behit_action:Stop()
+--                         actor:SetCombatPos(last_x,last_y)
+--                         actor:SetDir(last_dir)
+--                         skill.target_end = true        
+--                         combat_system_remove_from_battle(target)
+--                     end
     
-                    if px - avatar:GetFrameKeyX() + avatar:GetFrameWidth() >= 800 then
-                        behit_action:RemoveUpdateCallback()
-                        behit_action:Stop()
-                        actor:SetCombatPos(last_x,last_y)
-                        actor:SetDir(last_dir)
-                        skill.target_end = true   
-                        combat_system_remove_from_battle(target)
-                    end
-                end)
-            else
-                local dir_x ,dir_y = actor:GetAttackVec()
-                target:MoveOnScreenWithDuration(-dir_x*24,-dir_y*24,PERFRAME_TIME*2,true)
-                skill.target_end = true   
-            end
-        else 
-            local dir_x ,dir_y = actor:GetAttackVec()
-            target:MoveOnScreenWithDuration(-dir_x*24,-dir_y*24,PERFRAME_TIME*2,true)
-        end
-    end)
-    target:PushAction(ACTION_BEHIT)
-    target:MoveActionToBack()
-end
+--                     if px - avatar:GetFrameKeyX() + avatar:GetFrameWidth() >= 800 then
+--                         behit_action:RemoveUpdateCallback()
+--                         behit_action:Stop()
+--                         actor:SetCombatPos(last_x,last_y)
+--                         actor:SetDir(last_dir)
+--                         skill.target_end = true   
+--                         combat_system_remove_from_battle(target)
+--                     end
+--                 end)
+--             else
+--                 local dir_x ,dir_y = actor:GetAttackVec()
+--                 target:MoveOnScreenWithDuration(-dir_x*24,-dir_y*24,PERFRAME_TIME*2,true)
+--                 skill.target_end = true   
+--             end
+--         else 
+--             local dir_x ,dir_y = actor:GetAttackVec()
+--             target:MoveOnScreenWithDuration(-dir_x*24,-dir_y*24,PERFRAME_TIME*2,true)
+--         end
+--     end)
+--     target:PushAction(ACTION_BEHIT)
+--     target:MoveActionToBack()
+
+    
+-- end
 
 function on_cast_group_attack(skill, actor)
 

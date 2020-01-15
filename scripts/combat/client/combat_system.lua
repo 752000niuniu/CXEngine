@@ -365,8 +365,6 @@ stub[PTO_S2C_COMBAT_EXECUTE] = function(all_skills)
     battle.state = BTTALE_TURN_EXECUTE 
 end
 
-
-
 function on_battle_start(self)
     ui_renderer_clear()
     local init_actor = function(actor, pos, dir)
@@ -394,15 +392,23 @@ function on_battle_start(self)
     end
 end
 
-
-
 function combat_system_update()
     if battle then
         if battle.state == BTTALE_TURN_EXECUTE then
             if #battle_commands > 0 then
                 local skill = battle_commands[1]
                 if skill.state == SKILL_STATE_DEFAULT then
-                    on_using_skill(skill)
+                    on_using_skill(battle, skill)
+                elseif skill.state == SKILL_STATE_START then
+                    if skill.type == 'atk' then
+                        if skill.caster_end and skill.target_end then
+                            if skill.group_atk_counter == #skill.atk_infos then
+                                skill.state = SKILL_STATE_END
+                            else
+                                skill_cast_atk(battle, skill)
+                            end
+                        end
+                    end
                 elseif skill.state == SKILL_STATE_END then
                     table.remove(battle_commands,1)    
                 end
