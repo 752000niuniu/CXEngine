@@ -179,7 +179,6 @@ function on_imgui_update()
 	if imgui.Button('战斗命令1') then
 
 		local msg = {}
-		msg.type = 'ATK'
 		msg.master = 1576985785
 		msg.target = 1576942487  
 		msg.skill_id = 1
@@ -188,7 +187,6 @@ function on_imgui_update()
 
 	if imgui.Button('战斗命令2') then
 		local msg = {}
-		msg.type = 'ATK'
 		msg.master = 1576942487 
 		msg.target = 1576985785
 		msg.skill_id = 1

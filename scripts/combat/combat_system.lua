@@ -62,8 +62,12 @@ function BattleMT:Serialize()
     info.id = self.id
     info.actors = {}
     for i, actor in ipairs(self.actors) do
-        table.insert(info.actors, actor:GetID())
+        table.insert(info.actors, { 
+            id = actor:GetID(), 
+            team_type = actor:GetProperty(PROP_TEAM_TYPE)
+        })
     end
+
     info.state = self.state
     info.turn = self.turn
     return info
@@ -72,8 +76,9 @@ end
 function BattleMT:Deserialize(info)
     self.id = info.id
     self.actors = {}
-    for i,actor_id in ipairs(info.actors) do
-        local actor = actor_manager_fetch_player_by_id(actor_id)
+    for i,actor_info in ipairs(info.actors) do
+        local actor = actor_manager_fetch_player_by_id(actor_info.id)
+        actor:SetProperty(PROP_TEAM_TYPE, actor_info.team_type)
         table.insert(self.actors, actor)
     end
     self.state = info.state
@@ -165,7 +170,7 @@ function BattleMT:StartBattle()
     if IsServer() then
         for i,actor in ipairs(self.actors) do
             actor:SetProperty(PROP_TURN_READY,false)
-            actor:SetProperty(PROP_HP,1000)
+            actor:SetProperty(PROP_HP,actor:GetMaxHP())
         end
     else
         on_battle_start(self)
@@ -226,9 +231,9 @@ function BattleMT:NextTurn()
             end
         end
     end
-     -- for i,actor in ipairs(self.actors) do
-    --     actor:BufferNextTurn(self.turn)
-    -- end
+    for i,actor in ipairs(self.actors) do
+        actor:BufferNextTurn(self.turn)
+    end
 end
 
 

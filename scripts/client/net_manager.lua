@@ -27,6 +27,11 @@ stub[PTO_C2C_NPC_ENTER] = function(req)
 		local actor = actor_manager_create_actor(actor_info[tostring(PROP_ID)])
 		actor:SetProperties(actor_info)
 	end
+
+	local player = actor_manager_fetch_local_player()
+	local req = {}
+	req.pid = player:GetID()
+	net_send_message(PTO_C2S_FETCH_TEAM, cjson.encode(req))
 end
 
 

@@ -15,7 +15,7 @@ function npc_on_show_dialog(player, target)
 			{ 
 				txt ='组队',
 				func=function()
-					player:AddTeamMember(target)
+					player:OrganizeTeam(target)
 				end
 			},
 			{ 

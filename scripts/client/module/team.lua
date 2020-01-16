@@ -68,6 +68,21 @@ function ActorMT:AddTeamMember(actor)
 	net_send_message(PTO_C2S_TEAM_ADD_MEMBER, cjson.encode(req))
 end
 
+function ActorMT:OrganizeTeam(actor)
+	local team = self:GetTeam()
+	local member_id = actor:GetID()
+	if not team then
+		team = actor:GetTeam()
+		member_id = self:GetID()
+	end
+	if not team then return end
+	local req = {}
+	req.team_id = team.id
+	req.member_id = member_id
+	net_send_message(PTO_C2S_TEAM_ADD_MEMBER, cjson.encode(req))
+end
+
+
 function ActorMT:RemoveTeamMember(actor)
 	local req = {}
 	req.team_id = team.id

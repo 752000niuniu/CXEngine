@@ -1,22 +1,5 @@
 
-SkillMT = {}
 skill_table = {}
-function SkillMT:new(o)
-    o = o or {
-        id = utils_next_uid('skill')
-    }
-    self.__index = self 
-    setmetatable(o, self)
-    return o
-end
-
-function SkillMT:GetTemplate()
-    return skill_table[self.tid] 
-end
-
-function SkillMT:GetType()
-    return skill_table[self.tid].type
-end
 
 local skill_env = {
     __index = _ENV
@@ -49,6 +32,7 @@ function init_skills()
 end
 
 function skill_init_by_templ(skill, templ)
+    skill.name = templ.name
     skill.sub_type = templ.sub_type
     skill.atk_anim = templ.atk_anim
     skill.group_kill = templ.group_kill 	--是否群体攻击
@@ -82,6 +66,9 @@ function battle_get_group_kill_targets(battle, group_kill, main_target)
                 local which = math.random(1,#candidates)
                 table.insert(targets, candidates[which])
                 table.remove(candidates,which)
+                if #candidates == 0 then
+                    break
+                end
             end
         end
     end
@@ -369,12 +356,14 @@ function skill_cast_atk(battle, skill)
 end
 
 
--- target, is_critical, is_combo, combo_coef, actor_type_coef
 function skill_take_effect_on_target(skill, effect, master, target, target_i, hit_i,...)
+    cxlog_info(string.format('%s正在对%s第%d次使用技能【%s】',master:GetName(), target:GetName(), hit_i, skill.name))
     if skill.type == 'atk' then
-        local hp_delta = master:GetAttackDamage(target, false , false,0 ,1)
+        local hp_delta = master:GetAttackDamage(target, false , false,0 ,1) -- target, is_critical, is_combo, combo_coef, actor_type_coef
         target:ModifyHP(-hp_delta)
         table.insert(effect.hp_deltas, {target = -hp_delta})
+        
+        cxlog_info(string.format('并造成了%.2f伤害', hp_delta))
     elseif skill.type =='spell' then
         if skill.sub_type == SKILL_SUBTYPE_SEAL or skill.sub_type == SKILL_SUBTYPE_AUXI then
             
@@ -382,10 +371,14 @@ function skill_take_effect_on_target(skill, effect, master, target, target_i, hi
             local hp_delta = master:GetSpellDamage(target)
             target:ModifyHP(hp_delta)
             table.insert(effect.hp_deltas, {target = hp_delta})
+
+            cxlog_info(string.format('并恢复了%.2fHP', hp_delta))
         elseif skill.sub_type == SKILL_SUBTYPE_DEFAULT then
             local hp_delta = master:GetSpellDamage(target)
             target:ModifyHP(-hp_delta)
             table.insert(effect.hp_deltas, {target = -hp_delta})
+
+            cxlog_info(string.format('并造成了%.2f伤害', hp_delta))
         end
     end
     if skill.SkillOnHit then
@@ -423,6 +416,7 @@ function base_using_skill(battle, skill)
         if skill.SkillOnStart then
             skill.SkillOnStart(skill, master)
         end
+        cxlog_info(string.format('%s开始使用技能【%s】',master:GetName() , skill.name))
 
         local targets = battle_get_group_kill_targets(battle, skill.group_kill, skill.target)
         for target_i, target in ipairs(targets) do
@@ -437,6 +431,12 @@ function base_using_skill(battle, skill)
                 effect.combo = hit_i
                 skill_take_effect_on_target(skill, effect, master, target, target_i, hit_i)
                 if master:IsDead() or target:IsDead() then
+                    if master:IsDead() then
+                        cxlog_info(string.format('造成了%s死亡',master:GetName()))
+                    end
+                    if target:IsDead() then
+                        cxlog_info(string.format('造成了%s死亡',target:GetName()))
+                    end
                     break
                 end
             end

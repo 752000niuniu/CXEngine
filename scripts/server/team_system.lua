@@ -58,6 +58,14 @@ function TeamMT:GetLeader()
     return self.leader
 end
 
+function TeamMT:Serialize()
+    local team_info = {}
+    team_info.id = self.id
+    team_info.members = self.members
+    team_info.leader = self.leader
+    return team_info
+end
+
 __teams__ = __teams__ or {}
 function team_system_create_team(actor)
     local team = TeamMT:new()
@@ -109,8 +117,13 @@ function ActorMT:DismissTeam()
 end
 
 stub[PTO_C2S_FETCH_TEAM] = function(req)
-    cxlog_info('PTO_C2S_FETCH_TEAM', cjson.encode(__teams__))
-    net_send_message(req.pid, PTO_S2C_FETCH_TEAM, cjson.encode(__teams__))
+    local team_infos = {}
+    for k,v in pairs(__teams__) do
+        table.insert(team_infos, v:Serialize())
+    end
+
+    cxlog_info('PTO_C2S_FETCH_TEAM', cjson.encode(team_infos))
+    net_send_message(req.pid, PTO_S2C_FETCH_TEAM, cjson.encode(team_infos))
 end
 
 stub[PTO_C2S_TEAM_CREATE] = function(req)
@@ -119,7 +132,7 @@ stub[PTO_C2S_TEAM_CREATE] = function(req)
     cxlog_info(actor:GetName()..'创建了队伍 '..team.id)
     local resp = {
         pid = req.pid,
-        team = team
+        team = team:Serialize()
     }
     net_send_message_to_all_players(PTO_S2C_TEAM_CREATE, cjson.encode(resp))
 end
@@ -141,7 +154,7 @@ stub[PTO_C2S_TEAM_ADD_MEMBER] = function(req)
     team:AddMember(mem_actor)
     cxlog_info(mem_actor:GetName()..'加入了队伍 '..team.id)
     local resp = {
-        team = team
+        team = team:Serialize()
     }
     net_send_message_to_all_players(PTO_S2C_TEAM_ADD_MEMBER, cjson.encode(resp))
 end
@@ -153,7 +166,7 @@ stub[PTO_C2S_TEAM_REMOVE_MEMBER] = function(req)
     team:RemoveMember(mem_actor)
     cxlog_info(mem_actor:GetName()..'离开了队伍 '..team.id)
     local resp = {
-        team = team
+        team = team:Serialize()
     }
     net_send_message_to_all_players(PTO_S2C_TEAM_REMOVE_MEMBER, cjson.encode(resp))
 end

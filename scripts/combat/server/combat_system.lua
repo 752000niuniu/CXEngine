@@ -67,7 +67,8 @@ end
 function process_turn_command(battle, master_id, target_id, skill_id)
 	local master = battle:FindActor(master_id)
 	if not master then return end
-	local skill = SkillMT:new()
+	local skill = {}
+	skill.id = utils_next_uid('skill')
 	skill.tid = skill_id
 	skill.master = master
 	skill.state = SKILL_STATE_DEFAULT
