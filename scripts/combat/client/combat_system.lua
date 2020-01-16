@@ -391,7 +391,7 @@ function combat_system_update()
                 elseif skill.state == SKILL_STATE_START then
                     if skill.type == 'atk' then
                         if skill.caster_end and skill.target_end then
-                            if skill.group_atk_counter == #skill.atk_infos then
+                            if skill.group_atk_counter == #skill.effects then
                                 skill.state = SKILL_STATE_END
                             else
                                 skill_cast_atk(battle, skill)

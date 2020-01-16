@@ -229,26 +229,6 @@ function handle_turn_commands(battle)
 end
 
 
-function handle_turn_old_commands(battle)
-	local perform_cmds = {}
-	for i,cmd in ipairs(battle.cmds) do
-		local master = actor_manager_fetch_player_by_id(cmd.master)
-		local target = actor_manager_fetch_player_by_id(cmd.target)
-		master:SetTarget(target)
-		master:CastSkill(cmd.skill_id)
-	end
-
-	if #battle.cmds > 0 then
-		for i,actor in ipairs(battle.actors) do
-			if actor:IsPlayer() then
-				local pid = actor:GetID()
-				local msg = { cmds = battle.cmds} 
-				net_send_message(pid, PTO_S2C_COMBAT_EXECUTE, cjson.encode(msg))
-			end
-		end
-	end
-end
-
 
 stub[PTO_C2S_COMBAT_CMD] = function(req)
 	local master = actor_manager_fetch_player_by_id(req.master)

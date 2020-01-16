@@ -69,12 +69,6 @@ function battle_get_group_kill_targets(battle, group_kill, main_target)
 
 	local candidates = {}
     for i,actor in ipairs(battle.actors) do
-        local name = actor:GetName()
-        local name2 = main_target:GetName()
-        local type1 = actor:GetProperty(PROP_TEAM_TYPE)
-        local type2 = main_target:GetProperty(PROP_TEAM_TYPE)
-        local is_dead = actor:IsDead() 
-        local is_id_equal = actor:GetID() ~= main_target:GetID()
 		if actor:GetProperty(PROP_TEAM_TYPE) == main_target:GetProperty(PROP_TEAM_TYPE)
 			and not actor:IsDead() 
 			and actor:GetID() ~= main_target:GetID() then
@@ -113,11 +107,11 @@ end
 function on_attack_action_callback(attack_action)
     if not IsClient() then return end
     local skill = attack_action.skill
+    local target = attack_action.target
     local atk_info = attack_action.atk_info
     atk_info.atk_counter = atk_info.atk_counter + 1
 
     local master = actor_manager_fetch_player_by_id(skill.master)
-    local target = actor_manager_fetch_player_by_id(atk_info.target)
 
     if skill.SkillOnHit then
         skill.SkillOnHit(skill, master)
@@ -135,7 +129,7 @@ function on_attack_action_callback(attack_action)
         anim:SetOffsetY(offy)  
         target:AddFrontAnim(anim)
 
-        local damage = atk_info.atk_hp_deltas[atk_info.atk_counter]
+        local damage = atk_info.hp_deltas[atk_info.atk_counter].target
         target:ShowBeatNumber(-damage)
         -- actor:ShowBeatNumber(damage)
 
@@ -147,7 +141,7 @@ function on_attack_action_callback(attack_action)
     end)
     
     behit_action:AddStopCallback(function()
-        if atk_info.atk_counter == atk_info.atk_cnt then
+        if atk_info.atk_counter == atk_info.combo then
             if target:IsDead() then
                 behit_action:Reset()
                 behit_action:Play()
@@ -227,8 +221,8 @@ function skill_cast_atk(battle, skill)
     master:ClearAction()
     master:PushAction(ACTION_BATIDLE)
     
-    local atk_info = skill.atk_infos[skill.group_atk_counter]
-    local target_id = atk_info.target
+    local target_id = skill.targets[skill.group_atk_counter]
+    local atk_info = skill.effects[skill.group_atk_counter]
     local target = actor_manager_fetch_player_by_id(target_id)
     master:SetTarget(target)
     master:FaceTo(target)
@@ -248,21 +242,22 @@ function skill_cast_atk(battle, skill)
 
     local attack_action = master:GetAvatar(ACTION_ATTACK)
     attack_action:Reset()
-    attack_action:SetLoop(atk_info.atk_cnt)
+    attack_action:SetLoop(atk_info.combo)
     attack_action.skill = skill
     atk_info.atk_counter = 0
     attack_action.atk_info = atk_info
+    attack_action.target = target
     
     local key_frame = attack_get_keyframe(master)
     attack_action:AddFrameCallback(key_frame, on_attack_action_callback)
     attack_action:AddLoopCallback(function(anim, counter)
-        if counter < atk_info.atk_cnt then
+        if counter < atk_info.combo then
             attack_action:AddFrameCallback(key_frame, on_attack_action_callback)
         end
     end)
     master:PushAction(ACTION_ATTACK)
 
-     if skill.sub_type ~= 3 or skill.group_atk_counter == #skill.atk_infos then
+     if skill.sub_type ~= 3 or skill.group_atk_counter == #skill.effects then
         local runback_action = master:GetAvatar(ACTION_RUNBACK)
         runback_action:Reset()
         runback_action:SetLoop(-1)
@@ -296,49 +291,72 @@ function skill_cast_atk(battle, skill)
     master:MoveActionToBack()
 end
 
-function using_atk_skill(battle, skill)
+
+-- target, is_critical, is_combo, combo_coef, actor_type_coef
+function skill_take_effect_on_target(skill, effect, master, target, target_i, hit_i,...)
+    if skill.type == 'atk' then
+        local hp_delta = master:GetAttackDamage(target, false , false,0 ,1)
+        table.insert(effect.hp_deltas, {target = hp_delta})
+        target:ModifyHP(-hp_delta)
+    end
+end
+
+
+function init_cskill(skill)
+    local cskill = {}
+    cskill.id = skill.id
+    cskill.tid = skill.tid
+    cskill.master = skill.master:GetID()
+    cskill.targets = {}
+    cskill.effects = {}
+    return cskill
+end
+
+function check_life_state(actor)
+    if actor:IsDead() then
+        if actor:GetProperty(PROP_ACTOR_TYPE) ~= ACTOR_TYPE_PLAYER then
+            return ACTOR_LIFE_DEAD_FLY
+        else
+            return ACTOR_LIFE_DEAD
+        end
+    else
+        return ACTOR_LIFE_ALIVE
+    end
+end
+
+function base_using_skill(battle, skill)
     if IsServer() then
-        local client_skill = {}
-        client_skill.id = skill.id
-        client_skill.tid = skill.tid
-        client_skill.master = skill.master:GetID()
-        client_skill.targets = {}
-        client_skill.type = 'atk'
-        client_skill.atk_infos = {}
-        
+        local cskill = init_cskill(skill)
         local master = skill.master
         local targets = skill_get_targets(battle, skill)
-        for i,target in ipairs(targets) do
-            table.insert(client_skill.targets, target:GetID())
+        for target_i, target in ipairs(targets) do
+            local target_id = target:GetID()
+            table.insert(cskill.targets, target_id)
             
-            local atk_info = {}
-            atk_info.target = target:GetID()
-            atk_info.atk_hp_deltas = {}
+            local effect = {}
+            effect.target_id = target_id
+            effect.hp_deltas = {}
             
-            local max_atk_cnt = skill.combo > 0 and skill.combo or 1
-            for i=1, max_atk_cnt do
-                atk_info.atk_cnt = i
-                local hp_delta = master:GetAttackDamage(target, false,false,0,1)
-                target:ModifyHP(-hp_delta)
-                table.insert(atk_info.atk_hp_deltas, hp_delta)
-    
-                if target:IsDead() then
+            local max_hit_cnt = skill.combo > 0 and skill.combo or 1
+            for hit_i=1, max_hit_cnt do
+                effect.combo = hit_i
+                skill_take_effect_on_target(skill, effect, master, target, target_i, hit_i)
+                if master:IsDead() or target:IsDead() then
                     break
                 end
             end
-            if target:IsDead() then
-                if target:GetProperty(PROP_ACTOR_TYPE) ~= ACTOR_TYPE_PLAYER then
-                    battle:RemoveActor(target)
-                    atk_info.target_life_state = ACTOR_LIFE_DEAD_FLY
-                else
-                    atk_info.target_life_state = ACTOR_LIFE_DEAD
-                end
-            else
-                atk_info.target_life_state = ACTOR_LIFE_ALIVE
+            local master_life_state = check_life_state(master)
+            if master_life_state==ACTOR_LIFE_DEAD_FLY then
+                battle:RemoveActor(master)
             end
-            table.insert(client_skill.atk_infos, atk_info)
+            local target_life_state = check_life_state(target)
+            if target_life_state==ACTOR_LIFE_DEAD_FLY then
+                battle:RemoveActor(target)
+            end
+            effect.life_state = {master = master_life_state, target=target_life_state}
+            table.insert(cskill.effects, effect)
         end
-        return client_skill
+        return cskill
     else
         local master = actor_manager_fetch_player_by_id(skill.master)
         if not master then return end
@@ -346,20 +364,27 @@ function using_atk_skill(battle, skill)
         local skill_templ = skill_table[skill.tid]
         skill_init_by_templ(skill, skill_templ)
 
-        if skill.SkillOnStart then
-            skill.SkillOnStart(skill, master)
+        if skill.type =='atk' then
+            if skill.SkillOnStart then
+                skill.SkillOnStart(skill, master)
+            end
+    
+            if #skill.effects > 0 then
+                skill.group_atk_counter = 0
+                skill.origin_x, skill.origin_y = master:GetPos()
+                skill_cast_atk(battle, skill)
+            end
         end
 
-        if #skill.atk_infos > 0 then
-            skill.group_atk_counter = 0
-            skill.origin_x, skill.origin_y = master:GetPos()
-            skill_cast_atk(battle, skill)
-        end
     end
 end
 
-function using_spell_skill(battle, skill)
+function using_atk_skill(battle, skill)
+    return base_using_skill(battle, skill)
+end
 
+function using_spell_skill(battle, skill)
+   return base_using_skill(battle, skill)
 end
 
 function using_flee_skill(battle, skill)
@@ -377,18 +402,5 @@ end
 function on_using_skill(battle, skill)
     if skill.state ~= SKILL_STATE_DEFAULT then return end
     skill.state = SKILL_STATE_START
-
-    local ret
-	if skill.type == 'atk' then
-		ret = using_atk_skill(battle, skill)
-	elseif skill.type == 'spell' then
-		ret = using_spell_skill(battle, skill)
-	elseif skill.type == 'flee' then
-		ret = using_flee_skill(battle, skill)
-	elseif skill.type == 'trap' then
-		ret = using_trap_skill(battle, skill)
-	elseif skill.type == 'def' then
-		ret = using_def_skill(battle, skill)
-	end
-    return ret
+    return base_using_skill(battle,skill)
 end

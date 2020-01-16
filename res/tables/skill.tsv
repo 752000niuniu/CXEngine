@@ -261,3 +261,4 @@ ID	name	type	sub_type	school	combo	atk_anim	group_kill	cast_anim	act_turn
 259	雷击2	spell				6-2A997658			
 260	飞石	spell				6-9F9BEB7D			
 261	龙	spell				6-DC8C69E8			
+262	普攻2	atk	3		2	0-1D3FF13C	3		
