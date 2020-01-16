@@ -113,6 +113,8 @@ void MoveHandle::MoveOnScreenWithDuration(Pos offset, float move_dur,bool keepdi
 
 void MoveHandle::MoveTo(float x, float y)
 {
+	m_bMoveWithDuration = false;
+	m_bKeepDir = false;
 	if (!m_Actor->GetScene())return;
 	if (!m_Actor->GetProperty(PROP_CAN_MOVE).toBool())return;
 	GameMap* map = m_Actor->GetScene()->GetGameMap();

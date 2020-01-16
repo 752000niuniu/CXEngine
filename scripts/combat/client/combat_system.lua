@@ -85,10 +85,11 @@ function combat_reset_actor(actor)
     actor:SetProperty(PROP_ASM_BUFF_ANIM, 0)
     actor:SetProperty(PROP_IS_COMBAT,false)
     actor:SetProperty(PROP_CAN_MOVE,true)
-    actor:ClearAction()
     actor:ClearBackAnim()
     actor:ClearFrontAnim()
-    actor:PushAction(ACTION_IDLE)    
+    actor:StopMove()
+    actor:ClearAction()
+    actor:PushAction(ACTION_IDLE)   
 end
 
 function combat_system_draw()
@@ -147,7 +148,13 @@ function combat_system_imgui_update()
     end
 
     if imgui.Button('逃跑##player') then
-        -- battle:EndBattle()
+        local player = actor_manager_fetch_local_player()
+        player:SetProperty(PROP_USING_SKILL,268)
+
+        local msg = {}
+        msg.master = player:GetID()
+        msg.skill_id = 268
+        net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
     end
 
     imgui.SetNextWindowSize(350,400)
@@ -214,7 +221,8 @@ stub[PTO_S2C_COMBAT_START] = function(resp)
 end 
 
 stub[PTO_S2C_COMBAT_EXECUTE] = function(all_skills)
-    for i,skill in ipairs(all_skills) do
+    for i,cskill in ipairs(all_skills) do
+        local skill = cskill_to_skill(cskill)
         skill.state = SKILL_STATE_DEFAULT
         table.insert(battle_commands,skill)
     end
@@ -259,6 +267,12 @@ function combat_system_update()
                     on_using_skill_update(battle, skill)
                 elseif skill.state == SKILL_STATE_END then
                     table.remove(battle_commands,1)    
+                end
+
+                local player = actor_manager_fetch_local_player()
+                if not battle:FindActor(player:GetID()) then
+                    battle:EndBattle()
+                    return
                 end
             else 
                 if battle:CheckEnd() then

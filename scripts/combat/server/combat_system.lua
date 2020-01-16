@@ -47,46 +47,15 @@ stub[PTO_C2S_COMBAT_START] = function(req)
 	net_send_message_to_all_players(PTO_S2C_COMBAT_START,cjson.encode(resp))
 end
 
---技能就是战斗指令
---玩家的操作也就是 吃道具 逃跑等 还有就是选技能+目标
---[[
-	技能表示在战斗回合里，由某个玩家从待战状态，释放技能，再回到待战状态这一过程的表现。
-	技能释放后，会产生对战斗对象的影响，影响后续技能的计算
-	技能主要阶段：
-		技能开始释放（数值结算，表现计算）
-		技能释放过程 
-		技能释放结束（）	
-	cmd = {
-		master 
-		target 可为空
-		技能id
-	}
-]]
-
-
-function process_turn_command(battle, master_id, target_id, skill_id)
-	local master = battle:FindActor(master_id)
-	if not master or master:IsDead() then return end
-
-	local skill = {}
-	skill.id = utils_next_uid('skill')
-	skill.tid = skill_id
-	skill.master = master
-	skill.state = SKILL_STATE_DEFAULT
-
-	local target = battle:FindActor(target_id)
-	if target then
-		skill.target = target
-	end
-	skill.turn = battle.turn
-
-	skill.templ = skill_table[skill_id]
-	skill_init_by_templ(skill, skill.templ)			
-
-	return on_using_skill(battle, skill)
-end
 
 function handle_turn_commands(battle)
+	local send_pids = {}
+	for i,actor in ipairs(battle.actors) do
+		if actor:IsPlayer() then
+			table.insert(send_pids, actor:GetID())
+		end
+	end
+
 	local all_skills = {}
 	for i,cmd in ipairs(battle.cmds) do
 		local skill_info = process_turn_command(battle,cmd.master,cmd.target,cmd.skill_id)
@@ -95,11 +64,8 @@ function handle_turn_commands(battle)
 		end
 	end
 
-	for i,actor in ipairs(battle.actors) do
-		if actor:IsPlayer() then
-			local pid = actor:GetID()
-			net_send_message(pid, PTO_S2C_COMBAT_EXECUTE, cjson.encode(all_skills))
-		end
+	for i, pid in ipairs(send_pids) do
+		net_send_message(pid, PTO_S2C_COMBAT_EXECUTE, cjson.encode(all_skills))
 	end
 end
 

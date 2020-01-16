@@ -96,7 +96,6 @@ function skill_play_target_dead_fly(skill, behit_action, master, target)
     local fly_x ,fly_y = 0,0 
     behit_action:AddUpdateCallback(function()
         local actor = target
-    
         local px, py = actor:GetPos()
         local avatar = actor:GetAvatar()
         if py - avatar:GetFrameKeyY() <= 0 then
@@ -123,7 +122,11 @@ function skill_play_target_dead_fly(skill, behit_action, master, target)
             behit_action:Stop()
             actor:SetCombatPos(last_x,last_y)
             actor:SetDir(last_dir)
-            skill.target_end = true        
+            if skill.type == 'spell' then
+                skill_target_end_counter(skill)
+            elseif skill.type == 'atk' then
+                skill.target_end = true        
+            end
             combat_system_remove_from_battle(target)
         end
 
@@ -132,7 +135,11 @@ function skill_play_target_dead_fly(skill, behit_action, master, target)
             behit_action:Stop()
             actor:SetCombatPos(last_x,last_y)
             actor:SetDir(last_dir)
-            skill.target_end = true   
+            if skill.type == 'spell' then
+                skill_target_end_counter(skill)
+            elseif skill.type == 'atk' then
+                skill.target_end = true        
+            end
             combat_system_remove_from_battle(target)
         end
     end)
@@ -355,6 +362,25 @@ function skill_cast_atk(battle, skill)
     master:MoveActionToBack()
 end
 
+function skill_cast_flee(battle, skill)
+    if not skill.flee_success then return end
+    local master = skill.master
+    master:ClearAction()
+    master:ReverseDir()
+    
+    local walk_action = master:GetAvatar(ACTION_WALK)
+    walk_action:Reset()
+    walk_action:SetLoop(0)
+    walk_action:AddStartCallback(function(anim)
+        local px , py = master:GetPos()
+        local dx = 800-px
+        local dy = 600-py
+        master:MoveOnScreenWithDuration(dx,dy,1,false)
+    end)
+    
+    master:PushAction(ACTION_WALK)
+    master:MoveActionToBack()
+end
 
 function skill_take_effect_on_target(skill, effect, master, target, target_i, hit_i,...)
     cxlog_info(string.format('%s正在对%s第%d次使用技能【%s】',master:GetName(), target:GetName(), hit_i, skill.name))
@@ -391,6 +417,7 @@ function init_cskill(skill)
     local cskill = {}
     cskill.id = skill.id
     cskill.tid = skill.tid
+    cskill.turn = skill.turn
     cskill.master = skill.master:GetID()
     cskill.targets = {}
     cskill.effects = {}
@@ -406,6 +433,27 @@ function check_life_state(actor)
         end
     else
         return ACTOR_LIFE_ALIVE
+    end
+end
+
+function cskill_to_skill(skill)
+    skill.master = actor_manager_fetch_player_by_id(skill.master)
+    local skill_templ = skill_table[skill.tid]
+    skill_init_by_templ(skill, skill_templ)
+    return skill
+end
+
+function on_using_flee_skill(battle, skill)
+    if IsServer() then
+        local suc = math.random(1,10) <= 5 or true
+        if suc then
+            battle:RemoveActor(skill.master)
+        end
+        local cskill = init_cskill(skill)
+        cskill.flee_success = suc 
+        return cskill
+    else
+        skill_cast_flee(battle, skill)
     end
 end
 
@@ -456,16 +504,12 @@ function base_using_skill(battle, skill)
         end
         return cskill
     else
-        local master = actor_manager_fetch_player_by_id(skill.master)
-        if not master or #skill.effects==0 then 
+        if #skill.effects==0 then 
             skill.state = SKILL_STATE_END
             return 
         end
         
-        skill.master = master
-        local skill_templ = skill_table[skill.tid]
-        skill_init_by_templ(skill, skill_templ)
-
+        local master = skill.master
         if skill.SkillOnStart then
             skill.SkillOnStart(skill, master)
         end
@@ -511,6 +555,15 @@ if IsClient() then
                     skill_cast_spell(battle, skill)
                 end
             end
+        elseif skill.type == 'flee' then
+            local master = skill.master
+            local avatar = master:GetAvatar()
+            local px, py = master:GetPos()
+            if px >= 800 then
+                skill.state = SKILL_STATE_END
+                combat_reset_actor(master)
+                battle:RemoveActor(master)
+            end
         end
     end
 end
@@ -518,5 +571,32 @@ end
 function on_using_skill(battle, skill)
     if skill.state ~= SKILL_STATE_DEFAULT then return end
     skill.state = SKILL_STATE_START
-    return base_using_skill(battle,skill)
+    if skill.type == 'atk' or skill.type == 'spell' then
+        return base_using_skill(battle,skill)
+    elseif skill.type == 'flee' then
+        return on_using_flee_skill(battle, skill)
+    end
+end
+
+
+function process_turn_command(battle, master_id, target_id, skill_id)
+	local master = battle:FindActor(master_id)
+	if not master or master:IsDead() then return end
+
+	local skill = {}
+	skill.id = utils_next_uid('skill')
+	skill.tid = skill_id
+	skill.master = master
+	skill.state = SKILL_STATE_DEFAULT
+
+	local target = battle:FindActor(target_id)
+	if target then
+		skill.target = target
+	end
+	skill.turn = battle.turn
+
+	skill.templ = skill_table[skill_id]
+	skill_init_by_templ(skill, skill.templ)			
+
+	return on_using_skill(battle, skill)
 end

@@ -262,3 +262,10 @@ ID	name	type	sub_type	school	combo	atk_anim	group_kill	cast_anim	act_turn
 260	飞石	spell				6-9F9BEB7D			
 261	龙	spell				6-DC8C69E8			
 262	普攻2	atk	3		2	0-1D3FF13C	3		
+263	道具	spell	""	""	""	""	""	""	""
+264	防御	idle	""	""	""	""	""	""	""
+265	召唤	idle	""	""	""	""	""	""	""
+266	召还	idle	""	""	""	""	""	""	""
+267	捕捉	trap	""	""	""	""	""	""	""
+268	逃跑	flee	""	""	""	""	""	""	""
+269	保护	idle	""	""	""	""	""	""	""
