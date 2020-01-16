@@ -67,23 +67,25 @@ function battle_get_group_kill_targets(battle, group_kill, main_target)
 		table.insert(targets, main_target)
 	end
 
-	local candidates = {}
-    for i,actor in ipairs(battle.actors) do
-		if actor:GetProperty(PROP_TEAM_TYPE) == main_target:GetProperty(PROP_TEAM_TYPE)
-			and not actor:IsDead() 
-			and actor:GetID() ~= main_target:GetID() then
-			table.insert(candidates, actor)
-		end
-	end
-
-    if #candidates > 0 then
-        table.sort(candidates, function(a,b) return a:CalcSpeed() > b:CalcSpeed() end)
-        for i=1,group_kill-1 do
-            local which = math.random(1,#candidates)
-            table.insert(targets, candidates[which])
-            table.remove(candidates,which)
+    if group_kill > 0 then
+        local candidates = {}
+        for i,actor in ipairs(battle.actors) do
+            if actor:GetProperty(PROP_TEAM_TYPE) == main_target:GetProperty(PROP_TEAM_TYPE)
+                and not actor:IsDead() 
+                and actor:GetID() ~= main_target:GetID() then
+                table.insert(candidates, actor)
+            end
+        end
+        if #candidates > 0 then
+            table.sort(candidates, function(a,b) return a:CalcSpeed() > b:CalcSpeed() end)
+            for i=1,group_kill-1 do
+                local which = math.random(1,#candidates)
+                table.insert(targets, candidates[which])
+                table.remove(candidates,which)
+            end
         end
     end
+
 	return targets
 end
 
@@ -93,14 +95,6 @@ end
 
 function deserialize_skill(skill)
     return ret
-end
-
-function skill_get_targets(battle, skill)
-    if skill.group_kill > 0 then
-        return battle_get_group_kill_targets(battle, skill.group_kill, skill.target)
-    else
-        return { skill.target }
-    end
 end
 
 
@@ -216,13 +210,11 @@ function skill_cast_atk(battle, skill)
     skill.group_atk_counter = skill.group_atk_counter + 1
     skill.caster_end = false
     skill.target_end = false
-    cxlog_info('group_atk_counter',skill.id, skill.group_atk_counter)
 
     master:ClearAction()
     master:PushAction(ACTION_BATIDLE)
-    
-    local target_id = skill.targets[skill.group_atk_counter]
     local atk_info = skill.effects[skill.group_atk_counter]
+    local target_id = atk_info.target_id
     local target = actor_manager_fetch_player_by_id(target_id)
     master:SetTarget(target)
     master:FaceTo(target)
@@ -257,7 +249,7 @@ function skill_cast_atk(battle, skill)
     end)
     master:PushAction(ACTION_ATTACK)
 
-     if skill.sub_type ~= 3 or skill.group_atk_counter == #skill.effects then
+    if skill.sub_type ~= 3 or skill.group_atk_counter == #skill.effects then
         local runback_action = master:GetAvatar(ACTION_RUNBACK)
         runback_action:Reset()
         runback_action:SetLoop(-1)
@@ -299,6 +291,9 @@ function skill_take_effect_on_target(skill, effect, master, target, target_i, hi
         table.insert(effect.hp_deltas, {target = hp_delta})
         target:ModifyHP(-hp_delta)
     end
+    if skill.SkillOnHit then
+        skill.SkillOnHit(skill, master, target ,target_i, hit_i )
+    end
 end
 
 
@@ -328,7 +323,11 @@ function base_using_skill(battle, skill)
     if IsServer() then
         local cskill = init_cskill(skill)
         local master = skill.master
-        local targets = skill_get_targets(battle, skill)
+        if skill.SkillOnStart then
+            skill.SkillOnStart(skill, master)
+        end
+
+        local targets = battle_get_group_kill_targets(battle, skill.group_kill, skill.target)
         for target_i, target in ipairs(targets) do
             local target_id = target:GetID()
             table.insert(cskill.targets, target_id)
@@ -356,6 +355,9 @@ function base_using_skill(battle, skill)
             effect.life_state = {master = master_life_state, target=target_life_state}
             table.insert(cskill.effects, effect)
         end
+        if skill.SkillOnEnd then
+            skill.SkillOnEnd(skill, master)
+        end
         return cskill
     else
         local master = actor_manager_fetch_player_by_id(skill.master)
@@ -379,24 +381,21 @@ function base_using_skill(battle, skill)
     end
 end
 
-function using_atk_skill(battle, skill)
-    return base_using_skill(battle, skill)
-end
-
-function using_spell_skill(battle, skill)
-   return base_using_skill(battle, skill)
-end
-
-function using_flee_skill(battle, skill)
-
-end
-
-function using_trap_skill(battle, skill)
-
-end
-
-function using_def_skill(battle, skill)
-    
+if IsClient() then
+    function on_using_skill_update(battle, skill)
+        if skill.type == 'atk' then
+            if skill.caster_end and skill.target_end then
+                if skill.group_atk_counter == #skill.effects then
+                    skill.state = SKILL_STATE_END
+                    if skill.SkillOnEnd then
+                        skill.SkillOnEnd(skill, skill.master)
+                    end
+                else
+                    skill_cast_atk(battle, skill)
+                end
+            end
+        end
+    end
 end
 
 function on_using_skill(battle, skill)
