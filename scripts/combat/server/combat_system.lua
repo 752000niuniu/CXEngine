@@ -66,7 +66,8 @@ end
 
 function process_turn_command(battle, master_id, target_id, skill_id)
 	local master = battle:FindActor(master_id)
-	if not master then return end
+	if not master or master:IsDead() then return end
+
 	local skill = {}
 	skill.id = utils_next_uid('skill')
 	skill.tid = skill_id
@@ -89,7 +90,9 @@ function handle_turn_commands(battle)
 	local all_skills = {}
 	for i,cmd in ipairs(battle.cmds) do
 		local skill_info = process_turn_command(battle,cmd.master,cmd.target,cmd.skill_id)
-		table.insert(all_skills, skill_info)
+		if skill_info then
+			table.insert(all_skills, skill_info)
+		end
 	end
 
 	for i,actor in ipairs(battle.actors) do
