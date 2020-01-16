@@ -47,7 +47,7 @@ end
 
 function battle_get_group_kill_targets(battle, group_kill, main_target)
 	local targets = {}
-	if not main_target:IsDead() then
+	if main_target and not main_target:IsDead() then
 		table.insert(targets, main_target)
 	end
 
@@ -363,23 +363,31 @@ function skill_cast_atk(battle, skill)
 end
 
 function skill_cast_flee(battle, skill)
-    if not skill.flee_success then return end
+    if not skill.flee_success then 
+        skill.state = SKILL_STATE_END
+        return 
+    end
     local master = skill.master
-    master:ClearAction()
     master:ReverseDir()
-    
-    local walk_action = master:GetAvatar(ACTION_WALK)
-    walk_action:Reset()
-    walk_action:SetLoop(0)
-    walk_action:AddStartCallback(function(anim)
+
+    cxlog_info(master:GetName()..'使用了逃跑')
+
+    master:ClearAction()
+
+    if master:GetProperty(PROP_TEAM_TYPE) == battle.local_team_type then
         local px , py = master:GetPos()
         local dx = 800-px
         local dy = 600-py
         master:MoveOnScreenWithDuration(dx,dy,1,false)
-    end)
+    else
+        local px , py = master:GetPos()
+        local dx = 0-px
+        local dy = 0-py
+        master:MoveOnScreenWithDuration(dx,dy,1,false)
+    end
     
+
     master:PushAction(ACTION_WALK)
-    master:MoveActionToBack()
 end
 
 function skill_take_effect_on_target(skill, effect, master, target, target_i, hit_i,...)
@@ -557,12 +565,19 @@ if IsClient() then
             end
         elseif skill.type == 'flee' then
             local master = skill.master
-            local avatar = master:GetAvatar()
             local px, py = master:GetPos()
-            if px >= 800 then
-                skill.state = SKILL_STATE_END
-                combat_reset_actor(master)
-                battle:RemoveActor(master)
+            if master:GetProperty(PROP_TEAM_TYPE) == battle.local_team_type then
+                if px >= 800 then
+                    skill.state = SKILL_STATE_END
+                    combat_reset_actor(master)
+                    battle:RemoveActor(master)
+                end
+            else
+                if px <= 0 then
+                    skill.state = SKILL_STATE_END
+                    combat_reset_actor(master)
+                    battle:RemoveActor(master)
+                end
             end
         end
     end

@@ -79,6 +79,7 @@ function combat_system_actor_ev_on_click(actor, button, x, y)
     net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
 
     ACTOR_CLICK_MODE = ACTOR_CLICK_MODE_ATTACK
+    player:SetProperty(PROP_TURN_READY, true)
 end
 
 function combat_reset_actor(actor)
@@ -214,6 +215,7 @@ stub[PTO_S2C_COMBAT_START] = function(resp)
     local player = actor_manager_fetch_local_player()
     for i, actor in ipairs(battle.actors) do
         if player:GetID() == actor:GetID() then
+            battle.local_team_type = actor:GetProperty(PROP_TEAM_TYPE)
             battle:StartBattle()
             return
         end

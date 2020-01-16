@@ -92,6 +92,63 @@ function on_imgui_update()
 		os.execute(cmd)
 	end
 
+	imgui.SameLine()
+	if imgui.Button('客户端3') then
+		local exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'
+		local dbg_port = math.tointeger(DbgPortSB:str())
+
+		local tcmd = {
+			'start '..exepath,
+			'--cwd='..vfs_get_workdir(),
+			'--host='..IPSB:str(),
+			'--port='..PortSB:str(),
+			'--dbg_port='..(dbg_port+20),
+			'--user='..AccountSB:str()..'3',
+			'--pass='..PasswordSB:str(),
+		}
+		local cmd = table.concat(tcmd,' ')
+		cxlog_info(cmd)
+		os.execute(cmd)
+	end
+
+	imgui.SameLine()
+	if imgui.Button('客户端4') then
+		local exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'
+		local dbg_port = math.tointeger(DbgPortSB:str())
+
+		local tcmd = {
+			'start '..exepath,
+			'--cwd='..vfs_get_workdir(),
+			'--host='..IPSB:str(),
+			'--port='..PortSB:str(),
+			'--dbg_port='..(dbg_port+30),
+			'--user='..AccountSB:str()..'4',
+			'--pass='..PasswordSB:str(),
+		}
+		local cmd = table.concat(tcmd,' ')
+		cxlog_info(cmd)
+		os.execute(cmd)
+	end
+
+	imgui.SameLine()
+	if imgui.Button('客户端5') then
+		local exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'
+		local dbg_port = math.tointeger(DbgPortSB:str())
+
+		local tcmd = {
+			'start '..exepath,
+			'--cwd='..vfs_get_workdir(),
+			'--host='..IPSB:str(),
+			'--port='..PortSB:str(),
+			'--dbg_port='..(dbg_port+40),
+			'--user='..AccountSB:str()..'5',
+			'--pass='..PasswordSB:str(),
+		}
+		local cmd = table.concat(tcmd,' ')
+		cxlog_info(cmd)
+		os.execute(cmd)
+	end
+
 	if imgui.Button('启动服务器') then
 		local cmd = string.format('start %sbin/Debug/SimpleServer.exe --cwd=%s', vfs_get_workdir(),vfs_get_workdir())
 		cxlog_info(cmd)
