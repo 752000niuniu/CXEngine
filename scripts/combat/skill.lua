@@ -159,7 +159,7 @@ function on_attack_action_callback(attack_action)
     local master = skill.master
 
     if skill.SkillOnHit then
-        skill.SkillOnHit(skill, master)
+        skill.SkillOnHit(skill, master, target, skill.group_kill_counter, atk_info.atk_counter)
     end
 
     local behit_action = target:GetAvatar(ACTION_BEHIT)
@@ -215,6 +215,7 @@ function skill_create_spell_anim(skill, effect, target)
     local resid = skill.atk_anim 
     local pack, was = res_decode(resid)
     local anim = animation_create(pack,was)
+    skill.spell_anim = anim
     anim:SetLoop(-1)
     if skill.sub_type == SKILL_SUBTYPE_HEAL then
         anim:SetOffsetY(-20)
@@ -258,13 +259,13 @@ function skill_cast_spell(battle, skill)
             local target = actor_manager_fetch_player_by_id(effect.target_id)
             if skill.spell_combo_counter <= effect.combo then
                 if skill.sub_type ~= SKILL_SUBTYPE_DEFAULT then
-                    skill.spell_anim = skill_create_spell_anim(skill, effect, target) 
+                    skill_create_spell_anim(skill, effect, target) 
                 else
                     local behit_action = target:GetAvatar(ACTION_BEHIT)
                     behit_action:Reset()
                     behit_action:SetLoop(1)
                     behit_action:AddFrameCallback(1, function()
-                        skill.spell_anim = skill_create_spell_anim(skill, effect, target)
+                        skill_create_spell_anim(skill, effect, target)
                         behit_action:Pause(math.floor(skill.spell_anim:GetGroupFrameTime()* 1000))
                     end)
 
