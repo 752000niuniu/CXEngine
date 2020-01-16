@@ -1,6 +1,6 @@
 ID	name	type	sub_type	school	combo	atk_anim	group_kill	cast_anim	act_turn
 *0		atk	0	0	0				
-1	普攻	atk			2	0-1D3FF13C	3		
+1	普攻	atk				0-1D3FF13C			
 2	DF_冤魂不散	spell		9		6-4EA6D4BF			
 3	DF_判官令	spell		9		6-241C668A			
 4	DF_勘察令	spell		9		6-1AAB80F2			
@@ -38,22 +38,22 @@ ID	name	type	sub_type	school	combo	atk_anim	group_kill	cast_anim	act_turn
 36	FC_落魄符	spell		2		6-4FB56243			
 37	FC_追魂符	spell		2		6-D4024676			
 38	FC_飞行符	spell		2		6-693F825E			
-39	HS_一苇渡江	spell	2	3		6-F354CCB8			
-40	HS_佛法无边	spell	2	3		6-C8011EF1			
+39	HS_一苇渡江	spell	3	3		6-F354CCB8			
+40	HS_佛法无边	spell	3	3		6-C8011EF1			
 41	HS_佛门普渡	spell	2	3		6-1989B002			
-42	HS_唧唧歪歪	spell		3		6-C12C2663	5		
+42	HS_唧唧歪歪	spell		3	3	6-C12C2663	5		
 43	HS_我佛慈悲	spell	2	3		6-203B8773			
 44	HS_推拿	spell	2	3		6-03139F50	3		
 45	HS_正骨	spell	2	3		6-E869B98A			
 46	HS_神佑复生	spell		3		6-DA22B637			
 47	HS_紫气东来	spell		3		6-A742E8AB			
 48	HS_舍生取义	spell	2	3		6-F0CE9045			
-49	HS_解毒	spell	2	3		6-DE34B83E			
-50	HS_达摩护体	spell	2	3		6-98F08C75			
-51	HS_金刚护体	spell	2	3		6-38C2146B			
-52	HS_金刚护法	spell	2	3		6-04DB6C0A			
+49	HS_解毒	spell	3	3		6-DE34B83E			
+50	HS_达摩护体	spell	3	3		6-98F08C75			
+51	HS_金刚护体	spell	3	3		6-38C2146B			
+52	HS_金刚护法	spell	3	3		6-04DB6C0A			
 53	HS_针灸	spell	2	3		6-573F92CA			
-54	HS_韦陀护法	spell		3		6-94A5BEEC			
+54	HS_韦陀护法	spell	3	3		6-94A5BEEC			
 55	LG_斩龙诀	spell		6					
 56	LG	spell		6		6-6EFC43B9			
 57	LG	spell		6		6-D4974969			

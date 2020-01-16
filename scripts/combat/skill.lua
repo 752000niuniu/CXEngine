@@ -187,7 +187,7 @@ function on_attack_action_callback(attack_action)
     
     behit_action:AddStopCallback(function()
         if atk_info.atk_counter == atk_info.combo then
-            if target:IsDead() then                
+            if atk_info.life_state.target == ACTOR_LIFE_DEAD_FLY then                
                 skill_play_target_dead_fly(skill, behit_action, master, target)
             else
                 local dir_x ,dir_y = master:GetAttackVec()
@@ -269,7 +269,7 @@ function skill_cast_spell(battle, skill)
                     end)
 
                     behit_action:AddStopCallback(function()
-                        if target:IsDead() then
+                        if effect.combo==skill.spell_combo_counter and effect.life_state.target == ACTOR_LIFE_DEAD_FLY then
                             skill_play_target_dead_fly(skill, behit_action, master, target)
                         else
                             skill_target_end_counter(skill)
