@@ -49,6 +49,7 @@ function init_skills()
 end
 
 function skill_init_by_templ(skill, templ)
+    skill.sub_type = templ.sub_type
     skill.atk_anim = templ.atk_anim
     skill.group_kill = templ.group_kill 	--是否群体攻击
     skill.combo = templ.combo				--是否连击
@@ -108,13 +109,6 @@ function skill_get_targets(battle, skill)
     end
 end
 
--- atk_info.target = target:GetID()
---             atk_info.atk_hp_deltas = {}
-            
---             local max_atk_cnt = skill.combo > 0 and skill.combo or 1
---             for i=1, max_atk_cnt do
---                 atk_info.atk_cnt = i
-            
 
 function on_attack_action_callback(attack_action)
     if not IsClient() then return end
@@ -268,27 +262,37 @@ function skill_cast_atk(battle, skill)
     end)
     master:PushAction(ACTION_ATTACK)
 
-    local runback_action = master:GetAvatar(ACTION_RUNBACK)
-    runback_action:Reset()
-    runback_action:SetLoop(-1)
-    runback_action:SetFrameInterval(PERFRAME_TIME)
-    runback_action.to_x = runto_x
-    runback_action.to_y = runto_y
-    runback_action:AddStartCallback(function(anim)
-        master:ReverseDir()
-        master:MoveOnScreenWithDuration(-anim.to_x,-anim.to_y,anim:GetGroupFrameTime()-PERFRAME_TIME,true)
-    end)
+     if skill.sub_type ~= 3 or skill.group_atk_counter == #skill.atk_infos then
+        local runback_action = master:GetAvatar(ACTION_RUNBACK)
+        runback_action:Reset()
+        runback_action:SetLoop(-1)
+        runback_action:SetFrameInterval(PERFRAME_TIME)
+        runback_action:AddStartCallback(function(anim)
+            master:ReverseDir()
+            local x,y = master:GetPos()
+            anim.to_x = skill.origin_x - x
+            anim.to_y = skill.origin_y - y
+            master:MoveOnScreenWithDuration(anim.to_x,anim.to_y,anim:GetGroupFrameTime()-PERFRAME_TIME,true)
+        end)
 
-    runback_action:AddStopCallback(function()
-        master:ReverseDir()
+        runback_action:AddStopCallback(function()
+            master:ReverseDir()
+            skill.caster_end = true     
+            local battle = master:GetBattle()
+            if not battle:InBattle(target) then
+                skill.target_end = true
+            end
+        end)
+
+        master:PushAction(ACTION_RUNBACK)
+    else
         skill.caster_end = true     
         local battle = master:GetBattle()
         if not battle:InBattle(target) then
             skill.target_end = true
         end
-    end)
-
-    master:PushAction(ACTION_RUNBACK)
+    end
+    
     master:MoveActionToBack()
 end
 
@@ -348,6 +352,7 @@ function using_atk_skill(battle, skill)
 
         if #skill.atk_infos > 0 then
             skill.group_atk_counter = 0
+            skill.origin_x, skill.origin_y = master:GetPos()
             skill_cast_atk(battle, skill)
         end
     end

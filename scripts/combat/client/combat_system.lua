@@ -346,17 +346,6 @@ stub[PTO_S2C_COMBAT_START] = function(resp)
     end
 end 
 
--- stub[PTO_S2C_COMBAT_EXECUTE] = function(req)
---     for i,req_cmd in ipairs(req.cmds) do
---         local actor = actor_manager_fetch_player_by_id(req_cmd.master)
---         local target = actor_manager_fetch_player_by_id(req_cmd.target)
---         assert(req_cmd.skill_id~=0)
---         actor:SetTarget(target)
---         table.insert(battle_commands,req_cmd)
---     end
---     battle.state = BTTALE_TURN_EXECUTE 
--- end
-
 stub[PTO_S2C_COMBAT_EXECUTE] = function(all_skills)
     for i,skill in ipairs(all_skills) do
         skill.state = SKILL_STATE_DEFAULT

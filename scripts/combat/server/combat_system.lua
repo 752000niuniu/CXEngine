@@ -220,12 +220,10 @@ function handle_turn_commands(battle)
 		table.insert(all_skills, skill_info)
 	end
 
-	if #all_skills > 0 then
-		for i,actor in ipairs(battle.actors) do
-			if actor:IsPlayer() then
-				local pid = actor:GetID()
-				net_send_message(pid, PTO_S2C_COMBAT_EXECUTE, cjson.encode(all_skills))
-			end
+	for i,actor in ipairs(battle.actors) do
+		if actor:IsPlayer() then
+			local pid = actor:GetID()
+			net_send_message(pid, PTO_S2C_COMBAT_EXECUTE, cjson.encode(all_skills))
 		end
 	end
 end

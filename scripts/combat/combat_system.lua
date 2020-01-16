@@ -165,6 +165,7 @@ function BattleMT:StartBattle()
     if IsServer() then
         for i,actor in ipairs(self.actors) do
             actor:SetProperty(PROP_TURN_READY,false)
+            actor:SetProperty(PROP_HP,1000)
         end
     else
         on_battle_start(self)
