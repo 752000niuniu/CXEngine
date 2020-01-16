@@ -97,15 +97,66 @@ function deserialize_skill(skill)
     return ret
 end
 
+function skill_play_target_dead_fly(skill, behit_action, master, target)
+    behit_action:Reset()
+    behit_action:Play()
+    behit_action:SetLoop(0)
+
+    local last_x, last_y = target:GetPos()
+    local last_dir = target:GetDir()
+    local dx, dy = 0,0
+    local dir_x ,dir_y = master:GetAttackVec()
+    local fly_x ,fly_y = 0,0 
+    behit_action:AddUpdateCallback(function()
+        local actor = target
+    
+        local px, py = actor:GetPos()
+        local avatar = actor:GetAvatar()
+        if py - avatar:GetFrameKeyY() <= 0 then
+            dir_y = -dir_y
+        end
+
+        if py - avatar:GetFrameKeyY() + avatar:GetFrameHeight()  >= 600 then
+            dir_y = -dir_y
+        end
+        
+        if avatar:IsFrameUpdate() then
+            px = px + dir_x * 49
+            py = py + dir_y * 49
+            actor:SetCombatPos(px,py)
+        end
+
+        if avatar:IsGroupEndUpdate() then
+            local dir = actor:GetDir()
+            dir = math_next_dir4(dir)
+            actor:SetDir(dir)
+        end
+        if px - avatar:GetFrameKeyX() < 0 then
+            behit_action:RemoveUpdateCallback()
+            behit_action:Stop()
+            actor:SetCombatPos(last_x,last_y)
+            actor:SetDir(last_dir)
+            skill.target_end = true        
+            combat_system_remove_from_battle(target)
+        end
+
+        if px - avatar:GetFrameKeyX() + avatar:GetFrameWidth() >= 800 then
+            behit_action:RemoveUpdateCallback()
+            behit_action:Stop()
+            actor:SetCombatPos(last_x,last_y)
+            actor:SetDir(last_dir)
+            skill.target_end = true   
+            combat_system_remove_from_battle(target)
+        end
+    end)
+end
 
 function on_attack_action_callback(attack_action)
-    if not IsClient() then return end
     local skill = attack_action.skill
     local target = attack_action.target
     local atk_info = attack_action.atk_info
     atk_info.atk_counter = atk_info.atk_counter + 1
-
-    local master = actor_manager_fetch_player_by_id(skill.master)
+    local master = skill.master
 
     if skill.SkillOnHit then
         skill.SkillOnHit(skill, master)
@@ -119,12 +170,12 @@ function on_attack_action_callback(attack_action)
         local pack, was = res_decode(skill.atk_anim)
         local anim = animation_create(pack,was)
         anim:SetLoop(-1)
-        local offy =  -avatar:GetFrameKeyY() + avatar:GetFrameHeight() / 2.0
+        local offy = -avatar:GetFrameKeyY() + avatar:GetFrameHeight() / 2.0
         anim:SetOffsetY(offy)  
         target:AddFrontAnim(anim)
 
         local damage = atk_info.hp_deltas[atk_info.atk_counter].target
-        target:ShowBeatNumber(-damage)
+        target:ShowBeatNumber(damage)
         -- actor:ShowBeatNumber(damage)
 
         attack_action:Pause(math.floor(anim:GetGroupFrameTime()* 1000))
@@ -136,58 +187,8 @@ function on_attack_action_callback(attack_action)
     
     behit_action:AddStopCallback(function()
         if atk_info.atk_counter == atk_info.combo then
-            if target:IsDead() then
-                behit_action:Reset()
-                behit_action:Play()
-                behit_action:SetLoop(0)
-    
-                local last_x, last_y = target:GetPos()
-                local last_dir = target:GetDir()
-                local dx, dy = 0,0
-                local dir_x ,dir_y = master:GetAttackVec()
-                local fly_x ,fly_y = 0,0 
-                behit_action:AddUpdateCallback(function()
-                    local actor = target
-                
-                    local px, py = actor:GetPos()
-                    local avatar = actor:GetAvatar()
-                    if py - avatar:GetFrameKeyY() <= 0 then
-                        dir_y = -dir_y
-                    end
-    
-                    if py - avatar:GetFrameKeyY() + avatar:GetFrameHeight()  >= 600 then
-                        dir_y = -dir_y
-                    end
-                    
-                    if avatar:IsFrameUpdate() then
-                        px = px + dir_x * 49
-                        py = py + dir_y * 49
-                        actor:SetCombatPos(px,py)
-                    end
-    
-                    if avatar:IsGroupEndUpdate() then
-                        local dir = actor:GetDir()
-                        dir = math_next_dir4(dir)
-                        actor:SetDir(dir)
-                    end
-                    if px - avatar:GetFrameKeyX() < 0 then
-                        behit_action:RemoveUpdateCallback()
-                        behit_action:Stop()
-                        actor:SetCombatPos(last_x,last_y)
-                        actor:SetDir(last_dir)
-                        skill.target_end = true        
-                        combat_system_remove_from_battle(target)
-                    end
-    
-                    if px - avatar:GetFrameKeyX() + avatar:GetFrameWidth() >= 800 then
-                        behit_action:RemoveUpdateCallback()
-                        behit_action:Stop()
-                        actor:SetCombatPos(last_x,last_y)
-                        actor:SetDir(last_dir)
-                        skill.target_end = true   
-                        combat_system_remove_from_battle(target)
-                    end
-                end)
+            if target:IsDead() then                
+                skill_play_target_dead_fly(skill, behit_action, master, target)
             else
                 local dir_x ,dir_y = master:GetAttackVec()
                 target:MoveOnScreenWithDuration(-dir_x*24,-dir_y*24,PERFRAME_TIME*2,true)
@@ -202,18 +203,107 @@ function on_attack_action_callback(attack_action)
     target:MoveActionToBack()
 end
 
+function skill_target_end_counter(skill)
+    skill.target_counter = skill.target_counter - 1
+    if skill.target_counter == 0 then
+        skill.target_end = true
+    end
+end
+
+
+function skill_create_spell_anim(skill, effect, target)
+    local resid = skill.atk_anim 
+    local pack, was = res_decode(resid)
+    local anim = animation_create(pack,was)
+    anim:SetLoop(-1)
+    if skill.sub_type == SKILL_SUBTYPE_HEAL then
+        anim:SetOffsetY(-20)
+    end
+    target:AddFrontAnim(anim)
+    if skill.SkillOnSpell then
+        skill.SkillOnSpell(skill, skill.master, target)
+    end
+	
+    if skill.sub_type == SKILL_SUBTYPE_DEFAULT then
+        local hp_delta = effect.hp_deltas[skill.spell_combo_counter].target
+        target:ShowBeatNumber(hp_delta)
+    end
+    
+    anim:AddStopCallback(function()
+        if skill.sub_type == SKILL_SUBTYPE_HEAL then
+            local hp_delta = effect.hp_deltas[skill.spell_combo_counter].target
+            target:ShowBeatNumber(hp_delta)
+        end
+        if skill.SkillOnAfterSpell then
+            skill.SkillOnAfterSpell(skill, skill.master, target)
+        end
+        if skill.sub_type ~= SKILL_STATE_DEFAULT then
+            skill_target_end_counter(skill)
+        end
+    end)
+    return anim
+end
+
+function skill_cast_spell(battle, skill)
+    skill.caster_end = false
+    skill.target_end = false
+    skill.spell_combo_counter = skill.spell_combo_counter + 1
+
+    local master = skill.master
+    local cast_action = master:GetAvatar(ACTION_CAST)
+    cast_action:Reset()
+    cast_action:SetLoop(-1)
+    cast_action:AddFrameCallback(cast_action:GetGroupFrameCount()/2,function()
+        for target_i,effect in ipairs(skill.effects) do    
+            local target = actor_manager_fetch_player_by_id(effect.target_id)
+            if skill.spell_combo_counter <= effect.combo then
+                if skill.sub_type ~= SKILL_SUBTYPE_DEFAULT then
+                    skill.spell_anim = skill_create_spell_anim(skill, effect, target) 
+                else
+                    local behit_action = target:GetAvatar(ACTION_BEHIT)
+                    behit_action:Reset()
+                    behit_action:SetLoop(1)
+                    behit_action:AddFrameCallback(1, function()
+                        skill.spell_anim = skill_create_spell_anim(skill, effect, target)
+                        behit_action:Pause(math.floor(skill.spell_anim:GetGroupFrameTime()* 1000))
+                    end)
+
+                    behit_action:AddStopCallback(function()
+                        if target:IsDead() then
+                            skill_play_target_dead_fly(skill, behit_action, master, target)
+                        else
+                            skill_target_end_counter(skill)
+                        end
+                    end)
+                    target:PushAction(ACTION_BEHIT)
+                    target:MoveActionToBack()
+                end
+                if skill.SkillOnHit then
+                    skill.SkillOnHit(skill, master, target, target_i, skill.spell_combo_counter)
+                end
+            else
+                skill_target_end_counter(skill)
+            end
+        end
+    end)
+    cast_action:AddStopCallback(function()
+        skill.caster_end = true  
+    end)
+    master:PushAction(ACTION_CAST)
+    master:MoveActionToBack()
+end
 
 
 function skill_cast_atk(battle, skill)
-    local master = actor_manager_fetch_player_by_id(skill.master)
+    local master = skill.master
     if not master then return end
-    skill.group_atk_counter = skill.group_atk_counter + 1
+    skill.group_kill_counter = skill.group_kill_counter + 1
     skill.caster_end = false
     skill.target_end = false
 
     master:ClearAction()
     master:PushAction(ACTION_BATIDLE)
-    local atk_info = skill.effects[skill.group_atk_counter]
+    local atk_info = skill.effects[skill.group_kill_counter]
     local target_id = atk_info.target_id
     local target = actor_manager_fetch_player_by_id(target_id)
     master:SetTarget(target)
@@ -249,7 +339,7 @@ function skill_cast_atk(battle, skill)
     end)
     master:PushAction(ACTION_ATTACK)
 
-    if skill.sub_type ~= 3 or skill.group_atk_counter == #skill.effects then
+    if skill.sub_type ~= 3 or skill.group_kill_counter == #skill.effects then
         local runback_action = master:GetAvatar(ACTION_RUNBACK)
         runback_action:Reset()
         runback_action:SetLoop(-1)
@@ -265,19 +355,13 @@ function skill_cast_atk(battle, skill)
         runback_action:AddStopCallback(function()
             master:ReverseDir()
             skill.caster_end = true     
-            local battle = master:GetBattle()
-            if not battle:InBattle(target) then
-                skill.target_end = true
-            end
         end)
 
         master:PushAction(ACTION_RUNBACK)
     else
-        skill.caster_end = true     
-        local battle = master:GetBattle()
-        if not battle:InBattle(target) then
-            skill.target_end = true
-        end
+        attack_action:AddStopCallback(function(anim, counter)
+            skill.caster_end = true     
+        end)
     end
     
     master:MoveActionToBack()
@@ -288,8 +372,20 @@ end
 function skill_take_effect_on_target(skill, effect, master, target, target_i, hit_i,...)
     if skill.type == 'atk' then
         local hp_delta = master:GetAttackDamage(target, false , false,0 ,1)
-        table.insert(effect.hp_deltas, {target = hp_delta})
         target:ModifyHP(-hp_delta)
+        table.insert(effect.hp_deltas, {target = -hp_delta})
+    elseif skill.type =='spell' then
+        if skill.sub_type == SKILL_SUBTYPE_SEAL or skill.sub_type == SKILL_SUBTYPE_AUXI then
+            
+        elseif skill.sub_type == SKILL_SUBTYPE_HEAL then
+            local hp_delta = master:GetSpellDamage(target)
+            target:ModifyHP(hp_delta)
+            table.insert(effect.hp_deltas, {target = hp_delta})
+        elseif skill.sub_type == SKILL_SUBTYPE_DEFAULT then
+            local hp_delta = master:GetSpellDamage(target)
+            target:ModifyHP(-hp_delta)
+            table.insert(effect.hp_deltas, {target = -hp_delta})
+        end
     end
     if skill.SkillOnHit then
         skill.SkillOnHit(skill, master, target ,target_i, hit_i )
@@ -335,7 +431,6 @@ function base_using_skill(battle, skill)
             local effect = {}
             effect.target_id = target_id
             effect.hp_deltas = {}
-            
             local max_hit_cnt = skill.combo > 0 and skill.combo or 1
             for hit_i=1, max_hit_cnt do
                 effect.combo = hit_i
@@ -361,23 +456,33 @@ function base_using_skill(battle, skill)
         return cskill
     else
         local master = actor_manager_fetch_player_by_id(skill.master)
-        if not master then return end
+        if not master or #skill.effects==0 then 
+            skill.state = SKILL_STATE_END
+            return 
+        end
         
+        skill.master = master
         local skill_templ = skill_table[skill.tid]
         skill_init_by_templ(skill, skill_templ)
 
-        if skill.type =='atk' then
-            if skill.SkillOnStart then
-                skill.SkillOnStart(skill, master)
-            end
-    
-            if #skill.effects > 0 then
-                skill.group_atk_counter = 0
-                skill.origin_x, skill.origin_y = master:GetPos()
-                skill_cast_atk(battle, skill)
-            end
+        if skill.SkillOnStart then
+            skill.SkillOnStart(skill, master)
         end
 
+        if skill.type =='atk' then
+            skill.group_kill_counter = 0
+            skill.origin_x, skill.origin_y = master:GetPos()
+            skill_cast_atk(battle, skill)
+        elseif skill.type == 'spell' then
+            skill.spell_combo_counter = 0
+            skill.spell_combo = 0
+            for i, effect in ipairs(skill.effects) do
+                skill.spell_combo = math.max(effect.combo)
+            end
+            
+            skill.target_counter = #skill.effects
+            skill_cast_spell(battle, skill)
+        end
     end
 end
 
@@ -385,13 +490,24 @@ if IsClient() then
     function on_using_skill_update(battle, skill)
         if skill.type == 'atk' then
             if skill.caster_end and skill.target_end then
-                if skill.group_atk_counter == #skill.effects then
+                if skill.group_kill_counter == #skill.effects then
                     skill.state = SKILL_STATE_END
                     if skill.SkillOnEnd then
                         skill.SkillOnEnd(skill, skill.master)
                     end
                 else
                     skill_cast_atk(battle, skill)
+                end
+            end
+        elseif skill.type == 'spell' then
+            if skill.caster_end and skill.target_end then
+                if skill.spell_combo_counter == skill.spell_combo then
+                    skill.state = SKILL_STATE_END
+                    if skill.SkillOnEnd then
+                        skill.SkillOnEnd(skill, skill.master)
+                    end
+                else
+                    skill_cast_spell(battle, skill)
                 end
             end
         end

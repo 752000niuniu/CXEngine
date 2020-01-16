@@ -56,9 +56,11 @@ function ActorMT:AddBuffer(buff_id, turn_cnt)
     buff.turn_counter = 0
     local buffers = self:GetBuffers()
     buffers[buff_id] = buff
-    local templ = buffer_table[buff_id]
-    if templ.BufferOnStart then
-        templ.BufferOnStart(buff,self)
+    if IsClient() then
+        local templ = buffer_table[buff_id]
+        if templ.BufferOnStart then
+            templ.BufferOnStart(buff,self)
+        end
     end
 end
 
@@ -66,10 +68,13 @@ function ActorMT:RemoveBuffer(buff_id)
     local buffers = self:GetBuffers()
     local buff = buffers[buff_id]
     if not buff then return end
-    local templ = buffer_table[buff_id]
-    if templ.BufferOnEnd then
-        templ.BufferOnEnd(buff,self)
+    if IsClient() then
+        local templ = buffer_table[buff_id]
+        if templ.BufferOnEnd then
+            templ.BufferOnEnd(buff,self)
+        end
     end
+
     buffers[buff_id] = nil
 end
 
@@ -78,10 +83,12 @@ function ActorMT:BufferNextTurn()
     if buffers then
         for id,buff in pairs(buffers) do
             buff.turn_counter = buff.turn_counter + 1
-            local templ = buffer_table[id]
-            if templ.BufferOnNextTurn then
-                templ.BufferOnNextTurn(buff,self)
-            end     
+            if IsClient() then
+                local templ = buffer_table[id]
+                if templ.BufferOnNextTurn then
+                    templ.BufferOnNextTurn(buff,self)
+                end     
+            end
             if buff.turn_counter == buff.turn_cnt then
                 self:RemoveBuffer(id)
             end
