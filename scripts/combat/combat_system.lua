@@ -37,7 +37,7 @@ SKILL_STATE_END = 3
 
 
 script_system_dofile('../combat/skill.lua')
-script_system_dofile('../combat/buffer.lua')
+script_system_dofile('../combat/buff.lua')
 
 if IsClient() then
     script_system_dofile('../combat/client/skill.lua')
@@ -232,7 +232,7 @@ function BattleMT:NextTurn()
         end
     end
     for i,actor in ipairs(self.actors) do
-        actor:BufferNextTurn(self.turn)
+        actor:BuffNextTurn(self.turn)
     end
 end
 

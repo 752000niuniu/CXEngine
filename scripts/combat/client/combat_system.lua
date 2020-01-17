@@ -54,7 +54,7 @@ function combat_system_init()
     combat_self_pos =  calc_combat_self_pos(ratio_x, ratio_y)
     combat_enemy_pos =  calc_combat_enemy_pos(ratio_x, ratio_y)
     init_skills()
-    init_buffers()
+    init_buffs()
 end
 
 

@@ -106,5 +106,5 @@ end
 
 function combat_system_init()
 	init_skills()
-	init_buffers()
+	init_buffs()
 end

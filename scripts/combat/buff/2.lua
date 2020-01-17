@@ -1,4 +1,4 @@
-function BufferOnStart(buff, actor, target)
+function BuffOnStart(buff, actor, target)
     if IsClient() then
         local anim = animation_create(23,0xD9463A0C)
         anim:SetLoop(0)
@@ -10,7 +10,7 @@ function BufferOnStart(buff, actor, target)
     end
 end
 
-function BufferOnEnd(buff, actor, target)
+function BuffOnEnd(buff, actor, target)
     if IsClient() then
         buff.anim:Stop()
     end

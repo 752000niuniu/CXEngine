@@ -96,12 +96,12 @@ function init_skill_template_table()
     return ret
 end
 
-function init_buffer_template_table()
-    local tbl  = utils_parse_tsv(vfs_get_tsvpath('buffer'),{
+function init_buff_template_table()
+    local tbl  = utils_parse_tsv(vfs_get_tsvpath('buff'),{
         { name='ID', fmt='i'},
         { name='name'},
         { name='type',def=0},
-        { name='buffer_anim', fmt=res_parse_resid, def=0},
+        { name='buff_anim', fmt=res_parse_resid, def=0},
     })
 
     local ret = {}
@@ -221,7 +221,7 @@ function content_system_init()
     content_system_set_table('actor_template', read_actor_template())
 
     content_system_set_table('skill', init_skill_template_table())
-    content_system_set_table('buffer', init_buffer_template_table())
+    content_system_set_table('buff', init_buff_template_table())
 
     content_system_set_table('school', init_school_templ_table())
     content_system_set_table('equip', init_equip_templ_table())
