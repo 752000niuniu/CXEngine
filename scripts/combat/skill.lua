@@ -46,8 +46,9 @@ function skill_init_by_templ(skill, templ)
 end
 
 function battle_get_group_kill_targets(battle, group_kill, main_target)
+    assert(main_target~=nil)
 	local targets = {}
-	if main_target and not main_target:IsDead() then
+	if not main_target:IsDead() then
 		table.insert(targets, main_target)
 	end
 
@@ -88,6 +89,8 @@ function skill_play_target_dead_fly(skill, behit_action, master, target)
     behit_action:Reset()
     behit_action:Play()
     behit_action:SetLoop(0)
+
+    master:SetTarget(target)
 
     local last_x, last_y = target:GetPos()
     local last_dir = target:GetDir()
@@ -151,6 +154,7 @@ function on_attack_action_callback(attack_action)
     local atk_info = attack_action.atk_info
     atk_info.atk_counter = atk_info.atk_counter + 1
     local master = skill.master
+    master:SetTarget(target)
 
     if skill.SkillOnHit then
         skill.SkillOnHit(skill, master, target, skill.group_kill_counter, atk_info.atk_counter)
@@ -183,6 +187,15 @@ function on_attack_action_callback(attack_action)
         if atk_info.atk_counter == atk_info.combo then
             if atk_info.life_state.target == ACTOR_LIFE_DEAD_FLY then                
                 skill_play_target_dead_fly(skill, behit_action, master, target)
+            elseif atk_info.life_state.target == ACTOR_LIFE_DEAD then
+                local clps_action = target:GetAvatar(ACTION_CLPS)
+                clps_action:Reset()
+                clps_action:SetLoop(0, 1)                                
+                clps_action:AddFrameCallback(clps_action:GetGroupFrameCount(),  function()
+                    skill.target_end = true
+                end)
+                target:PushAction(ACTION_CLPS)
+                target:MoveActionToBack()
             else
                 local dir_x ,dir_y = master:GetAttackVec()
                 target:MoveOnScreenWithDuration(-dir_x*24,-dir_y*24,PERFRAME_TIME*2,true)
@@ -240,6 +253,7 @@ function skill_create_spell_anim(skill, effect, target)
 end
 
 function skill_cast_spell(battle, skill)
+    skill.target_counter = #skill.effects
     skill.caster_end = false
     skill.target_end = false
     skill.spell_combo_counter = skill.spell_combo_counter + 1
@@ -264,8 +278,21 @@ function skill_cast_spell(battle, skill)
                     end)
 
                     behit_action:AddStopCallback(function()
-                        if effect.combo==skill.spell_combo_counter and effect.life_state.target == ACTOR_LIFE_DEAD_FLY then
-                            skill_play_target_dead_fly(skill, behit_action, master, target)
+                        if effect.combo==skill.spell_combo_counter then
+                            if effect.life_state.target == ACTOR_LIFE_DEAD_FLY then
+                                skill_play_target_dead_fly(skill, behit_action, master, target)
+                            elseif effect.life_state.target == ACTOR_LIFE_DEAD then
+                                local clps_action = target:GetAvatar(ACTION_CLPS)
+                                clps_action:Reset()
+                                clps_action:SetLoop(0, 1)                                
+                                clps_action:AddFrameCallback(clps_action:GetGroupFrameCount(),  function()
+                                    skill_target_end_counter(skill)
+                                end)
+                                target:PushAction(ACTION_CLPS)
+                                target:MoveActionToBack()
+                            else
+                                skill_target_end_counter(skill)
+                            end
                         else
                             skill_target_end_counter(skill)
                         end
@@ -532,8 +559,7 @@ function base_using_skill(battle, skill)
             for i, effect in ipairs(skill.effects) do
                 skill.spell_combo = math.max(effect.combo)
             end
-            
-            skill.target_counter = #skill.effects
+        
             skill_cast_spell(battle, skill)
         end
     end
@@ -605,9 +631,17 @@ function process_turn_command(battle, master_id, target_id, skill_id)
 	skill.state = SKILL_STATE_DEFAULT
 
 	local target = battle:FindActor(target_id)
-	if target then
-		skill.target = target
+    if not target then
+        local targets = {}
+        for i,actor in ipairs(battle.actors) do
+            if actor:GetProperty(PROP_TEAM_TYPE) ~= master:GetProperty(PROP_TEAM_TYPE) then
+                table.insert(targets, actor)
+            end
+        end
+        if #targets == 0 then return end
+        target = targets[math.random(1,#targets)]
 	end
+    skill.target = target
 	skill.turn = battle.turn
 
 	skill.templ = skill_table[skill_id]

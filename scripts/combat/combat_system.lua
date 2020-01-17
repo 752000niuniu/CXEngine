@@ -169,7 +169,6 @@ function BattleMT:StartBattle()
 
     if IsServer() then
         for i,actor in ipairs(self.actors) do
-            actor:SetProperty(PROP_TURN_READY,false)
             actor:SetProperty(PROP_HP,actor:GetMaxHP())
         end
     else
@@ -226,6 +225,7 @@ function BattleMT:NextTurn()
     self.state = BATTLE_TURN_STAND_BY
     if IsServer() then
         for i,actor in ipairs(self.actors) do
+            actor:SetProperty(PROP_TURN_READY,false)
             if not actor:IsPlayer() then
                 self:AutoCommand(actor)
             end

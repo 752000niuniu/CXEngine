@@ -74,7 +74,7 @@ function combat_system_actor_ev_on_click(actor, button, x, y)
     msg.master = player:GetID()
     msg.target = actor:GetID()
     msg.skill_id = player:GetProperty(PROP_USING_SKILL)
-    assert(msg.skill_id ~= 0)
+    assert(msg.skill_id ~= 0 and msg.skill_id < 300)
 
     net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
 
@@ -304,5 +304,6 @@ function combat_system_remove_from_battle(_actor_)
     battle:RemoveActor(_actor_)
 end
 
-stub[PTO_S2C_COMBAT_LEAVE_BATTLE] = function(resp)
+stub[PTO_S2C_COMBAT_END_BATTLE] = function(resp)
+    battle:EndBattle()
 end 

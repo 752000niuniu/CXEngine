@@ -315,6 +315,17 @@ void Animation::AddLoopCallback(int funcRef)
 	m_LoopCBRef = funcRef;
 }
 
+
+void Animation::RemoveLoopCallback()
+{
+	if (m_LoopCBRef != -1) {
+		auto* L = script_system_get_luastate();
+		luaL_unref(L, LUA_REGISTRYINDEX, m_LoopCBRef);
+		m_LoopCBRef = -1;
+	}
+}
+
+
 void Animation::AddUpdateCallback(int funcRef)
 {
 	m_UpdateCBRef = funcRef;
@@ -988,7 +999,8 @@ int animation_unlock_frame(lua_State* L) {
 int animation_set_loop(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	int loop = (int)lua_tointeger(L, 2);
-	animation->SetLoop(loop);
+	int loop_mode = (int)luaL_optinteger(L, 3, ANIMATION_LOOPMODE_RESTART);
+	animation->SetLoop(loop, loop_mode);
 	return 0;
 }
 
@@ -1089,6 +1101,13 @@ int animation_remove_update_callback(lua_State*L){
 	animation->RemoveUpdateCallback();
 	return 0;
 }
+
+int animation_remove_loop_callback(lua_State* L) {
+	auto* animation = lua_check_animation(L, 1);
+	animation->RemoveLoopCallback();
+	return 0;
+}
+
 
 int animation_get_key_frame(lua_State*L) {
 	auto* animation = lua_check_animation(L, 1);
@@ -1207,6 +1226,7 @@ luaL_Reg MT_ANIMATION[] = {
 { "AddLoopCallback", animation_add_loop_callback},
 { "AddUpdateCallback", animation_add_update_callback},
 { "RemoveUpdateCallback", animation_remove_update_callback},
+{ "RemoveLoopCallback", animation_remove_loop_callback},
 { "GetKeyFrame", animation_get_key_frame},
 { "Reset", animation_reset},
 { "SetOffsetX", animation_set_offset_x},

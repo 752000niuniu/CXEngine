@@ -99,6 +99,11 @@ function ui_show_bag()
             player:DismissTeam()
         end
     end
+    imgui.SameLine()
+    if imgui.Button('结束战斗') then
+        local player = actor_manager_fetch_local_player()
+        net_send_message(PTO_C2S_COMBAT_END_BATTLE, cjson.encode( { pid = player:GetID()}) ) 
+    end
 
 
     if imgui.CollapsingHeader('MyPal') then

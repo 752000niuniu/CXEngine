@@ -93,7 +93,17 @@ end
 
 
 stub[PTO_C2S_COMBAT_END_BATTLE] = function(req) 
+	local actor = actor_manager_fetch_player_by_id(req.pid)
+	local battle = actor:GetBattle()
+	if not battle then return end
 	
+	for i,actor in ipairs(battle.actors) do
+		if actor:IsPlayer() then
+			local msg = {}
+			net_send_message(actor:GetID(), PTO_S2C_COMBAT_END_BATTLE, cjson.encode(msg))
+		end
+	end
+	battle:EndBattle()
 end
 
 function combat_system_battle_on_actor_leave(pid)

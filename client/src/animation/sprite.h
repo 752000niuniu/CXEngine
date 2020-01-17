@@ -141,6 +141,7 @@ public:
 	void AddStartCallback(int funcRef);
 	void AddLoopCallback(int funcRef);
 	void AddUpdateCallback(int funcRef);
+	void RemoveLoopCallback();
 	void RemoveUpdateCallback();
 
 	void CallLuaFunByRef(int& ref);
