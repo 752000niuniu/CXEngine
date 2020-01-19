@@ -12,7 +12,7 @@ function SkillOnSpell(skill, actor, hit_actor)
 end
 
 function SkillOnAfterSpell(skill, actor, hit_actor)
-    hit_actor:AddBuff(1,2)
+    actor_add_buff(hit_actor, 1)
 end
 
 function SkillOnEnd(skill, actor, target)

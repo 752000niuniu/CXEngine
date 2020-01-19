@@ -102,6 +102,7 @@ function init_buff_template_table()
         { name='name'},
         { name='type',def=0},
         { name='buff_anim', fmt=res_parse_resid, def=0},
+        { name='turn', fmt='i', def=0},
     })
 
     local ret = {}

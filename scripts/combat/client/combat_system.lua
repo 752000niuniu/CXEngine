@@ -65,6 +65,7 @@ function combat_system_actor_ev_on_click(actor, button, x, y)
 
     local player = actor_manager_fetch_local_player()
     player:SetTarget(actor)
+    
 
     if ACTOR_CLICK_MODE == ACTOR_CLICK_MODE_ATTACK then
         player:SetProperty(PROP_USING_SKILL,1)
@@ -228,7 +229,7 @@ stub[PTO_S2C_COMBAT_EXECUTE] = function(all_skills)
         skill.state = SKILL_STATE_DEFAULT
         table.insert(battle_commands,skill)
     end
-    battle.state = BTTALE_TURN_EXECUTE 
+    battle.state = BTTALE_TURN_EXECUTE
 end
 
 function on_battle_start(self)

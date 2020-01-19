@@ -36,7 +36,6 @@ function combat_system_remove_battle(battle_id)
 	__battles__[battle.id]  = nil
 end
 
-
 stub[PTO_C2S_COMBAT_START] = function(req)
 	local atk = actor_manager_fetch_player_by_id(req.atk)
 	local def = actor_manager_fetch_player_by_id(req.def)
@@ -46,7 +45,6 @@ stub[PTO_C2S_COMBAT_START] = function(req)
 	resp.battle = battle:Serialize()
 	net_send_message_to_all_players(PTO_S2C_COMBAT_START,cjson.encode(resp))
 end
-
 
 function handle_turn_commands(battle)
 	local send_pids = {}
@@ -69,13 +67,12 @@ function handle_turn_commands(battle)
 	end
 end
 
-
-
 stub[PTO_C2S_COMBAT_CMD] = function(req)
 	local master = actor_manager_fetch_player_by_id(req.master)
 	local battle =  master:GetBattle()
 	if not battle then return cxlog_info('battle not exist!') end
 	if battle.state ~= BATTLE_TURN_STAND_BY then return cxlog_info('battle is not in standby') end
+	if master:GetProperty(PROP_TURN_READY) then return end
 	battle:AddCommand(master, req)
 
 	if battle:CheckStandBy() then

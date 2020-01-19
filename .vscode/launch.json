@@ -39,6 +39,14 @@
             "cwd": "${workspaceFolder}\\"
         },
         {
+            "name": "Client10STDIO",
+            "type": "cxlua",
+            "request": "attach",
+            "ip": "127.0.0.1",
+            "port": 9610,
+            "cwd": "${workspaceFolder}\\"
+        },
+        {
             "name": "LauncherSTDIO",
             "type": "cxlua",
             "request": "attach",

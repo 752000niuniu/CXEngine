@@ -661,30 +661,46 @@ skill 对象用来做表现
 
 
 1. 攻击性技能
-
 逻辑 ： 
     Atk HP+ 
     Def HP-
     combo攻击 Def--
-    群体攻击 Def_HP1- Def_HP2- 
+    群体攻击 Def_HP1 - Def_HP2- 
     Def倒地（死亡），Def被击飞
     被保护Def_HP1- Def_HP2-
-
 表现 ：
     单体攻击 群体攻击
 
 2. 辅助性技能
-
 逻辑：Caster HP+
     Caster1_HP+ Caster2_HP+
     防御 攻击 增加 
     法防 灵力增加 增加BUFF
     抗封
     解封
-    复活
-    
+    复活    
 表现：
 
 3. 控制技能
-
 逻辑：无法物理攻击 无法法术攻击 催眠 无法使用特技 
+
+
+
+buff设计
+
+控制技能 
+辅助技能 
+
+持续回合
+
+buff效果 加减属性  加减hp
+每回合开始的时候进行buff结算  buff是否被移除 buff效果显示
+
+回合中会有buff增加 buff减去的事件
+比方说封印和解封
+
+所以skill里的effect会有是否成功的结果  施法成功 封印成功 解封成功 等
+
+
+
+

@@ -20,7 +20,22 @@ script_system_dofile('../combat/combat_system.lua')
 
 function server_reload()
     cxlog_info('server_reload')
-    script_system_dofile('main.lua')
+
+    script_system_dofile('../share/enums.lua')
+    script_system_dofile('../share/enums_protocol.lua')
+    script_system_dofile('../share/vfs.lua')
+    script_system_dofile('../share/utils.lua')
+    script_system_dofile('../share/content_system.lua')
+    script_system_dofile('../share/actor_metatable.lua')
+
+    script_system_dofile('server.lua')
+    script_system_dofile('login_system.lua')
+    script_system_dofile('actor_system.lua')
+    script_system_dofile('scene_system.lua')
+    script_system_dofile('team_system.lua')
+    script_system_dofile('../combat/combat_system.lua')
+
+
     content_system_init()
     combat_system_init()
 end

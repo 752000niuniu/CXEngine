@@ -47,7 +47,7 @@ BattleMT = {}
 function BattleMT:new(o)
     o = o or {
         id = utils_next_uid('battle'),
-		actors = {},
+        actors = {},
 		cmds = {},
         state = BATTLE_DEFAULT,
         turn = 0
@@ -231,9 +231,7 @@ function BattleMT:NextTurn()
             end
         end
     end
-    for i,actor in ipairs(self.actors) do
-        actor:BuffNextTurn(self.turn)
-    end
+    process_turn_buffs(self)
 end
 
 
