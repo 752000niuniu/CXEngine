@@ -5,7 +5,6 @@ function BuffOnStart(buff, actor, target)
         -- local offy = -avatar:GetFrameKeyY() + avatar:GetFrameHeight() / 2.0
         anim:SetOffsetY(10)
         buff.anim = anim 
-        buff.turn_cnt = 2
         actor:AddBackAnim(anim)
     end
 end

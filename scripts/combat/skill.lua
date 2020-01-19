@@ -443,7 +443,7 @@ function skill_take_effect_on_target(skill, effect, master, target, target_i, hi
         end
     end
     if skill.SkillOnHit then
-        skill.SkillOnHit(skill, master, target ,target_i, hit_i )
+        skill.SkillOnHit(skill, master, target ,target_i, hit_i)
     end
 end
 
@@ -509,8 +509,8 @@ function base_using_skill(battle, skill)
             local effect = {}
             effect.target_id = target_id
             effect.hp_deltas = {}
-            local max_hit_cnt = skill.combo > 0 and skill.combo or 1
-            for hit_i=1, max_hit_cnt do
+            skill.max_hit_cnt = skill.combo > 0 and skill.combo or 1
+            for hit_i=1, skill.max_hit_cnt do
                 effect.combo = hit_i
                 skill_take_effect_on_target(skill, effect, master, target, target_i, hit_i)
                 if master:IsDead() or target:IsDead() then

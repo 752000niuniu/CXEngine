@@ -137,7 +137,7 @@ function BattleMT:AutoCommand(actor)
     actor:SetProperty(PROP_TURN_READY, true)
 
     local rand = math.random(1,10)
-    if rand >= 4 then
+    if rand >= 0 then
         return
     elseif rand == 2 then
         local cmd = {}
