@@ -65,20 +65,16 @@ function combat_system_actor_ev_on_click(actor, button, x, y)
 
     local player = actor_manager_fetch_local_player()
     player:SetTarget(actor)
-    
 
     if ACTOR_CLICK_MODE == ACTOR_CLICK_MODE_ATTACK then
         player:SetProperty(PROP_USING_SKILL,1)
     end
-
     local msg = {}
     msg.master = player:GetID()
     msg.target = actor:GetID()
     msg.skill_id = player:GetProperty(PROP_USING_SKILL)
     assert(msg.skill_id ~= 0 and msg.skill_id < 300)
-
-    net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
-
+    net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg))
     ACTOR_CLICK_MODE = ACTOR_CLICK_MODE_ATTACK
     player:SetProperty(PROP_TURN_READY, true)
 end

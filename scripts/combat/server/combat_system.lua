@@ -7,27 +7,34 @@ function ActorMT:GetBattle()
 	return __battles__[battle_id]
 end
 
+function combat_system_add_team_by_actor(battle, actor, team_type)
+	if actor:HasTeam() then
+		local team = actor:GetTeam()
+		for i,mem in ipairs(team:GetMembers()) do
+			battle:AddActor(mem, team_type)
+			if mem:IsPlayer() then
+				local summon = mem:GetSummon()
+				if summon then
+					battle:AddActor(summon, team_type)
+				end
+			end
+		end
+	else
+		battle:AddActor(actor,team_type)
+		if actor:IsPlayer() then
+			local summon = actor:GetSummon()
+			if summon then
+				battle:AddActor(summon, team_type)
+			end
+		end
+	end
+end
+
 function combat_system_create_battle(atk_actor, def_actor)
 	local battle = BattleMT:new()
-
-	if atk_actor:HasTeam() then
-		local team = atk_actor:GetTeam()
-		for i,mem in ipairs(team:GetMembers()) do
-			battle:AddActor(mem, TEAM_TYPE_ATTACKER)
-		end
-	else
-		battle:AddActor(atk_actor,TEAM_TYPE_ATTACKER)
-	end
-
-	if def_actor:HasTeam() then
-		local team = def_actor:GetTeam()
-		for i,mem in ipairs(team:GetMembers()) do
-			battle:AddActor(mem, TEAM_TYPE_DEFENDER)
-		end
-	else
-		battle:AddActor(def_actor, TEAM_TYPE_DEFENDER)
-	end
-
+	combat_system_add_team_by_actor(battle, atk_actor, TEAM_TYPE_ATTACKER)
+	combat_system_add_team_by_actor(battle, def_actor, TEAM_TYPE_DEFENDER)
+	
 	__battles__[battle.id] = battle
 	return battle
 end

@@ -1,19 +1,7 @@
 script_system_dofile('../share/vfs.lua')
 script_system_dofile('../share/utils.lua')
 
-function read_database_file(path)
-    local file = io.open(path,'r')
-    if not file then
-        local fw = io.open(path,'w')
-        fw:close()
-        file = io.open(path,'r')
-    end
-    local data = file:read('a')
-	file:close()
-	if data~='' then
-		return cjson.decode(data)
-	end
-end
+
 
 local player_database = {}
 function read_player_database()
@@ -32,7 +20,7 @@ stub[PTO_C2C_SAVE_PLAYER_DATABASE] = function()
 	local pinfos = {}
     for pid, p in pairs(players) do
         if p:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_PLAYER then
-            table.insert(pinfos, p:GetProperties())
+			table.insert(pinfos, p:GetProperties())
         end
     end
     table.sort(pinfos, function(a,b) return a[PROP_ID] < b[PROP_ID] end)
@@ -71,12 +59,6 @@ stub[PTO_C2C_SAVE_ACCOUNT_DATABASE] = function()
     if not fw then return end
 	fw:write(cjson.encode(accounts))
 	fw:close()
-end
-
-
-function server_thread_start()
-	read_account_database()
-	read_player_database()
 end
 
 function server_on_disconnect(pid)

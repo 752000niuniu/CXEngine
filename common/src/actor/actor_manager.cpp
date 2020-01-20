@@ -112,6 +112,24 @@ int lua_actor_manager_create_actor(lua_State*L)
 	return 1;
 }
 
+
+int lua_create_actor(lua_State* L)
+{
+	uint64_t pid = (uint64_t)lua_tointeger(L, 1);
+	Actor* actor = new Actor(pid);
+	lua_push_actor(L, actor);
+	return 1;
+}
+
+
+int lua_destroy_actor(lua_State* L)
+{
+	Actor* actor = lua_check_actor(L, 1);
+	delete actor;
+	return 0;
+}
+
+
 Player* actor_manager_create_player(uint64_t pid) {
 	if(g_Players.find(pid) != g_Players.end()){
 		delete g_Players[pid];
@@ -181,5 +199,8 @@ void luaopen_actor_manager(lua_State* L) {
 	script_system_register_function(L, actor_manager_draw);
 	script_system_register_function(L, actor_manager_set_scene);
 	script_system_register_luac_function(L, actor_manager_set_local_player);
+
+	script_system_register_luac_function(L, lua_create_actor);
+	script_system_register_luac_function(L, lua_destroy_actor);
 }
 

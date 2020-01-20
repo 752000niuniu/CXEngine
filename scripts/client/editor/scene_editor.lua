@@ -1,9 +1,6 @@
-
-
-
 local select_scene_name = 0
 local str_templ_name = imgui.CreateStrbuf('', 512)
-local  copy_actor_type = ACTOR_TYPE_PLAYER
+local copy_actor_type = ACTOR_TYPE_PLAYER
  
 local cbx_draw_mask = true
 local cbx_draw_strider = true

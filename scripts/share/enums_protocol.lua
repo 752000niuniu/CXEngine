@@ -51,3 +51,9 @@ PTO_S2C_COMBAT_LEAVE_BATTLE = enum_next()
 
 PTO_C2S_COMBAT_END_BATTLE = enum_next()
 PTO_S2C_COMBAT_END_BATTLE = enum_next()
+
+PTO_C2S_CREATE_SUMMON = enum_next()
+PTO_S2C_CREATE_SUMMON_RESP = enum_next()
+
+PTO_C2S_FETCH_SUMMON = enum_next()
+PTO_S2C_FETCH_SUMMON_RESP = enum_next()

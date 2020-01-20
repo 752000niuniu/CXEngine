@@ -201,6 +201,17 @@ function ui_show_bag()
     end
 
     if imgui.CollapsingHeader('CMD') then
+       
+        if imgui.Button('拉取召唤兽') then
+            local player = actor_manager_fetch_local_player()
+            local msg = {}
+            msg.pid = player:GetID()
+
+            net_send_message(PTO_C2S_FETCH_SUMMON, cjson.encode(msg)) 
+        end
+
+
+
         if imgui.Button('满血') then
             net_manager_player_dostring(string.format([[ 
                 player:SetProperty(PROP_HP, %d) 

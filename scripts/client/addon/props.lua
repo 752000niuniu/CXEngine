@@ -20,6 +20,21 @@ function ui_show_props()
 
     local actor = actor_manager_fetch_player_by_id(selected_actor_uid)
     if actor then
+        if imgui.Button('创建召唤兽') then
+            local player = actor_manager_fetch_local_player()
+            local msg = {}
+            msg.owner = player:GetID()
+            msg.props = actor:GetProperties()
+
+            net_send_message(PTO_C2S_CREATE_SUMMON, cjson.encode(msg)) 
+        end
+
+        if imgui.Button('导出召唤兽') then
+            net_manager_player_dostring([[
+                summons_on_save()
+            ]])
+        end
+
         edit_prop_lv = actor:GetProperty(PROP_LV)
         imgui.PushItemWidth(80)
         res , edit_prop_lv =  imgui.DragInt('等级', edit_prop_lv)

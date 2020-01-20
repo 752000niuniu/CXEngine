@@ -73,12 +73,7 @@ void GameServer::Start()
 
 	script_system_register_luac_function(m_L, insert_pid_connection_pair);
 	script_system_register_luac_function(m_L, erase_pid_connection_pair);
-
-	
-
-	script_system_call_function(m_L, "server_thread_start");
 	m_Server.Start();
-	cxlog_info("server start\n");
 }
 
 void GameServer::Stop()

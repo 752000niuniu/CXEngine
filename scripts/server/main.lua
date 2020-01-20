@@ -27,10 +27,13 @@ function server_reload()
     script_system_dofile('../share/utils.lua')
     script_system_dofile('../share/content_system.lua')
     script_system_dofile('../share/actor_metatable.lua')
+
+    script_system_dofile('actor_system.lua')
     script_system_dofile('../combat/combat_system.lua')
 
     content_system_init()
     combat_system_init()
+    summons_on_load()
 end
 
 function on_script_system_init()
@@ -38,6 +41,10 @@ function on_script_system_init()
     combat_system_init()
     
     scene_system_init()
+
+    read_account_database()
+    read_player_database()
+    summons_on_load()
 end
 
 local prop_templ_tbl

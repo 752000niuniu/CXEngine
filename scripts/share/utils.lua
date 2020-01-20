@@ -412,6 +412,20 @@ function prop_id_to_name(prop_id)
     return tbl[prop_id+1].name
 end
 
+function read_database_file(path)
+    local file = io.open(path,'r')
+    if not file then
+        local fw = io.open(path,'w')
+        fw:close()
+        file = io.open(path,'r')
+    end
+    local data = file:read('a')
+	file:close()
+	if data~='' then
+		return cjson.decode(data)
+	end
+end
+
 function format_lua_path(path)
      if string.find(path, '@') == 1 then
         path = string.sub(path, 2)
