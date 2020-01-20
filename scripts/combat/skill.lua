@@ -22,8 +22,6 @@ function init_skills()
                 skill.SkillOnStart = module.SkillOnStart
                 skill.SkillOnEnd = module.SkillOnEnd
                 skill.SkillOnHit = module.SkillOnHit
-                skill.SkillOnSpell = module.SkillOnSpell
-                skill.SkillOnAfterSpell = module.SkillOnAfterSpell
             else
                 cxlog_info(fun,err)
             end
@@ -41,8 +39,6 @@ function skill_init_by_templ(skill, templ)
 	skill.SkillOnStart = templ.SkillOnStart
 	skill.SkillOnEnd = templ.SkillOnEnd
 	skill.SkillOnHit = templ.SkillOnHit
-	skill.SkillOnSpell = templ.SkillOnSpell
-	skill.SkillOnAfterSpell = templ.SkillOnAfterSpell	
 end
 
 function battle_get_group_kill_targets(battle, group_kill, main_target)
@@ -156,10 +152,6 @@ function on_attack_action_callback(attack_action)
     local master = skill.master
     master:SetTarget(target)
 
-    if skill.SkillOnHit then
-        skill.SkillOnHit(skill, master, target, skill.group_kill_counter, atk_info.atk_counter)
-    end
-
     local behit_action = target:GetAvatar(ACTION_BEHIT)
     behit_action:Reset()
     behit_action:SetLoop(-1)
@@ -167,11 +159,16 @@ function on_attack_action_callback(attack_action)
         local avatar = target:GetAvatar()
         local pack, was = res_decode(skill.atk_anim)
         local anim = animation_create(pack,was)
+        skill.anim = anim
         anim:SetLoop(-1)
         local offy = -avatar:GetFrameKeyY() + avatar:GetFrameHeight() / 2.0
         anim:SetOffsetY(offy)  
+        
+        if skill.SkillOnHit then
+            skill.SkillOnHit(skill, master, target, skill.group_kill_counter, atk_info.atk_counter)
+        end
         target:AddFrontAnim(anim)
-
+        
         local damage = atk_info.hp_deltas[atk_info.atk_counter].target
         target:ShowBeatNumber(damage)
         -- actor:ShowBeatNumber(damage)
@@ -222,33 +219,32 @@ function skill_create_spell_anim(skill, effect, target)
     local resid = skill.atk_anim 
     local pack, was = res_decode(resid)
     local anim = animation_create(pack,was)
-    skill.spell_anim = anim
+    skill.anim = anim
     anim:SetLoop(-1)
     if skill.sub_type == SKILL_SUBTYPE_HEAL then
         anim:SetOffsetY(-20)
-    end
-    target:AddFrontAnim(anim)
-    if skill.SkillOnSpell then
-        skill.SkillOnSpell(skill, skill.master, target)
-    end
-	
-    if skill.sub_type == SKILL_SUBTYPE_DEFAULT then
-        local hp_delta = effect.hp_deltas[skill.spell_combo_counter].target
-        target:ShowBeatNumber(hp_delta)
+    elseif skill.sub_type == SKILL_SUBTYPE_SEAL then
+        anim:SetOffsetY(-30)
     end
     
-    anim:AddStopCallback(function()
-        if skill.sub_type == SKILL_SUBTYPE_HEAL then
+    
+    if skill.sub_type ~= SKILL_SUBTYPE_DEFAULT then
+        anim:AddStopCallback(function()
+            if skill.SkillOnHit then
+                skill.SkillOnHit(skill, master, target, target_i, skill.spell_combo_counter)
+            end
+            skill_target_end_counter(skill)
+        end)
+    else
+        if skill.SkillOnHit then
+            skill.SkillOnHit(skill, master, target, target_i, skill.spell_combo_counter)
+        end
+        if skill.sub_type == SKILL_SUBTYPE_DEFAULT or skill.sub_type == SKILL_SUBTYPE_HEAL then
             local hp_delta = effect.hp_deltas[skill.spell_combo_counter].target
             target:ShowBeatNumber(hp_delta)
         end
-        if skill.SkillOnAfterSpell then
-            skill.SkillOnAfterSpell(skill, skill.master, target)
-        end
-        if skill.sub_type ~= SKILL_STATE_DEFAULT then
-            skill_target_end_counter(skill)
-        end
-    end)
+    end
+    target:AddFrontAnim(anim)
     return anim
 end
 
@@ -274,7 +270,7 @@ function skill_cast_spell(battle, skill)
                     behit_action:SetLoop(1)
                     behit_action:AddFrameCallback(1, function()
                         skill_create_spell_anim(skill, effect, target)
-                        behit_action:Pause(math.floor(skill.spell_anim:GetGroupFrameTime()* 1000))
+                        behit_action:Pause(math.floor(skill.anim:GetGroupFrameTime()* 1000))
                     end)
 
                     behit_action:AddStopCallback(function()
@@ -299,9 +295,6 @@ function skill_cast_spell(battle, skill)
                     end)
                     target:PushAction(ACTION_BEHIT)
                     target:MoveActionToBack()
-                end
-                if skill.SkillOnHit then
-                    skill.SkillOnHit(skill, master, target, target_i, skill.spell_combo_counter)
                 end
             else
                 skill_target_end_counter(skill)

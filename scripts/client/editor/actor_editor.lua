@@ -204,8 +204,7 @@ function on_actor_editor_update()
         imgui.InputTextMultiline('##source', SourceSB, 400, 200,ImGuiInputTextFlags_AllowTabInput)
         if imgui.Button('服务端执行') then
             local code = SourceSB:str()
-            local msg = {code = code} 
-            net_send_message(PTO_C2S_DOSTRING, cjson.encode(msg) )
+            net_manager_player_dostring(code)
         end
 
         imgui_std_horizontal_button_layout(LoginDebugButtons,function(t,k) 

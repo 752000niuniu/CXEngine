@@ -54,6 +54,16 @@ function handle_turn_commands(battle)
 		end
 	end
 
+	table.sort(battle.cmds, function(a,b)
+		local pa = actor_manager_fetch_player_by_id(a.master)
+		local pb = actor_manager_fetch_player_by_id(b.master)
+		if pa and pb then
+			return pa:CalcSpeed() > pb:CalcSpeed()
+		else
+			return true
+		end
+	end)
+	
 	local all_skills = {}
 	for i,cmd in ipairs(battle.cmds) do
 		local skill_info = process_turn_command(battle,cmd.master,cmd.target,cmd.skill_id)
