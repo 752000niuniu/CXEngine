@@ -496,6 +496,7 @@ function base_using_skill(battle, skill)
     if IsServer() then
         local cskill = init_cskill(skill)
         local master = skill.master
+
         if skill.SkillOnStart then
             skill.SkillOnStart(skill, master)
         end
@@ -611,14 +612,16 @@ end
 
 function on_using_skill(battle, skill)
     if skill.state ~= SKILL_STATE_DEFAULT then return end
+
     skill.state = SKILL_STATE_START
     if skill.type == 'atk' or skill.type == 'spell' then
         return base_using_skill(battle,skill)
     elseif skill.type == 'flee' then
         return on_using_flee_skill(battle, skill)
+    elseif skill.type == 'idle' then
+        return
     end
 end
-
 
 function process_turn_command(battle, master_id, target_id, skill_id)
 	local master = battle:FindActor(master_id)
@@ -646,6 +649,19 @@ function process_turn_command(battle, master_id, target_id, skill_id)
 
 	skill.templ = skill_table[skill_id]
 	skill_init_by_templ(skill, skill.templ)			
+
+    cxlog_info('ban', master:GetProperty(PROP_COMBAT_SKILL_BAN_SPELL), 
+    master:GetProperty(PROP_COMBAT_SKILL_BAN_ATK)) 
+
+    if skill_id == 1 then
+        if master:GetProperty(PROP_COMBAT_SKILL_BAN_ATK) then
+           return 
+        end
+    elseif skill.type == 'atk' or skill.type == 'spell' then
+        if master:GetProperty(PROP_COMBAT_SKILL_BAN_SPELL) then
+           return 
+        end
+    end
 
 	return on_using_skill(battle, skill)
 end

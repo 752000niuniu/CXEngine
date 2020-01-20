@@ -27,14 +27,7 @@ function server_reload()
     script_system_dofile('../share/utils.lua')
     script_system_dofile('../share/content_system.lua')
     script_system_dofile('../share/actor_metatable.lua')
-
-    script_system_dofile('server.lua')
-    script_system_dofile('login_system.lua')
-    script_system_dofile('actor_system.lua')
-    script_system_dofile('scene_system.lua')
-    script_system_dofile('team_system.lua')
     script_system_dofile('../combat/combat_system.lua')
-
 
     content_system_init()
     combat_system_init()

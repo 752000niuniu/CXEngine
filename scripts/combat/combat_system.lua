@@ -138,6 +138,14 @@ function BattleMT:AutoCommand(actor)
 
     local rand = math.random(1,10)
     if rand >= 0 then
+        local cmd = {}
+        local target = self:RandomSelectEnemy(actor)
+        cmd.type = 'ATK'
+        cmd.master = actor:GetID()
+        cmd.target = target:GetID()
+        cmd.skill_id = 1
+        table.insert(self.cmds, cmd)
+
         return
     elseif rand == 2 then
         local cmd = {}

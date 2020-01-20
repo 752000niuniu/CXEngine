@@ -134,7 +134,11 @@ function combat_system_imgui_update()
     end
 
     if imgui.Button('防御##player') then
-
+        local player = actor_manager_fetch_local_player()
+        local msg = {}
+        msg.master = player:GetID()
+        msg.skill_id = 264
+        net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
     end
 
     if imgui.Button('召唤##player') then

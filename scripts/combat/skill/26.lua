@@ -1,10 +1,11 @@
 
 function SkillOnStart(skill, actor, target)
-    -- 
+
 end
 
 function SkillOnHit(skill, actor, hit_actor)
     -- hit_actor:AddBuff(1,skill.turn)
+    actor_add_buff(hit_actor, 30)
 end
 
 function SkillOnSpell(skill, actor, hit_actor)
@@ -12,7 +13,7 @@ function SkillOnSpell(skill, actor, hit_actor)
 end
 
 function SkillOnAfterSpell(skill, actor, hit_actor)
-    -- actor_add_buff(hit_actor, 1)
+    -- actor_add_buff(hit_actor, 30)
 end
 
 function SkillOnEnd(skill, actor, target)
