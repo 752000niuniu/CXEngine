@@ -44,13 +44,10 @@ int lua_cxlog_warn(lua_State* L)
 
 void Logger::Print(const char *format, ...)
 {
-	char* logstr = new char[20480];
 	va_list ap;
 	va_start(ap, format);
-	vsprintf(logstr, format, ap);
+	vprintf(format, ap);
 	va_end(ap);
-	printf("%s", utils::Utf8ToGB2312(logstr).c_str());
-	delete[] logstr;
 }
 
 void luaopen_logger(lua_State* L) {
