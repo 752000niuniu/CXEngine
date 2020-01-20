@@ -74,9 +74,11 @@ end
 local ActorMT = actor_get_metatable()
 function ActorMT:AddSummon(summon)
     local uids_str = self:GetProperty(PROP_SUMMON_UIDS) 
+    uids_str = '[]'
     local uids = cjson.decode(uids_str) 
     table.insert(uids, summon:GetID())
     summon:SetProperty(PROP_SUMMON_HAS_OWNER, true) 
+    summon:SetProperty(PROP_SUMMON_OWNER, self:GetID()) 
     self:SetProperty(PROP_SUMMON_UIDS, cjson.encode(uids))
 end
 

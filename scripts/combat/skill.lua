@@ -260,7 +260,7 @@ function skill_cast_spell(battle, skill)
     cast_action:SetLoop(-1)
     cast_action:AddFrameCallback(cast_action:GetGroupFrameCount()/2,function()
         for target_i,effect in ipairs(skill.effects) do    
-            local target = actor_manager_fetch_player_by_id(effect.target_id)
+            local target = battle:FindActor(effect.target_id)
             if skill.spell_combo_counter <= effect.combo then
                 if skill.sub_type ~= SKILL_SUBTYPE_DEFAULT then
                     skill_create_spell_anim(skill, effect, target) 
@@ -320,7 +320,7 @@ function skill_cast_atk(battle, skill)
     master:PushAction(ACTION_BATIDLE)
     local atk_info = skill.effects[skill.group_kill_counter]
     local target_id = atk_info.target_id
-    local target = actor_manager_fetch_player_by_id(target_id)
+    local target = battle:FindActor(target_id)
     master:SetTarget(target)
     master:FaceTo(target)
 
@@ -465,7 +465,7 @@ function check_life_state(actor)
 end
 
 function cskill_to_skill(skill)
-    skill.master = actor_manager_fetch_player_by_id(skill.master)
+    skill.master = battle:FindActor(skill.master)
     local skill_templ = skill_table[skill.tid]
     skill_init_by_templ(skill, skill_templ)
     return skill

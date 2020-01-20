@@ -19,27 +19,27 @@ combat_self_pos = combat_self_pos or {}
 combat_enemy_pos = combat_enemy_pos or {}
 function calc_combat_self_pos(ratio_x, ratio_y)
 	return {
+        { x = 465.0 * ratio_x, y = 315.0 * ratio_y },
+		{ x = 405.0 * ratio_x, y = 345.0 * ratio_y },
+		{ x = 525.0 * ratio_x, y = 285.0 * ratio_y },
+		{ x = 345.0 * ratio_x, y = 375.0 * ratio_y },
+		{ x = 585.0 * ratio_x, y = 255.0 * ratio_y },
 		{ x = 415.0 * ratio_x, y = 275.0 * ratio_y },
 		{ x = 355.0 * ratio_x, y = 305.0 * ratio_y },
 		{ x = 475.0 * ratio_x, y = 245.0 * ratio_y },
 		{ x = 295.0 * ratio_x, y = 335.0 * ratio_y },
 		{ x = 535.0 * ratio_x, y = 215.0 * ratio_y },
-		{ x = 465.0 * ratio_x, y = 315.0 * ratio_y },
-		{ x = 405.0 * ratio_x, y = 345.0 * ratio_y },
-		{ x = 525.0 * ratio_x, y = 285.0 * ratio_y },
-		{ x = 345.0 * ratio_x, y = 375.0 * ratio_y },
-		{ x = 585.0 * ratio_x, y = 255.0 * ratio_y },
 	}
 end
 
 function calc_combat_enemy_pos(ratio_x, ratio_y)
 	return {
-		{ x = 175.0 * ratio_x, y = 170.0 * ratio_y },   
+        { x = 175.0 * ratio_x, y = 170.0 * ratio_y },   
 		{ x = 115.0 * ratio_x, y = 200.0 * ratio_y },   
 		{ x = 235.0 * ratio_x, y = 140.0 * ratio_y },   
 		{ x = 55.0  * ratio_x, y = 230.0 * ratio_y },  
 		{ x = 295.0 * ratio_x, y = 110.0 * ratio_y },   
-		{ x = 220.0 * ratio_x, y = 210.0 * ratio_y },   
+        { x = 220.0 * ratio_x, y = 210.0 * ratio_y },   
 		{ x = 160.0 * ratio_x, y = 240.0 * ratio_y },   
 		{ x = 280.0 * ratio_x, y = 180.0 * ratio_y },   
 		{ x = 100.0 * ratio_x, y = 270.0 * ratio_y },   
@@ -73,6 +73,7 @@ function combat_system_actor_ev_on_click(actor, button, x, y)
     msg.master = player:GetID()
     msg.target = actor:GetID()
     msg.skill_id = player:GetProperty(PROP_USING_SKILL)
+    msg.battle_id = battle.id
     assert(msg.skill_id ~= 0 and msg.skill_id < 300)
     net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg))
     ACTOR_CLICK_MODE = ACTOR_CLICK_MODE_ATTACK
@@ -134,6 +135,7 @@ function combat_system_imgui_update()
         local msg = {}
         msg.master = player:GetID()
         msg.skill_id = 264
+        msg.battle_id = battle.id
         net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
     end
 
@@ -156,6 +158,7 @@ function combat_system_imgui_update()
         local msg = {}
         msg.master = player:GetID()
         msg.skill_id = 268
+        msg.battle_id = battle.id
         net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
     end
 
@@ -242,18 +245,13 @@ function on_battle_start(self)
         actor:PushAction(ACTION_BATIDLE)
     end
 
-    local player = actor_manager_fetch_local_player()
-    local self_team_type = player:GetProperty(PROP_TEAM_TYPE)
-    local self_pos_i = 1
-    local enemy_pos_i = 1
     for i,actor in ipairs(self.actors) do
-        if actor:GetProperty(PROP_TEAM_TYPE) == self_team_type then
-            local pos = combat_self_pos[self_pos_i]
-            self_pos_i = self_pos_i + 1
+        local pos_i = actor:GetProperty(PROP_COMBAT_POS_ID)
+        if actor:GetProperty(PROP_TEAM_TYPE) == battle.local_team_type then
+            local pos = combat_self_pos[pos_i]
             init_actor(actor, pos, DIR_NW)
         else
-            local pos =  combat_enemy_pos[enemy_pos_i]
-            enemy_pos_i = enemy_pos_i + 1
+            local pos =  combat_enemy_pos[pos_i]
             init_actor(actor, pos, DIR_SE)
         end
     end
@@ -308,3 +306,9 @@ end
 stub[PTO_S2C_COMBAT_END_BATTLE] = function(resp)
     battle:EndBattle()
 end 
+
+function combat_system_end_battle()
+    local player = actor_manager_fetch_local_player()
+    net_send_message(PTO_C2S_COMBAT_END_BATTLE, cjson.encode( { pid = player:GetID() , battle_id = battle.id}) ) 
+end
+

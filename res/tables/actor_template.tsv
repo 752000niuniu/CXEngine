@@ -92,3 +92,5 @@ prop_combat_skill_ban_atk	bool	false	0
 prop_combat_skill_ban_spell	bool	false	0
 prop_summon_uids	str	[]	1
 prop_summon_has_owner	bool	false	1
+prop_summon_owner	uint64	0	1
+prop_combat_pos_id	int	0	1

@@ -64,7 +64,8 @@ function BattleMT:Serialize()
     for i, actor in ipairs(self.actors) do
         table.insert(info.actors, { 
             id = actor:GetID(), 
-            team_type = actor:GetProperty(PROP_TEAM_TYPE)
+            team_type = actor:GetProperty(PROP_TEAM_TYPE),
+            pos_id = actor:GetProperty(PROP_COMBAT_POS_ID)
         })
     end
 
@@ -79,6 +80,7 @@ function BattleMT:Deserialize(info)
     for i,actor_info in ipairs(info.actors) do
         local actor = actor_manager_fetch_player_by_id(actor_info.id)
         actor:SetProperty(PROP_TEAM_TYPE, actor_info.team_type)
+        actor:SetProperty(PROP_COMBAT_POS_ID, actor_info.pos_id)
         table.insert(self.actors, actor)
     end
     self.state = info.state
@@ -95,10 +97,11 @@ function BattleMT:FindActor(actor_id)
     end
 end
 
-function BattleMT:AddActor(actor, team_type)
-    cxlog_info('Battle:AddActor', self.id, actor:GetName(),team_type==TEAM_TYPE_ATTACKER and 'atk' or 'def')
+function BattleMT:AddActor(actor, team_type, pos_i)
+    cxlog_info('Battle:AddActor', self.id, actor:GetName(),team_type==TEAM_TYPE_ATTACKER and 'atk' or 'def', pos_i)
     actor:SetProperty(PROP_TEAM_TYPE, team_type)
     actor:SetProperty(PROP_COMBAT_BATTLE_ID, self.id)
+    actor:SetProperty(PROP_COMBAT_POS_ID, pos_i)
     table.insert(self.actors,actor)
 end
 

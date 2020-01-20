@@ -11,20 +11,23 @@ function combat_system_add_team_by_actor(battle, actor, team_type)
 	if actor:HasTeam() then
 		local team = actor:GetTeam()
 		for i,mem in ipairs(team:GetMembers()) do
-			battle:AddActor(mem, team_type)
-			if mem:IsPlayer() then
-				local summon = mem:GetSummon()
+			battle:AddActor(mem, team_type, i)
+		end
+
+		for i,actor in ipairs(battle.actors) do
+			if actor:IsPlayer() then
+				local summon = actor:GetSummon()
 				if summon then
-					battle:AddActor(summon, team_type)
+					battle:AddActor(summon, team_type, i+5)
 				end
 			end
 		end
 	else
-		battle:AddActor(actor,team_type)
+		battle:AddActor(actor,team_type,1)
 		if actor:IsPlayer() then
 			local summon = actor:GetSummon()
 			if summon then
-				battle:AddActor(summon, team_type)
+				battle:AddActor(summon, team_type,6)
 			end
 		end
 	end
@@ -62,8 +65,8 @@ function handle_turn_commands(battle)
 	end
 
 	table.sort(battle.cmds, function(a,b)
-		local pa = actor_manager_fetch_player_by_id(a.master)
-		local pb = actor_manager_fetch_player_by_id(b.master)
+		local pa = battle:FindActor(a.master)
+		local pb = battle:FindActor(b.master)
 		if pa and pb then
 			return pa:CalcSpeed() > pb:CalcSpeed()
 		else
@@ -85,10 +88,11 @@ function handle_turn_commands(battle)
 end
 
 stub[PTO_C2S_COMBAT_CMD] = function(req)
-	local master = actor_manager_fetch_player_by_id(req.master)
-	local battle =  master:GetBattle()
+	local battle = __battles__[req.battle_id]
 	if not battle then return cxlog_info('battle not exist!') end
 	if battle.state ~= BATTLE_TURN_STAND_BY then return cxlog_info('battle is not in standby') end
+	
+	local master = battle:FindActor(req.master)
 	if master:GetProperty(PROP_TURN_READY) then return end
 	battle:AddCommand(master, req)
 
@@ -104,12 +108,10 @@ stub[PTO_C2S_COMBAT_CMD] = function(req)
 	end
 end
 
-
-
 stub[PTO_C2S_COMBAT_END_BATTLE] = function(req) 
-	local actor = actor_manager_fetch_player_by_id(req.pid)
-	local battle = actor:GetBattle()
+	local battle = __battles__[req.battle_id]
 	if not battle then return end
+	local actor = battle:FindActor(req.pid)
 	
 	for i,actor in ipairs(battle.actors) do
 		if actor:IsPlayer() then
