@@ -92,6 +92,15 @@ function team_system_dismiss_team(actor)
 end
 
 
+function team_system_leave_team(actor)
+    if actor:IsTeamLeader() then
+        team_system_dismiss_team(actor)
+    else
+        local team = actor:GetTeam()
+        team:RemoveMember(actor)
+    end
+end
+
 local ActorMT = actor_get_metatable()
 
 function ActorMT:HasTeam()

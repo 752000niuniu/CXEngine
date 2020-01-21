@@ -14,9 +14,9 @@ function combat_system_add_team_by_actor(battle, actor, team_type)
 			battle:AddActor(mem, team_type, i)
 		end
 
-		for i,actor in ipairs(battle.actors) do
-			if actor:IsPlayer() then
-				local summon = actor:GetSummon()
+		for i,mem in ipairs(team:GetMembers()) do
+			if mem:IsPlayer() then
+				local summon = mem:GetSummon()
 				if summon then
 					battle:AddActor(summon, team_type, i+5)
 				end

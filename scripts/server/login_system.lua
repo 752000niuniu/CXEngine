@@ -5,6 +5,7 @@ stub[PTO_C2C_LOGIN] = function(req)
     local props = fetch_player_database_props(req.pid)
     if props then
         req_player:SetProperties(props)
+        req_player:SetProperty(PROP_NAME,math.tointeger(req.pid))
     end
 
     local actors = actor_manager_fetch_all_players()    

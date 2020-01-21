@@ -81,6 +81,7 @@ function BattleMT:Deserialize(info)
         local actor = actor_manager_fetch_player_by_id(actor_info.id)
         actor:SetProperty(PROP_TEAM_TYPE, actor_info.team_type)
         actor:SetProperty(PROP_COMBAT_POS_ID, actor_info.pos_id)
+        cxlog_info('Deserialize', actor:GetID(), actor:GetName(), actor:GetProperty(PROP_TEAM_TYPE), actor:GetProperty(PROP_COMBAT_POS_ID))
         table.insert(self.actors, actor)
     end
     self.state = info.state
@@ -98,7 +99,7 @@ function BattleMT:FindActor(actor_id)
 end
 
 function BattleMT:AddActor(actor, team_type, pos_i)
-    cxlog_info('Battle:AddActor', self.id, actor:GetName(),team_type==TEAM_TYPE_ATTACKER and 'atk' or 'def', pos_i)
+    cxlog_info('Battle:AddActor', self.id, actor:GetID(), actor:GetName(),team_type==TEAM_TYPE_ATTACKER and 'atk' or 'def', pos_i)
     actor:SetProperty(PROP_TEAM_TYPE, team_type)
     actor:SetProperty(PROP_COMBAT_BATTLE_ID, self.id)
     actor:SetProperty(PROP_COMBAT_POS_ID, pos_i)

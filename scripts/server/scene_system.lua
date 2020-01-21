@@ -2,7 +2,6 @@
 local npcs = { }
 
 function scene_system_init()
-    local ostime = os.time()
     local npc_table = content_system_get_table('npc')
     local npcs = {}
     for i, props in ipairs(npc_table) do

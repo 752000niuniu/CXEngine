@@ -5,7 +5,7 @@ function summons_on_load()
 	local db = read_database_file(path)
 	if db then
 		for i,v in ipairs(db) do
-			local pid = v[tostring(PROP_ID)]
+            local pid = utils_next_uid('npc')
             local actor = actor_manager_create_actor(pid)
             actor:SetProperties(v)
             __summons__[pid] = actor
@@ -30,16 +30,29 @@ end
 
 
 stub[PTO_C2S_CREATE_SUMMON] = function(req)
-    local pid = os.time()
+    local pid = utils_next_uid('npc')
     local actor = actor_manager_create_actor(pid)
     actor:SetProperties(req.props)
     actor:SetProperty(PROP_ID, pid)
+    actor:SetProperty(PROP_TEAM_ID, 0)
+    actor:SetProperty(PROP_ACTOR_TYPE, ACTOR_TYPE_SUMMON)
 
+    cxlog_info('create summon ' ,actor:GetID(), actor:GetProperty(PROP_AVATAR_ID))
     local owner = actor_manager_fetch_player_by_id(req.owner)
     if owner then
         owner:AddSummon(actor)
     end
     __summons__[pid] = actor
+
+
+    local summon_infos = {}
+    for pid, summon in pairs(__summons__) do
+        table.insert(summon_infos, summon:GetProperties())
+    end
+    
+    net_send_message(req.owner, PTO_S2C_FETCH_SUMMON_RESP, 
+        cjson.encode(summon_infos))
+
 end
 
 stub[PTO_C2S_FETCH_SUMMON] = function(req)
