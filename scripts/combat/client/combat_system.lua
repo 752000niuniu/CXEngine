@@ -227,6 +227,7 @@ stub[PTO_S2C_COMBAT_START] = function(resp)
 end 
 
 stub[PTO_S2C_COMBAT_EXECUTE] = function(all_skills)
+    battle_commands = {}
     for i,cskill in ipairs(all_skills) do
         local skill = cskill_to_skill(cskill)
         skill.state = SKILL_STATE_DEFAULT

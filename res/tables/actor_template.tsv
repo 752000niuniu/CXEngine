@@ -94,3 +94,9 @@ prop_summon_uids	str	[]	1
 prop_summon_has_owner	bool	false	1
 prop_summon_owner	uint64	0	1
 prop_combat_pos_id	int	0	1
+prop_damage_extra	float	0	1
+prop_defend_extra	float	0	1
+prop_speed_extra	float	0	1
+prop_spiritual_extra	float	0	1
+prop_targethit_extra	float	0	1
+prop_dodge_extra	float	0	1
