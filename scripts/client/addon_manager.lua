@@ -4,6 +4,7 @@ function load_all_addons()
     script_system_dofile('addon/hud.lua')
     script_system_dofile('addon/quest.lua')
     script_system_dofile('addon/action.lua')
+    script_system_dofile('addon/options.lua')
 end
 
 
@@ -46,12 +47,17 @@ function addon_manager_imgui_update()
     if imgui.KeysMod('ALT') and imgui.IsKeyPressed(string.byte('D')) then
 		ui_toggle_show_action()
     end
+
+    if imgui.KeysMod('ALT') and imgui.IsKeyPressed(string.byte('Z')) then
+		ui_toggle_show_options()
+    end
     
     ui_show_bag()
     ui_show_props()
     ui_hud_update()
     ui_show_quest()
     ui_show_action()
+    ui_show_options()
 
 
     if not imgui.IsAnyItemHovered() then

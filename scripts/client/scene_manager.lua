@@ -1,6 +1,5 @@
 scene_list_name = {}
 
-script_system_dofile('editor/imgui_editor.lua')
 local scene_lua_files = 
 {
     {name='AnimationEditor' ,  file= 'scene/animation_editor.lua'},
@@ -70,7 +69,6 @@ function on_scene_manager_init_scene(name)
 end
 
 function on_scene_manager_update(name)
-    on_imgui_editor_update()
     if scene_list[name] then
         scene_list[name].OnSceneUpdate()
     end

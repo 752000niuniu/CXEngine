@@ -9,7 +9,7 @@ ID	name	type	sub_type	school	combo	atk_anim	group_kill	cast_anim	act_turn
 7	DF_幽冥鬼眼	spell		9		6-07DF52CA			
 8	DF_杳无音讯	spell		9		6-A18073CD			
 9	DF_还阳术	spell		9		6-5BB14859			
-10	DF_阎罗令	spell		9		6-9EB11259	2		
+10	DF_阎罗令	spell		9		6-9EB11259	7		
 11	DF_黄泉	spell		9		6-0F689A42			
 12	DF_黄泉之息	spell		9		6-2611E02E			
 13	DT_兵器谱	spell		1		6-47F4F7C1			

@@ -4,7 +4,6 @@ function ui_toggle_show_bag()
     return ui_is_show_bag
 end
 
-
 local COLOR_SCHEMES 
 local COLOR_SCHEMES_SELECT_MAP = {}
 function update_color_schemes_select_map()
@@ -37,73 +36,153 @@ function fetch_weapon_keys(tbl, avatar_key)
     return weapon_keys
 end
 
+local PlayerNameSB = imgui.CreateStrbuf('Ocean藏心',256)
+local LocalPlayerDebugButtons = {
+    {
+        '客户端重载', function(player)
+            actor_manager_clear_all()
+            script_system_dofile('../share/enums.lua')
+            script_system_dofile('actor_metatable.lua')
+            script_system_dofile('../share/actor_metatable.lua')
+            script_system_dofile('../share/utils.lua')
+            script_system_dofile('../combat/combat_system.lua')
+            combat_system_init()
+            script_system_dofile('ui_renderer.lua')
+            script_system_dofile('input_manager.lua')
+            scene_manager_reload()
+            game_map_reset_map_offset()
+            script_system_dofile('input_manager.lua')
+            script_system_dofile('addon_manager.lua')
+            load_all_addons()
+    
+            script_system_dofile('module/team.lua')
+            script_system_dofile('module/dialog.lua')
+    
+            game_server_on_connection(true)
+            
+            collectgarbage()
+        end
+    },{
+        '服务端重载', function(player)
+            local msg = {code = [[
+                server_reload()
+            ]]} 
+            net_send_message(PTO_C2S_DOSTRING, cjson.encode(msg) ) 
+        end
+    },{
+        '刷新数据库', function(player)
+            net_send_message(PTO_C2C_SAVE_ACCOUNT_DATABASE,cjson.encode({}))
+            net_send_message(PTO_C2C_SAVE_PLAYER_DATABASE,cjson.encode({}))
+        end
+    },{
+        '刷新角色', function(player)
+            local player = actor_manager_fetch_local_player()
+            if player then
+                net_send_message(PTO_C2S_CREATE_PLAYER,cjson.encode(player:GetProperties()))
+            end
+        end
+    },{
+        '创建队伍', function(player)
+            local player = actor_manager_fetch_local_player()
+            if player then
+                player:CreateTeam()
+            end
+        end
+    },{
+        '离开队伍', function(player)
+            local player = actor_manager_fetch_local_player()
+            if player then
+                player:DismissTeam()
+            end
+        end
+    },{
+        '结束战斗', function(player)
+            combat_system_end_battle()
+        end
+    },{
+        'Say', function(player)
+            player:Say('what the fuck')
+        end
+    },{ 
+        'SetName', function(player)
+            player:SetProperty(PROP_NAME,PlayerNameSB:str())
+        end
+    },{ 
+        'SetScene', function(player)
+            player:SetProperty(PROP_SCENE_ID,scene_manager_get_current_scene_id())
+        end
+    },{ 
+        'BoundingBox', function(player)
+            local show = player:GetProperty(PROP_SHOW_BOUNDINGBOX) 
+            player:SetProperty(PROP_SHOW_BOUNDINGBOX , not show)
+        end
+    },{ 
+        'AvatarInfo', function(player)
+            local show = player:GetProperty(PROP_SHOW_AVATAR_INFO) 
+            player:SetProperty(PROP_SHOW_AVATAR_INFO , not show)
+        end
+    },{ 
+        '升级', function(player)
+            local anim = animation_create(ADDONWDF,0x9B3AF4E5) 
+            anim:SetLoop(-1)
+            player:AddFrontAnim(anim)
+        end
+    },{
+        '拉取召唤兽',function(player) 
+            local msg = {}
+            msg.pid = player:GetID()
+            net_send_message(PTO_C2S_FETCH_SUMMON, cjson.encode(msg)) 
+        end
+    },{
+        '满血',function(player) 
+            net_manager_player_dostring(string.format([[ 
+                player:SetProperty(PROP_HP, %d) 
+            ]], 10000 ))
+        end
+    },{
+        '升级',function(player) 
+            net_manager_player_dostring(string.format([[ 
+                player:SetProperty(PROP_LV, 100) 
+                player:SetProperty(PROP_HP,1000) 
+
+                player:SetProperty(PROP_BASE_FORCE,200) 
+                player:SetProperty(PROP_BASE_HEALTH,200) 
+                player:SetProperty(PROP_BASE_STAMINA,200) 
+                player:SetProperty(PROP_BASE_AGILITY,200) 
+                player:SetProperty(PROP_BASE_MAGIC,200) 
+            ]]))
+        end
+    },{
+        '同步位置',function(player) 
+            game_map_reset_map_offset()
+            net_manager_player_dostring(string.format([[ 
+                player:SetProperty(PROP_POS, {305,441}) 
+                player:SetProperty(PROP_SCENE_ID, %d) 
+            ]], scene_manager_get_current_scene_id()))
+        end
+    },{
+        '重连服务器',function(player) 
+            net_manager_reconnect()
+        end
+    }
+}
+
 function ui_show_bag()
     if not ui_is_show_bag then return end
     local player = actor_manager_fetch_local_player()
     if not player then return end
     imgui.Begin('Bag')
-    if imgui.Button('客户端重载') then
-        actor_manager_clear_all()
-        script_system_dofile('../share/enums.lua')
-        script_system_dofile('actor_metatable.lua')
-        script_system_dofile('../share/actor_metatable.lua')
-        script_system_dofile('../share/utils.lua')
-        script_system_dofile('../combat/combat_system.lua')
-        combat_system_init()
-        script_system_dofile('editor/imgui_editor.lua')
-        script_system_dofile('ui_renderer.lua')
-        script_system_dofile('input_manager.lua')
-        scene_manager_reload()
-        game_map_reset_map_offset()
-        script_system_dofile('input_manager.lua')
-        script_system_dofile('addon_manager.lua')
-        load_all_addons()
 
-        script_system_dofile('module/team.lua')
-        script_system_dofile('module/dialog.lua')
-
-        game_server_on_connection(true)
-        
-        collectgarbage()
-    end
-    imgui.SameLine()
-    if imgui.Button('服务端重载') then
-        local msg = {code = [[
-            server_reload()
-        ]]} 
-        net_send_message(PTO_C2S_DOSTRING, cjson.encode(msg) ) 
-    end
-    imgui.SameLine()
-    if imgui.Button('刷新数据库') then
-        net_send_message(PTO_C2C_SAVE_ACCOUNT_DATABASE,cjson.encode({}))
-        net_send_message(PTO_C2C_SAVE_PLAYER_DATABASE,cjson.encode({}))
-    end
-    imgui.SameLine()
-    if imgui.Button('刷新角色') then
+    if imgui.CollapsingHeader('CMD') then
+        imgui.InputText("玩家名字", PlayerNameSB)
         local player = actor_manager_fetch_local_player()
-        if player then
-            net_send_message(PTO_C2S_CREATE_PLAYER,cjson.encode(player:GetProperties()))
-        end
+        imgui_std_horizontal_button_layout(LocalPlayerDebugButtons,function(t,k) 
+            local nk,v = next(t,k)
+            return nk,v, nk and v[1]
+        end,function(k,v)
+            v[2](player)
+        end)
     end
-
-    if imgui.Button('创建队伍') then
-        local player = actor_manager_fetch_local_player()
-        if player then
-            player:CreateTeam()
-        end
-    end
-    imgui.SameLine()
-    if imgui.Button('离开队伍') then
-        local player = actor_manager_fetch_local_player()
-        if player then
-            player:DismissTeam()
-        end
-    end
-    imgui.SameLine()
-    if imgui.Button('结束战斗') then
-        combat_system_end_battle()
-    end
-
 
     if imgui.CollapsingHeader('MyPal') then
         if COLOR_SCHEMES then
@@ -199,49 +278,7 @@ function ui_show_bag()
         end)
     end
 
-    if imgui.CollapsingHeader('CMD') then
-       
-        if imgui.Button('拉取召唤兽') then
-            local player = actor_manager_fetch_local_player()
-            local msg = {}
-            msg.pid = player:GetID()
-
-            net_send_message(PTO_C2S_FETCH_SUMMON, cjson.encode(msg)) 
-        end
-
-
-
-        if imgui.Button('满血') then
-            net_manager_player_dostring(string.format([[ 
-                player:SetProperty(PROP_HP, %d) 
-            ]], 10000 ))
-        end
-
-        if imgui.Button('升级') then
-            net_manager_player_dostring(string.format([[ 
-                player:SetProperty(PROP_LV, 100) 
-                player:SetProperty(PROP_HP,1000) 
-
-                player:SetProperty(PROP_BASE_FORCE,200) 
-                player:SetProperty(PROP_BASE_HEALTH,200) 
-                player:SetProperty(PROP_BASE_STAMINA,200) 
-                player:SetProperty(PROP_BASE_AGILITY,200) 
-                player:SetProperty(PROP_BASE_MAGIC,200) 
-            ]]))
-        end
-
-        if imgui.Button('同步位置') then
-            game_map_reset_map_offset()
-            net_manager_player_dostring(string.format([[ 
-                player:SetProperty(PROP_POS, {305,441}) 
-                player:SetProperty(PROP_SCENE_ID, %d) 
-            ]], scene_manager_get_current_scene_id()))
-        end
-      
-        if imgui.Button('重连服务器') then
-            net_manager_reconnect()
-        end
-    end
+   
 
     imgui.End()
 end

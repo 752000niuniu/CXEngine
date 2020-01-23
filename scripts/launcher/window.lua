@@ -1,11 +1,20 @@
 local AccountSB = imgui.CreateStrbuf('oceancx',256)
 local PasswordSB = imgui.CreateStrbuf('123456',256)
+local SourceSB = imgui.CreateStrbuf('print("hello")',2560)
 local IPSB = imgui.CreateStrbuf('127.0.0.1',256)
 local PortSB = imgui.CreateStrbuf('45000',256)
 local DbgPortSB = imgui.CreateStrbuf('9600',256)
 local PlayerNameSB = imgui.CreateStrbuf('Ocean藏心',256)
 local PosX = imgui.CreateStrbuf('200',128)
 local PosY = imgui.CreateStrbuf('2790',128)
+
+function net_manager_player_dostring(pid, code)
+	local req = {
+		pid = pid,
+		code = code
+	}
+	net_send_message(PTO_C2S_PLAYER_DOSTRING,cjson.encode(req))
+end
 
 function on_imgui_update()
 	if not shared_netq:empty(0) then
@@ -56,6 +65,15 @@ function on_imgui_update()
 	imgui.Text("Password   :");
 	imgui.SameLine();
 	imgui.InputText("##password", PasswordSB);
+
+	imgui.Text('Server:')
+	imgui.InputTextMultiline('##source', SourceSB, 400, 200,ImGuiInputTextFlags_AllowTabInput)
+   
+	if imgui.Button('服务端执行') then
+		local code = SourceSB:str()
+		net_manager_player_dostring(code)
+	end
+
 
 	if imgui.Button('客户端1') then
 		local exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'
@@ -211,20 +229,24 @@ function on_imgui_update()
 	-- if imgui.Button('生成Protocol') then
 	-- 	script_system_dofile('../generator/protocol.lua')	
 	-- end
-	if imgui.Button('登陆') then
+
+
+
+	if imgui.Button('SignUp') then
 		local msg = {}
-		msg.account = 'oceancx'
-		msg.password = '123456'
-		net_send_message(PTO_C2C_LOGIN, cjson.encode(msg))
+        msg.account = AccountSB:str()
+        msg.password = PasswordSB:str()
+        net_send_message(PTO_C2C_SIGNUP, cjson.encode(msg))
 	end
 
-	if imgui.Button('登陆2') then
+	if imgui.Button('SignIn') then
 		local msg = {}
-		msg.account = 'oceancx2'
-		msg.password = '123456'
-		net_send_message(PTO_C2C_LOGIN, cjson.encode(msg))
+        msg.account = AccountSB:str()
+        msg.password = PasswordSB:str()
+        net_send_message(PTO_C2C_LOGIN, cjson.encode(msg))
 	end
 
+	
 	if imgui.Button('战斗') then
 		local msg = {}
 		msg.atk = 1576985785

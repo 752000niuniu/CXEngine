@@ -20,6 +20,10 @@ function ui_show_props()
 
     local actor = actor_manager_fetch_player_by_id(selected_actor_uid)
     if actor then
+        if imgui.Button('SetLocal') then
+            actor_manager_set_local_player(actor:GetID())
+        end
+
         if imgui.Button('创建召唤兽') then
             local player = actor_manager_fetch_local_player()
             local msg = {}

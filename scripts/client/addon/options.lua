@@ -1,3 +1,9 @@
+local ui_is_show_options = false
+function ui_toggle_show_options()
+    ui_is_show_options = not ui_is_show_options
+    return ui_is_show_options
+end
+
 local select_scene_name = 0
 local str_templ_name = imgui.CreateStrbuf('', 512)
 local copy_actor_type = ACTOR_TYPE_PLAYER
@@ -8,6 +14,7 @@ local cbx_draw_cell = false
 local cbx_draw_map  = true
 local cbx_draw_announcement = true
 
+
 local checkbox_names = {
     {   name = 'DrawMap', cb  = function(v) v.res,cbx_draw_map = imgui.Checkbox(v.name, cbx_draw_map) end },
     {   name = 'DrawCell', cb = function(v) v.res,cbx_draw_cell = imgui.Checkbox(v.name, cbx_draw_cell) end },
@@ -16,19 +23,36 @@ local checkbox_names = {
     {   name = 'DrawAnnouncement', cb = function(v) v.res,cbx_draw_announcement = imgui.Checkbox(v.name, cbx_draw_announcement) end},
 }
 
-function on_scene_editor_update()
+local SourceSB = imgui.CreateStrbuf('print("hello")',2560)
+
+local IPSB = imgui.CreateStrbuf('127.0.0.1',256)
+local PortSB = imgui.CreateStrbuf('45000',256)
+
+
+local cur_add_plan = 1
+local add_plan_map ={
+    [1] = "1,0,3,1,0", -- 3力1体1耐
+    [2] = "0,4,0,1,0", -- 4魔1耐
+    [3] = "2,0,0,2,1", -- 2体2耐1敏
+    [4] = "1,0,0,1,3", -- 3敏1体1耐
+    -- [5] = "0,0,5,0,0", -- 5力
+    [5] = "1,0,4,0,0", -- 4力1体
+}
+
+function ui_show_options()
+    if not ui_is_show_options then return end
     local player = actor_manager_fetch_local_player()
     if not player then return end
-    imgui.Begin('场景编辑器')
-
-    local mx, my = imgui.GetMousePos()
-    local cur_x ,cur_y = imgui.GetCursorScreenPos()
-	if imgui.IsMousePosValid(mx,my) then
-		mx = mx - cur_x
-		my = my - cur_y
-    end
+    
+    imgui.Begin('Options')
 
     if imgui.CollapsingHeader('PosInfo') then
+        local mx, my = imgui.GetMousePos()
+        local cur_x ,cur_y = imgui.GetCursorScreenPos()
+        if imgui.IsMousePosValid(mx,my) then
+            mx = mx - cur_x
+            my = my - cur_y
+        end
         local mapx, mapy = util_screen_pos_to_map_pos(mx,my)
         local px,py = player:GetPos()
         imgui.Text(string.format("[mouse] : x=%.0f,y=%.0f world.x=%.0f,world.y=%.0f",mx,my, mapx,mapy))
@@ -38,6 +62,7 @@ function on_scene_editor_update()
     if imgui.CollapsingHeader('MapDrawOption') then
         imgui.HorizontalLayout(checkbox_names,next,function(k,v) v:cb() end)
     end
+
     scene_manager_sync_draw_cbx(cbx_draw_map,cbx_draw_cell,cbx_draw_strider,cbx_draw_mask,cbx_draw_announcement,cbx_auto_run)
 
     if imgui.CollapsingHeader('Maps') then
@@ -82,6 +107,31 @@ function on_scene_editor_update()
                 audio_manager_play(v)
             end
         end)
+    end
+
+    if imgui.CollapsingHeader('Login') then 
+        
+        imgui.Text('IP  :')
+        imgui.SameLine()
+        imgui.InputText('##IP', IPSB)
+
+        imgui.Text('Port  :')
+        imgui.SameLine()
+        imgui.InputText('##Port', PortSB)
+
+        if imgui.Button('连接服务器') then
+            local ip = IPSB:str()
+            local port = math.tointeger(PortSB:str())
+            net_manager_deinit()
+            net_manager_init(ip, port)
+        end
+
+        imgui.Text('Server:')
+        imgui.InputTextMultiline('##source', SourceSB, 400, 200,ImGuiInputTextFlags_AllowTabInput)
+        if imgui.Button('服务端执行') then
+            local code = SourceSB:str()
+            net_manager_player_dostring(code)
+        end
     end
 
     imgui.End()

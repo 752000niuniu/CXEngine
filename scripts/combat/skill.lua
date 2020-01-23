@@ -236,13 +236,15 @@ function skill_create_spell_anim(skill, effect, target)
             skill_target_end_counter(skill)
         end)
     else
-        if skill.SkillOnHit then
-            skill.SkillOnHit(skill, master, target, target_i, skill.spell_combo_counter)
-        end
-        if skill.sub_type == SKILL_SUBTYPE_DEFAULT or skill.sub_type == SKILL_SUBTYPE_HEAL then
-            local hp_delta = effect.hp_deltas[skill.spell_combo_counter].target
-            target:ShowBeatNumber(hp_delta)
-        end
+        anim:AddFrameCallback(anim:GetGroupFrameCount()/2, function()
+            if skill.SkillOnHit then
+                skill.SkillOnHit(skill, master, target, target_i, skill.spell_combo_counter)
+            end
+            if skill.sub_type == SKILL_SUBTYPE_DEFAULT or skill.sub_type == SKILL_SUBTYPE_HEAL then
+                local hp_delta = effect.hp_deltas[skill.spell_combo_counter].target
+                target:ShowBeatNumber(hp_delta)
+            end
+        end)
     end
     target:AddFrontAnim(anim)
     return anim
