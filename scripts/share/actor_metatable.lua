@@ -666,19 +666,11 @@ function ActorMT:SetPropsByPlan(plan)
 
     local lv = self:GetProperty(PROP_LV) 
     local total = (lv+1) * 5 
-
-    local init_prop = self:GetInitProp()
-    local health = init_prop.health + total*plan.health
-    local magic = init_prop.magic + total*plan.magic
-    local force = init_prop.force + total*plan.force
-    local stamina = init_prop.stamina + total*plan.stamina
-    local agility = init_prop.agility + total*plan.agility
-    
-    self:SetProperty(PROP_ASSIGN_HEALTH, health)
-    self:SetProperty(PROP_ASSIGN_MAGIC, magic)
-    self:SetProperty(PROP_ASSIGN_FORCE, force)
-    self:SetProperty(PROP_ASSIGN_STAMINA , stamina)
-    self:SetProperty(PROP_ASSIGN_AGILITY, agility)
+    self:SetProperty(PROP_ASSIGN_HEALTH,  total*plan.health)
+    self:SetProperty(PROP_ASSIGN_MAGIC,  total*plan.magic)
+    self:SetProperty(PROP_ASSIGN_FORCE,  total*plan.force)
+    self:SetProperty(PROP_ASSIGN_STAMINA ,  total*plan.stamina)
+    self:SetProperty(PROP_ASSIGN_AGILITY,  total*plan.agility)
 end
 
 function ActorMT:GetInitHealthProp()
@@ -756,6 +748,14 @@ function ActorMT:GetAgilityProp()
     return self:GetInitAgilityProp() + self:GetProperty(PROP_ASSIGN_AGILITY)
 end
  
+function ActorMT:ClearAssignPoints()
+    self:SetProperty(PROP_ASSIGN_HEALTH, 0)
+    self:SetProperty(PROP_ASSIGN_MAGIC, 0)
+    self:SetProperty(PROP_ASSIGN_FORCE, 0)
+    self:SetProperty(PROP_ASSIGN_STAMINA , 0)
+    self:SetProperty(PROP_ASSIGN_AGILITY, 0)
+end
+
 function ActorMT:UpdatePropPtsByPlan()
     local planstr = self:GetProperty(PROP_ADD_PROP_PLAN) 
     local plan = utils_string_split(planstr,',')
@@ -787,11 +787,11 @@ function ActorMT:UpdatePropPtsByPlan()
         agility = 20 + lv + total * plan[5]
     end
 
-    self:SetProperty(PROP_ASSGIN_HEALTH, health)
-    self:SetProperty(PROP_ASSGIN_MAGIC, magic)
-    self:SetProperty(PROP_ASSGIN_FORCE, force)
-    self:SetProperty(PROP_ASSGIN_STAMINA , stamina)
-    self:SetProperty(PROP_ASSGIN_AGILITY, agility)
+    self:SetProperty(PROP_ASSIGN_HEALTH, health)
+    self:SetProperty(PROP_ASSIGN_MAGIC, magic)
+    self:SetProperty(PROP_ASSIGN_FORCE, force)
+    self:SetProperty(PROP_ASSIGN_STAMINA , stamina)
+    self:SetProperty(PROP_ASSIGN_AGILITY, agility)
 
     self:SetProperty(PROP_SCHOOL_SKILL_LV_TARGETHIT, lv) 
     self:SetProperty(PROP_SCHOOL_SKILL_LV_DAMAGE, lv) 

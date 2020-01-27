@@ -14,48 +14,65 @@ function draw_prop_points_panel(actor, lv)
     local init_prop = actor:GetInitProp()
     local total = (lv+1)*5
     local remain = actor:GetRemainPropPoints()
-    local health = actor:GetProperty(PROP_ASSGIN_HEALTH)
-    local magic = actor:GetProperty(PROP_ASSGIN_MAGIC)
-    local force = actor:GetProperty(PROP_ASSGIN_FORCE)
-    local stamina = actor:GetProperty(PROP_ASSGIN_STAMINA)
-    local agility = actor:GetProperty(PROP_ASSGIN_AGILITY)
+    local health = actor:GetProperty(PROP_ASSIGN_HEALTH)
+    local magic = actor:GetProperty(PROP_ASSIGN_MAGIC)
+    local force = actor:GetProperty(PROP_ASSIGN_FORCE)
+    local stamina = actor:GetProperty(PROP_ASSIGN_STAMINA)
+    local agility = actor:GetProperty(PROP_ASSIGN_AGILITY)
 
     imgui.BeginGroup()
     imgui.Dummy(30,20)
     
     imgui.Text('体质: '.. actor:GetHealthProp())
     imgui.SameLine()
-    res, health =  imgui.DragInt('##prop_health', health,1,init_prop.health, remain )
+    imgui.PushItemWidth(80)
+    res, health =  imgui.DragInt('##prop_health', health, 1.01, 1, remain)
+    imgui.PopItemWidth()
     if res then
-        actor:SetProperty(PROP_ASSGIN_HEALTH, health)
+        net_manager_player_dostring(string.format([[ 
+            local actor = actor_manager_fetch_player_by_id(%d)
+            actor:SetProperty(PROP_ASSIGN_HEALTH, %d)
+        ]], actor:GetID(), health))
     end
 
     imgui.Text('魔力: '.. actor:GetMagicProp())
     imgui.SameLine()
     res, magic =  imgui.DragInt('##prop_magic', magic,1,init_prop.magic, remain )
     if res then
-        actor:SetProperty(PROP_ASSGIN_MAGIC, magic)
+        net_manager_player_dostring(string.format([[ 
+            local actor = actor_manager_fetch_player_by_id(%d)
+            actor:SetProperty(PROP_ASSIGN_MAGIC, %d)
+        ]], actor:GetID(), magic))        
     end
 
     imgui.Text('力量: '.. actor:GetForceProp())
     imgui.SameLine()
     res, force =  imgui.DragInt('##prop_force', force,1,init_prop.force, remain )
     if res then
-        actor:SetProperty(PROP_ASSGIN_FORCE, force)
+        net_manager_player_dostring(string.format([[ 
+            local actor = actor_manager_fetch_player_by_id(%d)
+            actor:SetProperty(PROP_ASSIGN_FORCE, %d)
+        ]], actor:GetID(), force))
     end
 
     imgui.Text('耐力: '.. actor:GetStaminaProp())
     imgui.SameLine()
     res, stamina =  imgui.DragInt('##prop_stamina', stamina,1,init_prop.stamina, remain )
     if res then
-        actor:SetProperty(PROP_ASSGIN_STAMINA, stamina)
+        net_manager_player_dostring(string.format([[ 
+            local actor = actor_manager_fetch_player_by_id(%d)
+            actor:SetProperty(PROP_ASSIGN_STAMINA, %d)
+        ]], actor:GetID(), stamina))
     end
 
     imgui.Text('敏捷: '.. actor:GetAgilityProp())
     imgui.SameLine()
     res, agility =  imgui.DragInt('##prop_agility', agility,1,init_prop.agility, remain )
     if res then
-        actor:SetProperty(PROP_ASSGIN_AGILITY, agility)
+        net_manager_player_dostring(string.format([[ 
+            local actor = actor_manager_fetch_player_by_id(%d)
+            actor:SetProperty(PROP_ASSIGN_AGILITY, %d)
+        ]], actor:GetID(), agility))
     end
     imgui.EndGroup()
 end
@@ -102,13 +119,7 @@ function ui_show_props()
             net_manager_player_dostring(string.format([[ 
                 local actor = actor_manager_fetch_player_by_id(%d)
                 actor:SetProperty(PROP_LV, %d)
-                actor:SetPropsByPlan({
-                    health = 0,
-                    magic = 0,
-                    force = 5,
-                    stamina = 0,
-                    agility = 0,
-                })
+                actor:ClearAssignPoints()
 
                 if actor:GetProperty(PROP_ACTOR_TYPE)==ACTOR_TYPE_SUMMON then
                     actor:ApplySummonQual('芙蓉仙子')
