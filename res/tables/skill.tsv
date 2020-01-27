@@ -113,16 +113,16 @@ ID	name	type	sub_type	school	combo	atk_anim	group_kill	cast_anim	act_turn
 111	PS_魔心摄魄	spell		12		6-F145AC62			
 112	PS_魔音摄心	spell		12		6-78246FE4			
 113	PT_五行错位	spell		8		6-5A07D50A			
-114	PT_地裂火	spell		8		6-18E13BE9			
+114	PT_地裂火	spell		8		6-18E13BE9	5		
 115	PT_坐莲	spell		8		6-7230F12D			
-116	PT_巨岩破	spell		8		6-565A6FE1			
-117	PT_日光华	spell		8		6-45CA9913			
+116	PT_巨岩破	spell		8		6-565A6FE1	5		
+117	PT_日光华	spell		8		6-45CA9913	5		
 118	PT_普渡众生	spell		8		6-2FF74578			
 119	PT_杨柳甘露	spell		8		6-380337C1			
 120	PT_灵动九天	spell		8		6-3FCA8C5A			
 121	PT_紧箍咒	spell		8		6-5480C749			
-122	PT_苍茫树	spell		8		6-9CCB6E84			
-123	PT_靛沧海	spell		8		6-6C5F8376			
+122	PT_苍茫树	spell		8		6-9CCB6E84	5		
+123	PT_靛沧海	spell		8		6-6C5F8376	5		
 124	PT_颠倒五行	spell		8		6-370E2580			
 125	STL_变身	spell		11		6-29D819DF			
 126	STL_天魔解体	spell		11		6-D20E78BF			

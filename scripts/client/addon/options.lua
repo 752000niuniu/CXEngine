@@ -13,6 +13,7 @@ local cbx_draw_strider = true
 local cbx_draw_cell = false
 local cbx_draw_map  = true
 local cbx_draw_announcement = true
+scene_manager_sync_draw_cbx(cbx_draw_map,cbx_draw_cell,cbx_draw_strider,cbx_draw_mask,cbx_draw_announcement,cbx_auto_run)
 
 
 local checkbox_names = {
@@ -38,6 +39,7 @@ local add_plan_map ={
     -- [5] = "0,0,5,0,0", -- 5力
     [5] = "1,0,4,0,0", -- 4力1体
 }
+
 
 function ui_show_options()
     if not ui_is_show_options then return end
@@ -131,6 +133,20 @@ function ui_show_options()
         if imgui.Button('服务端执行') then
             local code = SourceSB:str()
             net_manager_player_dostring(code)
+        end
+
+        imgui.SameLine()
+        if imgui.Button('客户端执行') then
+            local code = SourceSB:str()
+            local func, err = load(code,'@client_dostring','bt',_ENV)
+            if func then
+                local ok,ret = pcall(func)
+                if not ok then
+                    cxlog_info(ret)
+                end
+            else
+                cxlog_info('PTO_C2S_PLAYER_DOSTRING', err)
+            end
         end
     end
 

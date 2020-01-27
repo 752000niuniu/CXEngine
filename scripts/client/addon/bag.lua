@@ -145,11 +145,7 @@ local LocalPlayerDebugButtons = {
                 player:SetProperty(PROP_LV, 100) 
                 player:SetProperty(PROP_HP,1000) 
 
-                player:SetProperty(PROP_BASE_FORCE,200) 
-                player:SetProperty(PROP_BASE_HEALTH,200) 
-                player:SetProperty(PROP_BASE_STAMINA,200) 
-                player:SetProperty(PROP_BASE_AGILITY,200) 
-                player:SetProperty(PROP_BASE_MAGIC,200) 
+                  
             ]]))
         end
     },{
@@ -173,7 +169,7 @@ function ui_show_bag()
     if not player then return end
     imgui.Begin('Bag')
 
-    if imgui.CollapsingHeader('CMD') then
+    if imgui.CollapsingHeader('CMD', ImGuiTreeNodeFlags_DefaultOpen) then
         imgui.InputText("玩家名字", PlayerNameSB)
         local player = actor_manager_fetch_local_player()
         imgui_std_horizontal_button_layout(LocalPlayerDebugButtons,function(t,k) 
@@ -229,7 +225,6 @@ function ui_show_bag()
             table.insert(filenames,name)
         end
 
-        
         imgui.HorizontalLayout(filenames,next,function(k,v)
             if imgui.Button(v) then
                 select_pal = files[k]
@@ -277,8 +272,6 @@ function ui_show_bag()
             end
         end)
     end
-
-   
 
     imgui.End()
 end

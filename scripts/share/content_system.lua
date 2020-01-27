@@ -213,6 +213,27 @@ function init_npc_table()
     return npc_props
 end
 
+function init_summon_table()
+    local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('summon'),{
+        { name = 'name' },
+        { name = 'take_level', fmt='i', def=0},
+        { name = 'battle_level', fmt='i',def=0 },
+        { name = 'atk_qual', fmt='i' },
+        { name = 'def_qual', fmt='i' },
+        { name = 'health_qual', fmt='i' },
+        { name = 'magic_qual', fmt='i' },
+        { name = 'speed_qual', fmt='i' },
+        { name = 'dodge_qual', fmt='i' },
+        { name = 'grow_coef', fmt='n' },
+    })
+
+    local ret = {}
+    for i,row in ipairs(tbl) do
+        ret[row.name] = row
+    end
+    return ret
+end
+
 function content_system_init()
     content_system_set_table('role', read_tsv_index_by_main_key('avatar_role',false,'ID'))
     content_system_set_table('weapon', read_tsv_index_by_main_key('avatar_weapon',false,'ID'))
@@ -228,6 +249,7 @@ function content_system_init()
     content_system_set_table('equip', init_equip_templ_table())
 
     content_system_set_table('npc', init_npc_table())
+    content_system_set_table('summon', init_summon_table())
     
     
 end

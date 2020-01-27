@@ -1,7 +1,6 @@
 
 
 
-
 function ui_hud_update()
     local player = actor_manager_fetch_local_player()
     if not player then return end

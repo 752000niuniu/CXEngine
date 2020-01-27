@@ -92,6 +92,21 @@ function ActorMT:SetProperties(props)
     end
 end
 
+
+function ActorMT:ApplySummonQual(name)
+    local tbl = content_system_get_table('summon')
+    local templ = tbl[name]
+    if not templ then return end
+    self:SetProperty(PROP_SUMMON_ATK_QUAL ,templ.atk_qual)
+    self:SetProperty(PROP_SUMMON_DEF_QUAL ,templ.def_qual)
+    self:SetProperty(PROP_SUMMON_HEALTH_QUAL ,templ.health_qual)
+    self:SetProperty(PROP_SUMMON_MAGIC_QUAL , templ.magic_qual)
+    self:SetProperty(PROP_SUMMON_SPEED_QUAL ,templ.speed_qual)
+    self:SetProperty(PROP_SUMMON_DODGE_QUAL , templ.dodge_qual)
+    self:SetProperty(PROP_SUMMON_GROW_COEF , templ.grow_coef)
+end
+
+
 function ActorMT:GetProperties()
     local props = {}
     for prop_id=0,PROP_COUNT-1 do
@@ -121,14 +136,14 @@ COEF = {
 --气血 体质×5＋100 体质×6＋100 体质×4.5＋100
 function formula_calc_hp(actor)
     local race = actor:GetProperty(PROP_RACE)
-    local hp = actor:GetProperty(PROP_BASE_HEALTH) * COEF[race].health + 100
+    local hp = actor:GetHealthProp() * COEF[race].health + 100
     return hp
 end
 
 --魔法 魔力×3+80 魔力×2.5＋80 魔力×3.5＋80
 function formula_calc_mp(actor)
     local race = actor:GetProperty(PROP_RACE)
-    local mp = actor:GetProperty(PROP_BASE_MAGIC) * COEF[race].magic + 80
+    local mp = actor:GetMagicProp() * COEF[race].magic + 80
     return mp
 end
 
@@ -136,7 +151,7 @@ end
 function formula_calc_targethit(actor)
     local race = actor:GetProperty(PROP_RACE)
     local base_target = race == RACE_DEVIL and 27 or 30
-    local target_force = actor:GetProperty(PROP_BASE_FORCE) * COEF[race].target + base_target
+    local target_force = actor:GetForceProp() * COEF[race].target + base_target
     return target_force
 end
 
@@ -144,56 +159,56 @@ end
 function formula_calc_atk(actor)
     local race = actor:GetProperty(PROP_RACE)
     local base_damage = race == RACE_DEVIL and 34 or 40
-    local damage = actor:GetProperty(PROP_BASE_FORCE) * COEF[race].damage + base_damage
+    local damage = actor:GetForceProp() * COEF[race].damage + base_damage
     return damage
 end
 
 --防御 耐力*1.5 耐力*1.3 耐力*1.6
 function formula_calc_defend(actor)
     local race = actor:GetProperty(PROP_RACE)
-    local defend = actor:GetProperty(PROP_BASE_STAMINA) * COEF[race].defend
+    local defend = actor:GetStaminaProp() * COEF[race].defend
     return defend
 end
 
 --速度 体质×0.1+力量×0.1+耐力×0.1+敏捷×0.7
 function formula_calc_speed(actor)
-    local speed = actor:GetProperty(PROP_BASE_HEALTH) * 0.1 
-                + actor:GetProperty(PROP_BASE_FORCE) * 0.1 
-                + actor:GetProperty(PROP_BASE_STAMINA) * 0.1 
-                + actor:GetProperty(PROP_BASE_AGILITY) * 0.7
+    local speed = actor:GetHealthProp() * 0.1 
+                + actor:GetForceProp() * 0.1 
+                + actor:GetStaminaProp() * 0.1 
+                + actor:GetAgilityProp() * 0.7
     return speed
 end
 
 --躲避 敏捷*1
 function formula_calc_dodge(actor)
     local race = actor:GetProperty(PROP_RACE)
-    local dodge = actor:GetProperty(PROP_BASE_AGILITY) * 1 + 10
+    local dodge = actor:GetAgilityProp() * 1 + 10
     if race == RACE_DEVIL then
-        dodge = actor:GetProperty(PROP_BASE_AGILITY) * 1 + 8
+        dodge = actor:GetAgilityProp() * 1 + 8
     end
     return dodge
 end
 
 --灵力 体质×0.3+魔力×0.7+力量×0.4+耐力×0.2
 function formula_calc_spiritual(actor)
-    local spiritual = actor:GetProperty(PROP_BASE_HEALTH) * 0.3
-                    + actor:GetProperty(PROP_BASE_MAGIC) * 0.7
-                    + actor:GetProperty(PROP_BASE_FORCE) * 0.4 
-                    + actor:GetProperty(PROP_BASE_STAMINA) * 0.2
+    local spiritual = actor:GetHealthProp() * 0.3
+                    + actor:GetMagicProp() * 0.7
+                    + actor:GetForceProp() * 0.4 
+                    + actor:GetStaminaProp() * 0.2
     return spiritual
 end
 
 
 --气血 ＝体质×成长率×6+体力资质×等级÷1000
 function formula_calc_summon_hp(actor)
-    local hp = actor:GetProperty(PROP_BASE_HEALTH) * actor:GetProperty(PROP_SUMMON_GROW_COEF) * 6
+    local hp = actor:GetHealthProp() * actor:GetProperty(PROP_SUMMON_GROW_COEF) * 6
              + actor:GetProperty(PROP_SUMMON_HEALTH_QUAL) * actor:GetProperty(PROP_LV) / 1000
     return hp
 end
 
 --魔法 ＝魔力×成长率x3+法力资质×等级÷500
 function formula_calc_summon_mp(actor)
-    local mp = actor:GetProperty(PROP_BASE_MAGIC) * actor:GetProperty(PROP_SUMMON_GROW_COEF) * 3
+    local mp = actor:GetMagicProp() * actor:GetProperty(PROP_SUMMON_GROW_COEF) * 3
             + actor:GetProperty(PROP_SUMMON_MAGIC_QUAL) * actor:GetProperty(PROP_LV) / 500
     return mp
 end
@@ -201,7 +216,7 @@ end
 --攻击 ＝力量×成长率 + 攻击资质x等级x7/2000
 function formula_calc_summon_atk(actor)
     local lv = actor:GetProperty(PROP_LV)
-    local force = actor:GetProperty(PROP_BASE_FORCE) 
+    local force = actor:GetForceProp()
     local grow = actor:GetProperty(PROP_SUMMON_GROW_COEF)
     local atk_qual = actor:GetProperty(PROP_SUMMON_ATK_QUAL)
     local atk = force * grow + atk_qual*lv*7/2000
@@ -211,7 +226,7 @@ end
 --防御 ＝ 耐力x成长率x4/3 + 防御资质x等级/433
 function formula_calc_summon_defend(actor)
     local lv = actor:GetProperty(PROP_LV)
-    local stamina = actor:GetProperty(PROP_BASE_STAMINA) 
+    local stamina =  actor:GetStaminaProp()
     local grow = actor:GetProperty(PROP_SUMMON_GROW_COEF)
     local def_qual = actor:GetProperty(PROP_SUMMON_DEF_QUAL)
     local def = stamina*grow*4/3 + def_qual*lv/433
@@ -220,7 +235,7 @@ end
 
 --速度 ＝速度资质×敏捷÷1000
 function formula_calc_summon_speed(actor)
-    local agility = actor:GetProperty(PROP_BASE_AGILITY) 
+    local agility = actor:GetAgilityProp()
     local speed_qual = actor:GetProperty(PROP_SUMMON_SPEED_QUAL)
     local speed = agility * speed_qual / 1000
     return speed
@@ -232,10 +247,10 @@ function formula_calc_summon_spiritual(actor)
     local grow = actor:GetProperty(PROP_SUMMON_GROW_COEF)
     local magic_qual = actor:GetProperty(PROP_SUMMON_MAGIC_QUAL)
     
-    local magic = actor:GetProperty(PROP_BASE_MAGIC) 
-    local force = actor:GetProperty(PROP_BASE_FORCE) 
-    local health = actor:GetProperty(PROP_BASE_HEALTH) 
-    local stamina = actor:GetProperty(PROP_BASE_STAMINA) 
+    local magic = actor:GetMagicProp()
+    local force = actor:GetForceProp()
+    local health = actor:GetHealthProp()
+    local stamina = actor:GetStaminaProp()
     
     local spiritual = lv*(magic_qual+1640)*(grow+1)/7500 + magic*0.7 + force*0.4 + health*0.3 + stamina*0.2
     return spiritual
@@ -264,7 +279,7 @@ function ActorMT:CalcSchoolSkillTargethit()
         elseif school == SCHOOL_LB then
             targethit = targethit + 1 + i*0.0099
         elseif school == SCHOOL_PS then
-            targethit = targethit + i*3
+            targethit = targethit + 3
         end
     end
     return targethit
@@ -606,6 +621,44 @@ local init_prop = {
     },
 }
 
+function ActorMT:GetInitProp()
+    local lv = self:GetProperty(PROP_LV) 
+    local actor_type = self:GetProperty(PROP_ACTOR_TYPE)
+    local race = self:GetProperty(PROP_RACE)
+    local ret = {
+        health = 0,
+        magic = 0,
+        force = 0,
+        stamina = 0,
+        agility = 0
+    }
+    if actor_type == ACTOR_TYPE_PLAYER then
+        ret.health  = init_prop[race][1] + lv
+        ret.magic   = init_prop[race][2] + lv
+        ret.force   = init_prop[race][3] + lv
+        ret.stamina = init_prop[race][4] + lv
+        ret.agility = init_prop[race][5] + lv
+    elseif actor_type == ACTOR_TYPE_SUMMON then
+        ret.health  = 20 + lv
+        ret.magic   = 20 + lv
+        ret.force   = 20 + lv
+        ret.stamina = 20 + lv
+        ret.agility = 20 + lv
+    end
+    return ret
+end
+
+function ActorMT:GetRemainPropPoints()
+    local lv = self:GetProperty(PROP_LV)
+    local total = (lv+1)*5
+    local current = self:GetProperty(PROP_ASSIGN_HEALTH)
+    + self:GetProperty(PROP_ASSIGN_MAGIC)
+    + self:GetProperty(PROP_ASSIGN_FORCE)
+    + self:GetProperty(PROP_ASSIGN_STAMINA)
+    + self:GetProperty(PROP_ASSIGN_AGILITY)
+    return total - current
+end
+
 function ActorMT:SetPropsByPlan(plan)
     for k,v in pairs(plan) do
         plan[k] = tonumber(v)/5
@@ -613,35 +666,96 @@ function ActorMT:SetPropsByPlan(plan)
 
     local lv = self:GetProperty(PROP_LV) 
     local total = (lv+1) * 5 
-    local actor_type = self:GetProperty(PROP_ACTOR_TYPE)
-    local race = self:GetProperty(PROP_RACE)
 
-    local health = 0 
-    local magic = 0 
-    local force = 0 
-    local stamina = 0 
-    local agility = 0 
-    if actor_type == ACTOR_TYPE_PLAYER then
-        health  = init_prop[race][1] + lv + total * plan.health
-        magic   = init_prop[race][2] + lv + total * plan.magic
-        force   = init_prop[race][3] + lv + total * plan.force
-        stamina = init_prop[race][4] + lv + total * plan.stamina
-        agility = init_prop[race][5] + lv + total * plan.agility
-    elseif actor_type == ACTOR_TYPE_SUMMON then
-        health  = 20 + lv + total * plan.health
-        magic   = 20 + lv + total * plan.magic
-        force   = 20 + lv + total * plan.force
-        stamina = 20 + lv + total * plan.stamina
-        agility = 20 + lv + total * plan.agility
-    end
-
-    self:SetProperty(PROP_BASE_HEALTH, health)
-    self:SetProperty(PROP_BASE_MAGIC, magic)
-    self:SetProperty(PROP_BASE_FORCE, force)
-    self:SetProperty(PROP_BASE_STAMINA , stamina)
-    self:SetProperty(PROP_BASE_AGILITY, agility)
+    local init_prop = self:GetInitProp()
+    local health = init_prop.health + total*plan.health
+    local magic = init_prop.magic + total*plan.magic
+    local force = init_prop.force + total*plan.force
+    local stamina = init_prop.stamina + total*plan.stamina
+    local agility = init_prop.agility + total*plan.agility
+    
+    self:SetProperty(PROP_ASSIGN_HEALTH, health)
+    self:SetProperty(PROP_ASSIGN_MAGIC, magic)
+    self:SetProperty(PROP_ASSIGN_FORCE, force)
+    self:SetProperty(PROP_ASSIGN_STAMINA , stamina)
+    self:SetProperty(PROP_ASSIGN_AGILITY, agility)
 end
 
+function ActorMT:GetInitHealthProp()
+    local lv = self:GetProperty(PROP_LV) 
+    local actor_type = self:GetProperty(PROP_ACTOR_TYPE)
+    if actor_type == ACTOR_TYPE_PLAYER then
+        local race = self:GetProperty(PROP_RACE)
+        return init_prop[race][1] + lv
+    elseif actor_type == ACTOR_TYPE_SUMMON then
+        return 20 + lv
+    end
+end
+
+function ActorMT:GetInitMagicProp()
+    local lv = self:GetProperty(PROP_LV) 
+    local actor_type = self:GetProperty(PROP_ACTOR_TYPE)
+    if actor_type == ACTOR_TYPE_PLAYER then
+        local race = self:GetProperty(PROP_RACE)
+        return init_prop[race][2] + lv
+    elseif actor_type == ACTOR_TYPE_SUMMON then
+        return 20 + lv
+    end
+end
+
+function ActorMT:GetInitForceProp()
+    local lv = self:GetProperty(PROP_LV) 
+    local actor_type = self:GetProperty(PROP_ACTOR_TYPE)
+    if actor_type == ACTOR_TYPE_PLAYER then
+        local race = self:GetProperty(PROP_RACE)
+        return init_prop[race][3] + lv
+    elseif actor_type == ACTOR_TYPE_SUMMON then
+        return 20 + lv
+    end
+end
+
+function ActorMT:GetInitStaminaProp()
+    local lv = self:GetProperty(PROP_LV) 
+    local actor_type = self:GetProperty(PROP_ACTOR_TYPE)
+    if actor_type == ACTOR_TYPE_PLAYER then
+        local race = self:GetProperty(PROP_RACE)
+        return init_prop[race][4] + lv
+    elseif actor_type == ACTOR_TYPE_SUMMON then
+        return 20 + lv
+    end
+end
+
+function ActorMT:GetInitAgilityProp()
+    local lv = self:GetProperty(PROP_LV) 
+    local actor_type = self:GetProperty(PROP_ACTOR_TYPE)
+    if actor_type == ACTOR_TYPE_PLAYER then
+        local race = self:GetProperty(PROP_RACE)
+        return init_prop[race][5] + lv
+    elseif actor_type == ACTOR_TYPE_SUMMON then
+        return 20 + lv
+    end
+end
+
+function ActorMT:GetHealthProp()
+    return self:GetInitHealthProp() + self:GetProperty(PROP_ASSIGN_HEALTH)
+end
+
+function ActorMT:GetMagicProp()
+    return self:GetInitMagicProp() + self:GetProperty(PROP_ASSIGN_MAGIC)
+end
+
+function ActorMT:GetForceProp()
+    return self:GetInitForceProp() + self:GetProperty(PROP_ASSIGN_FORCE)
+end
+
+function ActorMT:GetStaminaProp()
+    return self:GetInitStaminaProp() + self:GetProperty(PROP_ASSIGN_STAMINA)
+end
+
+function ActorMT:GetAgilityProp()
+    return self:GetInitAgilityProp() + self:GetProperty(PROP_ASSIGN_AGILITY)
+end
+ 
 function ActorMT:UpdatePropPtsByPlan()
     local planstr = self:GetProperty(PROP_ADD_PROP_PLAN) 
     local plan = utils_string_split(planstr,',')
@@ -673,11 +787,11 @@ function ActorMT:UpdatePropPtsByPlan()
         agility = 20 + lv + total * plan[5]
     end
 
-    self:SetProperty(PROP_BASE_HEALTH, health)
-    self:SetProperty(PROP_BASE_MAGIC, magic)
-    self:SetProperty(PROP_BASE_FORCE, force)
-    self:SetProperty(PROP_BASE_STAMINA , stamina)
-    self:SetProperty(PROP_BASE_AGILITY, agility)
+    self:SetProperty(PROP_ASSGIN_HEALTH, health)
+    self:SetProperty(PROP_ASSGIN_MAGIC, magic)
+    self:SetProperty(PROP_ASSGIN_FORCE, force)
+    self:SetProperty(PROP_ASSGIN_STAMINA , stamina)
+    self:SetProperty(PROP_ASSGIN_AGILITY, agility)
 
     self:SetProperty(PROP_SCHOOL_SKILL_LV_TARGETHIT, lv) 
     self:SetProperty(PROP_SCHOOL_SKILL_LV_DAMAGE, lv) 

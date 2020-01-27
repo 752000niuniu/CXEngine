@@ -100,3 +100,8 @@ prop_speed_extra	float	0	1
 prop_spiritual_extra	float	0	1
 prop_targethit_extra	float	0	1
 prop_dodge_extra	float	0	1
+prop_assign_force	int	0	1
+prop_assign_health	int	0	1
+prop_assign_stamina	int	0	1
+prop_assign_agility	int	0	1
+prop_assign_magic	int	0	1
