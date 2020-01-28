@@ -456,3 +456,7 @@ function utils_next_uid(ns)
     __uids__[ns] = __uids__[ns] + 1
     return __uids__[ns]
 end
+
+imgui.TextFormat = function(...)
+    return imgui.Text(string.format(...))
+end

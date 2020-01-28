@@ -116,19 +116,31 @@ function combat_system_imgui_update()
     local player = actor_manager_fetch_local_player()
     if not player:GetProperty(PROP_TURN_READY) then
         current_master = player
-        imgui.Begin('Menu',menu_show)
+    else
+        local summon = player:GetSummon()
+        if summon then
+            if not summon:GetProperty(PROP_TURN_READY) then
+                current_master = summon
+            else
+                current_master = nil
+            end
+        else
+            current_master = nil
+        end
+    end
 
-        if imgui.Button('攻击##player') then
-            
-        end  
+    if current_master then
+        imgui.Begin('Menu',menu_show)
 
         if imgui.Button('法术##player') then
             imgui.OpenPopup('SpellSelector')
             ACTOR_CLICK_MODE = ACTOR_CLICK_MODE_SPELL
         end
 
-        if imgui.Button('特技##player') then
-
+        if current_master:IsPlayer() then
+            if imgui.Button('特技##player') then
+    
+            end
         end
 
         if imgui.Button('道具##player') then
@@ -136,32 +148,31 @@ function combat_system_imgui_update()
         end
 
         if imgui.Button('防御##player') then
-            local player = actor_manager_fetch_local_player()
             local msg = {}
-            msg.master = player:GetID()
+            msg.master = current_master:GetID()
             msg.skill_id = 264
             msg.battle_id = battle.id
             net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
         end
-
-        if imgui.Button('召唤##player') then
-
-        end
-
-        if imgui.Button('召还##player') then
-
-        end
-
-        if imgui.Button('捕捉##player') then
-
+        if current_master:IsPlayer() then
+            if imgui.Button('召唤##player') then
+    
+            end
+    
+            if imgui.Button('召还##player') then
+    
+            end
+    
+            if imgui.Button('捕捉##player') then
+    
+            end
         end
 
         if imgui.Button('逃跑##player') then
-            local player = actor_manager_fetch_local_player()
-            player:SetProperty(PROP_USING_SKILL,268)
+            current_master:SetProperty(PROP_USING_SKILL,268)
 
             local msg = {}
-            msg.master = player:GetID()
+            msg.master = current_master:GetID()
             msg.skill_id = 268
             msg.battle_id = battle.id
             net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
@@ -170,8 +181,7 @@ function combat_system_imgui_update()
         imgui.SetNextWindowSize(350,400)
         if imgui.BeginPopup('SpellSelector') then
             local skill_tbl = content_system_get_table('skill')
-            local player = actor_manager_fetch_local_player()      
-            local school = player:GetProperty(PROP_SCHOOL)
+            local school = current_master:GetProperty(PROP_SCHOOL)
             local school_skill = {}
             for id,row in pairs(skill_tbl) do
                 if row.school == school then
@@ -180,38 +190,14 @@ function combat_system_imgui_update()
             end
             imgui.HorizontalLayout(school_skill,next,function(k,v) 
                 if imgui.Button(v.name..'##'..v.ID) then
-                    local player = actor_manager_fetch_local_player()
-                    player:SetProperty(PROP_USING_SKILL, v.ID)
+                    local current_master = actor_manager_fetch_local_player()
+                    current_master:SetProperty(PROP_USING_SKILL, v.ID)
                     imgui.CloseCurrentPopup()
                 end
             end)
             imgui.EndPopup('SpellSelector')
         end
         imgui.End()
-    else
-        local summon = player:GetSummon()
-        if summon then
-            if not summon:GetProperty(PROP_TURN_READY) then
-                current_master = summon
-                imgui.Begin('BBMenu',bb_menu_show)
-                if imgui.Button('法术##bb') then
-
-                end
-
-                if imgui.Button('道具##bb') then
-
-                end
-
-                if imgui.Button('防御##bb') then
-
-                end
-
-                if imgui.Button('逃跑##bb') then
-
-                end
-                imgui.End()
-            end
-        end
     end
 	
     
@@ -220,7 +206,7 @@ function combat_system_imgui_update()
         imgui.SetCursorPos(x,y-10)
         local max_hp = actor:GetMaxHP()
         local hp = actor:GetHP()
-        imgui.Text(hp..'/'..max_hp)
+        imgui.TextFormat('%.f/%.f',hp,max_hp)
     end
 end
 
