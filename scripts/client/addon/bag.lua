@@ -160,6 +160,11 @@ local LocalPlayerDebugButtons = {
         '重连服务器',function(player) 
             net_manager_reconnect()
         end
+    },{
+        '测试封印公式',function(player) 
+            
+            
+        end
     }
 }
 

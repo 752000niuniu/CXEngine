@@ -901,6 +901,21 @@ function ActorMT:GetSpellDamage(target)
     return damage
 end
 
+function formula_calc_seal_success_rate(skill_lv, target_lv, practice_lv, resistance_lv)
+    local success_rate = 0
+    if skill_lv <= target_lv then
+        success_rate = 0.9^(target_lv-skill_lv) * 0.6
+    else
+        success_rate = 0.98-0.38*0.975^(skill_lv - target_lv)
+    end
+    if practice_lv < resistance_lv then
+        success_rate = success_rate* 0.98^(resistance_lv-practice_lv)
+    else
+        success_rate = success_rate* 1.02^(practice_lv-resistance_lv) 
+    end
+    return success_rate
+end
+
 
 function ActorMT:SetGlobalStandardEquip(lv, is_enforce)
     local equip_tbl = content_system_get_table('equip')

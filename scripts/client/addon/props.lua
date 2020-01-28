@@ -323,6 +323,10 @@ function ui_show_props()
             end
         end
         if actor:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_SUMMON then
+            if imgui.CollapsingHeader('修炼等级') then
+                draw_player_practice_lv(actor)
+            end
+            
             imgui.BeginGroup()
             imgui.Text('攻击资质 '..actor:GetProperty(PROP_SUMMON_ATK_QUAL))
             imgui.Text('防御资质 '..actor:GetProperty(PROP_SUMMON_DEF_QUAL))

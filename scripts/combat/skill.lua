@@ -385,7 +385,7 @@ function skill_cast_atk(battle, skill)
 end
 
 function skill_cast_flee(battle, skill)
-    if not skill.flee_success then 
+    if not skill.success then 
         skill.state = SKILL_STATE_END
         return 
     end
@@ -422,7 +422,7 @@ function skill_take_effect_on_target(skill, effect, master, target, target_i, hi
         cxlog_info(string.format('并造成了%.2f伤害', hp_delta))
     elseif skill.type =='spell' then
         if skill.sub_type == SKILL_SUBTYPE_SEAL or skill.sub_type == SKILL_SUBTYPE_AUXI then
-            
+                
         elseif skill.sub_type == SKILL_SUBTYPE_HEAL then
             local hp_delta = master:GetSpellDamage(target)
             target:ModifyHP(hp_delta)
@@ -480,7 +480,7 @@ function on_using_flee_skill(battle, skill)
             battle:RemoveActor(skill.master)
         end
         local cskill = init_cskill(skill)
-        cskill.flee_success = suc 
+        cskill.success = suc 
         return cskill
     else
         skill_cast_flee(battle, skill)
@@ -533,6 +533,7 @@ function base_using_skill(battle, skill)
         if skill.SkillOnEnd then
             skill.SkillOnEnd(skill, master)
         end
+        cskill.success = skill.success
         return cskill
     else
         if #skill.effects==0 then 
@@ -623,11 +624,12 @@ function process_turn_command(battle, master_id, target_id, skill_id)
 	if not master or master:IsDead() then return end
 
 	local skill = {}
-	skill.id = utils_next_uid('skill')
+    skill.id = utils_next_uid('skill')
+    skill.lv = master:GetProperty(PROP_LV)
 	skill.tid = skill_id
 	skill.master = master
 	skill.state = SKILL_STATE_DEFAULT
-
+    skill.success = true
 	local target = battle:FindActor(target_id)
     if not target then
         local targets = {}
@@ -660,3 +662,5 @@ function process_turn_command(battle, master_id, target_id, skill_id)
 
 	return on_using_skill(battle, skill)
 end
+
+
