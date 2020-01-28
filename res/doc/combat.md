@@ -23,31 +23,6 @@ PVE 最多5V10  对方是NPC 或者 普通Actor
 4. 本回合战斗指令处理
 5. 回合结束，进入下一个回合
 
-#战斗指令
-类型：
-施法技能 ：物理施法，法术施法，特技施法，辅助施法
-普通攻击
-防御
-召唤
-捕捉
-
-战斗指令队列
-回合计数
-              
-
-master 攻击actor
-target 攻击目标actor
-
-hp +-	hp为0表示死亡 
-sp +-	sp不足 不能释放特技
-mp +-	mp不足 不能释放技能
-
-攻击力  
-防御力
-灵力
-速度
-躲避
-
 1. 攻击类
 
 攻击类动画表现为 master移动到target进行攻击 
@@ -120,17 +95,6 @@ buff = {
 播放施法指令
 
 
-atk_skill = {
-    type = 'atk',
-    combo,
-    atk_anim = '',
-    group_kill,
-    buff_id,
-    base_damage,
-    is_suck_blood,
-    is_critical_atk,
-}
-
 攻击指令
     如果group_kill , 则有group_kill个完整攻击流程
 攻击流程
@@ -155,8 +119,6 @@ attack = {
 封印 : 单封 群封 无受击
 
 辅助 : 加血 单加 群加
-
-
 
 
 特技 : 

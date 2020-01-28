@@ -153,8 +153,9 @@ end
 
 function draw_player_practice_lv(actor)
     function draw_practice_lv_bar(label, enum)
+        local actor_lv = actor:GetProperty(PROP_LV)
         imgui.PushItemWidth(50)
-        local res, lv = imgui.DragInt(label,  actor:GetProperty(enum) , 1.0, 0, 25)
+        local res, lv = imgui.DragInt(label,  actor:GetProperty(enum) , 1.0, 0, math.min(25,actor_lv//5-4))
         imgui.PopItemWidth()
         if res then
             actor:SetProperty(enum, lv)
@@ -326,7 +327,7 @@ function ui_show_props()
             if imgui.CollapsingHeader('修炼等级') then
                 draw_player_practice_lv(actor)
             end
-            
+
             imgui.BeginGroup()
             imgui.Text('攻击资质 '..actor:GetProperty(PROP_SUMMON_ATK_QUAL))
             imgui.Text('防御资质 '..actor:GetProperty(PROP_SUMMON_DEF_QUAL))
