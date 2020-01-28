@@ -212,6 +212,10 @@ function ui_show_bag()
                         end
                         cxlog_info('new_pal  '.. cjson.encode(new_pal))
                         player:ChangePalMatrix(new_pal)
+
+                        net_manager_actor_dostring(player:GetID(),string.format([=[
+                            actor:SetProperty(PROP_PAL_MATRIX, %q)
+                        ]=], cjson.encode(new_pal)))
                     end
                 end
                                 

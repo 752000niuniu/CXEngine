@@ -97,6 +97,10 @@ end
 stub[PTO_C2S_PLAYER_DOSTRING] = function(req)
     local pid = req.pid
     local player = actor_manager_fetch_player_by_id(pid)
+    if not player then
+        cxlog_info('PTO_C2S_PLAYER_DOSTRING not found player!!!')
+        return 
+    end
     local env = { player = player}
     setmetatable(env,{__index = _ENV})
     local func, err = load(req.code,'@player_dostring','bt',env)
@@ -109,6 +113,29 @@ stub[PTO_C2S_PLAYER_DOSTRING] = function(req)
         cxlog_info('PTO_C2S_PLAYER_DOSTRING', err)
     end
 end 
+
+
+stub[PTO_C2S_ACTOR_DOSTRING] = function(req)
+    local pid = req.pid
+    local actor = actor_manager_fetch_player_by_id(pid)
+    if not actor then
+        cxlog_info('PTO_C2S_ACTOR_DOSTRING not found actor!!!')
+        return 
+    end
+    local env = { actor = actor}
+    setmetatable(env,{__index = _ENV})
+    local func, err = load(req.code,'@actor_dostring','bt',env)
+    if func then
+        local ok,ret = pcall(func)
+        if not ok then
+            cxlog_info(ret)
+        end
+    else
+        cxlog_info('PTO_C2S_ACTOR_DOSTRING', err)
+    end
+end 
+
+
 
 function game_server_dispatch_message(pt)
     local type = pt:ReadAsInt()

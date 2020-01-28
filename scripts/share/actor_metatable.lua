@@ -90,6 +90,15 @@ function ActorMT:SetProperties(props)
     for k,v in pairs(props) do
         self:SetProperty(k,v)
     end
+    local pal = self:GetProperty(PROP_PAL_MATRIX)
+    local tpal = cjson.decode(pal)
+    if next(tpal) then
+        local count = #tpal.segments
+        for i=1,count do
+            tpal[i] = tpal[tostring(i)]
+        end
+        self:ChangePalMatrix(tpal)
+    end
 end
 
 

@@ -94,14 +94,6 @@ void actor_manager_draw()
 	AnimationManager::GetInstance()->Draw();
 #endif // !SIMPLE_SERVER
 }
-int lua_actor_manager_create_player(lua_State*L)
-{
-	uint64_t pid = (uint64_t)lua_tointeger(L, 1);
-	Actor* player = new Actor(pid);
-	g_Players.insert({ pid, player });
-	lua_push_actor(L, player);
-	return 1;
-}
 
 int lua_actor_manager_create_actor(lua_State*L)
 {
@@ -129,16 +121,7 @@ int lua_destroy_actor(lua_State* L)
 	return 0;
 }
 
-
-Player* actor_manager_create_player(uint64_t pid) {
-	if(g_Players.find(pid) != g_Players.end()){
-		delete g_Players[pid];
-		g_Players.erase(pid);
-	}
-	Player* player = new Player(pid);
-	g_Players.insert({ pid, player });
-	return player;
-}
+ 
 
 int lua_actor_manager_fetch_player_by_id(lua_State*L) {
 	uint64_t pid = (uint64_t)lua_tointeger(L, 1);
@@ -188,7 +171,6 @@ void luaopen_actor_manager(lua_State* L) {
 	
 	script_system_register_luac_function_with_name(L, "actor_manager_clear_all", lua_actor_manager_clear_all);
 	script_system_register_luac_function_with_name(L, "actor_manager_create_actor", lua_actor_manager_create_actor);
-	script_system_register_luac_function_with_name(L, "actor_manager_create_player", lua_actor_manager_create_player);
 	script_system_register_luac_function_with_name(L, "actor_manager_fetch_local_player", lua_actor_manager_fetch_local_player);
 	script_system_register_luac_function_with_name(L, "actor_manager_fetch_player_by_id", lua_actor_manager_fetch_player_by_id);
 	script_system_register_luac_function_with_name(L, "scene_manager_fetch_local_player", lua_actor_manager_fetch_local_player);

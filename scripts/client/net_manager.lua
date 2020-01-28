@@ -112,3 +112,22 @@ function net_manager_player_dostring(code)
 	end
 end
 
+
+function net_manager_actor_dostring(pid, fmt, ...)
+	local code = string.format(fmt, ...)
+	-- local code
+	-- if select('#',...) > 0 then
+	-- 	code = string.format(fmt, ...)
+	-- else
+	-- 	code = fmt
+	-- end
+
+	local req = {
+		pid = pid,
+		code = code
+	}
+	net_send_message(PTO_C2S_ACTOR_DOSTRING,cjson.encode(req))
+end
+
+
+

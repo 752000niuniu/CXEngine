@@ -56,3 +56,5 @@ stub[PTO_S2C_CLICK_NPC] = function(req)
 		end
 	end
 end
+
+ 

@@ -45,7 +45,7 @@ function OnSceneInit()
 
 	local player = actor_manager_fetch_local_player()
 	if not player then
-		player = actor_manager_create_player(math.tointeger( os.time()))
+		player = actor_manager_create_actor(math.tointeger( os.time()))
 		player:SetProperty(PROP_NAME,'oceacx')
 		player:SetProperty(PROP_SCENE_ID,1135)
 		player:SetProperty(PROP_ROLE_ID,1)
@@ -59,7 +59,7 @@ function OnSceneInit()
 	self_actor = player
 	self_actor:SetPos( combat_self_pos[1].x , combat_self_pos[1].y)
 	
-	enemy_actor = actor_manager_create_player(math.tointeger( os.time()) + 10 )
+	enemy_actor = actor_manager_create_actor(math.tointeger( os.time()) + 10 )
 	enemy_actor:SetProperty(PROP_NAME,'oceacx')
 	enemy_actor:SetProperty(PROP_SCENE_ID,1135)
 	enemy_actor:SetProperty(PROP_ROLE_ID,16)

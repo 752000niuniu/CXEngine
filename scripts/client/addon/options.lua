@@ -80,7 +80,7 @@ function ui_show_options()
         local npc_tbl = content_system_get_table('npc')
         imgui.HorizontalLayout(npc_tbl,next,function(k,v) 
             if imgui.Button(v.ID) then
-                local actor = actor_manager_create_player(os.time())
+                local actor = actor_manager_create_actor(os.time())
                 actor:SetProperty(PROP_ACTOR_TYPE,ACTOR_TYPE_SUMMON)
                 actor:SetProperty(PROP_AVATAR_ID, v.ID)
                 actor:SetProperty(PROP_WEAPON_AVATAR_ID,'')

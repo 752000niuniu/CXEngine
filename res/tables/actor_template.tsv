@@ -109,3 +109,4 @@ prop_atk_practice_skill_lv	int	0	1
 prop_atk_resistance_skill_lv	int	0	1
 prop_spell_practice_skill_lv	int	0	1
 prop_spell_resistance_skill_lv	int	0	1
+prop_pal_matrix	str	{}	1

@@ -5,7 +5,7 @@ function summons_on_load()
 	local db = read_database_file(path)
 	if db then
 		for i,v in ipairs(db) do
-            local pid = utils_next_uid('npc')
+            local pid = v[tostring(PROP_ID)]
             local actor = actor_manager_create_actor(pid)
             actor:SetProperties(v)
             __summons__[pid] = actor
@@ -102,12 +102,4 @@ function ActorMT:GetSummon()
     return __summons__[uids[1]]
 end
 
-
-
-
-
-
-
-
-
-
+ 
