@@ -8,74 +8,169 @@ end
 local selected_actor_uid = 0
 local edit_prop_lv = 0
 
+local edit_health = 0
+local edit_magic = 0
+local edit_force = 0
+local edit_stamina = 0
+local edit_agility = 0
+
+function draw_prop_bar(actor, prop, total, edit_prop)
+    local remain = total - edit_health - edit_magic - edit_force - edit_stamina - edit_agility
+    imgui.Text(prop[1].. ': '.. prop[3])
+    imgui.SameLine()
+    imgui.PushItemWidth(80)
+    local res
+    if remain+edit_prop == 0 then
+        res, edit_prop = imgui.DragInt('##bar'..prop[1], edit_prop, 1, -1, 0)
+    else
+        res, edit_prop = imgui.DragInt('##bar'..prop[1], edit_prop, 1, 0, remain + edit_prop)
+    end
+    imgui.PopItemWidth()
+    return edit_prop
+end
 
 function draw_prop_points_panel(actor, lv)
     local res 
-    local init_prop = actor:GetInitProp()
-    local total = (lv+1)*5
-    local remain = actor:GetRemainPropPoints()
-    local health = actor:GetProperty(PROP_ASSIGN_HEALTH)
-    local magic = actor:GetProperty(PROP_ASSIGN_MAGIC)
-    local force = actor:GetProperty(PROP_ASSIGN_FORCE)
-    local stamina = actor:GetProperty(PROP_ASSIGN_STAMINA)
-    local agility = actor:GetProperty(PROP_ASSIGN_AGILITY)
+    local total = (lv+1) * 5
 
+    edit_health = actor:GetProperty(PROP_ASSIGN_HEALTH)
+    edit_magic = actor:GetProperty(PROP_ASSIGN_MAGIC)
+    edit_force = actor:GetProperty(PROP_ASSIGN_FORCE)
+    edit_stamina = actor:GetProperty(PROP_ASSIGN_STAMINA)
+    edit_agility = actor:GetProperty(PROP_ASSIGN_AGILITY)
+
+    
     imgui.BeginGroup()
     imgui.Dummy(30,20)
     
-    imgui.Text('体质: '.. actor:GetHealthProp())
+    local prop_bars = {
+        {'体质', PROP_ASSIGN_HEALTH, actor:GetHealthProp()},
+        {'魔力', PROP_ASSIGN_MAGIC, actor:GetMagicProp()},
+        {'力量', PROP_ASSIGN_FORCE, actor:GetForceProp()},
+        {'耐力', PROP_ASSIGN_STAMINA, actor:GetStaminaProp()},
+        {'敏捷', PROP_ASSIGN_AGILITY, actor:GetAgilityProp()},
+    }
+    
+    edit_health =  draw_prop_bar(actor, prop_bars[1], total, edit_health)
+    edit_magic =   draw_prop_bar(actor, prop_bars[2], total, edit_magic)
+    edit_force =   draw_prop_bar(actor, prop_bars[3], total, edit_force)
+    edit_stamina = draw_prop_bar(actor, prop_bars[4], total, edit_stamina)
+    edit_agility = draw_prop_bar(actor, prop_bars[5], total, edit_agility)
+
+    actor:SetProperty(PROP_ASSIGN_HEALTH, edit_health)
+    actor:SetProperty(PROP_ASSIGN_MAGIC, edit_magic)
+    actor:SetProperty(PROP_ASSIGN_FORCE, edit_force)
+    actor:SetProperty(PROP_ASSIGN_STAMINA, edit_stamina)
+    actor:SetProperty(PROP_ASSIGN_AGILITY, edit_agility)
+
+    imgui.EndGroup()
+
+    imgui.Text('剩余点：'.. actor:GetRemainPropPoints())
     imgui.SameLine()
-    imgui.PushItemWidth(80)
-    res, health =  imgui.DragInt('##prop_health', health, 1.01, 1, remain)
-    imgui.PopItemWidth()
-    if res then
+    if imgui.Button('重新加点') then
+        net_manager_player_dostring(string.format([[ 
+            local actor = actor_manager_fetch_player_by_id(%d)
+            actor:ClearAssignPoints()
+        ]], actor:GetID()))
+    end
+        
+    imgui.SameLine()
+    if imgui.Button('确认加点') then
         net_manager_player_dostring(string.format([[ 
             local actor = actor_manager_fetch_player_by_id(%d)
             actor:SetProperty(PROP_ASSIGN_HEALTH, %d)
-        ]], actor:GetID(), health))
-    end
-
-    imgui.Text('魔力: '.. actor:GetMagicProp())
-    imgui.SameLine()
-    res, magic =  imgui.DragInt('##prop_magic', magic,1,init_prop.magic, remain )
-    if res then
-        net_manager_player_dostring(string.format([[ 
-            local actor = actor_manager_fetch_player_by_id(%d)
             actor:SetProperty(PROP_ASSIGN_MAGIC, %d)
-        ]], actor:GetID(), magic))        
-    end
-
-    imgui.Text('力量: '.. actor:GetForceProp())
-    imgui.SameLine()
-    res, force =  imgui.DragInt('##prop_force', force,1,init_prop.force, remain )
-    if res then
-        net_manager_player_dostring(string.format([[ 
-            local actor = actor_manager_fetch_player_by_id(%d)
             actor:SetProperty(PROP_ASSIGN_FORCE, %d)
-        ]], actor:GetID(), force))
-    end
-
-    imgui.Text('耐力: '.. actor:GetStaminaProp())
-    imgui.SameLine()
-    res, stamina =  imgui.DragInt('##prop_stamina', stamina,1,init_prop.stamina, remain )
-    if res then
-        net_manager_player_dostring(string.format([[ 
-            local actor = actor_manager_fetch_player_by_id(%d)
             actor:SetProperty(PROP_ASSIGN_STAMINA, %d)
-        ]], actor:GetID(), stamina))
+            actor:SetProperty(PROP_ASSIGN_AGILITY, %d)
+        ]], actor:GetID(), edit_health, edit_magic, edit_force, edit_stamina, edit_agility))
     end
+end
 
-    imgui.Text('敏捷: '.. actor:GetAgilityProp())
-    imgui.SameLine()
-    res, agility =  imgui.DragInt('##prop_agility', agility,1,init_prop.agility, remain )
+local prop_school_skill_lv_hp = 0
+local prop_school_skill_lv_mp = 0
+local prop_school_skill_lv_targethit = 0
+local prop_school_skill_lv_damage = 0
+local prop_school_skill_lv_defend = 0
+local prop_school_skill_lv_spiritual = 0
+local prop_school_skill_lv_speed = 0
+local prop_school_skill_lv_dodge = 0
+
+
+function draw_player_skill_bar(actor, bar)
+    local actor_lv = actor:GetProperty(PROP_LV)
+    imgui.PushItemWidth(50)
+    local res, lv = imgui.DragInt(bar[1].. '技能等级',  actor:GetProperty(bar[2]) , 1.0, 0, actor_lv+10)
+    imgui.PopItemWidth()
     if res then
+        actor:SetProperty(bar[2], lv)
         net_manager_player_dostring(string.format([[ 
             local actor = actor_manager_fetch_player_by_id(%d)
-            actor:SetProperty(PROP_ASSIGN_AGILITY, %d)
-        ]], actor:GetID(), agility))
+            actor:SetProperty(%d, %d)
+        ]], actor:GetID(), bar[2], lv))
     end
+end
+
+local pannel = {
+    {'HP', PROP_SCHOOL_SKILL_LV_HP },
+    {'MP', PROP_SCHOOL_SKILL_LV_MP },
+    {'命中', PROP_SCHOOL_SKILL_LV_TARGETHIT },
+    {'伤害', PROP_SCHOOL_SKILL_LV_DAMAGE },
+    {'防御', PROP_SCHOOL_SKILL_LV_DEFEND },
+    {'灵力', PROP_SCHOOL_SKILL_LV_SPIRITUAL },
+    {'速度', PROP_SCHOOL_SKILL_LV_SPEED },
+    {'闪避', PROP_SCHOOL_SKILL_LV_DODGE },
+}
+
+function draw_player_skill_pannel(actor)
+    imgui.BeginGroup()
+    draw_player_skill_bar(actor, pannel[1])
+    draw_player_skill_bar(actor, pannel[2])
+    draw_player_skill_bar(actor, pannel[3])
+    draw_player_skill_bar(actor, pannel[4])
+    draw_player_skill_bar(actor, pannel[5])
+    draw_player_skill_bar(actor, pannel[6])
+    draw_player_skill_bar(actor, pannel[7])
+    draw_player_skill_bar(actor, pannel[8])
     imgui.EndGroup()
 end
+
+function draw_player_equip_pannel(actor)
+    -- prop_equip_hp	float	0	1
+    -- prop_equip_mp	float	0	1
+    -- prop_equip_target	float	0	1
+    -- prop_equip_damage	float	0	1
+    -- prop_equip_defend	float	0	1
+    -- prop_equip_spiritual	float	0	1
+    -- prop_equip_agile	float	0	1
+    imgui.Text('头盔')
+    imgui.Text('项链')
+    imgui.Text('武器')
+    imgui.Text('衣服')
+    imgui.Text('腰带')
+    imgui.Text('鞋子')
+end
+
+function draw_player_practice_lv(actor)
+    function draw_practice_lv_bar(label, enum)
+        imgui.PushItemWidth(50)
+        local res, lv = imgui.DragInt(label,  actor:GetProperty(enum) , 1.0, 0, 25)
+        imgui.PopItemWidth()
+        if res then
+            actor:SetProperty(enum, lv)
+            net_manager_player_dostring(string.format([[ 
+                local actor = actor_manager_fetch_player_by_id(%d)
+                actor:SetProperty(%d, %d)
+            ]], actor:GetID(), enum, lv))
+        end
+    end
+
+    draw_practice_lv_bar('攻击修炼等级' , PROP_ATK_PRACTICE_SKILL_LV) 
+    draw_practice_lv_bar('防御修炼等级' , PROP_ATK_RESISTANCE_SKILL_LV) 
+    draw_practice_lv_bar('法术修炼等级' , PROP_SPELL_PRACTICE_SKILL_LV) 
+    draw_practice_lv_bar('法抗修炼等级' , PROP_SPELL_RESISTANCE_SKILL_LV) 
+end
+
 
 function ui_show_props()
     if not ui_is_show_props then return end
@@ -85,6 +180,20 @@ function ui_show_props()
         local selected = imgui.RadioButton(v:GetName()..'##'..v:GetID(), v:GetID() == selected_actor_uid)
         if selected then
             selected_actor_uid = v:GetID()
+            local actor = actor_manager_fetch_player_by_id(selected_actor_uid)
+            prop_school_skill_lv_hp = actor:GetProperty(PROP_SCHOOL_SKILL_LV_HP) 
+            prop_school_skill_lv_mp = actor:GetProperty(PROP_SCHOOL_SKILL_LV_MP) 
+            prop_school_skill_lv_targethit = actor:GetProperty(PROP_SCHOOL_SKILL_LV_TARGETHIT) 
+            prop_school_skill_lv_damage = actor:GetProperty(PROP_SCHOOL_SKILL_LV_DAMAGE) 
+            prop_school_skill_lv_defend = actor:GetProperty(PROP_SCHOOL_SKILL_LV_DEFEND) 
+            prop_school_skill_lv_spiritual = actor:GetProperty(PROP_SCHOOL_SKILL_LV_SPIRITUAL) 
+            prop_school_skill_lv_speed = actor:GetProperty(PROP_SCHOOL_SKILL_LV_SPEED) 
+            prop_school_skill_lv_dodge = actor:GetProperty(PROP_SCHOOL_SKILL_LV_DODGE) 
+
+            prop_atk_practice_skill_lv	= actor:GetProperty(PROP_ATK_PRACTICE_SKILL_LV)
+            prop_atk_resistance_skill_lv	= actor:GetProperty(PROP_ATK_RESISTANCE_SKILL_LV)
+            prop_spell_practice_skill_lv	= actor:GetProperty(PROP_SPELL_PRACTICE_SKILL_LV)
+            prop_spell_resistance_skill_lv	= actor:GetProperty(PROP_SPELL_RESISTANCE_SKILL_LV)
         end
     end)
 
@@ -172,17 +281,18 @@ function ui_show_props()
             ]], actor:GetID() ))
         end
         imgui.SameLine()
-        imgui.Text('HP:'.. math.floor(actor:GetProperty(PROP_HP)) .. '/'..actor:GetMaxHP())
+        imgui.Text(string.format('HP:%.f/%.f',actor:GetProperty(PROP_HP), actor:GetMaxHP()))
         imgui.SameLine()
-        imgui.Text('MP:' .. math.floor(actor:GetProperty(PROP_MP)) ..'/' ..actor:GetMaxMP())
+        imgui.Text(string.format('MP:%.0f/%.0f',actor:GetProperty(PROP_MP),actor:GetMaxMP()))
+        
         if actor:GetProperty(PROP_ACTOR_TYPE) ==  ACTOR_TYPE_PLAYER then
             imgui.SameLine()
-            imgui.Text('SP:'..actor:GetProperty(PROP_SP) ..'/150')
+            imgui.Text(string.format('SP:%.0f/%.0f',actor:GetProperty(PROP_SP), 150))
         end
         imgui.Separator()
 
         imgui.BeginGroup()
-        imgui.Dummy(30,10)
+        imgui.Dummy(30,20)
         if actor:GetProperty(PROP_ACTOR_TYPE)  == ACTOR_TYPE_PLAYER then
             imgui.Text(string.format('命中 %.1f', actor:CalcTargetHit()) )
         end
@@ -200,17 +310,17 @@ function ui_show_props()
         imgui.Dummy(30,10)
 
         if actor:GetProperty(PROP_ACTOR_TYPE)  == ACTOR_TYPE_PLAYER then
-            imgui.BeginGroup()
-            imgui.Text('HP技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_HP))
-            imgui.Text('MP技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_MP))
-            imgui.Text('命中技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_TARGETHIT))
-            imgui.Text('伤害技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_DAMAGE))
-            imgui.Text('防御技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_DEFEND))
-            imgui.Text('灵力技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_SPIRITUAL))
-            imgui.Text('速度技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_SPEED))
-            imgui.Text('躲避技能等级:'..actor:GetProperty(PROP_SCHOOL_SKILL_LV_DODGE))
-            imgui.EndGroup()
-            imgui.Separator()
+            if imgui.CollapsingHeader('师门技能等级') then
+                draw_player_skill_pannel(actor)
+            end
+
+            if imgui.CollapsingHeader('装备') then
+                draw_player_equip_pannel(actor)
+            end
+
+            if imgui.CollapsingHeader('修炼等级') then
+                draw_player_practice_lv(actor)
+            end
         end
         if actor:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_SUMMON then
             imgui.BeginGroup()
@@ -220,8 +330,32 @@ function ui_show_props()
             imgui.Text('法力资质 '..actor:GetProperty(PROP_SUMMON_MAGIC_QUAL))
             imgui.Text('速度资质 '..actor:GetProperty(PROP_SUMMON_SPEED_QUAL))
             imgui.Text('躲闪资质 '..actor:GetProperty(PROP_SUMMON_DODGE_QUAL))
-            imgui.Text('成长 '    ..actor:GetProperty(PROP_SUMMON_GROW_COEF))
+            imgui.Text(string.format('成长 %.4f',  actor:GetProperty(PROP_SUMMON_GROW_COEF)))
             imgui.EndGroup()
+
+            if imgui.Button('BB资质模板') then
+                imgui.OpenPopup('BBQualSelector')
+            end
+            if imgui.BeginPopup('BBQualSelector') then
+                local tbl = content_system_get_table('summon')
+                imgui.HorizontalLayout(tbl,next,function(k,v) 
+                    if imgui.Button(k..'##bb_templ') then
+                        net_manager_player_dostring(string.format([[ 
+                            local actor = actor_manager_fetch_player_by_id(%d)
+                            actor:SetProperty(PROP_SUMMON_ATK_QUAL, %d)
+                            actor:SetProperty(PROP_SUMMON_DEF_QUAL, %d)
+                            actor:SetProperty(PROP_SUMMON_HEALTH_QUAL, %d)
+                            actor:SetProperty(PROP_SUMMON_MAGIC_QUAL, %d)
+                            actor:SetProperty(PROP_SUMMON_SPEED_QUAL, %d)
+                            actor:SetProperty(PROP_SUMMON_DODGE_QUAL, %d)
+                            actor:SetProperty(PROP_SUMMON_GROW_COEF, %f)
+                        ]], actor:GetID(), v.atk_qual, v.def_qual, v.health_qual,v.magic_qual,v.speed_qual,v.dodge_qual,v.grow_coef))
+
+                        imgui.CloseCurrentPopup()
+                    end
+                end)
+                imgui.EndPopup('BBQualSelector')
+            end
         end
     end
     imgui.End()

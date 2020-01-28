@@ -813,8 +813,16 @@ local ACTOR_TYPE_COEF_PVP = 1
 local ACTOR_TYPE_COEF_PVE = 0.9
 local ACTOR_TYPE_COEF_EVP = 0.8
 local ACTOR_TYPE_COEF_EVE = 1
-function formula_calc_atk_base_damage(atk, def, is_critical, is_combo, combo_coef, actor_type_coef)
+function formula_calc_atk_base_damage(attacker, defender, atk, def, is_critical, is_combo, combo_coef, actor_type_coef)
+    local atk_practice_lv = attacker:GetProperty(PROP_ATK_PRACTICE_SKILL_LV)
+    local atk_resistance_lv = defender:GetProperty(PROP_ATK_RESISTANCE_SKILL_LV)
     local base = atk - def
+    if atk_practice_lv > atk_resistance_lv then
+        base = 1.02^(atk_practice_lv-atk_resistance_lv) * (base+250) - 250
+    elseif atk_practice_lv < atk_resistance_lv then
+        base = 0.98^(atk_resistance_lv - atk_practice_lv) * (base+250) - 250
+    end
+
     if is_combo then
         base = combo_coef*atk - def --第一次0.75 第二次0.5
     end
@@ -854,7 +862,7 @@ end
 function ActorMT:GetAttackDamage(target, is_critical, is_combo, combo_coef, actor_type_coef)
     local atk = self:CalcAttack()
     local def = target:CalcDefend()
-    local damage = formula_calc_atk_base_damage(atk, def, is_critical, is_combo, combo_coef, actor_type_coef)
+    local damage = formula_calc_atk_base_damage(self, target, atk, def, is_critical, is_combo, combo_coef, actor_type_coef)
     damage = formula_calc_atk_float_damage(atk,damage)
     return damage
 end
@@ -871,11 +879,25 @@ end
 -- 法宠(单法)=等级×3+灵力差×1.2+20
 -- 法宠(群法)=(等级×3+灵力差×1.2+10)×（10-作用人数）/10
 
+function formula_calc_spell_base_damage(attacker, defender)
+    local spell_atk = attacker:CalcSpiritual()
+    local spell_def = defender:CalcSpiritual()
+    local base = spell_atk-spell_def
+    
+    local spell_practice_lv = attacker:GetProperty(PROP_SPELL_PRACTICE_SKILL_LV)
+    local spell_resistance_lv = defender:GetProperty(PROP_SPELL_RESISTANCE_SKILL_LV)
+    if spell_practice_lv > spell_resistance_lv then
+        base = 1.02^(spell_practice_lv-spell_resistance_lv) * (base+250) - 250
+    elseif spell_practice_lv < spell_resistance_lv then
+        base = 0.98^(spell_resistance_lv - spell_practice_lv) * (base+250) - 250
+    end
+    return base
+end
+
 function ActorMT:GetSpellDamage(target)
-    local spell_atk = self:CalcSpiritual()
-    local spell_def = target:CalcDefend()
     local lv = self:GetProperty(PROP_LV)
-    local damage = math.max(1,lv*3 + (spell_atk-spell_def)*1.2 + 20)
+    local base = formula_calc_spell_base_damage(self, target)
+    local damage = math.max(1,lv*3 + base*1.2 + 20)
     return damage
 end
 

@@ -23,7 +23,6 @@ function launcher_init()
 	end
 end
 
-
 function launcher_update()
 	if not shared_netq:empty(0) then
 		local pt = shared_netq:front(0)
@@ -237,8 +236,6 @@ function launcher_update()
 	-- if imgui.Button('生成Protocol') then
 	-- 	script_system_dofile('../generator/protocol.lua')	
 	-- end
-
-
 
 	if imgui.Button('SignUp') then
 		local msg = {}

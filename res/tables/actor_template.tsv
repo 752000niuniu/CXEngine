@@ -105,3 +105,7 @@ prop_assign_health	int	0	1
 prop_assign_stamina	int	0	1
 prop_assign_agility	int	0	1
 prop_assign_magic	int	0	1
+prop_atk_practice_skill_lv	int	0	1
+prop_atk_resistance_skill_lv	int	0	1
+prop_spell_practice_skill_lv	int	0	1
+prop_spell_resistance_skill_lv	int	0	1
