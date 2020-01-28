@@ -16,7 +16,15 @@ function net_manager_player_dostring(pid, code)
 	net_send_message(PTO_C2S_PLAYER_DOSTRING,cjson.encode(req))
 end
 
-function on_imgui_update()
+function launcher_init()
+	if command_arg_check('gen-imgui') then
+		script_system_dofile('../generator/imgui_binding_generator.lua')
+		return	
+	end
+end
+
+
+function launcher_update()
 	if not shared_netq:empty(0) then
 		local pt = shared_netq:front(0)
 		local type = pt:ReadAsInt()

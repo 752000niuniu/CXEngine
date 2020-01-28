@@ -50,13 +50,14 @@ do
 
 	cx_client:Connect()
 	
+	launcher_init()
 	event_loop:RunTaskEvery(function()
 		if iw_should_close() then 
 			event_loop:Quit()
 			return
 		end
 		iw_begin_render()
-		on_imgui_update()
+		launcher_update()
 		iw_end_render()
 	end,16)
 	event_loop:Run()

@@ -573,8 +573,8 @@ function output_imguiapis()
                     table.insert(call_api_args, call_arg)
                 elseif arg:Type() == 'const char*' then
                     if arg.def then
-                        fun_impl:write_line( '\t%s %s = luaL_optstring(L, __argi__, %s);' ,arg:Type(), arg.name, arg.def)
-                        fun_impl:write_line( '\tif( %s != %s ) __argi__++;' ,arg.name, arg.def)
+                        fun_impl:write_line( '\t%s %s = luaL_optstring(L, __argi__++, %s);' ,arg:Type(), arg.name, arg.def)
+                        -- fun_impl:write_line( '\tif( %s != %s ) __argi__++;' ,arg.name, arg.def)
                     else
                         fun_impl:write_line( '\t%s %s = lua_tostring(L, __argi__++);' ,arg:Type(), arg.name)
                     end
@@ -588,8 +588,8 @@ function output_imguiapis()
                         table.insert(call_api_args, arg.name)
                     else
                         if arg.def then
-                            fun_impl:write_line( '\t%s %s = (%s)luaL_optinteger(L, __argi__, %s);' ,arg.type, arg.name, arg.type, arg.def)
-                            fun_impl:write_line( '\tif( %s != %s ) __argi__++;' ,arg.name, arg.def)
+                            fun_impl:write_line( '\t%s %s = (%s)luaL_optinteger(L, __argi__++, %s);' ,arg.type, arg.name, arg.type, arg.def)
+                            -- fun_impl:write_line( '\tif( %s != %s ) __argi__++;' ,arg.name, arg.def)
                         else
                             fun_impl:write_line( '\t%s %s = (%s)lua_tointeger(L, __argi__++);' ,arg.type, arg.name, arg.type)
                         end                    
@@ -605,8 +605,8 @@ function output_imguiapis()
                         table.insert(call_api_args, arg.name)
                     else
                         if arg.def then
-                            fun_impl:write_line( '\t%s %s = (%s)luaL_optnumber(L, __argi__, %s);' ,arg.type, arg.name , arg.type, arg.def)
-                            fun_impl:write_line( '\tif( %s != %s ) __argi__++;' ,arg.name, arg.def)
+                            fun_impl:write_line( '\t%s %s = (%s)luaL_optnumber(L, __argi__++, %s);' ,arg.type, arg.name , arg.type, arg.def)
+                            -- fun_impl:write_line( '\tif( %s != %s ) __argi__++;' ,arg.name, arg.def)
                         else
                             fun_impl:write_line( '\t%s %s = (%s)lua_tonumber(L, __argi__++);' ,arg.type, arg.name , arg.type)
                         end                                        
@@ -1013,7 +1013,7 @@ function output_imgui_enums(path)
     file:close(new_content)
 end
 
-output_imgui_enums(vfs_makepath('client/src/cximgui_enums.inl'))
+output_imgui_enums(vfs_makepath('common/src/client/cximgui_enums.inl'))
 
 
 
