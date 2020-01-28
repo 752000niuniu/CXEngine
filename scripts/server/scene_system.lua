@@ -7,6 +7,7 @@ function scene_system_init()
     for i, props in ipairs(npc_table) do
         local npc = actor_manager_create_actor(utils_next_uid('npc'))
         npc:SetProperties(props)    
+        npc:SetProperty(PROP_IS_AUTO_COMMAND, true)
         table.insert(npcs, npc)
     end
 

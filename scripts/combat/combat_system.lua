@@ -137,7 +137,6 @@ function BattleMT:RandomSelectEnemy(self_actor)
 end
 
 function BattleMT:AutoCommand(actor)
-    if actor:IsPlayer() then return end
     actor:SetProperty(PROP_TURN_READY, true)
 
     local rand = math.random(1,10)
@@ -149,7 +148,6 @@ function BattleMT:AutoCommand(actor)
         cmd.target = target:GetID()
         cmd.skill_id = 1
         table.insert(self.cmds, cmd)
-
         return
     elseif rand == 2 then
         local cmd = {}
@@ -238,7 +236,7 @@ function BattleMT:NextTurn()
     if IsServer() then
         for i,actor in ipairs(self.actors) do
             actor:SetProperty(PROP_TURN_READY,false)
-            if not actor:IsPlayer() then
+            if actor:GetProperty(PROP_IS_AUTO_COMMAND) then
                 self:AutoCommand(actor)
             end
         end

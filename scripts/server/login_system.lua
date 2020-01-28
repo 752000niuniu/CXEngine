@@ -31,6 +31,5 @@ stub[PTO_C2C_LOGIN] = function(req)
         end
     end
     net_send_message(req.pid,PTO_C2C_NPC_ENTER, cjson.encode({ npcs = actors_props}))
-
 end
 
