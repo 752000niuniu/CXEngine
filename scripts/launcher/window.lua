@@ -74,13 +74,12 @@ function launcher_update()
 	imgui.InputText("##password", PasswordSB);
 
 	imgui.Text('Server:')
-	imgui.InputTextMultiline('##source', SourceSB, 400, 200,ImGuiInputTextFlags_AllowTabInput)
+	imgui.InputTextMultiline('##source', SourceSB, 300, 50,ImGuiInputTextFlags_AllowTabInput)
    
 	if imgui.Button('服务端执行') then
 		local code = SourceSB:str()
 		net_manager_player_dostring(code)
 	end
-
 
 	if imgui.Button('客户端1') then
 		local exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'

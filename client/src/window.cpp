@@ -157,18 +157,6 @@ void Window::Show()
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		ImGuiViewport* mainViewport = ImGui::GetMainViewport();
-		ImGui::SetNextWindowPos(mainViewport->Pos);
-		ImGui::SetNextWindowSize(mainViewport->Size);
-		ImGui::SetNextWindowViewport(mainViewport->ID);
-
-		ImGui::Begin("MainDock", NULL,  ImGuiWindowFlags_NoDocking 
-			| ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
-			| ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus);
-		int dockspace_id = ImGui::GetID("MainDockSpace");
-		ImGui::DockSpace(dockspace_id);
-		ImGui::End();
-
 		script_system_update();
 		script_system_draw();
 
