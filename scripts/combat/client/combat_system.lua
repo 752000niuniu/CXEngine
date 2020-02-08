@@ -310,6 +310,7 @@ stub[PTO_S2C_COMBAT_END_BATTLE] = function(resp)
 end 
 
 function combat_system_end_battle()
+    if not battle then return end
     local player = actor_manager_fetch_local_player()
     net_send_message(PTO_C2S_COMBAT_END_BATTLE, cjson.encode( { pid = player:GetID() , battle_id = battle.id}) ) 
 end

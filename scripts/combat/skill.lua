@@ -233,6 +233,10 @@ function skill_create_spell_anim(skill, effect, target)
             if skill.SkillOnHit then
                 skill.SkillOnHit(skill, master, target, target_i, skill.spell_combo_counter)
             end
+            if skill.sub_type == SKILL_SUBTYPE_HEAL then
+                local hp_delta = effect.hp_deltas[skill.spell_combo_counter].target
+                target:ShowBeatNumber(hp_delta)
+            end
             skill_target_end_counter(skill)
         end)
     else
