@@ -36,6 +36,7 @@ stub[PTO_C2S_CREATE_SUMMON] = function(req)
     actor:SetProperty(PROP_ID, pid)
     actor:SetProperty(PROP_TEAM_ID, 0)
     actor:SetProperty(PROP_ACTOR_TYPE, ACTOR_TYPE_SUMMON)
+    actor:SetProperty(PROP_IS_AUTO_COMMAND, false)
 
     cxlog_info('create summon ' ,actor:GetID(), actor:GetProperty(PROP_AVATAR_ID))
     local owner = actor_manager_fetch_player_by_id(req.owner)
