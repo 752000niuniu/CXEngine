@@ -264,7 +264,9 @@ void SceneManager::Draw()
 	ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_TextureColor, cspos, ImVec2(cspos.x+gameWidth,cspos.y+gameHeight), ImVec2(0, 1), ImVec2(1, 0));
 	ImGui::GetWindowDrawList()->AddCallback(function_to_restore_shader_or_blend_state , nullptr);
 	ImGui::SetCursorPos(cursorPos);
-	script_system_call_function(script_system_get_luastate(), "on_game_imgui_update", m_pCurrentScene->GetName());
+	if(m_pCurrentScene){
+		script_system_call_function(script_system_get_luastate(), "on_game_imgui_update", m_pCurrentScene->GetName());
+	}
 	ImGui::End();
 };
 
@@ -339,16 +341,21 @@ void scene_manager_add_scene(int id , const char* name)
 	SCENE_MANAGER_INSTANCE->AddScene(new Scene( id , name ));
 }
 
-void scene_manager_add_custom_scene(int id, const char* name)
+void scene_manager_add_custom_scene(int scene_id, const char* name, int map_id)
 {
+	BaseScene* scene=nullptr;
 	if (strcmp(name, "WASViewer") == 0) {
-		SCENE_MANAGER_INSTANCE->AddScene(new WASViewerScene(id, name));
+		scene = new WASViewerScene(scene_id, name);
 	}
 	else if (strcmp(name, "UIScene") == 0) {
-		SCENE_MANAGER_INSTANCE->AddScene(new UIScene(id, name));
+		scene = new UIScene(scene_id, name);
 	}
 	else {
-		SCENE_MANAGER_INSTANCE->AddScene(new BaseScene(id, name));
+		scene = new BaseScene(scene_id, name);
+	}
+	if(scene!=nullptr) {
+		scene->SetMapID(map_id);
+		SCENE_MANAGER_INSTANCE->AddScene(scene);
 	}
 }
 

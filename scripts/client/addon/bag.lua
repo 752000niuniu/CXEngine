@@ -105,11 +105,15 @@ local LocalPlayerDebugButtons = {
         end
     },{ 
         'SetName', function(player)
-            player:SetProperty(PROP_NAME,PlayerNameSB:str())
+            net_manager_player_dostring(string.format([[ 
+                player:SetProperty(PROP_NAME, %s)
+            ]], PlayerNameSB:str() ))
         end
     },{ 
         'SetScene', function(player)
-            player:SetProperty(PROP_SCENE_ID,scene_manager_get_current_scene_id())
+            net_manager_player_dostring(string.format([[ 
+                player:SetProperty(PROP_SCENE_ID, %d)
+            ]], scene_manager_get_current_scene_id() ))
         end
     },{ 
         'BoundingBox', function(player)

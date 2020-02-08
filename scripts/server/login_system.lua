@@ -8,6 +8,8 @@ stub[PTO_C2C_LOGIN] = function(req)
         req_player:SetProperty(PROP_NAME,math.tointeger(req.pid))
     end
 
+    local player = actor_manager_fetch_player_by_id(req.pid)
+    player:SetProperty(PROP_SCENE_ID, -100)
     local actors = actor_manager_fetch_all_players()    
     -- print('players', #players)
     for i,actor in ipairs(actors) do
@@ -22,14 +24,17 @@ stub[PTO_C2C_LOGIN] = function(req)
             net_send_message(pid,PTO_C2C_PLAYER_ENTER, cjson.encode({ actors = { req_player:GetProperties() }}))
         end
     end
-
+    
     local actors_props = {}
     local actors = actor_manager_fetch_all_actors()   
     for i,actor in ipairs(actors) do
         if not actor:IsPlayer() then
+            local player = actor_manager_fetch_player_by_id(req.pid)
+            actor:SetProperty(PROP_SCENE_ID, player:GetProperty(PROP_SCENE_ID))
             table.insert(actors_props, actor:GetProperties())
         end
     end
+
     net_send_message(req.pid,PTO_C2C_NPC_ENTER, cjson.encode({ npcs = actors_props}))
 end
 

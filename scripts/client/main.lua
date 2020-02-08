@@ -18,7 +18,6 @@ script_system_dofile('../combat/combat_system.lua')
 script_system_dofile 'scene_manager.lua'
 script_system_dofile 'actor_manager.lua'
 script_system_dofile('action/action.lua')
-script_system_dofile('ui_renderer.lua')
 script_system_dofile('event_system.lua')
 script_system_dofile('input_manager.lua')
 
@@ -34,10 +33,7 @@ SERVER_PORT = command_arg_opt_int('port', 45000)
 DBG_PORT = command_arg_opt_int('dbg_port', 9600)
 luadbg_listen(DBG_PORT)
 
-function main()
-	window_system_init(SCREEN_WIDTH,SCREEN_HEIGHT)
-	window_system_show()	
-end
+
 
 function on_script_system_init()
     content_system_init()
@@ -77,5 +73,7 @@ function on_script_system_deinit()
     actor_manager_deinit()
 end
 
-
-main()
+do
+	window_system_init(SCREEN_WIDTH,SCREEN_HEIGHT)
+	window_system_show()	
+end

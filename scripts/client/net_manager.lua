@@ -11,31 +11,6 @@ function on_player_send_chat_message(msg)
 	net_send_message(PTO_C2C_CHAT, cjson.encode(req))
 end
 
-stub[PTO_C2C_PLAYER_ENTER] = function(req)
-	for i,actor_info in ipairs(req.actors) do
-		local actor = actor_manager_create_actor(actor_info[tostring(PROP_ID)])
-		cxlog_info('create pid ', actor_info[tostring(PROP_ID)] )
-		actor:SetProperties(actor_info)
-		-- actor_reg_event(actor, ACTOR_EV_ON_CLICK, actor_ev_on_click)
-	end
-	if req.local_pid then
-		actor_manager_set_local_player(req.local_pid)
-	end
-end
-
-stub[PTO_C2C_NPC_ENTER] = function(req)
-	for i,actor_info in ipairs(req.npcs) do
-		local actor = actor_manager_create_actor(actor_info[tostring(PROP_ID)])
-		actor:SetProperties(actor_info)
-	end
-
-	local player = actor_manager_fetch_local_player()
-	local req = {}
-	req.pid = player:GetID()
-	net_send_message(PTO_C2S_FETCH_TEAM, cjson.encode(req))
-end
-
-
 stub[PTO_C2C_CHAT] = function(req)
 	local player = actor_manager_fetch_player_by_id(req.pid)
 	if not player:IsLocal() then
