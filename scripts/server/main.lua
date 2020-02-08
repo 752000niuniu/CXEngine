@@ -18,6 +18,8 @@ script_system_dofile('scene_system.lua')
 script_system_dofile('team_system.lua')
 script_system_dofile('../combat/combat_system.lua')
 
+script_system_dofile('gm.lua')
+
 function server_reload()
     cxlog_info('server_reload')
 

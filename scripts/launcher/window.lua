@@ -80,6 +80,10 @@ function launcher_update()
 		local code = SourceSB:str()
 		net_manager_player_dostring(code)
 	end
+	imgui.SameLine()
+	if imgui.Button('重连服务器') then
+		net_reconnect()
+	end
 
 	if imgui.Button('客户端1') then
 		local exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'
@@ -172,11 +176,19 @@ function launcher_update()
 		cxlog_info(cmd)
 		os.execute(cmd)
 	end
+	imgui.SameLine()
+	if imgui.Button('关闭客户端') then
+		net_send_message(PTO_C2S_GM, cjson.encode({type='exit'}))
+	end
 
 	if imgui.Button('启动服务器') then
 		local cmd = string.format('start %sbin/Debug/SimpleServer.exe --cwd=%s', vfs_get_workdir(),vfs_get_workdir())
 		cxlog_info(cmd)
 		os.execute(cmd)
+	end
+	imgui.SameLine()
+	if imgui.Button('关闭服务器') then
+		net_send_message(PTO_C2S_GM, cjson.encode({type='exit_server'}))
 	end
 
 	if imgui.Button('启动DA 4711') then

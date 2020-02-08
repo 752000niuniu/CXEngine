@@ -36,6 +36,15 @@ stub[PTO_S2C_SYNC_PROPS] = function(req)
 	end
 end
 
+
+stub[PTO_S2C_GM] = function(msg)
+	if msg.type  == 'exit' then
+		os.exit(0)
+	end
+end	
+
+
+
 function game_dispatch_message(pt)
 	local type = pt:ReadAsInt()
 	local js = pt:ReadAllAsString()

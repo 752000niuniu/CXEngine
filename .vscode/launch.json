@@ -52,8 +52,7 @@
             "request": "attach",
             "ip": "127.0.0.1",
             "port": 9400,
-            "cwd": "${workspaceFolder}\\",
-            "debugServer": 4711
+            "cwd": "${workspaceFolder}\\"
         },
         {
             "name": "launch",

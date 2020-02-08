@@ -5,6 +5,10 @@ script_system_dofile('../share/enums_protocol.lua')
 script_system_dofile('window.lua')
 CX_MSG_HEADER_LEN = 4 
 
+function net_reconnect()
+	cx_client:Cancel()
+	cx_client:Connect()
+end
 
 function net_send_message(pt, msg)
 	cxlog_info('net_send_message',pt ,msg)
@@ -49,6 +53,7 @@ do
 	end)
 
 	cx_client:Connect()
+	cx_client:set_auto_reconnect(true)
 	
 	launcher_init()
 	event_loop:RunTaskEvery(function()

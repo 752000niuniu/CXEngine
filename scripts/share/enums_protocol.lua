@@ -58,3 +58,7 @@ PTO_S2C_CREATE_SUMMON_RESP = enum_next()
 
 PTO_C2S_FETCH_SUMMON = enum_next()
 PTO_S2C_FETCH_SUMMON_RESP = enum_next()
+
+
+PTO_C2S_GM = enum_next()
+PTO_S2C_GM = enum_next()
