@@ -8,8 +8,6 @@ stub[PTO_C2C_LOGIN] = function(req)
         req_player:SetProperty(PROP_NAME,math.tointeger(req.pid))
     end
 
-    local player = actor_manager_fetch_player_by_id(req.pid)
-    player:SetProperty(PROP_SCENE_ID, -100)
     local actors = actor_manager_fetch_all_players()    
     -- print('players', #players)
     for i,actor in ipairs(actors) do
