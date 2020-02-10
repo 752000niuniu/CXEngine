@@ -10,52 +10,41 @@ local scene_lua_files =
 }
 
 local scene_list = {}
-local current_scene_name = 'Splash'
 function on_scene_manager_init()
-    local parsed_tsv = utils_parse_tsv_file_as_table(fs_get_tsv_path('map'),false)
-    for i,row in ipairs(parsed_tsv) do
-        scene_manager_add_scene(tonumber(row.ID), row.name)
-    end
+    local scene_tbl = content_system_get_table('scene')
+    for id, row in pairs(scene_tbl) do
+        scene_manager_add_custom_scene(id, row.name, row.map_id)
 
-    scene_manager_add_scene(-1, '东海湾全景')
-    -- scene_manager_add_custom_scene(-2, "BattleScene", 1506);
-	scene_manager_add_custom_scene(-100, "Splash", 1506);
-	-- scene_manager_add_custom_scene(-101, "WASViewer", 1506);
-	-- scene_manager_add_custom_scene(-102, "UIScene", 1506);
-	-- scene_manager_add_custom_scene(-103, "TestScene", 1506);
-    -- scene_manager_add_custom_scene(-106, "PackageUnpacker", 1506);
+        if row.script ~= '' then
+            local path = vfs_get_luapath(row.script)
+            local module = {
+                exports = {},
+                env = _ENV
+            } 
+            scene_list[row.name] = module
+
+            setmetatable(module,{ __index = function(t,k)
+                local env = rawget(t, "env")
+                local v = env[k] ; if v then return v end
+                local exports = rawget(t, "exports")
+                local v = rawget(exports, k); if v then return v end 
+            end})
     
-    for i,v in ipairs(scene_lua_files) do
-        local path = vfs_get_luapath(v.file)
-        local module = {
-            exports = {},
-            env = _ENV
-        } 
-        scene_list[v.name] = module
-
-        setmetatable(module,{ __index = function(t,k)
-            local env = rawget(t, "env")
-            local v = env[k] ; if v then return v end
-            local exports = rawget(t, "exports")
-            local v = rawget(exports, k); if v then return v end 
-        end})
-
-        local fun,err = loadfile(path,'bt',module)
-        if fun then
-            fun()
-        else
-            cxlog_info(fun,err)
+            local fun,err = loadfile(path,'bt',module)
+            if fun then
+                fun()
+            else
+                cxlog_info(fun,err)
+            end
+    
+            for name,v in pairs(scene_list) do
+                table.insert(scene_list_name, name)
+            end
         end
     end
-
-    for name,v in pairs(scene_list) do
-        table.insert(scene_list_name, name)
-    end
-    -- scene_manager_switch_scene_by_name(current_scene_name)
 end
 
 function on_scene_manager_init_scene(name)
-    current_scene_name = name
     if scene_list[name] then
         scene_list[name].OnSceneInit() 
     end
@@ -74,7 +63,6 @@ function on_scene_manager_draw(name)
 end
 
 function scene_manager_reload(name)
-    name = name or current_scene_name
     for i,v in ipairs(scene_lua_files) do
         if v.name == name then
             local path = vfs_get_luapath(v.file)
@@ -142,6 +130,12 @@ end
 
 stub = net_manager_stub()
 
+
+stub[PTO_S2C_SWITCH_SCENE] = function()
+    -- PTO_C2S_SWITCH_SCENE
+end
+
+
 stub[PTO_C2C_PLAYER_ENTER] = function(req)
 	for i,actor_info in ipairs(req.actors) do
 		local actor = actor_manager_create_actor(actor_info[tostring(PROP_ID)])
@@ -153,7 +147,6 @@ stub[PTO_C2C_PLAYER_ENTER] = function(req)
 		actor_manager_set_local_player(req.local_pid)
         local player = actor_manager_fetch_local_player()
         local scene_id = player:GetProperty(PROP_SCENE_ID)
-        cxlog_info('PTO_C2C_PLAYER_ENTER', scene_id)
         scene_manager_switch_scene_by_id(scene_id)
 	end
 end

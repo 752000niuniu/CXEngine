@@ -675,13 +675,15 @@ void ActionStateMachine::Draw()
 			avatar->Pos.y = (float)py;
 		}
 		else {
-			if (m_Actor->GetScene() != nullptr&&m_Actor->GetScene()->GetGameMap() != nullptr) {
-				int offx = m_Actor->GetScene()->GetGameMap()->GetMapOffsetX();
-				int offy = m_Actor->GetScene()->GetGameMap()->GetMapOffsetY();
+			auto* player = actor_manager_fetch_local_player();
+			if (player) {
+				auto* scene = player->GetScene();
+				auto* map = scene->GetGameMap();
+				int offx = map->GetMapOffsetX();
+				int offy = map->GetMapOffsetY();
 				avatar->Pos.x = (float)(m_Actor->GetX() + offx);
 				avatar->Pos.y = (float)(m_Actor->GetY() + offy);
-			}
-			else {
+			}else{
 				avatar->Pos.x = pos.x;
 				avatar->Pos.y = pos.y;
 			}

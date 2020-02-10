@@ -62,3 +62,6 @@ PTO_S2C_FETCH_SUMMON_RESP = enum_next()
 
 PTO_C2S_GM = enum_next()
 PTO_S2C_GM = enum_next()
+
+PTO_C2S_SWITCH_SCENE = enum_next()
+PTO_S2C_SWITCH_SCENE = enum_next()

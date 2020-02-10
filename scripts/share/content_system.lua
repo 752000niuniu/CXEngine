@@ -234,6 +234,22 @@ function init_summon_table()
     return ret
 end
 
+function init_scene_table()
+    local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('scene'),{
+        { name = 'ID', fmt='i' },
+        { name = 'name'},
+        { name = 'map_id', fmt='i' },
+        { name = 'script'},
+        { name = 'birth_pos', fmt='pos' }
+    })
+    local ret = {}
+    for i, row in ipairs(tbl) do
+        ret[row.ID] = row
+    end
+    return ret
+end
+
+
 function content_system_init()
     content_system_set_table('role', read_tsv_index_by_main_key('avatar_role',false,'ID'))
     content_system_set_table('weapon', read_tsv_index_by_main_key('avatar_weapon',false,'ID'))
@@ -250,6 +266,8 @@ function content_system_init()
 
     content_system_set_table('npc', init_npc_table())
     content_system_set_table('summon', init_summon_table())
+
+    content_system_set_table('scene', init_scene_table())
     
     
 end

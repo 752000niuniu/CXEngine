@@ -27,8 +27,6 @@ stub[PTO_C2C_LOGIN] = function(req)
     local actors = actor_manager_fetch_all_actors()   
     for i,actor in ipairs(actors) do
         if not actor:IsPlayer() then
-            local player = actor_manager_fetch_player_by_id(req.pid)
-            actor:SetProperty(PROP_SCENE_ID, player:GetProperty(PROP_SCENE_ID))
             table.insert(actors_props, actor:GetProperties())
         end
     end
