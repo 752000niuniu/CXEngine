@@ -31,7 +31,28 @@ GameMap::GameMap(uint32 mapID)
 	{
 		iothread->PostTask(fileName.c_str(), [this](const char* path)->bool
 		{
-			
+				m_XyqMap = new NE::MAP(path);
+
+				m_MapWidth = m_XyqMap->MapWidth();
+
+				m_MapHeight = m_XyqMap->MapHeight();
+
+				m_Width = m_XyqMap->SliceWidth();
+				m_Height = m_XyqMap->SliceHeight();
+
+				m_Row = m_XyqMap->Row();
+				m_Col = m_XyqMap->Col();
+				cxlog_info("初始化GameMap %d %d ", m_Row, m_Col);
+
+				m_CellWidth = m_Col * 16;
+				m_CellHeight = m_Row * 12;
+				m_Cell.resize(m_CellWidth, { 0 });
+
+				for (int i = 0; i < m_CellWidth; i++)
+				{
+					m_Cell[i].resize(m_CellHeight, 0);
+				}
+				UpdateCell();
 			return true;
 		}
 		);
@@ -46,28 +67,7 @@ GameMap::GameMap(uint32 mapID)
 		m_MaskTiles.clear();
 		m_CellPic = new Texture(FileSystem::GetAssetsPath("X.png"));
 #endif
-		m_XyqMap = new NE::MAP(fileName);
-
-		m_MapWidth = m_XyqMap->MapWidth();
-
-		m_MapHeight = m_XyqMap->MapHeight();
-
-		m_Width = m_XyqMap->SliceWidth();
-		m_Height = m_XyqMap->SliceHeight();
-
-		m_Row = m_XyqMap->Row();
-		m_Col = m_XyqMap->Col();
-		cxlog_info("初始化GameMap %d %d ", m_Row, m_Col);
-
-		m_CellWidth = m_Col * 16;
-		m_CellHeight = m_Row * 12;
-		m_Cell.resize(m_CellWidth, { 0 });
-
-		for (int i = 0; i < m_CellWidth; i++)
-		{
-			m_Cell[i].resize(m_CellHeight, 0);
-		}
-		UpdateCell();
+		
 	}
 }
 

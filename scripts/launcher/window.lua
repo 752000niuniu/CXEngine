@@ -43,7 +43,13 @@ function launcher_update()
 		end
 	end
 
-	imgui.Begin('NewWindow')
+	local viewport, x,y,w,h = imgui.GetMainViewport();
+	imgui.SetNextWindowPos(x,y);
+	imgui.SetNextWindowSize(w,h);
+	imgui.SetNextWindowViewport(viewport);
+
+
+	imgui.Begin('NewWindow', nil, ImGuiWindowFlags_NoDecoration)
 	if imgui.Button('Reload') then
 		script_system_dofile('window.lua')
 	end
@@ -188,6 +194,10 @@ function launcher_update()
 	end
 	imgui.SameLine()
 	if imgui.Button('关闭服务器') then
+	end
+	
+	if imgui.Button('关闭所有端') then
+		net_send_message(PTO_C2S_GM, cjson.encode({type='exit'}))
 		net_send_message(PTO_C2S_GM, cjson.encode({type='exit_server'}))
 	end
 

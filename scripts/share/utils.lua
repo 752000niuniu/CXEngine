@@ -21,7 +21,7 @@ end
 
 
 function utils_string_split_fixcnt(str, cut, fixcnt)
-    local strs = utils_str_split(str,cut)
+    local strs = utils_string_split(str,cut)
     while #strs > fixcnt do
         table.remove(strs,#strs)
     end
@@ -188,6 +188,17 @@ function utils_parse_tsv(path, columns)
                             row[key] = tonumber(vals[i])
                         elseif col.fmt == 'i' then
                             row[key] = math.tointeger(vals[i])
+                        elseif col.fmt == 'pos' then
+                            local v = utils_string_split(vals[i], ',')
+                            local pos = {}
+                            if #v == 2 then
+                                pos.x = math.tointeger(v[1])
+                                pos.y = math.tointeger(v[2])
+                            else
+                                pos.x = 0
+                                pos.y = 0
+                            end
+                            row[key] = pos
                         elseif type(col.fmt)=='function' then
                             row[key] = col.fmt(vals[i])
                         else
