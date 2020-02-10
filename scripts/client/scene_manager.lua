@@ -99,13 +99,14 @@ end
 function on_game_imgui_update(name)
     fix_input_manager_mouse_pos()
     
-    imgui.Text('FPS:'.. math.floor(window_system_get_fps()*1000))
+    imgui.Text('    FPS:'.. math.floor(window_system_get_fps()*1000))
 
     if scene_list[name] then
         if scene_list[name].OnSceneImGuiUpdate then
             scene_list[name].OnSceneImGuiUpdate()
         end
-        if scene_is_combat() then
+        local player = actor_manager_fetch_local_player()
+        if player:IsCombat() then
             combat_system_imgui_update()
         end
     end

@@ -5,33 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Client",
-            "type": "cxlua",
-            "request": "attach",
-            "ip": "127.0.0.1",
-            "port": 9600,
-            "cwd": "${workspaceFolder}\\",
-            "debugServer": 4711
-        },
-        {
             "name": "Server",
             "type": "cxlua",
             "request": "attach",
             "ip": "127.0.0.1",
             "port": 9500,
-            "cwd": "${workspaceFolder}\\",
-            "debugServer": 4712
-        },
-        {
-            "name": "ServerSTDIO",
-            "type": "cxlua",
-            "request": "attach",
-            "ip": "127.0.0.1",
-            "port": 9500,
             "cwd": "${workspaceFolder}\\"
         },
         {
-            "name": "ClientSTDIO",
+            "name": "Client",
             "type": "cxlua",
             "request": "attach",
             "ip": "127.0.0.1",
@@ -39,7 +21,7 @@
             "cwd": "${workspaceFolder}\\"
         },
         {
-            "name": "Client10STDIO",
+            "name": "Client10",
             "type": "cxlua",
             "request": "attach",
             "ip": "127.0.0.1",
@@ -47,7 +29,7 @@
             "cwd": "${workspaceFolder}\\"
         },
         {
-            "name": "LauncherSTDIO",
+            "name": "Launcher",
             "type": "cxlua",
             "request": "attach",
             "ip": "127.0.0.1",

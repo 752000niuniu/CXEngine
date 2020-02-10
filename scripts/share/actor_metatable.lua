@@ -58,6 +58,10 @@ function ActorMT:SetCombatPos(x,y)
     self:SetProperty(PROP_COMBAT_POS,{x,y})
 end
 
+function ActorMT:IsCombat(x,y)
+    return self:GetProperty(PROP_IS_COMBAT)
+end
+
 
 function ActorMT:GetY()
     local x,y = self:GetPos()

@@ -66,6 +66,7 @@ public:
 
 	void SetCamera(Camera* camera);
 	void SetWindowPos(float x, float y);
+	void GetWindowPos(float& x, float& y);
 private:
 	
 	InputManager();

@@ -343,6 +343,13 @@ void InputManager::SetWindowPos(float x, float y)
 	m_WindowPos.x = x;
 	m_WindowPos.y = y;
 }
+
+void InputManager::GetWindowPos(float& x, float& y)
+{
+	x = m_WindowPos.x;
+	y = m_WindowPos.y;
+}
+
 void input_manager_init()
 {
 	INPUT_MANAGER_INSTANCE->Init();
@@ -366,10 +373,19 @@ int input_manager_set_window_pos(lua_State*L) {
 	return 0;
 }
 
+int input_manager_get_window_pos(lua_State* L) {
+	float x, y;
+	INPUT_MANAGER_INSTANCE->GetWindowPos(x, y);
+	lua_pushnumber(L, x);
+	lua_pushnumber(L, y);
+	return 2;
+}
+
 void luaopen_input_manager(lua_State* L)
 {
 	script_system_register_function(L, input_manager_init);
 	script_system_register_function(L, input_manager_deinit);
 	script_system_register_luac_function(L, input_manager_get_mouse_pos);
 	script_system_register_luac_function(L, input_manager_set_window_pos);
+	script_system_register_luac_function(L, input_manager_get_window_pos);
 }
