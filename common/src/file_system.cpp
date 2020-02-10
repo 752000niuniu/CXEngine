@@ -93,7 +93,7 @@ std::string FileSystem::GetIconPath(std::string path)
 
 void FileSystem::InitWorkPath()
 {
-	std::string cwd = command_arg_get("cwd");
+	std::string cwd = command_arg_opt_str("cwd","nil");
 	if (cwd != "nil")
 	{
 		VFS_WORK_DIR = cwd;

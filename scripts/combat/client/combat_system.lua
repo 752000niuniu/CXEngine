@@ -130,14 +130,32 @@ function combat_system_imgui_update()
     end
 
     if current_master then
-        local vid,x,y  = imgui.GetMainViewport()
-        imgui.SetNextWindowPos(x+640,y+100)
         if current_master:IsPlayer() then
+            local vid,x,y  = imgui.GetMainViewport()
+            imgui.SetNextWindowPos(x+640,y+100)
             imgui.Begin('Menu',menu_show)
 
             if imgui.Button('法术##player') then
                 imgui.OpenPopup('SpellSelector')
                 ACTOR_CLICK_MODE = ACTOR_CLICK_MODE_SPELL
+            end
+            if imgui.BeginPopup('SpellSelector') then
+                local skill_tbl = content_system_get_table('skill')
+                local school = current_master:GetProperty(PROP_SCHOOL)
+                local school_skill = {}
+                for id,row in pairs(skill_tbl) do
+                    if row.school == school then
+                        school_skill[id] = row
+                    end
+                end
+                imgui.HorizontalLayout(school_skill,next,function(k,v) 
+                    if imgui.Button(v.name..'##'..v.ID) then
+                        local current_master = actor_manager_fetch_local_player()
+                        current_master:SetProperty(PROP_USING_SKILL, v.ID)
+                        imgui.CloseCurrentPopup()
+                    end
+                end)
+                imgui.EndPopup('SpellSelector')
             end
 
             if imgui.Button('特技##player') then
@@ -179,12 +197,31 @@ function combat_system_imgui_update()
         
             imgui.End()
         else
-
+            local vid,x,y  = imgui.GetMainViewport()
+            imgui.SetNextWindowPos(x+640,y+100)
             imgui.Begin('Menu2',menu_show)
 
-            if imgui.Button('法术##player') then
+            if imgui.Button('法术##summon') then
                 imgui.OpenPopup('SpellSelector')
                 ACTOR_CLICK_MODE = ACTOR_CLICK_MODE_SPELL
+            end
+            if imgui.BeginPopup('SpellSelector') then
+                local skill_tbl = content_system_get_table('skill')
+                local school = current_master:GetProperty(PROP_SCHOOL)
+                local school_skill = {}
+                for id,row in pairs(skill_tbl) do
+                    if row.school == school then
+                        school_skill[id] = row
+                    end
+                end
+                imgui.HorizontalLayout(school_skill,next,function(k,v) 
+                    if imgui.Button(v.name..'##'..v.ID) then
+                        local current_master = actor_manager_fetch_local_player()
+                        current_master:SetProperty(PROP_USING_SKILL, v.ID)
+                        imgui.CloseCurrentPopup()
+                    end
+                end)
+                imgui.EndPopup('SpellSelector')
             end
 
 
@@ -212,29 +249,10 @@ function combat_system_imgui_update()
         
             imgui.End()
         end
-
-        imgui.SetNextWindowSize(350,400)
-        if imgui.BeginPopup('SpellSelector') then
-            local skill_tbl = content_system_get_table('skill')
-            local school = current_master:GetProperty(PROP_SCHOOL)
-            local school_skill = {}
-            for id,row in pairs(skill_tbl) do
-                if row.school == school then
-                    school_skill[id] = row
-                end
-            end
-            imgui.HorizontalLayout(school_skill,next,function(k,v) 
-                if imgui.Button(v.name..'##'..v.ID) then
-                    local current_master = actor_manager_fetch_local_player()
-                    current_master:SetProperty(PROP_USING_SKILL, v.ID)
-                    imgui.CloseCurrentPopup()
-                end
-            end)
-            imgui.EndPopup('SpellSelector')
-        end
     end
 	
     
+
     for i,actor in ipairs(battle.actors) do
         local x,y,w,h = actor:GetAvatarRect()
         imgui.SetCursorPos(x,y-10)

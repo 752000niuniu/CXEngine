@@ -201,6 +201,15 @@ function launcher_update()
 		net_send_message(PTO_C2S_GM, cjson.encode({type='exit_server'}))
 	end
 
+	if imgui.Button('DISTRIBUTE') then
+		local path = vfs_makepath('internals/luadebugger/vscode/Debug/vsdbgadapter.exe')
+		local cwd = vfs_makepath('internals/luadebugger/vscode/')
+		
+
+		os.execute()
+
+	end
+
 	if imgui.Button('启动DA 4711') then
 		local path = vfs_makepath('internals/luadebugger/vscode/Debug/vsdbgadapter.exe')
 		local cwd = vfs_makepath('internals/luadebugger/vscode/')

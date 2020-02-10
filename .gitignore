@@ -25,4 +25,4 @@ res/data
 *.exe
 *.log
 .vscode/ipch
-
+dist/
