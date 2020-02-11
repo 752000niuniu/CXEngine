@@ -1,5 +1,27 @@
 
-<img src="https://github.com/oceancx/SimpleEngine/blob/master/imgui.gif" width="50%" height="50%">
+试玩（direct playing）
+
+链接：https://pan.baidu.com/s/1WrAw3OaPYgGZRimI4O0YyA 
+提取码：0kvn 
+
+<img src="https://github.com/oceancx/SimpleEngine/blob/master/res/icon/1.jpg" width="50%" height="50%">
+<img src="https://github.com/oceancx/SimpleEngine/blob/master/res/icon/2.jpg" width="50%" height="50%">
+<img src="https://github.com/oceancx/SimpleEngine/blob/master/res/icon/3.jpg" width="50%" height="50%">
+<img src="https://github.com/oceancx/SimpleEngine/blob/master/res/icon/4.jpg" width="50%" height="50%">
+
+
+游戏内集成玩家召唤兽属性编辑，加点修炼设置。
+
+玩家武器 人物形象替换
+
+玩家染色，宠物染色
+
+玩家门派设置
+
+原版百分之60以上技能动画
+
+伤害结算公式 师门技能公式 玩家修炼公式  
+
 
 ### Notice
 
@@ -9,7 +31,7 @@ this repo is developed in master branch now and stable-0.1 is the stable branch.
 
 ### 对于游戏开发感兴趣的同胞们
 
-QQ群: 465885387
+QQ群: 983630090
 
 ### Current Working on
 

@@ -672,3 +672,5 @@ buff效果 加减属性  加减hp
 2. 登陆账号
 3. 登陆角色
 4. 加载角色场景
+
+<img src="https://github.com/oceancx/SimpleEngine/blob/master/imgui.gif" width="50%" height="50%">
