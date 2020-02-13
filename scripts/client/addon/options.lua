@@ -68,10 +68,10 @@ function ui_show_options()
     scene_manager_sync_draw_cbx(cbx_draw_map,cbx_draw_cell,cbx_draw_strider,cbx_draw_mask,cbx_draw_announcement,cbx_auto_run)
 
     if imgui.CollapsingHeader('Maps') then
-        local maps  = content_system_get_table('maps')
-        imgui.HorizontalLayout(maps,next,function(k,v) 
+        local scenes  = content_system_get_table('scene')
+        imgui.HorizontalLayout(scenes,next,function(k,v) 
             if imgui.Button(v.name) then
-                scene_manager_switch_scene_by_name(v.name)    
+                scene_manager_switch_scene_by_id(v.ID)    
             end
         end)
     end  

@@ -31,24 +31,28 @@ function check_dest_hit_actor(dest_x, dest_y)
     return hit_actor
 end
 
+function is_letter_pressed(lower_letter)
+    return imgui.IsKeyPressed(string.byte(lower_letter)) or imgui.IsKeyPressed(string.byte(lower_letter:upper())) 
+end
+
 function addon_manager_imgui_update()
-    if imgui.KeysMod('ALT') and imgui.IsKeyPressed(string.byte('E')) then
+    if imgui.KeysMod('ALT') and is_letter_pressed('e') then
 		ui_toggle_show_bag()
 	end
 
-	if imgui.KeysMod('ALT') and imgui.IsKeyPressed(string.byte('W')) then
+	if imgui.KeysMod('ALT') and  is_letter_pressed('w') then
 		ui_toggle_show_props()
     end
 
-    if imgui.KeysMod('ALT') and imgui.IsKeyPressed(string.byte('Q')) then
+    if imgui.KeysMod('ALT') and  is_letter_pressed('q') then
 		ui_toggle_show_quest()
     end
 
-    if imgui.KeysMod('ALT') and imgui.IsKeyPressed(string.byte('D')) then
+    if imgui.KeysMod('ALT') and  is_letter_pressed('d') then
 		ui_toggle_show_action()
     end
 
-    if imgui.KeysMod('ALT') and imgui.IsKeyPressed(string.byte('Z')) then
+    if imgui.KeysMod('ALT') and  is_letter_pressed('z') then
 		ui_toggle_show_options()
     end
     
@@ -81,7 +85,7 @@ function addon_manager_imgui_update()
         end
     end
 
-    if imgui.KeysMod('ALT') and imgui.IsKeyReleased(string.byte('A'))  then
+    if imgui.KeysMod('ALT') and  is_letter_pressed('a')  then
         local player = actor_manager_fetch_local_player()
         if not player then return end
         if player:GetProperty(PROP_IS_COMBAT) then return end
