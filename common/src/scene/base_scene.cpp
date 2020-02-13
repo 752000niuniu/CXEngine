@@ -74,18 +74,13 @@ void BaseScene::Load()
 {
 	if (m_Loaded)return;
 
-	if (m_SceneID > 0) {
-		m_Map = new GameMap(m_SceneID);
+	if (m_MapID > 0)
+	{
+		m_Map = new GameMap(m_MapID);
 	}
-	else {
-		if (m_MapID > 0)
-		{
-			m_Map = new GameMap(m_MapID);
-		}
-		else
-		{
-			m_Map = nullptr;
-		}
+	else
+	{
+		m_Map = nullptr;
 	}
 	
 	OnLoad();

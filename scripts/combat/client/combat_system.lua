@@ -48,6 +48,7 @@ function calc_combat_enemy_pos(ratio_x, ratio_y)
 end
 
 function combat_system_init()
+    cxlog_info('combat_system_init')
     BattleBG = animation_create(ADDONWDF, 0xE3B87E0F)
     local ratio_x = game_get_width()/ 640 
 	local ratio_y = game_get_height()/ 480

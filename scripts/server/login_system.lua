@@ -6,10 +6,15 @@ stub[PTO_C2C_LOGIN] = function(req)
     if props then
         req_player:SetProperties(props)
         req_player:SetProperty(PROP_NAME,math.tointeger(req.pid))
+    else
+        req_player:SetProperty(PROP_NAME,math.tointeger(req.pid))
+        req_player:SetProperty(PROP_ACTOR_TYPE, ACTOR_TYPE_PLAYER)
+        local scenes = content_system_get_table('scene')
+        local scene_id = req_player:GetProperty(PROP_SCENE_ID)
+        req_player:SetPos(scenes[scene_id].birth_pos.x,scenes[scene_id].birth_pos.y )
     end
 
     local actors = actor_manager_fetch_all_players()    
-    -- print('players', #players)
     for i,actor in ipairs(actors) do
         local pid = actor:GetID()
         if pid == req.pid then

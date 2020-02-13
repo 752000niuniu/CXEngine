@@ -28,10 +28,10 @@ prop_is_autorun	bool	false
 prop_is_dead	bool	false	
 prop_frame_speed	float	0.080	
 prop_actor_type	int	1	1
-prop_name	str		1
-prop_avatar_id	str		1
-prop_weapon_avatar_id	str		1
-prop_scene_id	int	0	1
+prop_name	str	test	1
+prop_avatar_id	str	JXK-SWORD	1
+prop_weapon_avatar_id	str	JXK-SWORD-060-X	1
+prop_scene_id	int	186	1
 prop_role_id	int	0	
 prop_weapon_id	int	-1	
 prop_weapon_type	int	0	
@@ -67,8 +67,8 @@ prop_asm_buff_anim	uint64	0
 prop_asm_play_behit	bool	true	
 prop_asm_runto_x	float	0	
 prop_asm_runto_y	float	0	
-prop_hp	float	0	1
-prop_mp	float	0	1
+prop_hp	float	100	1
+prop_mp	float	100	1
 prop_sp	float	0	1
 prop_lv	int	0	1
 prop_add_prop_plan	str	1,1,1,1,1	1

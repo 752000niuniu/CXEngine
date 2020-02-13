@@ -5,6 +5,7 @@ script_system_dofile('../share/utils.lua')
 
 local player_database = {}
 function read_player_database()
+	cxlog_info('read_player_database')
 	local path = vfs_get_workdir() .. '/res/storage/player.data'
 	local db = read_database_file(path)
 	if db then
@@ -38,6 +39,7 @@ end
 
 local account_database = {}
 function read_account_database()
+	cxlog_info('read_account_database')
 	local path = vfs_get_workdir() .. '/res/storage/account.data'
 	local db = read_database_file(path)
 	if db then
@@ -66,7 +68,6 @@ function server_on_disconnect(pid)
 	combat_system_battle_on_actor_leave(pid)
 end
 
-local idincr = 1
 function server_thread_on_message(conn, buf, netq)
 	while buf:readable_size() >= CX_MSG_HEADER_LEN do 
 		local len = buf:PeekAsInt()
@@ -79,8 +80,7 @@ function server_thread_on_message(conn, buf, netq)
 				local msg = cjson.decode(msgjs)
 				print('PTO_C2C_SIGNUP', msgjs)
 				local account_info = {}
-				account_info.pid = math.tointeger(os.time() + idincr)
-				idincr = idincr + 1
+				account_info.pid = utils_next_uid('actor')
 				account_info.account = msg.account
 				account_info.password = msg.password
 				account_database[account_info.account] = account_info

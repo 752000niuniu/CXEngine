@@ -343,6 +343,7 @@ void scene_manager_add_scene(int id , const char* name)
 
 void scene_manager_add_custom_scene(int scene_id, const char* name, int map_id)
 {
+	cxlog_info("scene_manager_add_custom_scene %d %s %d\n", scene_id, name, map_id);
 	BaseScene* scene=nullptr;
 	if (strcmp(name, "WASViewer") == 0) {
 		scene = new WASViewerScene(scene_id, name);

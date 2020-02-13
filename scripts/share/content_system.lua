@@ -4,6 +4,7 @@ function content_system_get_table(name)
 end
 
 function content_system_set_table(name, tbl)
+    cxlog_info('content_system_set_table', name)
     content_tables[name] = tbl
 end
 
@@ -251,6 +252,8 @@ end
 
 
 function content_system_init()
+    cxlog_info('content_system_init')
+    
     content_system_set_table('role', read_tsv_index_by_main_key('avatar_role',false,'ID'))
     content_system_set_table('weapon', read_tsv_index_by_main_key('avatar_weapon',false,'ID'))
     content_system_set_table('npc', read_npc_table())

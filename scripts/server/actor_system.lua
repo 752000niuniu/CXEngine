@@ -1,6 +1,7 @@
 __summons__ = __summons__ or {}
 
 function summons_on_load()
+    cxlog_info('summons_on_load')
     local path = vfs_get_workdir() .. '/res/storage/summon.data'
 	local db = read_database_file(path)
 	if db then
@@ -30,7 +31,7 @@ end
 
 
 stub[PTO_C2S_CREATE_SUMMON] = function(req)
-    local pid = utils_next_uid('npc')
+    local pid = utils_next_uid('actor')
     local actor = actor_manager_create_actor(pid)
     actor:SetProperties(req.props)
     actor:SetProperty(PROP_ID, pid)

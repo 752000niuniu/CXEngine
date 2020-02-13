@@ -131,6 +131,7 @@ function combat_system_battle_on_actor_leave(pid)
 end
 
 function combat_system_init()
+	cxlog_info('combat_system_init')
 	init_skills()
 	init_buffs()
 end

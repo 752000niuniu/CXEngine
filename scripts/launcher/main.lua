@@ -6,8 +6,10 @@ script_system_dofile('window.lua')
 CX_MSG_HEADER_LEN = 4 
 
 function net_reconnect()
-	cx_client:Cancel()
-	cx_client:Connect()
+	if not cx_client:IsConnected() then
+		cx_client:Cancel()
+		cx_client:Connect()
+	end
 end
 
 function net_send_message(pt, msg)
@@ -38,6 +40,8 @@ do
 	cx_client:set_on_connection(function(conn)
 		-- cxlog_info('conn-connected : ', conn:connected())
 	end)
+
+
 
 	cx_client:set_on_message(function(conn, buf, ts)
 		while buf:readable_size() >= CX_MSG_HEADER_LEN do

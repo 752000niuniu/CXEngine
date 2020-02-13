@@ -39,11 +39,10 @@ function server_reload()
 end
 
 function on_script_system_init()
+   
     content_system_init()
     combat_system_init()
-    
     scene_system_init()
-
     read_account_database()
     read_player_database()
     summons_on_load()

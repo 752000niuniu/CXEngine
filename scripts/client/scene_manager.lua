@@ -148,6 +148,7 @@ stub[PTO_C2C_PLAYER_ENTER] = function(req)
 		actor_manager_set_local_player(req.local_pid)
         local player = actor_manager_fetch_local_player()
         local scene_id = player:GetProperty(PROP_SCENE_ID)
+        cxlog_info('scene_manager_switch_scene_by_id', scene_id)
         scene_manager_switch_scene_by_id(scene_id)
 	end
 end

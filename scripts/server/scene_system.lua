@@ -2,10 +2,11 @@
 local npcs = { }
 
 function scene_system_init()
+    cxlog_info('scene_system_init')
     local npc_table = content_system_get_table('npc')
     local npcs = {}
     for i, props in ipairs(npc_table) do
-        local npc = actor_manager_create_actor(utils_next_uid('npc'))
+        local npc = actor_manager_create_actor(utils_next_uid('actor'))
         npc:SetProperties(props)    
         npc:SetProperty(PROP_IS_AUTO_COMMAND, true)
         table.insert(npcs, npc)
