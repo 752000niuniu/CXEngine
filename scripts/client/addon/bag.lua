@@ -36,7 +36,7 @@ function fetch_weapon_keys(tbl, avatar_key)
     return weapon_keys
 end
 
-local PlayerNameSB = imgui.CreateStrbuf('Ocean藏心',256)
+local PlayerNameSB = imgui.CreateStrbuf('test',256)
 local LocalPlayerDebugButtons = {
     {
         '客户端重载', function(player)
@@ -168,6 +168,26 @@ local LocalPlayerDebugButtons = {
         '测试封印公式',function(player) 
             
             
+        end
+    },{
+        '屏幕上移动',function(player) 
+            local x,y = player:GetPos()
+            player:SetPos(x,y-10)
+        end
+    },{
+        '屏幕下移动',function(player) 
+            local x,y = player:GetPos()
+            player:SetPos(x,y+10)
+        end
+    },{
+        '屏幕左移动',function(player) 
+            local x,y = player:GetPos()
+            player:SetPos(x-10,y)
+        end
+    },{
+        '屏幕右移动',function(player) 
+            local x,y = player:GetPos()
+            player:SetPos(x+10,y)
         end
     }
 }

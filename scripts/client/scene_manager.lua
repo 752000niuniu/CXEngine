@@ -141,7 +141,8 @@ stub[PTO_C2C_PLAYER_ENTER] = function(req)
 	for i,actor_info in ipairs(req.actors) do
 		local actor = actor_manager_create_actor(actor_info[tostring(PROP_ID)])
 		cxlog_info('create pid ', actor_info[tostring(PROP_ID)] )
-		actor:SetProperties(actor_info)
+        actor:SetProperties(actor_info)
+        actor:ResetASM()
 		-- actor_reg_event(actor, ACTOR_EV_ON_CLICK, actor_ev_on_click)
 	end
 	if req.local_pid then

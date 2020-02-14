@@ -10,8 +10,10 @@ local actor_enum_typename_to_type ={
     vec2 = PROP_TYPE_VEC2
 }
 
+local prop_names = {}
 function actor_on_reg_props(actor)
     local tbl = content_system_get_table('actor_template')
+    
     for i,row in ipairs(tbl) do
         local reg_type = actor_enum_typename_to_type[row.type]
         local v         
@@ -30,10 +32,11 @@ function actor_on_reg_props(actor)
             table.insert(v,tonumber(stry)) 
         end
         actor:RegProperty(i-1,reg_type,v)
+        prop_names[i-1] = row.name
     end
-    -- for i,row in ipairs(tbl) do
-    --     cxlog_info(actor:GetProperty(i-1))
-    -- end 
+    for i,row in ipairs(tbl) do
+        cxlog_info( prop_names[i-1] , actor:GetProperty(i-1))
+    end 
 end
 
 function ActorMT:GetPos()

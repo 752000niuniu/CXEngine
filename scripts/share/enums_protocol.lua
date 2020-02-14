@@ -65,3 +65,5 @@ PTO_S2C_GM = enum_next()
 
 PTO_C2S_SWITCH_SCENE = enum_next()
 PTO_S2C_SWITCH_SCENE = enum_next()
+
+PTO_C2S_FETCH_ACCOUNT_INFO           = enum_next()

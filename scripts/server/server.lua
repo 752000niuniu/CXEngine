@@ -49,6 +49,10 @@ function read_account_database()
 	end
 end
 
+function account_manager_fetch_infos()
+	return account_database
+end
+
 stub[PTO_C2C_SAVE_ACCOUNT_DATABASE] = function()
 	local accounts = {}
 	for account,info in pairs(account_database) do
@@ -113,6 +117,11 @@ function server_thread_on_message(conn, buf, netq)
 					netq:push_back(0, newmsg,newmsg:readable_size())
 					ezio_buffer_destroy(newmsg)					
 				end
+			elseif type == PTO_C2S_GM then
+				buf:Consume(4)
+				local msgjs = buf:ReadAsString(len-4)
+				local msg = cjson.decode(msgjs)
+				handle_gm_message(conn, msg)
 			else
 				netq:push_back(0, buf,len)
 				buf:Consume(len)

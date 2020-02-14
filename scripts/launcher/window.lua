@@ -7,10 +7,18 @@ local DbgPortSB = imgui.CreateStrbuf('9600',256)
 local PlayerNameSB = imgui.CreateStrbuf('simulator',256)
 local PosX = imgui.CreateStrbuf('200',128)
 local PosY = imgui.CreateStrbuf('2790',128)
+
+local account_infos = {}
+
 stub = stub or {}
-
+stub[PTO_S2C_GM] = function(req)
+	cxlog_info('PTO_S2C_GM', cjson.encode(req))
+	if req then
+		account_infos = req
+	end
+end
 stub[PTO_C2C_PLAYER_ENTER] = function()
-
+	
 end
 
 function net_manager_stub()
@@ -286,7 +294,11 @@ function launcher_update()
 		-- if imgui.Button('生成Protocol') then
 		-- 	script_system_dofile('../generator/protocol.lua')	
 		-- end
+	end
 
+	if imgui.Button('更新帐号信息') then
+		net_send_message(PTO_C2S_GM, cjson.encode({type='account_info'}))
+		
 	end
 	
 	if imgui.Button('注册帐号') then
@@ -325,31 +337,34 @@ function launcher_update()
 
 		imgui.SameLine()
 
-		if imgui.Button('登陆') then
-
-			local exepath
-			if command_arg_check('Debug') then
-				exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'
-			else
-				exepath = vfs_get_workdir()..'bin/SimpleEngine.exe'
-			end
-			local tcmd = {
-				'start '..exepath,
-				'--cwd='..vfs_get_workdir(),
-				'--host='..IPSB:str(),
-				'--port='..PortSB:str(),
-				'--dbg_port='..DbgPortSB:str(),
-				'--user='..AccountSB:str(),
-				'--pass='..PasswordSB:str(),
-			}
-			local cmd = table.concat(tcmd,' ')
-			cxlog_info(cmd)
-			os.execute(cmd)
-
-			imgui.CloseCurrentPopup()
-		end
-
+	
 		imgui.EndPopup('RigsterAccount')
+	end
+
+	if next(account_infos) then
+		for k,info in pairs(account_infos) do
+			if imgui.Button(string.format('%s:%d', info.account, info.pid).."##"..k) then
+				local exepath
+				if command_arg_check('Debug') then
+					exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'
+				else
+					exepath = vfs_get_workdir()..'bin/SimpleEngine.exe'
+				end
+				local tcmd = {
+					'start '..exepath,
+					'--cwd='..vfs_get_workdir(),
+					'--host='..IPSB:str(),
+					'--port='..PortSB:str(),
+					'--dbg_port='..DbgPortSB:str(),
+					'--user='..info.account,
+					'--pass='..info.password,
+				}
+				local cmd = table.concat(tcmd,' ')
+				cxlog_info(cmd)
+				os.execute(cmd)
+			end
+			imgui.SameLine()
+		end
 	end
 
 	imgui.End()
