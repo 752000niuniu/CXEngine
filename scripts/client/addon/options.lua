@@ -30,17 +30,6 @@ local IPSB = imgui.CreateStrbuf('127.0.0.1',256)
 local PortSB = imgui.CreateStrbuf('45000',256)
 
 
-local cur_add_plan = 1
-local add_plan_map ={
-    [1] = "1,0,3,1,0", -- 3力1体1耐
-    [2] = "0,4,0,1,0", -- 4魔1耐
-    [3] = "2,0,0,2,1", -- 2体2耐1敏
-    [4] = "1,0,0,1,3", -- 3敏1体1耐
-    -- [5] = "0,0,5,0,0", -- 5力
-    [5] = "1,0,4,0,0", -- 4力1体
-}
-
-
 function ui_show_options()
     if not ui_is_show_options then return end
     local player = actor_manager_fetch_local_player()
@@ -71,6 +60,11 @@ function ui_show_options()
         local scenes  = content_system_get_table('scene')
         imgui.HorizontalLayout(scenes,next,function(k,v) 
             if imgui.Button(v.name) then
+                -- net_manager_player_dostring(string.format([[ 
+                --     player:SetProperty(PROP_SCENE_ID, %d)
+                -- ]], scene_manager_get_current_scene_id() ))
+
+                player:SetProperty(PROP_SCENE_ID, v.ID)
                 scene_manager_switch_scene_by_id(v.ID)    
             end
         end)

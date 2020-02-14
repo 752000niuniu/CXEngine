@@ -342,9 +342,9 @@ function launcher_update()
 	end
 
 	if next(account_infos) then
-		for k,info in pairs(account_infos) do
-			if imgui.Button(string.format('%s:%d', info.account, info.pid).."##"..k) then
-				local exepath
+		imgui.HorizontalLayout(account_infos,next,function(k,v)
+			if imgui.Button(string.format('%s:%d', v.account, v.pid).."##"..k) then
+                local exepath
 				if command_arg_check('Debug') then
 					exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'
 				else
@@ -356,15 +356,14 @@ function launcher_update()
 					'--host='..IPSB:str(),
 					'--port='..PortSB:str(),
 					'--dbg_port='..DbgPortSB:str(),
-					'--user='..info.account,
-					'--pass='..info.password,
+					'--user='..v.account,
+					'--pass='..v.password,
 				}
 				local cmd = table.concat(tcmd,' ')
 				cxlog_info(cmd)
 				os.execute(cmd)
-			end
-			imgui.SameLine()
-		end
+            end
+		end)
 	end
 
 	imgui.End()
