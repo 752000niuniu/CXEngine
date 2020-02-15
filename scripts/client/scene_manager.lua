@@ -1,5 +1,7 @@
 scene_list_name = {}
 
+local transports = {}
+
 local scene_lua_files = 
 {
     {name='PackageUnpacker' ,  file= 'scene/package_unpacker.lua'},
@@ -42,9 +44,27 @@ function on_scene_manager_init()
             end
         end
     end
+
+
 end
 
 function on_scene_manager_init_scene(name)
+    local scene_id = scene_manager_get_current_scene_id() 
+    local transport_tbl = content_system_get_table('transport')
+    transports = {}
+    for ID, v in pairs(transport_tbl) do
+        if v.scene == scene_id then
+            v.player_outside = false
+            transports[ID] = v
+        end
+    end
+
+    local player = actor_manager_fetch_local_player()
+    if player then
+        player:ClearAction()
+        player:PushAction(ACTION_IDLE)
+        player:StopMove()
+    end
     if scene_list[name] then
         scene_list[name].OnSceneInit() 
     end
@@ -53,6 +73,34 @@ end
 function on_scene_manager_update(name)
     if scene_list[name] then
         scene_list[name].OnSceneUpdate()
+    end
+
+    local player = actor_manager_fetch_local_player()
+    if player then
+        local x,y = player:GetPos()
+        for ID,trans in pairs(transports) do
+            if math_get_distance(x,y,trans.pos.x ,trans.pos.y) <= 100 then
+                if trans.player_outside then
+                    local transport_tbl = content_system_get_table('transport')
+                    local to_trans = transport_tbl[trans.to_station]
+
+                    net_manager_player_dostring(string.format([[ 
+                        player:SetProperty(PROP_SCENE_ID, %d)
+                        player:SetPos(%f, %f)  
+                    ]], to_trans.scene,to_trans.pos.x, to_trans.pos.y))
+
+
+                    player:SetProperty(PROP_SCENE_ID,to_trans.scene)
+                    player:SetPos(to_trans.pos.x, to_trans.pos.y) 
+                
+                    scene_manager_switch_scene_by_id(to_trans.scene)   
+                    transports = {}
+                    break 
+                end
+            else
+                trans.player_outside = true
+            end
+        end
     end
 end
 

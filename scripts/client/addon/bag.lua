@@ -1,4 +1,5 @@
 local ui_is_show_bag = false
+local to_scene_id = 1
 function ui_toggle_show_bag()
     ui_is_show_bag = not ui_is_show_bag
     return ui_is_show_bag
@@ -37,6 +38,7 @@ function fetch_weapon_keys(tbl, avatar_key)
 end
 
 local PlayerNameSB = imgui.CreateStrbuf('test',256)
+local ToSceneFilterSB = imgui.CreateStrbuf('',256)
 local LocalPlayerDebugButtons = {
     {
         '客户端重载', function(player)
@@ -167,7 +169,14 @@ local LocalPlayerDebugButtons = {
     },{
         '测试封印公式',function(player) 
             
-            
+        end
+    },{
+        '加速',function(player) 
+            player:SetProperty(PROP_MOVE_VELOCITY, 750) 
+        end
+    },{
+        '恢复',function(player) 
+            player:SetProperty(PROP_MOVE_VELOCITY, 150) 
         end
     },{
         '屏幕上移动',function(player) 
@@ -189,6 +198,33 @@ local LocalPlayerDebugButtons = {
             local x,y = player:GetPos()
             player:SetPos(x+10,y)
         end
+    },{
+        '创建传送点',function(player) 
+            local x,y = player:GetPos()
+            scene_write_id = scene_write_id  or 0
+            local scenes  = content_system_get_table('scene')
+            local line = string.format('%d\t%s=>%s\t%d\t%d,%d\n',
+                scene_write_id,
+                player:GetSceneName(),
+                scenes[to_scene_id].name,
+                player:GetProperty(PROP_SCENE_ID),
+                x,y
+            )
+            scene_write_id = scene_write_id + 1
+            cxlog_info('line ', line)
+            local path = vfs_makepath('res/tables/transport.txt')
+            local f = io.open(path,'a+')
+            f:write(line)
+            f:close()
+        end
+    },{
+        '设置传送到的场景',function(player) 
+            imgui.OpenPopup('PopupSetToTransportScene')
+        end
+    },{
+        '传送到的场景',function(player) 
+            imgui.OpenPopup('PopupTransportScene')
+        end
     }
 }
 
@@ -207,6 +243,69 @@ function ui_show_bag()
         end,function(k,v)
             v[2](player)
         end)
+
+        if imgui.BeginPopup('PopupSetToTransportScene') then
+            imgui.InputText("Filter", ToSceneFilterSB)
+            imgui.NewLine()
+            local scenes  = content_system_get_table('scene')
+            imgui.HorizontalLayout(scenes,next,function(k,v) 
+                if ToSceneFilterSB:str()=='' 
+                    and (v.name:match('帮派') 
+                    or v.name:match('长安_')
+                    or v.name:match('地板')
+                    or v.name:match('宅')
+                    or v.name:match('社区')
+                    or v.name:match('店')
+                    or v.name:match('坐标')
+                    or v.name:match('%.')
+                    ) 
+                then 
+                        return 
+                end
+                
+                if v.name:match(ToSceneFilterSB:str()) and imgui.Button(v.name) then
+                    to_scene_id = v.ID
+                    imgui.CloseCurrentPopup()
+                end
+            end)
+            imgui.EndPopup()
+        end
+
+        if imgui.BeginPopup('PopupTransportScene') then
+            imgui.InputText("Filter", ToSceneFilterSB)
+            imgui.NewLine()
+            local scenes  = content_system_get_table('scene')
+            imgui.HorizontalLayout(scenes,next,function(k,v) 
+                if ToSceneFilterSB:str()=='' 
+                    and (v.name:match('帮派') 
+                    or v.name:match('长安_')
+                    or v.name:match('地板')
+                    or v.name:match('宅')
+                    or v.name:match('社区')
+                    or v.name:match('店')
+                    or v.name:match('坐标')
+                    or v.name:match('%.')
+                    ) 
+                then 
+                        return 
+                end
+                if v.name:match(ToSceneFilterSB:str()) and imgui.Button(v.name) then
+                    to_scene_id = v.ID
+                    net_manager_player_dostring(string.format([[ 
+                        player:SetProperty(PROP_SCENE_ID, %d)
+                        player:SetPos(%f, %f)  
+                    ]],to_scene_id,400,300))
+
+                    player:SetProperty(PROP_SCENE_ID, to_scene_id)
+                    player:SetPos(400,300) 
+                    scene_manager_switch_scene_by_id(to_scene_id)   
+                    imgui.CloseCurrentPopup()
+                end
+            end)
+            imgui.EndPopup()
+        end
+
+        
     end
 
     if imgui.CollapsingHeader('MyPal') then

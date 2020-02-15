@@ -202,6 +202,20 @@ function init_scene_table()
     return ret
 end
 
+function init_transport_table()
+    local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('transport'),{
+        { name = 'ID', fmt='i' },
+        { name = 'name'},
+        { name = 'scene', fmt='i' },
+        { name = 'pos', fmt='pos'},
+        { name = 'to_station', fmt='i',def=1 }
+    })
+    local ret = {}
+    for i, row in ipairs(tbl) do
+        ret[row.ID] = row
+    end
+    return ret
+end
 
 function content_system_init()
     cxlog_info('content_system_init')
@@ -223,6 +237,8 @@ function content_system_init()
     content_system_set_table('summon', init_summon_table())
 
     content_system_set_table('scene', init_scene_table())
+
+    content_system_set_table('transport', init_transport_table())
     
     
 end

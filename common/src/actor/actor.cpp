@@ -944,21 +944,46 @@ std::string action_system_get_action_name(int action) {
 	return action_get_name(action);
 }
 
-float math_get_distance(float sx, float sy, float ex, float ey)
+int math_get_distance(lua_State* L)
 {
-	return GMath::Astar_GetDistance(sx,sy,ex,ey);
+	float sx = (float)lua_tonumber(L, 1);
+	float sy = (float)lua_tonumber(L, 2); 
+	float ex = (float)lua_tonumber(L, 3); 
+	float ey = (float)lua_tonumber(L, 4);
+	float ret = GMath::Astar_GetDistance(sx,sy,ex,ey);
+	lua_pushnumber(L, ret);
+	return 1;
 }
 
-float math_get_distance_square(float sx, float sy, float ex, float ey){
-	return GMath::Astar_GetDistanceSquare(sx, sy, ex, ey);
+
+int math_get_distance_square(lua_State *L){
+	float sx = (float)lua_tonumber(L, 1);
+	float sy = (float)lua_tonumber(L, 2);
+	float ex = (float)lua_tonumber(L, 3);
+	float ey = (float)lua_tonumber(L, 4);
+	float ret = GMath::Astar_GetDistanceSquare(sx, sy, ex, ey);
+	lua_pushnumber(L, ret);
+	return 1;
 }
 
-float astar_get_angle(float sx, float sy, float ex, float ey) {
-	return GMath::Astar_GetAngle(sx, sy, ex, ey);
+int astar_get_angle(lua_State* L) {
+	float sx = (float)lua_tonumber(L, 1);
+	float sy = (float)lua_tonumber(L, 2);
+	float ex = (float)lua_tonumber(L, 3);
+	float ey = (float)lua_tonumber(L, 4);
+	float ret = GMath::Astar_GetAngle(sx, sy, ex, ey);
+	lua_pushnumber(L, ret);
+	return 1;
 }
 
-int astar_get_angle_use_box_xy(int sx, int sy, int ex, int ey) {
-	return GMath::Astar_GetAngleUseBoxXY(sx, sy, ex, ey);
+int astar_get_angle_use_box_xy(lua_State* L) {
+	int sx = (int)lua_tointeger(L, 1);
+	int sy = (int)lua_tointeger(L, 2);
+	int ex = (int)lua_tointeger(L, 3);
+	int ey = (int)lua_tointeger(L, 4);
+	float ret = GMath::Astar_GetAngleUseBoxXY(sx, sy, ex, ey);
+	lua_pushnumber(L, ret);
+	return 1;
 }
 
 int astar_get_dir_use_int(int degree) {
@@ -991,10 +1016,10 @@ int math_next_dir4(int dir) {
 
 void luaopen_actor(lua_State* L)
 {
-	script_system_register_function(L, math_get_distance);
-	script_system_register_function(L, math_get_distance_square);
-	script_system_register_function(L, astar_get_angle);
-	script_system_register_function(L, astar_get_angle_use_box_xy);
+	script_system_register_luac_function(L, math_get_distance);
+	script_system_register_luac_function(L, math_get_distance_square);
+	script_system_register_luac_function(L, astar_get_angle);
+	script_system_register_luac_function(L, astar_get_angle_use_box_xy);
 	script_system_register_function(L, astar_get_dir_use_int);
 	script_system_register_function(L, astar_get_dir);
 	script_system_register_function(L, astar_get_dir4);

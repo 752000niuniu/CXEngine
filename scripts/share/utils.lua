@@ -75,7 +75,7 @@ end
 
 
 imgui.HorizontalLayout = function(tbl, next_fn, cb)
-    local line_width = imgui.GetContentRegionAvailWidth()
+    local line_width = math.min(imgui.GetContentRegionAvailWidth(),400) 
     local cx, cy = imgui.GetCursorPos()
     local layout_x = cx
     do
@@ -177,7 +177,7 @@ function utils_parse_tsv(path, columns)
                 local vals = utils_string_split_fixcnt(line,'\t',#col_names)
                 for i,key in ipairs(col_names) do
                     local col = columns[i]
-                    if col.name == key then
+                    if col and col.name == key then
                         if col.def then
                             if vals[i] == '' then
                                 vals[i] = col.def

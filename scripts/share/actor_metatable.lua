@@ -621,6 +621,13 @@ function ActorMT:GetRaceName()
     end
 end
 
+function ActorMT:GetSceneName()
+    local scene_tbl = content_system_get_table('scene')
+    local scene_id = self:GetProperty(PROP_SCENE_ID)
+    return scene_tbl[scene_id].name or ''
+end
+
+
 function ActorMT:GetSchoolName()
     local school_tbl = content_system_get_table('school')
     local school = self:GetProperty(PROP_SCHOOL)
