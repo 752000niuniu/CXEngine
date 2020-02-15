@@ -65,9 +65,13 @@ Player* actor_manager_find_player_by_name(const char* name){
 
 void actor_manager_update()
 {
+	auto* player = actor_manager_fetch_local_player();
+	if (!player)return;
 	for (auto& it : g_Players)
 	{
-		it.second->OnUpdate();
+		if(player->GetProperty(PROP_SCENE_ID).toInt()==it.second->GetProperty(PROP_SCENE_ID).toInt()){
+			it.second->OnUpdate();
+		}
 	}
 #ifndef SIMPLE_SERVER
 	AnimationManager::GetInstance()->Update();
@@ -77,10 +81,14 @@ void actor_manager_update()
 void actor_manager_draw()
 {
 #ifndef SIMPLE_SERVER
+	auto* player = actor_manager_fetch_local_player();
+	if (!player)return;
 	vector<Actor*> drawPlayers;
 	for (auto& it : g_Players)
 	{
-		drawPlayers.push_back(it.second);
+		if (player->GetProperty(PROP_SCENE_ID).toInt() == it.second->GetProperty(PROP_SCENE_ID).toInt()) {
+			drawPlayers.push_back(it.second);
+		}
 	}
 	
 	std::sort(drawPlayers.begin(), drawPlayers.end(), [](Actor* lhs, Actor* rhs) {

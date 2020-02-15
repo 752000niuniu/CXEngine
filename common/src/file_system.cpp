@@ -70,11 +70,11 @@ std::string FileSystem::GetLuaPath(std::string path)
 }
 std::string FileSystem::GetWDFPath(std::string path)
 {
-	return GetPath() + "res/data/" + path;
+	return GetPath() + "data/" + path;
 }
 std::string FileSystem::GetMapPath(std::string path)
 {
-	return GetPath() + "res/data/scene/" + path + ".map";
+	return GetPath() + "data/scene/" + path + ".map";
 }
 std::string FileSystem::GetFontPath(std::string path)
 {

@@ -72,6 +72,21 @@ function launcher_update()
 		script_system_dofile('window.lua')
 	end
 
+	imgui.Button('启动游戏说明')
+	if imgui.IsItemHovered() then
+		imgui.BeginTooltip()
+		imgui.Text([[先点"启动服务器"，然后点"注册帐号"，
+注册完之后，点"更新帐号信息"，
+下面会根据帐号信息刷新出来新的按钮，
+点击这些按钮就是启动对应帐号的客户端。
+如果刷新不出来，帐号信息刷新按钮可以多点几次
+帐号信息保存在res/storage/account.data
+
+有问题请加群：983630090]])
+		imgui.EndTooltip()
+	end
+
+
 	if false and command_arg_check('Debug') then
 
 		res,show_demo = imgui.Checkbox('Demo',show_demo)
@@ -91,127 +106,7 @@ function launcher_update()
 		
 	end
 
-	if imgui.Button('客户端1') then
-		local exepath
-		if command_arg_check('Debug') then
-			exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'
-		else
-			exepath = vfs_get_workdir()..'bin/SimpleEngine.exe'
-		end
-		local tcmd = {
-			'start '..exepath,
-			'--cwd='..vfs_get_workdir(),
-			'--host='..IPSB:str(),
-			'--port='..PortSB:str(),
-			'--dbg_port='..DbgPortSB:str(),
-			'--user='..AccountSB:str(),
-			'--pass='..PasswordSB:str(),
-		}
-		local cmd = table.concat(tcmd,' ')
-		cxlog_info(cmd)
-		os.execute(cmd)
-	end
-
-	imgui.SameLine()
-	if imgui.Button('客户端2') then
-		local exepath
-		if command_arg_check('Debug') then
-			exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'
-		else
-			exepath = vfs_get_workdir()..'bin/SimpleEngine.exe'
-		end
-		local dbg_port = math.tointeger(DbgPortSB:str())
-
-		local tcmd = {
-			'start '..exepath,
-			'--cwd='..vfs_get_workdir(),
-			'--host='..IPSB:str(),
-			'--port='..PortSB:str(),
-			'--dbg_port='..(dbg_port+10),
-			'--user='..AccountSB:str()..'2',
-			'--pass='..PasswordSB:str(),
-		}
-		local cmd = table.concat(tcmd,' ')
-		cxlog_info(cmd)
-		os.execute(cmd)
-	end
-
-	imgui.SameLine()
-	if imgui.Button('客户端3') then
-		local exepath
-		if command_arg_check('Debug') then
-			exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'
-		else
-			exepath = vfs_get_workdir()..'bin/SimpleEngine.exe'
-		end
-		local dbg_port = math.tointeger(DbgPortSB:str())
-
-		local tcmd = {
-			'start '..exepath,
-			'--cwd='..vfs_get_workdir(),
-			'--host='..IPSB:str(),
-			'--port='..PortSB:str(),
-			'--dbg_port='..(dbg_port+20),
-			'--user='..AccountSB:str()..'3',
-			'--pass='..PasswordSB:str(),
-		}
-		local cmd = table.concat(tcmd,' ')
-		cxlog_info(cmd)
-		os.execute(cmd)
-	end
-
-	imgui.SameLine()
-	if imgui.Button('客户端4') then
-		local exepath
-		if command_arg_check('Debug') then
-			exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'
-		else
-			exepath = vfs_get_workdir()..'bin/SimpleEngine.exe'
-		end
-		local dbg_port = math.tointeger(DbgPortSB:str())
-
-		local tcmd = {
-			'start '..exepath,
-			'--cwd='..vfs_get_workdir(),
-			'--host='..IPSB:str(),
-			'--port='..PortSB:str(),
-			'--dbg_port='..(dbg_port+30),
-			'--user='..AccountSB:str()..'4',
-			'--pass='..PasswordSB:str(),
-		}
-		local cmd = table.concat(tcmd,' ')
-		cxlog_info(cmd)
-		os.execute(cmd)
-	end
-
-	imgui.SameLine()
-	if imgui.Button('客户端5') then
-		local exepath
-		if command_arg_check('Debug') then
-			exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'
-		else
-			exepath = vfs_get_workdir()..'bin/SimpleEngine.exe'
-		end
-		local dbg_port = math.tointeger(DbgPortSB:str())
-
-		local tcmd = {
-			'start '..exepath,
-			'--cwd='..vfs_get_workdir(),
-			'--host='..IPSB:str(),
-			'--port='..PortSB:str(),
-			'--dbg_port='..(dbg_port+40),
-			'--user='..AccountSB:str()..'5',
-			'--pass='..PasswordSB:str(),
-		}
-		local cmd = table.concat(tcmd,' ')
-		cxlog_info(cmd)
-		os.execute(cmd)
-	end
-	imgui.SameLine()
-	if imgui.Button('关闭客户端') then
-		net_send_message(PTO_C2S_GM, cjson.encode({type='exit'}))
-	end
-
+	
 	if imgui.Button('启动服务器') then
 		local exepath
 		if command_arg_check('Debug') then
@@ -225,16 +120,21 @@ function launcher_update()
 		os.execute(cmd)
 	end
 	imgui.SameLine()
-	if imgui.Button('关闭服务器') then
-	end
-	
 	if imgui.Button('重连服务器') then
 		net_reconnect()
 	end
-	
+
+	imgui.SameLine()
+	if imgui.Button('关闭服务器') then
+	end
+	imgui.SameLine()
 	if imgui.Button('关闭所有端') then
 		net_send_message(PTO_C2S_GM, cjson.encode({type='exit'}))
 		net_send_message(PTO_C2S_GM, cjson.encode({type='exit_server'}))
+	end
+	imgui.SameLine()
+	if imgui.Button('关闭客户端') then
+		net_send_message(PTO_C2S_GM, cjson.encode({type='exit'}))
 	end
 
 	if false and command_arg_check('Debug') then
@@ -366,5 +266,10 @@ function launcher_update()
 		end)
 	end
 
+	
+
+
 	imgui.End()
 end
+
+
