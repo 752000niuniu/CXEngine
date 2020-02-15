@@ -17,7 +17,6 @@ script_system_dofile('net_manager.lua')
 script_system_dofile('../combat/combat_system.lua')
 script_system_dofile 'scene_manager.lua'
 script_system_dofile 'actor_manager.lua'
-script_system_dofile('action/action.lua')
 script_system_dofile('event_system.lua')
 script_system_dofile('input_manager.lua')
 
@@ -37,7 +36,6 @@ luadbg_listen(DBG_PORT)
 
 function on_script_system_init()
     content_system_init()
-    net_manager_init(SERVER_HOST, SERVER_PORT)
     text_renderer_init()
     timer_manager_init()
     input_manager_init()
@@ -47,8 +45,8 @@ function on_script_system_init()
     scene_manager_init()
 	actor_manager_init()
 	combat_system_init()
-	asm_system_init()
     load_all_addons()
+    net_manager_init(SERVER_HOST, SERVER_PORT)
 end
 
 function on_script_system_update()

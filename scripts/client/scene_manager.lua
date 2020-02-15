@@ -99,7 +99,7 @@ end
 function on_game_imgui_update(name)
     fix_input_manager_mouse_pos()
     
-    imgui.Text('    FPS:'.. math.floor(window_system_get_fps()*1000))
+    imgui.Text('    FPS:'.. math.floor(1/window_system_get_fps()))
 
     if scene_list[name] then
         if scene_list[name].OnSceneImGuiUpdate then

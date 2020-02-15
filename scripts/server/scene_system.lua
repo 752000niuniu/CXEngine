@@ -3,35 +3,39 @@ local npcs = { }
 
 function scene_system_init()
     cxlog_info('scene_system_init')
+   
     local npc_table = content_system_get_table('npc')
-    local npcs = {}
-    for i, props in ipairs(npc_table) do
+    
+    for i, npc_templ in ipairs(npc_table) do
         local npc = actor_manager_create_actor(utils_next_uid('actor'))
-        npc:SetProperties(props)    
-        npc:SetProperty(PROP_IS_AUTO_COMMAND, true)
+        npc:SetProperty(PROP_ACTOR_TYPE,  ACTOR_TYPE_NPC)
+        npc:SetProperty(PROP_NAME,  npc_templ.name)
+        npc:SetProperty(PROP_AVATAR_ID,  npc_templ.avatar_id)
+        npc:SetPos(npc_templ.pos.x, npc_templ.pos.y)
+        npc:SetProperty(PROP_SCENE_ID, npc_templ.scene_id)
         table.insert(npcs, npc)
     end
+    
+    -- local team 
+    -- for i, npc in ipairs(npcs) do
+    --     if i <= 10 then
+    --         if i == 1 then
+    --             team = team_system_create_team(npc)
+    --         else
+    --             team:AddMember(npc)
+    --         end
+    --     end
+    -- end
 
-    local team 
-    for i, npc in ipairs(npcs) do
-        if i <= 10 then
-            if i == 1 then
-                team = team_system_create_team(npc)
-            else
-                team:AddMember(npc)
-            end
-        end
-    end
-
-    for i, npc in ipairs(npcs) do
-        if i > 11 then
-            if i == 12 then
-                team = team_system_create_team(npc)
-            else
-                team:AddMember(npc)
-            end
-        end
-    end
+    -- for i, npc in ipairs(npcs) do
+    --     if i > 11 then
+    --         if i == 12 then
+    --             team = team_system_create_team(npc)
+    --         else
+    --             team:AddMember(npc)
+    --         end
+    --     end
+    -- end
 end
 
 function scene_system_update()

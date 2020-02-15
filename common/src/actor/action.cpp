@@ -151,27 +151,11 @@ void Action::Update()
 
 void Action::OnEnter()
 {
-#ifndef SIMPLE_SERVER
-	lua_State* L = script_system_get_luastate();
-	lua_getglobal(L, "asm_action_on_enter");
-	lua_push_actor(L, m_Actor);
-	lua_pushinteger(L, m_Type);
-	int res = lua_pcall(L, 2, 0, 0);
-	check_lua_error(L, res);
-#endif	
 	Enter();
 }
 
 void Action::OnExit()
 {
-#ifndef SIMPLE_SERVER
-	lua_State* L = script_system_get_luastate();
-	lua_getglobal(L, "asm_action_on_exit");
-	lua_push_actor(L, m_Actor);
-	lua_pushinteger(L, m_Type);
-	int res = lua_pcall(L, 2, 0, 0);
-	check_lua_error(L, res);
-#endif
 	Exit();
 }
 

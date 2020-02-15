@@ -34,9 +34,9 @@ function actor_on_reg_props(actor)
         actor:RegProperty(i-1,reg_type,v)
         prop_names[i-1] = row.name
     end
-    for i,row in ipairs(tbl) do
-        cxlog_info( prop_names[i-1] , actor:GetProperty(i-1))
-    end 
+    -- for i,row in ipairs(tbl) do
+    --     cxlog_info( prop_names[i-1] , actor:GetProperty(i-1))
+    -- end 
 end
 
 function ActorMT:GetPos()
@@ -97,14 +97,16 @@ function ActorMT:SetProperties(props)
     for k,v in pairs(props) do
         self:SetProperty(k,v)
     end
-    local pal = self:GetProperty(PROP_PAL_MATRIX)
-    local tpal = cjson.decode(pal)
-    if next(tpal) then
-        local count = #tpal.segments
-        for i=1,count do
-            tpal[i] = tpal[tostring(i)]
+    if IsClient() then
+        local pal = self:GetProperty(PROP_PAL_MATRIX)
+        local tpal = cjson.decode(pal)
+        if next(tpal) then
+            local count = #tpal.segments
+            for i=1,count do
+                tpal[i] = tpal[tostring(i)]
+            end
+            self:ChangePalMatrix(tpal)
         end
-        self:ChangePalMatrix(tpal)
     end
 end
 
@@ -697,6 +699,8 @@ function ActorMT:GetInitHealthProp()
         return init_prop[race][1] + lv
     elseif actor_type == ACTOR_TYPE_SUMMON then
         return 20 + lv
+    else
+        return 0
     end
 end
 
@@ -708,6 +712,8 @@ function ActorMT:GetInitMagicProp()
         return init_prop[race][2] + lv
     elseif actor_type == ACTOR_TYPE_SUMMON then
         return 20 + lv
+    else
+        return 0
     end
 end
 
@@ -719,6 +725,8 @@ function ActorMT:GetInitForceProp()
         return init_prop[race][3] + lv
     elseif actor_type == ACTOR_TYPE_SUMMON then
         return 20 + lv
+    else
+        return 0
     end
 end
 
@@ -730,6 +738,8 @@ function ActorMT:GetInitStaminaProp()
         return init_prop[race][4] + lv
     elseif actor_type == ACTOR_TYPE_SUMMON then
         return 20 + lv
+    else 
+        return 0
     end
 end
 
@@ -741,6 +751,8 @@ function ActorMT:GetInitAgilityProp()
         return init_prop[race][5] + lv
     elseif actor_type == ACTOR_TYPE_SUMMON then
         return 20 + lv
+    else
+        return 0
     end
 end
 

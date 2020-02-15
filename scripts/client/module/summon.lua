@@ -5,11 +5,11 @@ __summons__ = __summons__ or {}
 stub[PTO_S2C_FETCH_SUMMON_RESP] = function(resp)
     for i, info in ipairs(resp) do
         local pid = info[tostring(PROP_ID)]
-        local actor = actor_manager_create_actor(pid)
+        local actor = lua_create_actor(pid)
         actor:SetProperties(info)
         actor:SetProperty(PROP_ID, pid)
 
-        cxlog_info('summon ' , i, actor:GetID(), actor:GetProperty(PROP_AVATAR_ID))
+        -- cxlog_info('summon ' , i, actor:GetID(), actor:GetProperty(PROP_AVATAR_ID))
         __summons__[pid] = actor
     end
 end

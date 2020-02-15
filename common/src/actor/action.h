@@ -1,9 +1,9 @@
 #pragma once
 
 #include <string>
-#include "pos.h"
+#include <pos.h>
 #include <list>
-#include "define_types.h"
+#include <define_types.h>
 
 std::string action_get_name(int i);
 size_t action_get_size();

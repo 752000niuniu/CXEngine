@@ -176,30 +176,31 @@ end
 function ui_show_props()
     if not ui_is_show_props then return end
     imgui.Begin('ActorInfo')
-    local actors = actor_manager_fetch_all_actors()
-    imgui.HorizontalLayout(actors,next,function(k,v) 
-        local selected = imgui.RadioButton(v:GetName()..'##'..v:GetID(), v:GetID() == selected_actor_uid)
-        if selected then
-            selected_actor_uid = v:GetID()
-            local actor = actor_manager_fetch_player_by_id(selected_actor_uid)
-            prop_school_skill_lv_hp = actor:GetProperty(PROP_SCHOOL_SKILL_LV_HP) 
-            prop_school_skill_lv_mp = actor:GetProperty(PROP_SCHOOL_SKILL_LV_MP) 
-            prop_school_skill_lv_targethit = actor:GetProperty(PROP_SCHOOL_SKILL_LV_TARGETHIT) 
-            prop_school_skill_lv_damage = actor:GetProperty(PROP_SCHOOL_SKILL_LV_DAMAGE) 
-            prop_school_skill_lv_defend = actor:GetProperty(PROP_SCHOOL_SKILL_LV_DEFEND) 
-            prop_school_skill_lv_spiritual = actor:GetProperty(PROP_SCHOOL_SKILL_LV_SPIRITUAL) 
-            prop_school_skill_lv_speed = actor:GetProperty(PROP_SCHOOL_SKILL_LV_SPEED) 
-            prop_school_skill_lv_dodge = actor:GetProperty(PROP_SCHOOL_SKILL_LV_DODGE) 
+    imgui.BeginChild('LEFT_PANNEL#uishoprops',100)
+        local actors = actor_manager_fetch_all_actors()
+        for i,actor in pairs(actors) do
+            if imgui.Button(actor:GetName()..'##'..actor:GetID()) then
+                selected_actor_uid = actor:GetID()
+                prop_school_skill_lv_hp = actor:GetProperty(PROP_SCHOOL_SKILL_LV_HP) 
+                prop_school_skill_lv_mp = actor:GetProperty(PROP_SCHOOL_SKILL_LV_MP) 
+                prop_school_skill_lv_targethit = actor:GetProperty(PROP_SCHOOL_SKILL_LV_TARGETHIT) 
+                prop_school_skill_lv_damage = actor:GetProperty(PROP_SCHOOL_SKILL_LV_DAMAGE) 
+                prop_school_skill_lv_defend = actor:GetProperty(PROP_SCHOOL_SKILL_LV_DEFEND) 
+                prop_school_skill_lv_spiritual = actor:GetProperty(PROP_SCHOOL_SKILL_LV_SPIRITUAL) 
+                prop_school_skill_lv_speed = actor:GetProperty(PROP_SCHOOL_SKILL_LV_SPEED) 
+                prop_school_skill_lv_dodge = actor:GetProperty(PROP_SCHOOL_SKILL_LV_DODGE) 
 
-            prop_atk_practice_skill_lv	= actor:GetProperty(PROP_ATK_PRACTICE_SKILL_LV)
-            prop_atk_resistance_skill_lv	= actor:GetProperty(PROP_ATK_RESISTANCE_SKILL_LV)
-            prop_spell_practice_skill_lv	= actor:GetProperty(PROP_SPELL_PRACTICE_SKILL_LV)
-            prop_spell_resistance_skill_lv	= actor:GetProperty(PROP_SPELL_RESISTANCE_SKILL_LV)
+                prop_atk_practice_skill_lv	= actor:GetProperty(PROP_ATK_PRACTICE_SKILL_LV)
+                prop_atk_resistance_skill_lv	= actor:GetProperty(PROP_ATK_RESISTANCE_SKILL_LV)
+                prop_spell_practice_skill_lv	= actor:GetProperty(PROP_SPELL_PRACTICE_SKILL_LV)
+                prop_spell_resistance_skill_lv	= actor:GetProperty(PROP_SPELL_RESISTANCE_SKILL_LV)
+            end
         end
-    end)
-
+    imgui.EndChild()
     local actor = actor_manager_fetch_player_by_id(selected_actor_uid)
     if actor then
+        imgui.SameLine()
+        imgui.BeginChild('RightPanel##uiprops')
         if imgui.Button('SetLocal') then
             actor_manager_set_local_player(actor:GetID())
         end
@@ -362,6 +363,7 @@ function ui_show_props()
                 imgui.EndPopup('BBQualSelector')
             end
         end
+        imgui.EndChild()
     end
     imgui.End()
 end
