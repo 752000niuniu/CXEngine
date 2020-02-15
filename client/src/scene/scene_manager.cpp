@@ -26,28 +26,11 @@ lua 尽快完成tsv解析  然后把scene创建放在lua
 SceneManager::SceneManager()
 :m_pCurrentScene(nullptr),
 m_pNextScene(nullptr),
-m_MapTSV(utils::tsv(FileSystem::GetTSVPath("map"))),
-m_TransportStationsTSV(utils::tsv(FileSystem::GetTSVPath("transport_station"))),
 m_PlayerEnterX(0),
 m_PlayerEnterY(0),
 m_SwitchingScene(false)
 {
-	m_TransportStations.clear();
-	//TODO move this to lua
-	for (const auto& row : m_TransportStationsTSV.Rows)
-	{
-		TransportStation station;
-		station.uuid = row.at("uuid");
-		station.to_uuid = row.at("to_uuid");
-		station.cx = std::stoi(row.at("cx"));
-		station.cy = std::stoi(row.at("cy"));
-		station.width = std::stoi(row.at("width"));
-		station.height = std::stoi(row.at("height"));
-		station.pack = row.at("pack");
-		station.was = std::stoul(row.at("was"), 0, 16);
-		m_TransportStations.insert({ station.uuid, station });
-	}
-
+	
 }
 
 SceneManager::~SceneManager()
@@ -118,18 +101,7 @@ void SceneManager::SwitchScene(int id)
 	}
 }
 
-void SceneManager::SwitchSceneByTransportUUID(String uuid)
-{
-	auto* stationInfo = GetTransportStationInfo(uuid);
-	if (stationInfo != nullptr)
-	{
-		auto mapinfo = utils::split_by_cuts(uuid, '_');
-		auto mapid = std::stoi(mapinfo[0]);
-		m_PlayerEnterX = stationInfo->cx;
-		m_PlayerEnterY = stationInfo->cy;
-		SwitchScene(mapid);
-	}
-}
+ 
 
 void SceneManager::AddScene(BaseScene* scene)
 {
@@ -178,19 +150,6 @@ bool SceneManager::IsDrawAnnounce()
 bool SceneManager::IsAutoRun()
 {
 	return s_AutoRun;
-}
-
-TransportStation* SceneManager::GetTransportStationInfo(String uuid)
-{
-	auto it = m_TransportStations.find(uuid);
-	if (it == m_TransportStations.end())
-	{
-		return nullptr;
-	}
-	else
-	{
-		return &it->second;
-	}
 }
 
 void SceneManager::Update() 
@@ -427,6 +386,21 @@ void game_map_reset_map_offset(){
 	}
 }
 
+int scene_get_map_offset(lua_State*L){
+	int x = 0;
+	int y = 0;
+	auto* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
+	if (scene) {
+		auto* map = scene->GetGameMap();
+		if(map){
+			x = map->GetMapOffsetX();
+			y = map->GetMapOffsetY();
+		}
+	}
+	lua_pushinteger(L, x);
+	lua_pushinteger(L, y);
+	return 2;
+}
 void luaopen_scene_manager(lua_State* L)
 {
 	script_system_register_function(L, scene_manager_init);
@@ -439,6 +413,8 @@ void luaopen_scene_manager(lua_State* L)
 	script_system_register_function(L, scene_is_combat);
 	script_system_register_function(L, scene_set_map);
 	script_system_register_function(L, game_map_reset_map_offset);
+
+	script_system_register_luac_function(L, scene_get_map_offset);
 
 	script_system_register_luac_function(L, scene_manager_get_imgui_cursor_pos);
 

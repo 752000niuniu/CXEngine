@@ -158,10 +158,12 @@ end
 
 function init_npc_table()
     local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('npc'),{
+        { name = 'ID' ,fmt='i'},
+        { name = 'scene_id', fmt='i', def =0  },
         { name = 'name' },
         { name = 'avatar_id' },
         { name = 'pos', fmt='pos' },
-        { name = 'scene_id', fmt='i', def =0  },
+        { name = 'dir', fmt='i', def =0 },
     })
     return tbl
 end

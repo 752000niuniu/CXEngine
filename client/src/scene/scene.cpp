@@ -27,7 +27,7 @@
 bool s_IsCombat = true;
 TextView* s_Announcement;
 TextView* s_Chat;
-std::map<String,FrameAnimation*> s_TranportCircles;
+
 
 Scene::Scene(int id,String name)
 :BaseScene(id,name)
@@ -76,16 +76,7 @@ void Scene::OnLoad()
 		script_system_call_function(script_system_get_luastate(), "on_player_send_chat_message", utils::WstringToString(s_Chat->Text).c_str());
 	};
 
-	for (auto id : m_TransportUUIDs)
-	{
-		auto* info = SCENE_MANAGER_INSTANCE->GetTransportStationInfo(id);
-		if (info != nullptr)
-		{
-			auto* frame = new FrameAnimation(MAPANIWDF, 0x7F4CBC8C);
-			frame->SetPos({ info->cx, info->cy });
-			s_TranportCircles.insert({ id,frame });
-		}
-	}
+	 
 	
 	m_ShowSmap = false;
 
@@ -105,11 +96,7 @@ void Scene::OnUnLoad()
 	SafeDelete(s_Announcement);
 	SafeDelete(s_Chat);
 	SafeDelete(m_NpcDialogBG);
-	for (auto& it : s_TranportCircles)
-	{
-		SafeDelete(it.second);
-	}
-	s_TranportCircles.clear();
+	 
 }
 
 FrameAnimation* Scene::GetNpcDialogBG()
@@ -134,10 +121,7 @@ void Scene::Update()
 {
 	float dt = WINDOW_INSTANCE->GetDeltaTime();
 
-	for (auto& it : s_TranportCircles)
-	{
-		it.second->OnUpdate();
-	}
+	 
 	
 	actor_manager_update();
 
@@ -167,45 +151,8 @@ void Scene::Draw()
 	if (SCENE_MANAGER_INSTANCE->IsDrawCell() && m_Map)
 		m_Map->DrawCell();
 
-	for (auto& it : s_TranportCircles)
-	{
-		auto* info = SCENE_MANAGER_INSTANCE->GetTransportStationInfo(it.first);
-		auto* frame = it.second;
-		Pos pos = GAME_INSTANCE->MapPosToScreenPos(Pos((float)info->cx, (float)info->cy));
-		int _px = (int)pos.x - frame->GetWidth() / 2;
-		int _py = (int)pos.y - frame->GetHeight() / 2;
-		frame->SetPos({ _px,_py });
-		frame->Draw();
-	}
-
-	if (!m_Switching)
-	{
-		for (auto& it : s_TranportCircles)
-		{
-			if (utils::BoundHitTest(it.second->GetBound(), GAME_INSTANCE->MapPosToScreenPos(localPlayer->GetPos())))
-			{
-				m_Switching = true;
-				auto* info = SCENE_MANAGER_INSTANCE->GetTransportStationInfo(it.first);
-				SCENE_MANAGER_INSTANCE->SwitchSceneByTransportUUID(info->to_uuid);
-				//SCENE_MANAGER_INSTANCE->SwitchScene(1070);
-				return;
-			}
-		}
-	}
-	else
-	{
-		bool hitok = false;
-		for (auto& it : s_TranportCircles)
-		{
-			if (utils::BoundHitTest(it.second->GetBound(), GAME_INSTANCE->MapPosToScreenPos(localPlayer->GetPos())))
-			{
-				hitok = true;
-				break;
-			}
-		}
-		if (!hitok)
-			m_Switching = false;
-	}
+	 
+	 
 
 	actor_manager_draw();
 
@@ -270,5 +217,5 @@ void clear_chat_text_cache()
 void luaopen_scene(lua_State* L)
 {
 	script_system_register_function(L, clear_chat_text_cache);
-		
+
 }

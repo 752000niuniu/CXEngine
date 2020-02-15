@@ -1196,16 +1196,9 @@ int animation_newindex(lua_State*L){
 
 
 int animation_destroy(lua_State* L) {
-	Animation** ptr = (Animation**)lua_touserdata(L, 1);
-	lua_pushnil(L);
-	lua_setuservalue(L, 1);
-	//int type = lua_type(L, -1);
-	
-	//lua_getfield(L, -1,"a");
-	
-	//auto* animation = lua_check_animation(L, 1);
-	//lua_pushboolean(L, animation->IsFrameUpdate());
-	return 1;
+	Animation* ptr = lua_check_animation(L,1);
+	delete ptr;
+	return 0;
 }
 
 
@@ -1358,6 +1351,8 @@ void animation_manager_clear()
 void luaopen_sprite(lua_State* L)
 {
 	script_system_register_luac_function(L, animation_create);
+	script_system_register_luac_function(L, animation_destroy);
+	
 	script_system_register_luac_function(L, base_sprite_get_metatable);
 	script_system_register_luac_function(L, beat_number_create);
 

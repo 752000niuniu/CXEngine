@@ -4,17 +4,6 @@
 #include <tsv.h>
 #include "scene/scene.h"
 
-struct TransportStation
-{
-	String uuid;
-	String to_uuid;
-	int cx;
-	int cy;
-	int width;
-	int height;
-	String pack;
-	uint32_t was;
-};
 
 class SceneManager : public Singleton<SceneManager>
 {
@@ -34,8 +23,7 @@ public:
 	void SwitchScene(String name);
 	
 	void SwitchScene(int id);
-
-	void SwitchSceneByTransportUUID(String uuid);
+	 
 	
 	void AddScene(BaseScene* scene);
 	
@@ -56,19 +44,12 @@ public:
 	unsigned int GetRboID() { return m_Rbo; };
 	unsigned int GetTextureID() { return m_TextureColor; };
 	Pos GetImGuiCursorPos() { return m_ImGuiCursorPos; }
-	TransportStation* GetTransportStationInfo(String uuid);
 private:	
 	std::map<String,BaseScene*> m_Scenes;
 
 	BaseScene* m_pCurrentScene;
 
 	BaseScene* m_pNextScene;
-
-	utils::tsv m_MapTSV;
-
-	utils::tsv m_TransportStationsTSV;
-
-	std::map<String,TransportStation> m_TransportStations;
 
 	String m_PlayerName;
 	int m_PlayerEnterX;

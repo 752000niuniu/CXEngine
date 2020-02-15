@@ -981,8 +981,8 @@ int astar_get_angle_use_box_xy(lua_State* L) {
 	int sy = (int)lua_tointeger(L, 2);
 	int ex = (int)lua_tointeger(L, 3);
 	int ey = (int)lua_tointeger(L, 4);
-	float ret = GMath::Astar_GetAngleUseBoxXY(sx, sy, ex, ey);
-	lua_pushnumber(L, ret);
+	int ret = GMath::Astar_GetAngleUseBoxXY(sx, sy, ex, ey);
+	lua_pushinteger(L, ret);
 	return 1;
 }
 

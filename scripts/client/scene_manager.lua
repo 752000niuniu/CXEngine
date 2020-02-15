@@ -1,6 +1,7 @@
 scene_list_name = {}
 
-local transports = {}
+transports =  transports or {}
+
 
 local scene_lua_files = 
 {
@@ -12,6 +13,8 @@ local scene_lua_files =
 }
 
 local scene_list = {}
+	
+	
 function on_scene_manager_init()
     local scene_tbl = content_system_get_table('scene')
     for id, row in pairs(scene_tbl) do
@@ -51,12 +54,24 @@ end
 function on_scene_manager_init_scene(name)
     local scene_id = scene_manager_get_current_scene_id() 
     local transport_tbl = content_system_get_table('transport')
+
+    for ID, v in pairs(transports) do
+        if v.anim then
+            animation_destroy(v.anim)
+        end
+    end
     transports = {}
     for ID, v in pairs(transport_tbl) do
         if v.scene == scene_id then
             v.player_outside = false
             transports[ID] = v
         end
+        v.anim = animation_create(MAPANIWDF,0x7F4CBC8C)
+        -- v.anim:SetPos(v.pos.x + offx,v.pos.y + offy)
+        v.anim:SetFrameInterval(0.128)
+        v.anim:Reset()
+        v.anim:SetLoop(0)
+        v.anim:Play()
     end
 
     local player = actor_manager_fetch_local_player()
@@ -94,7 +109,7 @@ function on_scene_manager_update(name)
                     player:SetPos(to_trans.pos.x, to_trans.pos.y) 
                 
                     scene_manager_switch_scene_by_id(to_trans.scene)   
-                    transports = {}
+                    trans.player_outside = false
                     break 
                 end
             else
@@ -102,12 +117,27 @@ function on_scene_manager_update(name)
             end
         end
     end
+    for k,v in pairs(transports) do
+        if v.anim then
+            v.anim:Update()
+        end
+    end
 end
 
 function on_scene_manager_draw(name)
+    local offx,offy = scene_get_map_offset()
+    for k,v in pairs(transports) do
+        if v.anim then
+            -- + v.anim:GetWidth()/2
+            -- + v.anim:GetHeight()/2
+            v.anim:SetPos(v.pos.x + offx ,v.pos.y + offy )
+            v.anim:Draw()
+        end
+    end
     if scene_list[name] then
         scene_list[name].OnSceneDraw()
     end
+                
 end
 
 function scene_manager_reload(name)
