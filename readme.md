@@ -1,8 +1,20 @@
 
 试玩（direct playing）
 
-链接：https://pan.baidu.com/s/1WrAw3OaPYgGZRimI4O0YyA 
-提取码：0kvn 
+游戏资源下载地址：https://pan.baidu.com/s/1nWqZ_R4rjcuq9RSh8fTXiQ  提取码：wiju 
+游戏下载地址：https://pan.baidu.com/s/1Mm1I9o5udaoeGlhXDb7WnA 提取码：g94o 
+
+整体目录结构
+
+--bin
+--data
+	--scene
+	--*.wdf
+--res
+--scripts
+launcher.bat
+imgui.ini
+
 
 <img src="https://github.com/oceancx/SimpleEngine/blob/master/res/icon/1.jpg" width="50%" height="50%">
 <img src="https://github.com/oceancx/SimpleEngine/blob/master/res/icon/2.jpg" width="50%" height="50%">
@@ -29,7 +41,7 @@ this repo is not suitable for you to commit now. also, not so friendly for you t
 
 this repo is developed in master branch now and stable-0.1 is the stable branch.
 
-### 对于游戏开发感兴趣的同胞们
+### 对于游戏开发感兴趣的同学们
 
 QQ群: 983630090
 
