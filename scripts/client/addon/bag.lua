@@ -40,7 +40,10 @@ end
 local PlayerNameSB = imgui.CreateStrbuf('test',256)
 local ToSceneFilterSB = imgui.CreateStrbuf('',256)
 local LocalPlayerDebugButtons = {
-    {
+    {   'HUD',function(player)
+            ui_toggle_show_hud()
+        end
+    },{
         '客户端重载', function(player)
             actor_manager_clear_all()
             script_system_dofile('../share/enums.lua')
@@ -49,7 +52,6 @@ local LocalPlayerDebugButtons = {
             script_system_dofile('../share/utils.lua')
             script_system_dofile('../combat/combat_system.lua')
             combat_system_init()
-            script_system_dofile('ui_renderer.lua')
             script_system_dofile('input_manager.lua')
             scene_manager_reload()
             game_map_reset_map_offset()
@@ -225,6 +227,27 @@ local LocalPlayerDebugButtons = {
         '传送到的场景',function(player) 
             imgui.OpenPopup('PopupTransportScene')
         end
+    },{
+        '重载战斗脚本',function(player) 
+            script_system_dofile('../share/enums_protocol.lua')
+            script_system_dofile('actor_metatable.lua')
+            script_system_dofile('../share/actor_metatable.lua')
+            script_system_dofile('../combat/combat_system.lua')
+            combat_system_init()
+            net_manager_player_dostring(string.format([[ 
+                script_system_dofile('../share/enums_protocol.lua')
+                script_system_dofile('../share/actor_metatable.lua')
+                script_system_dofile('../combat/combat_system.lua')
+                combat_system_init()
+            ]]))
+        end
+    },{
+        '战斗测试',function(player) 
+            local msg = {}
+            msg.pid = player:GetID()
+            net_send_message(PTO_C2S_COMBAT_CREATE, cjson.encode(msg))
+            player:StopMove()
+        end
     }
 }
 
@@ -236,6 +259,7 @@ function ui_show_bag()
 
     if imgui.CollapsingHeader('CMD', ImGuiTreeNodeFlags_DefaultOpen) then
         imgui.InputText("玩家名字", PlayerNameSB)
+         
         local player = actor_manager_fetch_local_player()
         imgui_std_horizontal_button_layout(LocalPlayerDebugButtons,function(t,k) 
             local nk,v = next(t,k)

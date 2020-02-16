@@ -43,6 +43,27 @@ if IsClient() then
     script_system_dofile('../combat/client/skill.lua')
 end
 
+function battle_get_state_name(state)
+    if state == BATTLE_DEFAULT then
+        return '战斗默认'        
+    elseif state == BATTLE_PREPARE then
+        return '战斗准备'        
+    elseif state == BATTLE_START then
+        return '战斗开始'
+    elseif state == BATTLE_TURN_STAND_BY then
+        return '战斗待命'
+    elseif state == BTTALE_TURN_EXECUTE then
+        return '战斗执行'
+    elseif state == BTTALE_TURN_NEXT then
+        return '战斗下一回合'
+    elseif state == BATTLE_END then
+        return '战斗结束'
+    else
+        return '战斗未知状态'
+    end        
+end
+
+
 BattleMT = {}
 function BattleMT:new(o)
     o = o or {
@@ -100,6 +121,14 @@ end
 
 function BattleMT:AddActor(actor, team_type, pos_i)
     cxlog_info('Battle:AddActor', self.id, actor:GetID(), actor:GetName(),team_type==TEAM_TYPE_ATTACKER and 'atk' or 'def', pos_i)
+
+    for i,actor in ipairs(self.actors) do
+        if actor:GetProperty(PROP_COMBAT_POS_ID) == pos_i 
+            and actor:GetProperty(PROP_TEAM_TYPE) == team_type
+        then
+            return
+        end
+    end
     actor:SetProperty(PROP_TEAM_TYPE, team_type)
     actor:SetProperty(PROP_COMBAT_BATTLE_ID, self.id)
     actor:SetProperty(PROP_COMBAT_POS_ID, pos_i)
@@ -165,6 +194,14 @@ function BattleMT:AutoCommand(actor)
         cmd.target = target:GetID()
         cmd.skill_id = 10
         table.insert(self.cmds, cmd)
+    end
+end
+
+function BattleMT:PrepareBattle()
+    self.state = BATTLE_PREPARE
+    if IsServer() then
+    else
+        on_battle_prepare(self)
     end
 end
 

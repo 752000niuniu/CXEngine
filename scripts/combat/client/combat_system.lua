@@ -2,14 +2,12 @@ __battles__ = __battles__ or {}
 battle = nil
 
 local ActorMT = actor_get_metatable()
-
 function ActorMT:GetBattle()
 	local battle_id = self:GetProperty(PROP_COMBAT_BATTLE_ID)
 	return __battles__[battle_id]
 end
 
 local battle_commands = {}
-
 local ACTOR_CLICK_MODE_ATTACK = 1
 local ACTOR_CLICK_MODE_SPELL = 2
 local ACTOR_CLICK_MODE  = ACTOR_CLICK_MODE_ATTACK
@@ -62,11 +60,8 @@ end
 local current_master
 function combat_system_actor_ev_on_click(actor, button, x, y)
     if not battle or battle.state ~= BATTLE_TURN_STAND_BY then return end
-    
     if not battle:InBattle(actor) then return end
-
     if not current_master then return end
-    
     current_master:SetTarget(actor)
 
     if ACTOR_CLICK_MODE == ACTOR_CLICK_MODE_ATTACK then
@@ -111,7 +106,117 @@ function combat_system_draw()
 end
 
 
+local edit_actor_is_local_team_type = true
+local select_team_type = 0
+local select_team_place = 1
+function draw_battle_actor_editor()
+    -- 添加的actor 要分敌方 还是友方
+    if imgui.RadioButton('友方', select_team_type == battle.local_team_type) then
+        select_team_type = battle.local_team_type
+    end
+    imgui.SameLine()
+    if imgui.RadioButton('敌方', select_team_type ~= battle.local_team_type) then
+        if battle.local_team_type== TEAM_TYPE_ATTACKER then
+            select_team_type = TEAM_TYPE_DEFENDER
+        else
+            select_team_type = TEAM_TYPE_ATTACKER
+        end
+    end
+
+    for i=1,10 do
+        if imgui.RadioButton(i..'##select_team_place', i == select_team_place) then
+            select_team_place = i
+        end
+        imgui.SameLine()
+    end
+    imgui.NewLine()
+
+    if imgui.Button('添加Actor') then
+        local actor = actor_manager_create_actor(os.time())
+        local pos
+        local dir 
+        if select_team_type == TEAM_TYPE_ATTACKER then
+            pos = combat_self_pos[select_team_place]
+            dir = DIR_NW
+        else
+            pos = combat_enemy_pos[select_team_place]
+            dir = DIR_SE
+        end
+        actor:SetProperty(PROP_NAME, string.format('%d', actor:GetID()))
+        actor:SetProperty(PROP_IS_COMBAT,true)
+        actor:SetPos(pos.x,pos.y)
+        actor:SetProperty(PROP_COMBAT_POS_ID, select_team_place)
+        actor:SetDir(dir)
+        actor:ClearAction()
+        actor:PushAction(ACTION_BATIDLE)
+
+        -- player:SetProperty(PROP_ACTOR_TYPE,ACTOR_TYPE_PLAYER)
+        -- player:SetProperty(PROP_AVATAR_ID, '%s') 
+        -- player:SetProperty(PROP_WEAPON_AVATAR_ID,'')
+        actor:ResetASM()
+        battle:AddActor(actor, select_team_type, select_team_place)        
+    end
+end
+
 function combat_system_imgui_update()
+    if not battle then return end
+    imgui.Begin('战斗编辑器')
+        if imgui.CollapsingHeader('CMD') then
+            if imgui.Button('战斗重载') then
+                script_system_dofile('../share/enums_protocol.lua')
+                script_system_dofile('actor_metatable.lua')
+                script_system_dofile('../share/actor_metatable.lua')
+                script_system_dofile('../combat/combat_system.lua')
+                combat_system_init()
+                net_manager_player_dostring(string.format([[ 
+                    script_system_dofile('../share/enums_protocol.lua')
+                    script_system_dofile('../share/actor_metatable.lua')
+                    script_system_dofile('../combat/combat_system.lua')
+                    combat_system_init()
+                ]]))
+                imgui.End()
+                return
+            end            
+
+            imgui.SameLine()
+            if imgui.Button('战斗测试') then
+                local player = actor_manager_fetch_local_player()
+                if player then
+                    local msg = {}
+                    msg.pid = player:GetID()
+                    net_send_message(PTO_C2S_COMBAT_CREATE, cjson.encode(msg))
+                end
+            end
+            imgui.SameLine()
+            if imgui.Button('结束战斗') then
+                combat_system_end_battle()
+            end
+        end
+
+        if imgui.CollapsingHeader('Battle状态') then
+            imgui.Text('Battle：'..battle_get_state_name(battle.state))
+
+            imgui.Text('敌方')
+            for i,actor in ipairs(battle.actors) do
+                if battle.local_team_type ~= actor:GetProperty(PROP_TEAM_TYPE) then
+                    imgui.Button(actor:GetProperty(PROP_NAME))
+                    imgui.SameLine()
+                end
+            end
+            imgui.NewLine()
+            imgui.Text('友方')
+            for i,actor in ipairs(battle.actors) do
+                if battle.local_team_type == actor:GetProperty(PROP_TEAM_TYPE) then
+                    imgui.Button(actor:GetProperty(PROP_NAME))
+                    imgui.SameLine()
+                end
+            end
+            imgui.NewLine()
+        end
+        if imgui.CollapsingHeader('Actor编辑') then
+            draw_battle_actor_editor()
+        end
+    imgui.End()
     if not battle or battle.state ~= BATTLE_TURN_STAND_BY then return end
 
     local player = actor_manager_fetch_local_player()
@@ -251,8 +356,6 @@ function combat_system_imgui_update()
             imgui.End()
         end
     end
-	
-    
 
     for i,actor in ipairs(battle.actors) do
         local x,y,w,h = actor:GetAvatarRect()
@@ -264,6 +367,23 @@ function combat_system_imgui_update()
 end
 
 local stub = net_manager_stub()
+
+stub[PTO_S2C_COMBAT_CREATE] = function(resp)
+    battle = BattleMT:new()
+    battle:Deserialize(resp.battle)
+
+    __battles__[battle.id] = battle
+    
+    local player = actor_manager_fetch_local_player()
+    for i, actor in ipairs(battle.actors) do
+        if player:GetID() == actor:GetID() then
+            battle.local_team_type = actor:GetProperty(PROP_TEAM_TYPE)
+            battle:PrepareBattle()
+            return
+        end
+    end
+end
+
 stub[PTO_S2C_COMBAT_START] = function(resp)
     battle = BattleMT:new()
     battle:Deserialize(resp.battle)
@@ -290,8 +410,7 @@ stub[PTO_S2C_COMBAT_EXECUTE] = function(all_skills)
     battle.state = BTTALE_TURN_EXECUTE
 end
 
-function on_battle_start(self)
-    ui_renderer_clear()
+function reset_actor_pos(self)
     local init_actor = function(actor, pos, dir)
         actor:SetCombatPos(pos.x,pos.y)
         actor:SetDir(dir)
@@ -311,6 +430,19 @@ function on_battle_start(self)
         end
     end
 end
+
+
+function on_battle_prepare(self)
+    ui_renderer_clear()
+    reset_actor_pos(self)
+end
+
+
+function on_battle_start(self)
+    ui_renderer_clear()
+    reset_actor_pos(self)
+end
+
 
 function combat_system_update()
     if battle then

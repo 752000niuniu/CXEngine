@@ -46,6 +46,20 @@ function combat_system_remove_battle(battle_id)
 	__battles__[battle.id]  = nil
 end
 
+
+stub[PTO_C2S_COMBAT_CREATE] = function(req)
+	local actor = actor_manager_fetch_player_by_id(req.pid)
+	local battle = BattleMT:new()
+	combat_system_add_team_by_actor(battle, actor, TEAM_TYPE_ATTACKER)
+	
+	__battles__[battle.id] = battle
+	
+	battle:PrepareBattle()
+	local resp = req
+	resp.battle = battle:Serialize()
+	net_send_message_to_all_players(PTO_S2C_COMBAT_CREATE,cjson.encode(resp))
+end
+
 stub[PTO_C2S_COMBAT_START] = function(req)
 	local atk = actor_manager_fetch_player_by_id(req.atk)
 	local def = actor_manager_fetch_player_by_id(req.def)
