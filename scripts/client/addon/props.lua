@@ -173,13 +173,36 @@ function draw_player_practice_lv(actor)
 end
 
 
+
+
+function actor_type_tostring(actor_type)
+    if actor_type == ACTOR_TYPE_PLAYER then
+        return '玩家'
+    elseif actor_type == ACTOR_TYPE_NPC then
+        return 'NPC'
+    elseif actor_type == ACTOR_TYPE_SUMMON then
+        return '召唤兽'
+    else
+        return '其他类型'
+    end
+end
+
 function ui_show_props()
     if not ui_is_show_props then return end
+    local player = actor_manager_fetch_local_player()
+    if not player then return end
     imgui.Begin('ActorInfo')
     imgui.BeginChild('LEFT_PANNEL#uishoprops',100)
+
         local actors = actor_manager_fetch_all_actors()
         for i,actor in pairs(actors) do
-            if imgui.Button(actor:GetName()..'##'..actor:GetID()) then
+            local show = true
+            if player:IsCombat() then
+                if not actor:IsCombat() then
+                    show = false
+                end
+            end
+            if show and imgui.Button(actor:GetName()..'##'..actor:GetID()) then
                 selected_actor_uid = actor:GetID()
                 prop_school_skill_lv_hp = actor:GetProperty(PROP_SCHOOL_SKILL_LV_HP) 
                 prop_school_skill_lv_mp = actor:GetProperty(PROP_SCHOOL_SKILL_LV_MP) 
@@ -201,6 +224,16 @@ function ui_show_props()
     if actor then
         imgui.SameLine()
         imgui.BeginChild('RightPanel##uiprops')
+        if imgui.Button('创建') then
+            net_manager_player_dostring(string.format([[
+                
+            ]]))
+            local actor = actor_manager_fetch_player_by_id()
+        end
+        imgui.SameLine()
+        if imgui.Button('删除') then
+
+        end
         if imgui.Button('SetLocal') then
             actor_manager_set_local_player(actor:GetID())
         end
@@ -220,6 +253,48 @@ function ui_show_props()
             net_manager_player_dostring([[
                 summons_on_save()
             ]])
+        end
+
+        imgui.Button('Actor类型')
+        imgui.SameLine()
+
+        if imgui.RadioButton('玩家##TYPE_PLAYER', actor:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_PLAYER) then
+            net_manager_player_dostring(string.format([[ 
+                local actor = actor_manager_fetch_player_by_id(%d)
+                actor:SetProperty(PROP_ACTOR_TYPE, %d)
+            ]], actor:GetID(), ACTOR_TYPE_PLAYER))
+        end
+        imgui.SameLine()
+        if imgui.RadioButton('NPC##TYPE_PLAYER', actor:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_NPC) then
+            net_manager_player_dostring(string.format([[ 
+                local actor = actor_manager_fetch_player_by_id(%d)
+                actor:SetProperty(PROP_ACTOR_TYPE, %d)
+            ]], actor:GetID(), ACTOR_TYPE_NPC))
+        end
+        imgui.SameLine()
+        if imgui.RadioButton('召唤兽##TYPE_PLAYER', actor:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_SUMMON) then
+            net_manager_player_dostring(string.format([[ 
+                local actor = actor_manager_fetch_player_by_id(%d)
+                actor:SetProperty(PROP_ACTOR_TYPE, %d)
+            ]], actor:GetID(), ACTOR_TYPE_SUMMON))
+        end
+        imgui.SameLine()   
+        if imgui.RadioButton('其他类型##TYPE_PLAYER', 
+            actor:GetProperty(PROP_ACTOR_TYPE) ~= ACTOR_TYPE_PLAYER
+            and actor:GetProperty(PROP_ACTOR_TYPE) ~= ACTOR_TYPE_SUMMON
+            and actor:GetProperty(PROP_ACTOR_TYPE) ~= ACTOR_TYPE_NPC
+        ) then
+            net_manager_player_dostring(string.format([[ 
+                local actor = actor_manager_fetch_player_by_id(%d)
+                actor:SetProperty(PROP_ACTOR_TYPE, %d)
+            ]], actor:GetID(), ACTOR_TYPE_DEFAULT))
+        end
+
+        if actor:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_PLAYER then
+            imgui.Button('队伍信息')
+
+
+            imgui.Button('召唤兽信息')
         end
 
         edit_prop_lv = actor:GetProperty(PROP_LV)
@@ -250,6 +325,7 @@ function ui_show_props()
         end
 
         imgui.SameLine()
+
 
         if actor:GetProperty(PROP_ACTOR_TYPE) ==  ACTOR_TYPE_PLAYER then
             imgui.Text('种族:'..actor:GetRaceName())
@@ -323,6 +399,7 @@ function ui_show_props()
             if imgui.CollapsingHeader('修炼等级') then
                 draw_player_practice_lv(actor)
             end
+
         end
         if actor:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_SUMMON then
             if imgui.CollapsingHeader('修炼等级') then
