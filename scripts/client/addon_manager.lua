@@ -5,7 +5,9 @@ function load_all_addons()
     script_system_dofile('addon/quest.lua')
     script_system_dofile('addon/action.lua')
     script_system_dofile('addon/options.lua')
+    script_system_dofile('addon/battle.lua')
 end
+
 
 
 function check_dest_hit_actor(dest_x, dest_y)
@@ -55,6 +57,12 @@ function addon_manager_imgui_update()
     if imgui.KeysMod('ALT') and  is_letter_pressed('z') then
 		ui_toggle_show_options()
     end
+
+    if imgui.KeysMod('ALT') and  is_letter_pressed('r') then
+		ui_toggle_show_battle()
+    end
+
+    
     
     ui_show_bag()
     ui_show_props()
@@ -62,7 +70,7 @@ function addon_manager_imgui_update()
     ui_show_quest()
     ui_show_action()
     ui_show_options()
-
+    ui_show_battle()
 
     if not imgui.IsAnyItemHovered() then
         if imgui.IsMouseClicked(0) then

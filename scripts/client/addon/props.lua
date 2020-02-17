@@ -272,8 +272,12 @@ function ui_show_props()
             local x,y = player:GetPos()
             net_manager_actor_dostring(actor:GetID(),[[
                 actor:SetPos(%.f, %.f)
-            ]], x, y ) 
+            ]],x,y) 
             actor:SetPos(player:GetPos())
+        end
+        imgui.SameLine()
+        if imgui.Button('SetLocal') then
+            actor_manager_set_local_player(actor:GetID())
         end
 
         imgui.PushItemWidth(100)
@@ -364,12 +368,6 @@ function ui_show_props()
                 imgui.EndPopup()
             end 
         end
-
-        -- imgui.SameLine()
-        -- if imgui.Button('SetLocal') then
-        --     actor_manager_set_local_player(actor:GetID())
-        -- end
-        -- imgui.SameLine()
 
         if actor:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_PLAYER then
             if imgui.Button('添加召唤兽') then

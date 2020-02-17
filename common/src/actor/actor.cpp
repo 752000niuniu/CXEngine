@@ -24,7 +24,8 @@
 
 #define ACTOR_METATABLE_NAME "mt_actor"
 Actor::Actor(uint64_t pid)
-	:BaseGameEntity(pid)
+	:BaseGameEntity(pid),
+	m_Target(nullptr)
 {
 	lua_State* L = script_system_get_luastate();
 	lua_getglobal(L, "actor_on_reg_props");
@@ -635,8 +636,13 @@ int actor_set_target(lua_State* L) {
 
 int actor_get_target(lua_State* L) {
 	Actor* actor = lua_check_actor(L, 1);
-	lua_push_actor(L, actor->GetTarget());
-	return 1;
+	if (actor->GetTarget() != nullptr) {
+		lua_push_actor(L, actor->GetTarget());
+		return 1;
+	}else{
+		return 0;
+	}
+	
 }
 
 int actor_restore_action(lua_State*L)

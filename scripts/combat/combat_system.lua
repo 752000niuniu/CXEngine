@@ -146,6 +146,16 @@ function BattleMT:RemoveActor(actor)
     end
 end
 
+function BattleMT:GetNotReadyActors()
+    local actors = {}
+    for i,_actor in ipairs(self.actors) do
+        if not actor:GetProperty(PROP_TURN_READY) then
+            table.insert(actors , _actor)
+        end
+    end
+    return actors
+end
+
 function BattleMT:GetTurn()
     return self.turn
 end
