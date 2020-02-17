@@ -3,7 +3,6 @@ local ACTOR_ID_COUNTER = 1
 
 local actor_table = {}
 
-
 local function utils_find_role_id_row(actor_type, role_id)
     local role_tbl =  content_system_get_table('role')
     local pet_tbl =  content_system_get_table('pet')
@@ -34,7 +33,6 @@ function actor_manager_add_new(tid)
 
 end
 
-
 function actor_ev_on_click(actor, button, x, y)
 	cxlog_info('ACTOR_EV_ON_CLICK',button,x,y)
 	local player = actor_manager_fetch_local_player()
@@ -57,4 +55,10 @@ stub[PTO_S2C_CLICK_NPC] = function(req)
 	end
 end
 
- 
+stub[PTO_S2C_CREATE_ACTOR] = function(req)
+    local pid = req[tostring(PROP_ID)]
+    local actor = actor_manager_create_actor(pid)
+    actor:SetProperties(req)
+    actor:ResetASM()
+
+end

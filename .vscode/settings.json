@@ -17,7 +17,8 @@
 		"stb_vorbis.c": "cpp",
 		"demo.h": "c",
 		"nanovg.h": "c",
-		"xtree": "cpp"
+		"xtree": "cpp",
+		"utility": "cpp"
 	},
 	"C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
 	"C_Cpp.configurationWarnings": "Disabled"

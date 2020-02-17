@@ -182,6 +182,7 @@ function on_game_imgui_update(name)
         end
     end
     local player = actor_manager_fetch_local_player()
+    if not player then return end
     if player:IsCombat() then
         combat_system_imgui_update()
     end
@@ -230,12 +231,14 @@ stub[PTO_C2C_PLAYER_ENTER] = function(req)
 end
 
 stub[PTO_C2C_NPC_ENTER] = function(req)
+    local player = actor_manager_fetch_local_player()
+    if not player then return end
+    
 	for i,actor_info in ipairs(req.npcs) do
 		local actor = actor_manager_create_actor(actor_info[tostring(PROP_ID)])
         actor:SetProperties(actor_info)
 	end
 
-	local player = actor_manager_fetch_local_player()
 	local req = {}
 	req.pid = player:GetID()
 	-- net_send_message(PTO_C2S_FETCH_TEAM, cjson.encode(req))

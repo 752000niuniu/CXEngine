@@ -26,3 +26,16 @@ function ActorMT:GetSummon()
 end
 
 
+function ActorMT:GetSummons()
+    local uids_str = self:GetProperty(PROP_SUMMON_UIDS) 
+    local uids = cjson.decode(uids_str) 
+    if #uids == 0 then return {} end
+    local summons = {}
+    for i,uid in ipairs(uids) do
+        local actor = actor_manager_fetch_player_by_id(uid)
+        table.insert(summons, actor)
+    end
+    return summons
+end
+
+

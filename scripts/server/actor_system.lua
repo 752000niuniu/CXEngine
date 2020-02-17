@@ -60,7 +60,7 @@ stub[PTO_C2C_LOGIN] = function(req)
     local actors_props = {}
     local actors = actor_manager_fetch_all_actors()   
     for i,actor in ipairs(actors) do
-        if actor:IsNPC() then
+        if actor:IsNPC() or actor:IsSummon() then
             table.insert(actors_props, actor:GetProperties())
         end
     end
@@ -125,28 +125,20 @@ stub[PTO_C2S_CREATE_PLAYER] = function(req, js)
 end
 
 stub[PTO_C2S_CREATE_ACTOR] = function(req)
-    local props = cjson.decode(req)
     local pid = utils_next_uid('actor')
-    local actor = lua_create_actor(pid)
-    actor:SetProperties(props)
+    local actor = actor_manager_create_actor(pid)
+    actor:SetProperties(req.props)
     actor:SetProperty(PROP_ID, pid)
-    
-    -- net_send_message(pid,PTO_C2C_PLAYER_ENTER, cjson.encode({local_pid = req.pid, actors = actors_props}))
-    -- net_send_message_to_all_players(PTO_S2C_CREATE_ACTOR,js)
-    -- lua_create_actor
-    -- PTO_S2C_CREATE_ACTOR                    = enum_next()
+    actor:SetProperty(PROP_NAME, pid)
+
+    net_send_message(req.pid,PTO_S2C_CREATE_ACTOR, 
+        cjson.encode(actor:GetProperties()))
 end
 
 stub[PTO_C2S_DELETE_ACTOR] = function(req)
-    
-    -- PTO_S2C_DELETE_ACTOR                    = enum_next()
+    actor_manager_destroy_actor(req.pid)
+    net_send_message(req.pid, PTO_S2C_DELETE_ACTOR, cjson.encode(req))
 end
-
-stub[PTO_C2S_SAVE_ACTOR] = function(req)
-    
-    -- PTO_S2C_SAVE_ACTOR                    = enum_next()
-end
-
 
 local ActorMT = actor_get_metatable()
 function ActorMT:AddSummon(summon)
@@ -163,5 +155,18 @@ function ActorMT:GetSummon()
     local uids_str = self:GetProperty(PROP_SUMMON_UIDS) 
     local uids = cjson.decode(uids_str) 
     if #uids == 0 then return end
-    return __summons__[uids[1]]
+    local actor = actor_manager_fetch_player_by_id(uids[1])
+    return actor
+end
+
+function ActorMT:GetSummons()
+    local uids_str = self:GetProperty(PROP_SUMMON_UIDS) 
+    local uids = cjson.decode(uids_str) 
+    if #uids == 0 then return {} end
+    local summons = {}
+    for i,uid in ipairs(uids) do
+        local actor = actor_manager_fetch_player_by_id(uid)
+        table.insert(summons, actor)
+    end
+    return summons
 end

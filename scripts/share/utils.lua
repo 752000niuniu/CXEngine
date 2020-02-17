@@ -74,8 +74,8 @@ function gen_next_sortk_fn(tbl)
 end
 
 
-imgui.HorizontalLayout = function(tbl, next_fn, cb)
-    local line_width = math.min(imgui.GetContentRegionAvailWidth(),400) 
+imgui.HorizontalLayout = function(tbl, next_fn, cb, wrap_w)
+    local line_width = wrap_w or imgui.GetContentRegionAvailWidth() 
     local cx, cy = imgui.GetCursorPos()
     local layout_x = cx
     do

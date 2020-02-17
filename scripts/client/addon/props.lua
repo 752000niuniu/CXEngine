@@ -172,9 +172,6 @@ function draw_player_practice_lv(actor)
     draw_practice_lv_bar('法抗修炼等级' , PROP_SPELL_RESISTANCE_SKILL_LV) 
 end
 
-
-
-
 function actor_type_tostring(actor_type)
     if actor_type == ACTOR_TYPE_PLAYER then
         return '玩家'
@@ -187,22 +184,30 @@ function actor_type_tostring(actor_type)
     end
 end
 
+
+function fetch_weapon_keys(tbl, avatar_key)
+    local weapon_keys = {}
+    local strs= utils_string_split(avatar_key,'-')
+    local role_key , weapon_key  = strs[1], strs[2]
+    for k, v in pairs(tbl) do
+        if role_key == v.role and weapon_key == v.type then
+            table.insert(weapon_keys,k)
+        end
+    end
+    table.sort(weapon_keys)
+    return weapon_keys
+end
+
+local ActorNameSB = imgui.CreateStrbuf('test',256)
 function ui_show_props()
     if not ui_is_show_props then return end
     local player = actor_manager_fetch_local_player()
     if not player then return end
-    imgui.Begin('ActorInfo')
+    imgui.Begin('ActorEditor')
     imgui.BeginChild('LEFT_PANNEL#uishoprops',100)
-
         local actors = actor_manager_fetch_all_actors()
-        for i,actor in pairs(actors) do
-            local show = true
-            if player:IsCombat() then
-                if not actor:IsCombat() then
-                    show = false
-                end
-            end
-            if show and imgui.Button(actor:GetName()..'##'..actor:GetID()) then
+        local drawbutton = function(actor)
+            if imgui.Button(actor:GetName()..'##'..actor:GetID()) then
                 selected_actor_uid = actor:GetID()
                 prop_school_skill_lv_hp = actor:GetProperty(PROP_SCHOOL_SKILL_LV_HP) 
                 prop_school_skill_lv_mp = actor:GetProperty(PROP_SCHOOL_SKILL_LV_MP) 
@@ -217,6 +222,21 @@ function ui_show_props()
                 prop_atk_resistance_skill_lv	= actor:GetProperty(PROP_ATK_RESISTANCE_SKILL_LV)
                 prop_spell_practice_skill_lv	= actor:GetProperty(PROP_SPELL_PRACTICE_SKILL_LV)
                 prop_spell_resistance_skill_lv	= actor:GetProperty(PROP_SPELL_RESISTANCE_SKILL_LV)
+
+                ActorNameSB:reset(actor:GetName())
+            end
+        end
+        imgui.Text('玩家')
+        for i,actor in pairs(actors) do
+            if actor:IsPlayer() then
+                drawbutton(actor)
+            end
+        end
+
+        imgui.Text('召唤兽')
+        for i,actor in pairs(actors) do
+            if actor:IsSummon() then
+                drawbutton(actor)
             end
         end
     imgui.EndChild()
@@ -225,78 +245,217 @@ function ui_show_props()
         imgui.SameLine()
         imgui.BeginChild('RightPanel##uiprops')
         if imgui.Button('创建') then
-            local props = cjson.encode(actor:GetProperties())
-            net_send_message(PTO_C2S_CREATE_ACTOR, props)
+            local req = {}
+            req.pid = player:GetID()
+            req.props = actor:GetProperties()
+            net_send_message(PTO_C2S_CREATE_ACTOR, cjson.encode(req))
         end
         imgui.SameLine()
         if imgui.Button('删除') then
-            net_send_message(PTO_C2S_DELETE_ACTOR, cjson.encode(actor:GetID()))
+            net_send_message(PTO_C2S_DELETE_ACTOR, cjson.encode(
+                { pid = actor:GetID() } 
+            ))
         end
         imgui.SameLine()
         if imgui.Button('保存') then
-            net_send_message(PTO_C2S_SAVE_ACTOR, cjson.encode(actor:GetID()))
-        end
-        if imgui.Button('SetLocal') then
-            actor_manager_set_local_player(actor:GetID())
+            net_send_message(PTO_C2C_SAVE_ACTORS, cjson.encode({}))
         end
         imgui.SameLine()
-
-        if imgui.Button('创建召唤兽') then
-            local player = actor_manager_fetch_local_player()
-            local msg = {}
-            msg.owner = player:GetID()
-            msg.props = actor:GetProperties()
-
-            net_send_message(PTO_C2S_CREATE_SUMMON, cjson.encode(msg)) 
+        if imgui.Button('传送') then
+            net_manager_player_dostring(string.format([[
+                player:SetPos(%.f, %.f)
+            ]], actor:GetPos()))  
+            player:SetPos(actor:GetPos())
         end
         imgui.SameLine()
+        if imgui.Button('摆怪') then
+            local x,y = player:GetPos()
+            net_manager_actor_dostring(actor:GetID(),[[
+                actor:SetPos(%.f, %.f)
+            ]], x, y ) 
+            actor:SetPos(player:GetPos())
+        end
 
-        if imgui.Button('导出召唤兽') then
-            net_manager_player_dostring([[
-                summons_on_save()
-            ]])
+        imgui.PushItemWidth(100)
+        imgui.InputText("名字", ActorNameSB)
+        imgui.PopItemWidth()
+        imgui.SameLine()
+        if imgui.Button('改名##change_name') then
+            net_manager_actor_dostring(actor:GetID(),[[ 
+                actor:SetProperty(PROP_NAME, '%s')
+            ]], ActorNameSB:str() )
         end
 
         imgui.Button('Actor类型')
         imgui.SameLine()
-
-        if imgui.RadioButton('玩家##TYPE_PLAYER', actor:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_PLAYER) then
-            net_manager_player_dostring(string.format([[ 
-                local actor = actor_manager_fetch_player_by_id(%d)
+        local actor_type = actor:GetProperty(PROP_ACTOR_TYPE) 
+        if imgui.RadioButton('玩家##TYPE_PLAYER', actor_type == ACTOR_TYPE_PLAYER) then
+            net_manager_actor_dostring(actor:GetID(),[[ 
                 actor:SetProperty(PROP_ACTOR_TYPE, %d)
-            ]], actor:GetID(), ACTOR_TYPE_PLAYER))
+            ]], ACTOR_TYPE_PLAYER)
         end
         imgui.SameLine()
-        if imgui.RadioButton('NPC##TYPE_PLAYER', actor:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_NPC) then
-            net_manager_player_dostring(string.format([[ 
-                local actor = actor_manager_fetch_player_by_id(%d)
+        
+        if imgui.RadioButton('召唤兽##TYPE_SUMMON', actor_type == ACTOR_TYPE_SUMMON) then
+            net_manager_actor_dostring(actor:GetID(),[[ 
                 actor:SetProperty(PROP_ACTOR_TYPE, %d)
-            ]], actor:GetID(), ACTOR_TYPE_NPC))
-        end
-        imgui.SameLine()
-        if imgui.RadioButton('召唤兽##TYPE_PLAYER', actor:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_SUMMON) then
-            net_manager_player_dostring(string.format([[ 
-                local actor = actor_manager_fetch_player_by_id(%d)
-                actor:SetProperty(PROP_ACTOR_TYPE, %d)
-            ]], actor:GetID(), ACTOR_TYPE_SUMMON))
+            ]], ACTOR_TYPE_SUMMON)
         end
         imgui.SameLine()   
-        if imgui.RadioButton('其他类型##TYPE_PLAYER', 
-            actor:GetProperty(PROP_ACTOR_TYPE) ~= ACTOR_TYPE_PLAYER
-            and actor:GetProperty(PROP_ACTOR_TYPE) ~= ACTOR_TYPE_SUMMON
-            and actor:GetProperty(PROP_ACTOR_TYPE) ~= ACTOR_TYPE_NPC
+        if imgui.RadioButton('其他类型##TYPE_OTHER', 
+            actor_type~= ACTOR_TYPE_PLAYER
+            and actor_type ~= ACTOR_TYPE_SUMMON
+            and actor_type ~= ACTOR_TYPE_NPC
         ) then
-            net_manager_player_dostring(string.format([[ 
-                local actor = actor_manager_fetch_player_by_id(%d)
+            net_manager_actor_dostring(actor:GetID(),[[ 
                 actor:SetProperty(PROP_ACTOR_TYPE, %d)
-            ]], actor:GetID(), ACTOR_TYPE_DEFAULT))
+            ]], ACTOR_TYPE_DEFAULT)
         end
 
+        if imgui.Button('Avatar') then
+            imgui.OpenPopup('PopupAvatar')
+        end
+        if imgui.BeginPopup('PopupAvatar') then
+            local avatar_tbl 
+            if actor_type == ACTOR_TYPE_PLAYER then
+                avatar_tbl = content_system_get_table('role')    
+            elseif actor_type == ACTOR_TYPE_SUMMON then
+                avatar_tbl = content_system_get_table('avatar_npc')  
+                local tmp = {}
+                for id, row in pairs(avatar_tbl)   do
+                    if row.can_take == 1 then
+                        tmp[row.ID] = row
+                    end
+                end
+                avatar_tbl = tmp
+            end
+            local role_keys =  utils_fetch_sort_keys(avatar_tbl)
+            imgui.HorizontalLayout(role_keys,next,function(k,v) 
+                if imgui.Button(v ..'##rolekey') then
+                    net_manager_actor_dostring(actor:GetID(),[[ 
+                        actor:SetProperty(PROP_ACTOR_TYPE, %d)
+                        actor:SetProperty(PROP_AVATAR_ID, '%s') 
+                        actor:SetProperty(PROP_WEAPON_AVATAR_ID,'')
+                    ]], actor_type, v)
+                    imgui.CloseCurrentPopup()
+                end
+            end,300)
+            imgui.EndPopup()
+        end
+        if actor:IsPlayer() then
+            imgui.SameLine()
+            if imgui.Button('WeaponAvtar') then
+                imgui.OpenPopup('PopupWeaponAvatar')
+            end
+
+            if imgui.BeginPopup('PopupWeaponAvatar') then
+                local avatar_weapon_tbl =  content_system_get_table('weapon')    
+                local avatar_key = actor:GetProperty(PROP_AVATAR_ID)
+                local keys = fetch_weapon_keys(avatar_weapon_tbl,avatar_key)
+              
+                imgui.HorizontalLayout(keys,next,function(k,v) 
+                    if imgui.Button(v ..'##weaponkey') then
+                        net_manager_actor_dostring(actor:GetID(),[[ 
+                            actor:SetProperty(PROP_WEAPON_AVATAR_ID,'%s')
+                        ]], v)
+                        imgui.CloseCurrentPopup()
+                    end
+                end,300)
+                imgui.EndPopup()
+            end 
+        end
+
+        -- imgui.SameLine()
+        -- if imgui.Button('SetLocal') then
+        --     actor_manager_set_local_player(actor:GetID())
+        -- end
+        -- imgui.SameLine()
+
         if actor:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_PLAYER then
+            if imgui.Button('添加召唤兽') then
+                imgui.OpenPopup('PopupAddSummon')                
+            end
+            if imgui.BeginPopup('PopupAddSummon') then
+                local actors = actor_manager_fetch_all_actors()
+                local all_summons = {}
+                for i,_actor_ in ipairs(actors) do
+                    if _actor_:IsSummon() then
+                        local find = false
+                        for j, summon in ipairs(actor:GetSummons()) do
+                            if _actor_:GetID() == summon:GetID() then
+                                find = true
+                                break
+                            end
+                        end
+                        if not find then
+                            table.insert(all_summons, _actor_) 
+                        end
+                    end
+                end
+                table.sort(all_summons, function(a,b) return a:GetID() < b:GetID() end)
+                imgui.HorizontalLayout(all_summons,next,function(k,v) 
+                    if imgui.Button(v:GetName()..'##summon'..v:GetID()) then
+                        net_manager_actor_dostring(actor:GetID(),[[ 
+                            local uids_str = actor:GetProperty(PROP_SUMMON_UIDS) 
+                            local uids = cjson.decode(uids_str) 
+                            table.insert(uids, %d)
+                            actor:SetProperty(PROP_SUMMON_UIDS, cjson.encode(uids))
+                        ]], v:GetID())
+                        imgui.CloseCurrentPopup()
+                    end
+                end)
+                imgui.EndPopup()
+            end
+            imgui.SameLine()
+            if imgui.Button('移除召唤兽') then
+                imgui.OpenPopup('PopupRemoveSummon')                
+            end
+            if imgui.BeginPopup('PopupRemoveSummon') then
+                local summons = actor:GetSummons()
+                imgui.HorizontalLayout(summons,next,function(k,v) 
+                    if imgui.Button(v:GetName()..'##'..v:GetID()) then
+                        net_manager_actor_dostring(actor:GetID(),[[ 
+                            local uids_str = actor:GetProperty(PROP_SUMMON_UIDS) 
+                            local uids = cjson.decode(uids_str) 
+                            if #uids == 0 then return end
+                            local remove_id = %d
+                            for i,uid in pairs(uids) do
+                                if uid == remove_id then
+                                    table.remove(uids, i)
+                                    break
+                                end
+                            end
+                            actor:SetProperty(PROP_SUMMON_UIDS, cjson.encode(uids))
+                        ]], v:GetID())
+                        imgui.CloseCurrentPopup()
+                    end
+                end)
+                imgui.EndPopup()
+            end
+            imgui.SameLine()
+            if imgui.Button('清空召唤兽') then
+                net_manager_actor_dostring(actor:GetID(),[[ 
+                    actor:SetProperty(PROP_SUMMON_UIDS, '[]') 
+                ]])
+            end
+            imgui.Text('召唤兽信息')
+            local summons = actor:GetSummons() 
+            imgui.HorizontalLayout(summons,next,function(k,v)
+                if imgui.Button(v:GetName()..'##summon info') then
+                    
+                end
+            end)
+
+                -- local player = actor_manager_fetch_local_player()
+                -- local msg = {}
+                -- msg.owner = player:GetID()
+                -- msg.props = actor:GetProperties()
+                
+                -- net_send_message(PTO_C2S_CREATE_SUMMON, cjson.encode(msg)) 
+
+            --
+
             imgui.Button('队伍信息')
-
-
-            imgui.Button('召唤兽信息')
         end
 
         edit_prop_lv = actor:GetProperty(PROP_LV)

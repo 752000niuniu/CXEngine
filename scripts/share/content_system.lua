@@ -60,9 +60,33 @@ function read_map_table()
     return tbl
 end
 function read_npc_table()
-    local path = vfs_get_tsvpath('avatar_npc')
-    local tbl,col_names = utils_parse_tsv_to_rows(path)
-    return tbl
+    local tbl  = utils_parse_tsv(vfs_get_tsvpath('avatar_npc'),{
+        { name = 'ID'},
+        { name = 'can_take', fmt='i', def =0},
+        { name = 'idle' },
+        { name = 'walk' },
+        { name = 'sit' },
+        { name = 'angry' },
+        { name = 'sayhi' },
+        { name = 'dance' },
+        { name = 'salute' },
+        { name = 'clps' },
+        { name = 'cry' },
+        { name = 'batidle' },
+        { name = 'attack' },
+        { name = 'cast' },
+        { name = 'behit' },
+        { name = 'runto' },
+        { name = 'runback' },
+        { name = 'defend' },
+        { name = 'unknown' }
+    })    
+
+    local ret = {}
+    for i,row in ipairs(tbl) do
+        ret[row.ID] = row
+    end
+    return ret
 end
 
 function read_actor_template()

@@ -55,11 +55,11 @@ end
 function on_script_system_update()
     game_server_update()   
     scene_system_update()
-    local actors = actor_manager_fetch_all_players()
+    local actors = actor_manager_fetch_all_actors()
     local dirty_props = {}
     for _, p in ipairs(actors) do
-        if not p:IsCombat() then
-            if p:IsDirty() then
+        -- if not p:IsCombat() then
+            if not p:IsNPC() and p:IsDirty() then
                 local pid = p:GetID()
                 local props = p:GetDirtyProps()
                 for i,prop_id in ipairs(props) do
@@ -69,7 +69,7 @@ function on_script_system_update()
                 end
                 p:ClearDirty()
             end
-        end
+        -- end
     end
     if #dirty_props > 0 then
         cxlog_info('sync dirty props', #dirty_props) 
