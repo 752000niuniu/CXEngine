@@ -12,7 +12,6 @@ script_system_dofile('../share/content_system.lua')
 script_system_dofile('../share/actor_metatable.lua')
 
 script_system_dofile('server.lua')
-script_system_dofile('login_system.lua')
 script_system_dofile('actor_system.lua')
 script_system_dofile('scene_system.lua')
 script_system_dofile('team_system.lua')
@@ -35,17 +34,14 @@ function server_reload()
 
     content_system_init()
     combat_system_init()
-    summons_on_load()
 end
 
 function on_script_system_init()
-   
     content_system_init()
     combat_system_init()
     scene_system_init()
     read_account_database()
-    read_player_database()
-    summons_on_load()
+    actors_on_load()
 end
 
 local prop_templ_tbl
@@ -59,19 +55,20 @@ end
 function on_script_system_update()
     game_server_update()   
     scene_system_update()
-    local players = actor_manager_fetch_all_actors()
+    local actors = actor_manager_fetch_all_players()
     local dirty_props = {}
-    
-    for _, p in ipairs(players) do
-        if p:IsDirty() then
-            local pid = p:GetID()
-            local props = p:GetDirtyProps()
-            for i,prop_id in ipairs(props) do
-                if is_prop_sync(prop_id) then
-                    table.insert(dirty_props, {pid, prop_id, p:GetProperty(prop_id)})
+    for _, p in ipairs(actors) do
+        if not p:IsCombat() then
+            if p:IsDirty() then
+                local pid = p:GetID()
+                local props = p:GetDirtyProps()
+                for i,prop_id in ipairs(props) do
+                    if is_prop_sync(prop_id) then
+                        table.insert(dirty_props, {pid, prop_id, p:GetProperty(prop_id)})
+                    end
                 end
+                p:ClearDirty()
             end
-            p:ClearDirty()
         end
     end
     if #dirty_props > 0 then

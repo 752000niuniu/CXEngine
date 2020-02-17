@@ -70,6 +70,16 @@ stub[PTO_C2S_COMBAT_START] = function(req)
 	net_send_message_to_all_players(PTO_S2C_COMBAT_START,cjson.encode(resp))
 end
 
+stub[PTO_C2S_PVE_BATTLE_START] = function(req)
+	local atk = actor_manager_fetch_player_by_id(req.atk)
+	-- local battle = combat_system_create_battle(atk,def)
+	-- battle:StartBattle()
+	-- local resp = req
+	-- resp.battle = battle:Serialize()
+	-- net_send_message_to_all_players(PTO_S2C_COMBAT_START,cjson.encode(resp))
+	
+end
+
 function handle_turn_commands(battle)
 	local send_pids = {}
 	for i,actor in ipairs(battle.actors) do

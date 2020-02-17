@@ -7,7 +7,7 @@ PTO_C2C_MOVE_TO_POS                     = enum_next()
 PTO_C2C_PLAYER_ENTER                    = enum_next()
 PTO_C2C_NPC_ENTER                       = enum_next()
 PTO_C2C_CHAT                            = enum_next()
-PTO_C2C_SAVE_PLAYER_DATABASE            = enum_next()
+PTO_C2C_SAVE_ACTORS            = enum_next()
 PTO_C2C_SAVE_ACCOUNT_DATABASE           = enum_next()
 
 PTO_C2S_COMBAT_START                    = enum_next()
@@ -70,3 +70,15 @@ PTO_C2S_FETCH_ACCOUNT_INFO           = enum_next()
 
 PTO_C2S_COMBAT_CREATE                    = enum_next()
 PTO_S2C_COMBAT_CREATE                    = enum_next()
+
+PTO_C2S_CREATE_ACTOR                    = enum_next()
+PTO_S2C_CREATE_ACTOR                    = enum_next()
+
+PTO_C2S_DELETE_ACTOR                    = enum_next()
+PTO_S2C_DELETE_ACTOR                    = enum_next()
+
+PTO_C2S_SAVE_ACTOR                    = enum_next()
+PTO_S2C_SAVE_ACTOR                    = enum_next()
+
+PTO_C2S_PVE_BATTLE_START              = enum_next()
+PTO_S2C_PVE_BATTLE_START        = enum_next()

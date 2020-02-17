@@ -1,32 +1,70 @@
-__summons__ = __summons__ or {}
 
-function summons_on_load()
-    cxlog_info('summons_on_load')
-    local path = vfs_get_workdir() .. '/res/storage/summon.data'
+function actors_on_load()
+    cxlog_info('actors_on_load')
+    local path = vfs_get_workdir() .. '/res/storage/actor.data'
 	local db = read_database_file(path)
 	if db then
 		for i,v in ipairs(db) do
             local pid = v[tostring(PROP_ID)]
             local actor = actor_manager_create_actor(pid)
             actor:SetProperties(v)
-            __summons__[pid] = actor
+            actor:SetProperty(PROP_ID, pid)
 		end
 	end
 end
 
-function summons_on_save()
-    local summon_infos = {}
-    for pid, summon in pairs(__summons__) do
-        assert(summon:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_SUMMON)
-        table.insert(summon_infos, summon:GetProperties())
+function actors_on_save()
+    local actor_infos = {}
+    local __actors__ = actor_manager_fetch_all_actors()
+    for pid, actor in pairs(__actors__) do
+        table.insert(actor_infos, actor:GetProperties())
     end
-    table.sort(summon_infos, function(a,b) return a[PROP_ID] < b[PROP_ID] end)
+    table.sort(actor_infos, function(a,b) return a[PROP_ID] < b[PROP_ID] end)
     	
-	local path = vfs_get_workdir() .. '/res/storage/summon.data'
+	local path = vfs_get_workdir() .. '/res/storage/actor.data'
 	local fw = io.open(path,'w')
     if not fw then return end
-	fw:write(cjson.encode(summon_infos))
+	fw:write(cjson.encode(actor_infos))
 	fw:close()
+end
+
+stub[PTO_C2C_SAVE_ACTORS] = function()
+    actors_on_save()
+end
+
+stub[PTO_C2C_LOGIN] = function(req)
+    local req_player = actor_manager_fetch_player_by_id(req.pid)
+    if not req_player then
+        req_player = actor_manager_create_actor(req.pid)
+        req_player:SetProperty(PROP_NAME,math.tointeger(req.pid))
+        req_player:SetProperty(PROP_ACTOR_TYPE, ACTOR_TYPE_PLAYER)
+        local scenes = content_system_get_table('scene')
+        local scene_id = req_player:GetProperty(PROP_SCENE_ID)
+        req_player:SetPos(scenes[scene_id].birth_pos.x,scenes[scene_id].birth_pos.y )
+    end
+    
+    local players = actor_manager_fetch_all_players()    
+    for i,p in ipairs(players) do
+        local pid = p:GetID()
+        if pid == req.pid then
+            local actors_props = {}
+            for _,actor in ipairs(players) do
+                table.insert(actors_props, actor:GetProperties())
+            end
+            net_send_message(pid,PTO_C2C_PLAYER_ENTER, cjson.encode({local_pid = req.pid, actors = actors_props}))
+        else
+            net_send_message(pid,PTO_C2C_PLAYER_ENTER, cjson.encode({ actors = { req_player:GetProperties() }}))
+        end
+    end
+    
+    local actors_props = {}
+    local actors = actor_manager_fetch_all_actors()   
+    for i,actor in ipairs(actors) do
+        if actor:IsNPC() then
+            table.insert(actors_props, actor:GetProperties())
+        end
+    end
+    net_send_message(req.pid,PTO_C2C_NPC_ENTER, cjson.encode({ npcs = actors_props}))
 end
 
 
@@ -86,6 +124,30 @@ stub[PTO_C2S_CREATE_PLAYER] = function(req, js)
     actor:SetProperties(props)
 end
 
+stub[PTO_C2S_CREATE_ACTOR] = function(req)
+    local props = cjson.decode(req)
+    local pid = utils_next_uid('actor')
+    local actor = lua_create_actor(pid)
+    actor:SetProperties(props)
+    actor:SetProperty(PROP_ID, pid)
+    
+    -- net_send_message(pid,PTO_C2C_PLAYER_ENTER, cjson.encode({local_pid = req.pid, actors = actors_props}))
+    -- net_send_message_to_all_players(PTO_S2C_CREATE_ACTOR,js)
+    -- lua_create_actor
+    -- PTO_S2C_CREATE_ACTOR                    = enum_next()
+end
+
+stub[PTO_C2S_DELETE_ACTOR] = function(req)
+    
+    -- PTO_S2C_DELETE_ACTOR                    = enum_next()
+end
+
+stub[PTO_C2S_SAVE_ACTOR] = function(req)
+    
+    -- PTO_S2C_SAVE_ACTOR                    = enum_next()
+end
+
+
 local ActorMT = actor_get_metatable()
 function ActorMT:AddSummon(summon)
     local uids_str = self:GetProperty(PROP_SUMMON_UIDS) 
@@ -103,5 +165,3 @@ function ActorMT:GetSummon()
     if #uids == 0 then return end
     return __summons__[uids[1]]
 end
-
- 

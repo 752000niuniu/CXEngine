@@ -14,7 +14,6 @@ local scene_lua_files =
 
 local scene_list = {}
 	
-	
 function on_scene_manager_init()
     local scene_tbl = content_system_get_table('scene')
     for id, row in pairs(scene_tbl) do
@@ -239,5 +238,5 @@ stub[PTO_C2C_NPC_ENTER] = function(req)
 	local player = actor_manager_fetch_local_player()
 	local req = {}
 	req.pid = player:GetID()
-	net_send_message(PTO_C2S_FETCH_TEAM, cjson.encode(req))
+	-- net_send_message(PTO_C2S_FETCH_TEAM, cjson.encode(req))
 end

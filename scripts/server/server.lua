@@ -3,39 +3,7 @@ script_system_dofile('../share/utils.lua')
 
 
 
-local player_database = {}
-function read_player_database()
-	cxlog_info('read_player_database')
-	local path = vfs_get_workdir() .. '/res/storage/player.data'
-	local db = read_database_file(path)
-	if db then
-		for i,v in ipairs(db) do
-			local pid = v[tostring(PROP_ID)]
-			player_database[pid] = v
-		end
-	end
-end
 
-stub[PTO_C2C_SAVE_PLAYER_DATABASE] = function()
-    local players = actor_manager_fetch_all_actors()
-	local pinfos = {}
-    for pid, p in pairs(players) do
-        if p:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_PLAYER then
-			table.insert(pinfos, p:GetProperties())
-        end
-    end
-    table.sort(pinfos, function(a,b) return a[PROP_ID] < b[PROP_ID] end)
-    	
-	local path = vfs_get_workdir() .. '/res/storage/player.data'
-	local fw = io.open(path,'w')
-    if not fw then return end
-	fw:write(cjson.encode(pinfos))
-	fw:close()
-end
-
-function fetch_player_database_props(pid)
- 	return player_database[pid]
-end
 
 local account_database = {}
 function read_account_database()

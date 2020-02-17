@@ -61,7 +61,7 @@ function ActorMT:SetCombatPos(x,y)
     self:SetProperty(PROP_COMBAT_POS,{x,y})
 end
 
-function ActorMT:IsCombat(x,y)
+function ActorMT:IsCombat()
     return self:GetProperty(PROP_IS_COMBAT)
 end
 
@@ -1009,8 +1009,8 @@ function ActorMT:IsPlayer()
     return self:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_PLAYER
 end
 
-function ActorMT:IsNpc()
-    return not self:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_PLAYER
+function ActorMT:IsNPC()
+    return self:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_NPC
 end
 
 function ActorMT:IsSummon()

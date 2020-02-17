@@ -1,7 +1,7 @@
 function npc_on_show_dialog(player, target)
 	npc_dialog_show(true,'神州上下祸劫频生，灵石是否重补苍天裂痕，', {
 			{ 
-				txt = '我是找你打架的',
+				txt = 'PVP战斗',
 				func = function()
 					local msg = {}
 					msg.atk = player:GetID()
@@ -25,12 +25,11 @@ function npc_on_show_dialog(player, target)
 				end
 			},
 			{ 
-				txt='战斗',
+				txt='PVE战斗',
 				func=function()
 					local req = {}
-					req.atk = player:GetID()
-					req.def = target:GetID()
-					net_send_message(PTO_C2S_COMBAT_START, cjson.encode(req))
+					req.pid = player:GetID()
+					net_send_message(PTO_C2S_PVE_BATTLE_START, cjson.encode(req))
 				end
 			},
 			{

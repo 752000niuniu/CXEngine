@@ -76,7 +76,7 @@ local LocalPlayerDebugButtons = {
     },{
         '刷新数据库', function(player)
             net_send_message(PTO_C2C_SAVE_ACCOUNT_DATABASE,cjson.encode({}))
-            net_send_message(PTO_C2C_SAVE_PLAYER_DATABASE,cjson.encode({}))
+            net_send_message(PTO_C2C_SAVE_ACTORS,cjson.encode({}))
         end
     },{
         '刷新角色', function(player)

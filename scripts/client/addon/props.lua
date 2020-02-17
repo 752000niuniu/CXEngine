@@ -225,14 +225,16 @@ function ui_show_props()
         imgui.SameLine()
         imgui.BeginChild('RightPanel##uiprops')
         if imgui.Button('创建') then
-            net_manager_player_dostring(string.format([[
-                
-            ]]))
-            local actor = actor_manager_fetch_player_by_id()
+            local props = cjson.encode(actor:GetProperties())
+            net_send_message(PTO_C2S_CREATE_ACTOR, props)
         end
         imgui.SameLine()
         if imgui.Button('删除') then
-
+            net_send_message(PTO_C2S_DELETE_ACTOR, cjson.encode(actor:GetID()))
+        end
+        imgui.SameLine()
+        if imgui.Button('保存') then
+            net_send_message(PTO_C2S_SAVE_ACTOR, cjson.encode(actor:GetID()))
         end
         if imgui.Button('SetLocal') then
             actor_manager_set_local_player(actor:GetID())
