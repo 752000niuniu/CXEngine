@@ -254,9 +254,15 @@ function ui_show_props()
         end
         imgui.SameLine()
         if imgui.Button('删除') then
-            net_send_message(PTO_C2S_DELETE_ACTOR, cjson.encode(
-                { pid = actor:GetID() } 
+            net_send_message(PTO_C2S_DELETE_ACTOR, cjson.encode({ 
+                    pid = player:GetID(),
+                    delete_pid = actor:GetID()
+                } 
             ))
+            selected_actor_uid = nil
+            imgui.EndChild()
+            imgui.End()
+            return
         end
         imgui.SameLine()
         if imgui.Button('保存') then
@@ -321,10 +327,24 @@ function ui_show_props()
             local owner = actor:GetSummonOwner()
             if owner then
                 imgui.Text('Owner:'..owner:GetName())
+                imgui.SameLine()
+                if imgui.Button('ClearOwner') then
+                    net_manager_actor_dostring(actor:GetID(),[[ 
+                        actor:RemoveSummonOwner()
+                    ]])
+                end
             end
         end
+
+        local auto_cmd = actor:GetProperty(PROP_IS_AUTO_COMMAND)
+        if imgui.Checkbox('自动战斗', auto_cmd)  then
+            auto_cmd = not auto_cmd
+            net_manager_actor_dostring(actor:GetID(),[[
+                actor:SetProperty(PROP_IS_AUTO_COMMAND, %s)
+            ]], auto_cmd)
+        end
         
-        if imgui.Button('Avatar') then
+        if imgui.Button(actor:GetProperty(PROP_AVATAR_ID)) then
             imgui.OpenPopup('PopupAvatar')
         end
         if imgui.BeginPopup('PopupAvatar') then
@@ -356,7 +376,7 @@ function ui_show_props()
         end
         if actor:IsPlayer() then
             imgui.SameLine()
-            if imgui.Button('WeaponAvtar') then
+            if imgui.Button(actor:GetProperty(PROP_WEAPON_AVATAR_ID)) then
                 imgui.OpenPopup('PopupWeaponAvatar')
             end
 
@@ -498,11 +518,11 @@ function ui_show_props()
 
         edit_prop_lv = actor:GetProperty(PROP_LV)
         imgui.PushItemWidth(80)
-        res , edit_prop_lv =  imgui.DragInt('等级', edit_prop_lv)
+        local lv_changed , new_prop_lv =  imgui.DragInt('等级', edit_prop_lv)
         imgui.PopItemWidth()
-        if res then
-            net_manager_player_dostring(string.format([[ 
-                local actor = actor_manager_fetch_player_by_id(%d)
+        if lv_changed then
+            actor:SetProperty(PROP_LV, new_prop_lv)
+            net_manager_actor_dostring(actor:GetID(),[[
                 actor:SetProperty(PROP_LV, %d)
                 actor:ClearAssignPoints()
 
@@ -520,7 +540,7 @@ function ui_show_props()
                 end
             
                 actor:SetProperty(PROP_HP, actor:GetMaxHP())
-            ]], actor:GetID() , edit_prop_lv))
+            ]],new_prop_lv) 
         end
 
         imgui.SameLine()

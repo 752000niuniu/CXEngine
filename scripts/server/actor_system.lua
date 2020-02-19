@@ -138,7 +138,10 @@ stub[PTO_C2S_CREATE_ACTOR] = function(req)
 end
 
 stub[PTO_C2S_DELETE_ACTOR] = function(req)
-    actor_manager_destroy_actor(req.pid)
+    -- local actor = actor_manager_fetch_player_by_id(req.pid)
+    -- if actor:IsPlayer() then
+    -- end
+    actor_manager_destroy_actor(req.delete_pid)
     net_send_message(req.pid, PTO_S2C_DELETE_ACTOR, cjson.encode(req))
 end
 

@@ -269,3 +269,4 @@ ID	name	type	sub_type	school	combo	atk_anim	group_kill	cast_anim	act_turn
 267	捕捉	trap							
 268	逃跑	flee							
 269	保护	idle							
+270	自动	idle	""	""	""	""	""	""	""

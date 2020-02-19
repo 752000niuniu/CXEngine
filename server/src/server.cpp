@@ -93,13 +93,13 @@ void GameServer::OnClose()
 void GameServer::SendMessageToPlayer(uint64_t pid, int proto, const char* msg)
 {
 	m_EventLoop->RunTask([this, pid, proto, msg]() {
-		ezio::Buffer buf;
-		buf.Write(proto);
-		buf.Write(msg, strlen(msg));
-		buf.Prepend((int)buf.readable_size());
 		auto it = g_PlayerConnections.find(pid);
 		if (it != g_PlayerConnections.end())
 		{
+			ezio::Buffer buf;
+			buf.Write(proto);
+			buf.Write(msg, strlen(msg));
+			buf.Prepend((int)buf.readable_size());
 			it->second->Send(kbase::StringView(buf.Peek(), buf.readable_size()));
 		}
 	});

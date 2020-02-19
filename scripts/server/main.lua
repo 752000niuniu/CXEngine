@@ -58,6 +58,9 @@ end
 function on_script_system_update()
     game_server_update()   
     scene_system_update()
+    combat_system_update()
+
+
     local players = actor_manager_fetch_all_players()
     local dirty_props = {}
 
@@ -86,6 +89,7 @@ function on_script_system_update()
         cxlog_info('sync dirty props', #dirty_props) 
         net_send_message_to_all_players(PTO_S2C_SYNC_PROPS, cjson.encode(dirty_props))
     end
+
     return true
 end
 

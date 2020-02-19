@@ -159,3 +159,35 @@ function combat_system_init()
 	init_skills()
 	init_buffs()
 end
+
+function combat_system_update()
+	if not __battles__ then return end
+	local push_dirty_props = function(dirty_props, actor)
+        local pid = actor:GetID()
+        local props = actor:GetDirtyProps()
+        for i,prop_id in ipairs(props) do
+            if is_prop_sync(prop_id) then
+                table.insert(dirty_props, {pid, prop_id, actor:GetProperty(prop_id)})
+            end
+        end
+        actor:ClearDirty()
+    end
+	for id,battle in pairs(__battles__) do
+		local dirty_props = {}
+		for i, actor in pairs(battle.actors) do
+			if not actor:IsPlayer() and actor:GetSummonOwner() == nil then
+				if actor:IsDirty() then
+					push_dirty_props(dirty_props, actor)
+				end
+			end
+		end
+		if #dirty_props > 0 then
+			cxlog_info('sync dirty props', #dirty_props) 
+			for i,actor in pairs(battle.actors) do
+				if actor:IsPlayer() then
+					net_send_message(actor:GetID(),PTO_S2C_SYNC_PROPS, cjson.encode(dirty_props))
+				end
+			end
+		end
+	end
+end

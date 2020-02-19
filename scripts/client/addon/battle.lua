@@ -138,17 +138,17 @@ function ui_show_battle()
                 if actor:GetProperty(PROP_TURN_READY) then
                     imgui.Text('准备完成')
                     if imgui.Button('取消准备') then
-
+                        net_manager_actor_dostring(actor:GetID(),[[
+                            actor:SetProperty(PROP_TURN_READY, false)
+                        ]])
                     end
                 else
                     imgui.Text('准备中')
                     imgui.Text('选择目标') 
                
                     imgui.HorizontalLayout(battle.actors,next,function(k,v)
-                        if v:GetProperty(PROP_TEAM_TYPE) ~= actor:GetProperty(PROP_TEAM_TYPE) then
-                            if imgui.Button(v:GetProperty(PROP_NAME)..'##BESetTarget') then
-                                actor:SetTarget(v)
-                            end
+                        if imgui.Button(v:GetProperty(PROP_NAME)..'##BESetTarget') then
+                            actor:SetTarget(v)
                         end
                     end)
                     local target = actor:GetTarget()
@@ -212,6 +212,14 @@ function ui_show_battle()
                         local msg = {}
                         msg.master = actor:GetID()
                         msg.skill_id = 264
+                        msg.battle_id = battle.id
+                        net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
+                    end
+                    imgui.SameLine()
+                    if imgui.Button('自动##BattleE') then
+                        local msg = {}
+                        msg.master = actor:GetID()
+                        msg.skill_id = 270
                         msg.battle_id = battle.id
                         net_send_message(PTO_C2S_COMBAT_CMD, cjson.encode(msg) )
                     end

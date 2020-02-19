@@ -50,20 +50,23 @@ local LocalPlayerDebugButtons = {
             script_system_dofile('actor_metatable.lua')
             script_system_dofile('../share/actor_metatable.lua')
             script_system_dofile('../share/utils.lua')
-            script_system_dofile('../combat/combat_system.lua')
-            combat_system_init()
+
             script_system_dofile('input_manager.lua')
+
             scene_manager_reload()
             game_map_reset_map_offset()
-            script_system_dofile('input_manager.lua')
+
+            script_system_dofile('actor_manager.lua')
+          
             script_system_dofile('addon_manager.lua')
             load_all_addons()
-    
             script_system_dofile('module/team.lua')
             script_system_dofile('module/dialog.lua')
     
+            script_system_dofile('../combat/combat_system.lua')
+            combat_system_init()
+
             game_server_on_connection(true)
-            
             collectgarbage()
         end
     },{
