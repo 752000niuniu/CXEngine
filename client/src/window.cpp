@@ -13,10 +13,9 @@
 #include "scene/scene_manager.h"
 #include "logger.h"
 #include "cxlua.h"
+#include "sprite_renderer.h"
 
 static const float MS_PER_UPDATE = 1000 / 60.f / 1000;
-#define GAME_SCREEN_WIDTH 800
-#define GAME_SCREEN_HEIGHT 600
 static void glfw_framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	WINDOW_INSTANCE->OnFrameBufferSizeCallback(width, height);
@@ -55,7 +54,7 @@ static void glfw_error_callback(int error, const char* description) {
 }
 
 Window::Window()
-	:m_Width(GAME_SCREEN_WIDTH), m_Height(GAME_SCREEN_HEIGHT), m_FPS(MS_PER_UPDATE), m_pWindow(nullptr){
+	:m_Width(0), m_Height(0), m_FPS(MS_PER_UPDATE), m_pWindow(nullptr){
 	
 }
 
@@ -98,6 +97,8 @@ void Window::Init(int w,int h)
 		exit(EXIT_FAILURE);
 	}
 	glfwGetWindowSize(m_pWindow, &m_WindowWidth, &m_WindowHeight);
+	m_Width = m_WindowWidth;
+	m_Height = m_WindowHeight;
 
 	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 	int monitorW = 0, monitorH = 0;
@@ -206,6 +207,10 @@ void Window::OnFrameBufferSizeCallback(int width, int height)
 {
 	m_WindowWidth = width;
 	m_WindowHeight = height;
+	m_Width = width;
+	m_Height = height;
+	SpriteRenderer::GetInstance()->UpdateProjection();
+	SCENE_MANAGER_INSTANCE->OnWindowFrameSizeChanged();
 	glViewport(0, 0, m_WindowWidth, m_WindowHeight);
 }
 

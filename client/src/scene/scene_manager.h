@@ -14,6 +14,8 @@ public:
 
 	void Init();
 
+	void OnWindowFrameSizeChanged();
+
 	void Update();
 
 	void Draw();

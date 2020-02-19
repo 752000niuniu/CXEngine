@@ -37,6 +37,7 @@ public:
 	void DrawBitmapSymmetrical(Texture* texture, glm::vec2 position, glm::vec2 size = glm::vec2(1, 1), glm::vec3 color = glm::vec3(1.0f), GLfloat alpha = 0.0f);
 	void Bind() { m_pShader->Bind(); };
 	void UnBind() {	m_pShader->Unbind();};
+    void UpdateProjection();
 private:
     // Render state
     Shader* m_pShader;

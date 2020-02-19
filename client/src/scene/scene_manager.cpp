@@ -152,6 +152,30 @@ bool SceneManager::IsAutoRun()
 	return s_AutoRun;
 }
 
+void SceneManager::OnWindowFrameSizeChanged()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, m_Fbo);
+
+	int screenWidth = WINDOW_INSTANCE->GetWidth();
+	int screenHeight = WINDOW_INSTANCE->GetHeight();
+	glGenTextures(1, &m_TextureColor);
+	glBindTexture(GL_TEXTURE_2D, m_TextureColor);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, screenWidth, screenHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TextureColor, 0);
+
+	glGenRenderbuffers(1, &m_Rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, m_Rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screenWidth, screenHeight);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_Rbo);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		cxlog_err("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+	}
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 void SceneManager::Update() 
 {
 	if (m_SwitchingScene)

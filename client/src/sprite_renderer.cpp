@@ -41,6 +41,14 @@ SpriteRenderer::~SpriteRenderer()
 }
 
 
+void SpriteRenderer::UpdateProjection()
+{
+	m_pShader->Bind();
+	glm::mat4 projection = glm::ortho(0.0f, WINDOW_INSTANCE->GetWidth() * 1.0f, WINDOW_INSTANCE->GetHeight() * 1.0f, 0.0f, -1.0f, 1.0f);
+	glUniformMatrix4fv(glGetUniformLocation(m_pShader->GetProgramID(), "projection"), 1, GL_FALSE, (GLfloat*)(&projection));
+	m_pShader->Unbind();
+}
+
 
 void SpriteRenderer::DrawTexture(Texture* texture, glm::vec2 position, glm::vec2 size /*= glm::vec2(0, 0)*/, GLfloat rotate /*= 0.0f*/, glm::vec3 color /*= glm::vec3(1.0f)*/)
 {
