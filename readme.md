@@ -29,7 +29,7 @@ externals目录下的库全是作者引用的外部库，外部的意思是作�
 
 internals目录下的库全是作者引用的内部库，意味着作者随时有可能对其进行修改。下面对内部库作一一介绍。
 
-1. kbase-cmake和ezio-cmake，这两个库修改自https://github.com/kingsamchen/KBase 和 https://github.com/kingsamchen/ezio，其中ezio依赖kbase，ezio是一个小巧高效的异步网络库，c++14编写。
+1. kbase-cmake和ezio-cmake，这两个库修改自https://github.com/kingsamchen/KBase 和 https://github.com/kingsamchen/ezio  其中ezio依赖kbase，ezio是一个小巧高效的异步网络库，c++14编写。
 
 2. lua-cmake，luacjson-cmake，为标准的lua库的cmake版。
 
@@ -41,7 +41,7 @@ internals目录下的库全是作者引用的内部库，意味着作者随时�
 
 6. luadebugger https://github.com/oceancx/luadebugger  这个目录是一个repo，提供了lua调试器，包含了vscode的lua调试器适配器，以及嵌入到被调试程序里的调试相关功能的支持（例如断点，步入，步出）
 
-7. gsm-cmake，miniaudio-cmake 修改自https://github.com/dr-soft/miniaudio，使其支持播放相关音频文件。
+7. gsm-cmake，miniaudio-cmake 修改自https://github.com/dr-soft/miniaudio 使其支持播放相关音频文件。
 
 8. imgui https://github.com/ocornut/imgui ，游戏必备，本项目也提供了imgui的lua binding生成。
 
