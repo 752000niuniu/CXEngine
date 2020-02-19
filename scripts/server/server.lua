@@ -36,7 +36,11 @@ stub[PTO_C2C_SAVE_ACCOUNT_DATABASE] = function()
 end
 
 function server_on_disconnect(pid)
-	cxlog_info('server_on_disconnect',pid)
+	local player = actor_manager_fetch_player_by_id(pid)
+	cxlog_info('server_on_disconnect',pid, player:GetName())
+	if not player then return end
+	team_system_on_disconnect(player)
+
 	combat_system_battle_on_actor_leave(pid)
 end
 

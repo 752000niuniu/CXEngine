@@ -64,7 +64,7 @@ stub[PTO_C2C_LOGIN] = function(req)
             table.insert(actors_props, actor:GetProperties())
         end
     end
-    net_send_message(req.pid,PTO_C2C_NPC_ENTER, cjson.encode({ npcs = actors_props}))
+    net_send_message(req.pid, PTO_C2C_ACTOR_ENTER, cjson.encode({ npcs = actors_props}))
 end
 
 
@@ -94,6 +94,8 @@ stub[PTO_C2S_CREATE_SUMMON] = function(req)
         cjson.encode(summon_infos))
 
 end
+
+ 
 
 stub[PTO_C2S_FETCH_SUMMON] = function(req)
     local summon_infos = {}

@@ -198,6 +198,8 @@ function fetch_weapon_keys(tbl, avatar_key)
     return weapon_keys
 end
 
+
+local team_info_select_actor 
 local ActorNameSB = imgui.CreateStrbuf('test',256)
 function ui_show_props()
     if not ui_is_show_props then return end
@@ -299,7 +301,6 @@ function ui_show_props()
             ]], ACTOR_TYPE_PLAYER)
         end
         imgui.SameLine()
-        
         if imgui.RadioButton('召唤兽##TYPE_SUMMON', actor_type == ACTOR_TYPE_SUMMON) then
             net_manager_actor_dostring(actor:GetID(),[[ 
                 actor:SetProperty(PROP_ACTOR_TYPE, %d)
@@ -316,6 +317,13 @@ function ui_show_props()
             ]], ACTOR_TYPE_DEFAULT)
         end
 
+        if actor_type == ACTOR_TYPE_SUMMON then
+            local owner = actor:GetSummonOwner()
+            if owner then
+                imgui.Text('Owner:'..owner:GetName())
+            end
+        end
+        
         if imgui.Button('Avatar') then
             imgui.OpenPopup('PopupAvatar')
         end
@@ -378,14 +386,7 @@ function ui_show_props()
                 local all_summons = {}
                 for i,_actor_ in ipairs(actors) do
                     if _actor_:IsSummon() then
-                        local find = false
-                        for j, summon in ipairs(actor:GetSummons()) do
-                            if _actor_:GetID() == summon:GetID() then
-                                find = true
-                                break
-                            end
-                        end
-                        if not find then
+                        if not _actor_:GetSummonOwner() then
                             table.insert(all_summons, _actor_) 
                         end
                     end
@@ -394,9 +395,12 @@ function ui_show_props()
                 imgui.HorizontalLayout(all_summons,next,function(k,v) 
                     if imgui.Button(v:GetName()..'##summon'..v:GetID()) then
                         net_manager_actor_dostring(actor:GetID(),[[ 
+                            local summon = actor_manager_fetch_player_by_id(%d)
+                            if not summon then return end
+                            summon:SetSummonOwner(actor)
                             local uids_str = actor:GetProperty(PROP_SUMMON_UIDS) 
                             local uids = cjson.decode(uids_str) 
-                            table.insert(uids, %d)
+                            table.insert(uids, summon:GetID())
                             actor:SetProperty(PROP_SUMMON_UIDS, cjson.encode(uids))
                         ]], v:GetID())
                         imgui.CloseCurrentPopup()
@@ -413,16 +417,18 @@ function ui_show_props()
                 imgui.HorizontalLayout(summons,next,function(k,v) 
                     if imgui.Button(v:GetName()..'##'..v:GetID()) then
                         net_manager_actor_dostring(actor:GetID(),[[ 
+                            local summon = actor_manager_fetch_player_by_id(%d)
+                            if not summon then return end
                             local uids_str = actor:GetProperty(PROP_SUMMON_UIDS) 
                             local uids = cjson.decode(uids_str) 
                             if #uids == 0 then return end
-                            local remove_id = %d
                             for i,uid in pairs(uids) do
-                                if uid == remove_id then
+                                if uid == summon:GetID() then
                                     table.remove(uids, i)
                                     break
                                 end
                             end
+                            summon:RemoveSummonOwner()
                             actor:SetProperty(PROP_SUMMON_UIDS, cjson.encode(uids))
                         ]], v:GetID())
                         imgui.CloseCurrentPopup()
@@ -433,6 +439,10 @@ function ui_show_props()
             imgui.SameLine()
             if imgui.Button('清空召唤兽') then
                 net_manager_actor_dostring(actor:GetID(),[[ 
+                    local summons = actor:GetSummons()
+                    for i,summon in ipairs(summons) do
+                        summon:RemoveSummonOwner()
+                    end    
                     actor:SetProperty(PROP_SUMMON_UIDS, '[]') 
                 ]])
             end
@@ -444,16 +454,46 @@ function ui_show_props()
                 end
             end)
 
-                -- local player = actor_manager_fetch_local_player()
-                -- local msg = {}
-                -- msg.owner = player:GetID()
-                -- msg.props = actor:GetProperties()
-                
-                -- net_send_message(PTO_C2S_CREATE_SUMMON, cjson.encode(msg)) 
-
-            --
-
             imgui.Button('队伍信息')
+            local team = actor:GetTeam()
+            if team then
+                imgui.Checkbox('队长', actor:IsTeamLeader())
+                imgui.SameLine()
+                for i, member in ipairs(team:GetMembers()) do
+                    if imgui.Button(member:GetName()) then
+                        team_info_select_actor = member
+                    end
+                    imgui.SameLine()
+                end
+                
+                if imgui.Button('离队') then
+                    if team_info_select_actor then
+                        team_info_select_actor:LeaveTeam()
+                    end
+                end
+                imgui.SameLine()
+
+                if imgui.Button('加人') then
+                    imgui.OpenPopup('PopupTeamInfoAddMember')
+                end
+                if imgui.BeginPopup('PopupTeamInfoAddMember') then
+                    local players = actor_manager_fetch_all_players()
+                    imgui.HorizontalLayout(players,next,function(k,v)
+                        local v_team = v:GetTeam()
+                        if v_team then return end
+                        if imgui.Button(v:GetName()..'##'..v:GetID()) then
+                            -- if actor:IsTeamLeader() then
+                            actor:AddTeamMember(v)
+                            -- end
+                        end
+                    end)
+                    imgui.EndPopup()
+                end
+            else
+                if imgui.Button('创建队伍') then
+                    actor:CreateTeam()
+                end
+            end            
         end
 
         edit_prop_lv = actor:GetProperty(PROP_LV)

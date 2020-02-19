@@ -32,6 +32,9 @@ function server_reload()
     script_system_dofile('actor_system.lua')
     script_system_dofile('../combat/combat_system.lua')
 
+    script_system_dofile('team_system.lua')
+
+
     content_system_init()
     combat_system_init()
 end
@@ -55,21 +58,29 @@ end
 function on_script_system_update()
     game_server_update()   
     scene_system_update()
-    local actors = actor_manager_fetch_all_actors()
+    local players = actor_manager_fetch_all_players()
     local dirty_props = {}
-    for _, p in ipairs(actors) do
-        -- if not p:IsCombat() then
-            if not p:IsNPC() and p:IsDirty() then
-                local pid = p:GetID()
-                local props = p:GetDirtyProps()
-                for i,prop_id in ipairs(props) do
-                    if is_prop_sync(prop_id) then
-                        table.insert(dirty_props, {pid, prop_id, p:GetProperty(prop_id)})
-                    end
-                end
-                p:ClearDirty()
+
+    local push_dirty_props = function(actor)
+        local pid = actor:GetID()
+        local props = actor:GetDirtyProps()
+        for i,prop_id in ipairs(props) do
+            if is_prop_sync(prop_id) then
+                table.insert(dirty_props, {pid, prop_id, actor:GetProperty(prop_id)})
             end
-        -- end
+        end
+        actor:ClearDirty()
+    end
+    for _, p in ipairs(players) do
+        if p:IsDirty() then
+            push_dirty_props(p)
+        end
+        local summons = p:GetSummons()
+        for __, summon in ipairs(summons) do
+            if summon:IsDirty() then
+                push_dirty_props(summon)
+            end
+        end
     end
     if #dirty_props > 0 then
         cxlog_info('sync dirty props', #dirty_props) 
@@ -138,7 +149,7 @@ end
 function game_server_dispatch_message(pt)
     local type = pt:ReadAsInt()
     local js = pt:ReadAllAsString()
-    print('game_server_dispatch_message' , type, js)
+    print('game_server_dispatch_message' ,proto_name(type) , js)
     local req = cjson.decode(js)
     if stub[type] then
         stub[type](req,js)

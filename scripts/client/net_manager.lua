@@ -49,7 +49,8 @@ function game_dispatch_message(pt)
 	local type = pt:ReadAsInt()
 	local js = pt:ReadAllAsString()
 	local req = cjson.decode(js)
-	cxlog_info('game_dispatch_message', type, js)
+	
+	cxlog_info('game_dispatch_message', proto_name(type), js)
 	if stub[type] then
 		stub[type](req)
 	end

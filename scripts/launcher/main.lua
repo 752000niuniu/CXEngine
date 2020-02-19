@@ -1,7 +1,7 @@
 script_system_dofile('../share/enums.lua')
+script_system_dofile('../share/enums_protocol.lua')
 script_system_dofile('../share/vfs.lua')
 script_system_dofile('../share/utils.lua')
-script_system_dofile('../share/enums_protocol.lua')
 script_system_dofile('window.lua')
 CX_MSG_HEADER_LEN = 4 
 

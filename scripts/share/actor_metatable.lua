@@ -1017,3 +1017,19 @@ function ActorMT:IsSummon()
     return self:GetProperty(PROP_ACTOR_TYPE) == ACTOR_TYPE_SUMMON
 end
 
+function ActorMT:GetSummonOwner()
+    if not self:IsSummon() then return end
+    local owner_id = self:GetProperty(PROP_SUMMON_OWNER)
+    local owner = actor_manager_fetch_player_by_id(owner_id)
+    return owner
+end
+
+function ActorMT:SetSummonOwner(owner)
+    if not self:IsSummon() then return end
+    if not owner or not owner:IsPlayer() then return end
+    self:SetProperty(PROP_SUMMON_OWNER, owner:GetID())
+end
+
+function ActorMT:RemoveSummonOwner()
+    self:SetProperty(PROP_SUMMON_OWNER, 0)
+end

@@ -227,10 +227,14 @@ stub[PTO_C2C_PLAYER_ENTER] = function(req)
         local scene_id = player:GetProperty(PROP_SCENE_ID)
         cxlog_info('scene_manager_switch_scene_by_id', scene_id)
         scene_manager_switch_scene_by_id(scene_id)
+
+        local req = {}
+	    req.pid = player:GetID()
+	    net_send_message(PTO_C2S_FETCH_TEAM, cjson.encode(req))
 	end
 end
 
-stub[PTO_C2C_NPC_ENTER] = function(req)
+stub[PTO_C2C_ACTOR_ENTER] = function(req)
     local player = actor_manager_fetch_local_player()
     if not player then return end
     
@@ -239,7 +243,5 @@ stub[PTO_C2C_NPC_ENTER] = function(req)
         actor:SetProperties(actor_info)
 	end
 
-	local req = {}
-	req.pid = player:GetID()
-	-- net_send_message(PTO_C2S_FETCH_TEAM, cjson.encode(req))
+	
 end

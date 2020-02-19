@@ -101,6 +101,18 @@ function team_system_leave_team(actor)
     end
 end
 
+function team_system_on_disconnect(player)
+    if not player then return end
+    local team = player:GetTeam()
+    if not team then return end
+    team:RemoveMember(player)
+    cxlog_info(player:GetName()..'离开了队伍 '..team.id)
+    local resp = {
+        team = team:Serialize()
+    }
+    net_send_message_to_all_players(PTO_S2C_TEAM_REMOVE_MEMBER, cjson.encode(resp))
+end
+
 local ActorMT = actor_get_metatable()
 
 function ActorMT:HasTeam()
@@ -172,11 +184,19 @@ stub[PTO_C2S_TEAM_REMOVE_MEMBER] = function(req)
     local team_id = req.team_id
     local team = __teams__[team_id]
     local mem_actor = actor_manager_fetch_player_by_id(req.member_id)
-    team:RemoveMember(mem_actor)
-    cxlog_info(mem_actor:GetName()..'离开了队伍 '..team.id)
-    local resp = {
-        team = team:Serialize()
-    }
-    net_send_message_to_all_players(PTO_S2C_TEAM_REMOVE_MEMBER, cjson.encode(resp))
+    
+    if mem_actor:IsTeamLeader() then
+        mem_actor:DismissTeam()
+        cxlog_info(mem_actor:GetName()..'解散了队伍 '..team_id)
+        req.team_id = team_id
+        net_send_message_to_all_players(PTO_S2C_TEAM_DISMISS, cjson.encode(req))
+    else
+        team:RemoveMember(mem_actor)
+        cxlog_info(mem_actor:GetName()..'离开了队伍 '..team.id)
+        local resp = {
+            team = team:Serialize()
+        }
+        net_send_message_to_all_players(PTO_S2C_TEAM_REMOVE_MEMBER, cjson.encode(resp))
+    end
 end
 
