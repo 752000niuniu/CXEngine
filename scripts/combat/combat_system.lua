@@ -2,6 +2,9 @@
 
 PERFRAME_TIME = 0.016*2.5  
 
+BATTLE_TYPE_PVE = 0
+BATTLE_TYPE_PVP = 1
+
 BATTLE_DEFAULT = 0
 BATTLE_PREPARE = 1
 BATTLE_START = 2
@@ -71,7 +74,8 @@ function BattleMT:new(o)
         actors = {},
 		cmds = {},
         state = BATTLE_DEFAULT,
-        turn = 0
+        turn = 0,
+        type = BATTLE_TYPE_PVE
 	}
     self.__index = self 
     setmetatable(o, self)
@@ -83,11 +87,20 @@ function BattleMT:Serialize()
     info.id = self.id
     info.actors = {}
     for i, actor in ipairs(self.actors) do
-        table.insert(info.actors, { 
-            id = actor:GetID(), 
-            team_type = actor:GetProperty(PROP_TEAM_TYPE),
-            pos_id = actor:GetProperty(PROP_COMBAT_POS_ID)
-        })
+        if actor:IsNPC() then
+            table.insert(info.actors, { 
+                id = actor:GetID(), 
+                team_type = actor:GetProperty(PROP_TEAM_TYPE),
+                pos_id = actor:GetProperty(PROP_COMBAT_POS_ID),
+                props =  actor:GetProperties()
+            })
+        else
+            table.insert(info.actors, { 
+                id = actor:GetID(), 
+                team_type = actor:GetProperty(PROP_TEAM_TYPE),
+                pos_id = actor:GetProperty(PROP_COMBAT_POS_ID)
+            })
+        end
     end
 
     info.state = self.state
@@ -95,13 +108,19 @@ function BattleMT:Serialize()
     return info
 end
 
+
 function BattleMT:Deserialize(info)
     self.id = info.id
     self.actors = {}
     for i,actor_info in ipairs(info.actors) do
         local actor = actor_manager_fetch_player_by_id(actor_info.id)
+        if not actor then
+            actor = actor_manager_create_actor(actor_info.id)
+            actor:SetProperties(actor_info.props)
+        end
         actor:SetProperty(PROP_TEAM_TYPE, actor_info.team_type)
         actor:SetProperty(PROP_COMBAT_POS_ID, actor_info.pos_id)
+        
         cxlog_info('Deserialize', actor:GetID(), actor:GetName(), actor:GetProperty(PROP_TEAM_TYPE), actor:GetProperty(PROP_COMBAT_POS_ID))
         table.insert(self.actors, actor)
     end
@@ -122,9 +141,12 @@ end
 function BattleMT:AddActor(actor, team_type, pos_i)
     cxlog_info('Battle:AddActor', self.id, actor:GetID(), actor:GetName(),team_type==TEAM_TYPE_ATTACKER and 'atk' or 'def', pos_i)
 
-    for i,actor in ipairs(self.actors) do
-        if actor:GetProperty(PROP_COMBAT_POS_ID) == pos_i 
-            and actor:GetProperty(PROP_TEAM_TYPE) == team_type
+    for i,_actor_ in ipairs(self.actors) do
+        if _actor_:GetID() == actor:GetID() then
+            return
+        end
+        if _actor_:GetProperty(PROP_COMBAT_POS_ID) == pos_i 
+            and _actor_:GetProperty(PROP_TEAM_TYPE) == team_type
         then
             return
         end
@@ -265,6 +287,8 @@ function BattleMT:EndBattle()
         actor:SetProperty(PROP_IS_COMBAT,false)
         actor:SetProperty(PROP_COMBAT_BATTLE_ID,0)
     end    
+
+
     if IsServer() then
         
     else
@@ -274,6 +298,13 @@ function BattleMT:EndBattle()
         
         animation_manager_clear()
     end
+
+    for i,actor in ipairs(self.actors) do
+        if actor:IsNPC() then
+            actor_manager_destroy_actor(actor:GetID())
+        end
+    end    
+    self.actors = {}
 end
 
 function BattleMT:NextTurn()

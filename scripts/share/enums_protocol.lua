@@ -56,3 +56,10 @@ PTO_C2S_SAVE_ACTOR                              = enum_next()
 PTO_S2C_SAVE_ACTOR                              = enum_next()
 PTO_C2S_PVE_BATTLE_START                                = enum_next()
 PTO_S2C_PVE_BATTLE_START                                = enum_next()
+
+PTO_C2S_COMBAT_PVE_START                                = enum_next()
+PTO_S2C_COMBAT_PVE_START                                = enum_next()
+
+PTO_C2S_COMBAT_PVP_START                                = enum_next()
+PTO_S2C_COMBAT_PVP_START                                = enum_next()
+

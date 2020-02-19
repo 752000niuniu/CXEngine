@@ -36,6 +36,15 @@ function TeamMT:RemoveMember(actor)
     end
 end
 
+function TeamMT:HasMember(actor)
+    for i,_mem_id in ipairs(self.members) do
+        if _mem_id == actor:GetID() then
+            return true
+        end
+    end
+    return false
+end
+
 function TeamMT:SetLeader(actor)
     for i,_mem_id in ipairs(self.members) do
         if _mem_id == actor:GetID() then

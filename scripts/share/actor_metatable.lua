@@ -469,7 +469,7 @@ function ActorMT:GetMaxHP()
         local equip_hp = self:GetProperty(PROP_EQUIP_HP)
         local skill_hp = self:CalcSchoolSkillHP(hp+equip_hp)
         return hp + equip_hp + skill_hp
-    elseif actor_type == ACTOR_TYPE_SUMMON then
+    elseif actor_type == ACTOR_TYPE_SUMMON or actor_type == ACTOR_TYPE_NPC then
         return formula_calc_summon_hp(self)
     end
     return 0
@@ -482,7 +482,7 @@ function ActorMT:GetMaxMP()
         local equip_mp = self:GetProperty(PROP_EQUIP_MP)
         local skill_mp = self:CalcSchoolSkillMP(equip_mp+ mp)
         return mp + equip_mp+ skill_mp
-    elseif actor_type == ACTOR_TYPE_SUMMON then
+    elseif actor_type == ACTOR_TYPE_SUMMON or actor_type == ACTOR_TYPE_NPC then
         return formula_calc_summon_mp(self)
     end
     return 0
@@ -550,7 +550,7 @@ function ActorMT:CalcAttack()
         local equip_atk = self:GetProperty(PROP_EQUIP_DAMAGE)
         local skill_targethit = self:CalcSchoolSkillTargethit()
         return prop_atk + skill_atk + equip_atk +(equip_targethit + skill_targethit) /3
-    elseif actor_type == ACTOR_TYPE_SUMMON then
+    elseif actor_type == ACTOR_TYPE_SUMMON or actor_type == ACTOR_TYPE_NPC then
         return formula_calc_summon_atk(self)
     end
     return 0
@@ -563,7 +563,7 @@ function ActorMT:CalcDefend()
         local skill_def = self:CalcSchoolSkillDefend()
         local equip_defend = self:GetProperty(PROP_EQUIP_DEFEND)
         return prop_def + equip_defend + skill_def
-    elseif actor_type == ACTOR_TYPE_SUMMON then
+    elseif actor_type == ACTOR_TYPE_SUMMON or actor_type == ACTOR_TYPE_NPC then
         return formula_calc_summon_defend(self)
     end
     return 0
@@ -576,7 +576,7 @@ function ActorMT:CalcSpeed()
         local equip_aglie = self:GetProperty(PROP_EQUIP_AGILE)
         local  skill_speed = self:CalcSchoolSkillSpeed(self)
         return prop_speed + equip_aglie*0.7+ skill_speed
-    elseif actor_type == ACTOR_TYPE_SUMMON then
+    elseif actor_type == ACTOR_TYPE_SUMMON or actor_type == ACTOR_TYPE_NPC then
         return formula_calc_summon_speed(self)
     end
     return 0
@@ -589,7 +589,7 @@ function ActorMT:CalcSpiritual()
         local skill_spiritual = self:CalcSchoolSkillSpiritual()
         local equip_spiritual = self:GetProperty(PROP_EQUIP_SPIRITUAL)
         return prop_spiritual+ equip_spiritual+ skill_spiritual
-    elseif actor_type == ACTOR_TYPE_SUMMON then
+    elseif actor_type == ACTOR_TYPE_SUMMON or actor_type == ACTOR_TYPE_NPC then
         return formula_calc_summon_spiritual(self)
     end
     return 0
@@ -663,7 +663,7 @@ function ActorMT:GetInitProp()
         ret.force   = init_prop[race][3] + lv
         ret.stamina = init_prop[race][4] + lv
         ret.agility = init_prop[race][5] + lv
-    elseif actor_type == ACTOR_TYPE_SUMMON then
+    elseif actor_type == ACTOR_TYPE_SUMMON or actor_type == ACTOR_TYPE_NPC then
         ret.health  = 20 + lv
         ret.magic   = 20 + lv
         ret.force   = 20 + lv
@@ -704,7 +704,7 @@ function ActorMT:GetInitHealthProp()
     if actor_type == ACTOR_TYPE_PLAYER then
         local race = self:GetProperty(PROP_RACE)
         return init_prop[race][1] + lv
-    elseif actor_type == ACTOR_TYPE_SUMMON then
+    elseif actor_type == ACTOR_TYPE_SUMMON or actor_type == ACTOR_TYPE_NPC then
         return 20 + lv
     else
         return 0
@@ -717,7 +717,7 @@ function ActorMT:GetInitMagicProp()
     if actor_type == ACTOR_TYPE_PLAYER then
         local race = self:GetProperty(PROP_RACE)
         return init_prop[race][2] + lv
-    elseif actor_type == ACTOR_TYPE_SUMMON then
+    elseif actor_type == ACTOR_TYPE_SUMMON or actor_type == ACTOR_TYPE_NPC then
         return 20 + lv
     else
         return 0
@@ -730,7 +730,7 @@ function ActorMT:GetInitForceProp()
     if actor_type == ACTOR_TYPE_PLAYER then
         local race = self:GetProperty(PROP_RACE)
         return init_prop[race][3] + lv
-    elseif actor_type == ACTOR_TYPE_SUMMON then
+    elseif actor_type == ACTOR_TYPE_SUMMON or actor_type == ACTOR_TYPE_NPC then
         return 20 + lv
     else
         return 0
@@ -743,7 +743,7 @@ function ActorMT:GetInitStaminaProp()
     if actor_type == ACTOR_TYPE_PLAYER then
         local race = self:GetProperty(PROP_RACE)
         return init_prop[race][4] + lv
-    elseif actor_type == ACTOR_TYPE_SUMMON then
+    elseif actor_type == ACTOR_TYPE_SUMMON or actor_type == ACTOR_TYPE_NPC then
         return 20 + lv
     else 
         return 0
@@ -756,7 +756,7 @@ function ActorMT:GetInitAgilityProp()
     if actor_type == ACTOR_TYPE_PLAYER then
         local race = self:GetProperty(PROP_RACE)
         return init_prop[race][5] + lv
-    elseif actor_type == ACTOR_TYPE_SUMMON then
+    elseif actor_type == ACTOR_TYPE_SUMMON or actor_type == ACTOR_TYPE_NPC then
         return 20 + lv
     else
         return 0
@@ -814,7 +814,7 @@ function ActorMT:UpdatePropPtsByPlan()
         force   = init_prop[race][3] + lv + total * plan[3]
         stamina = init_prop[race][4] + lv + total * plan[4]
         agility = init_prop[race][5] + lv + total * plan[5]
-    elseif actor_type == ACTOR_TYPE_SUMMON then
+    elseif actor_type == ACTOR_TYPE_SUMMON or actor_type == ACTOR_TYPE_NPC then
         health  = 20 + lv + total * plan[1]
         magic   = 20 + lv + total * plan[2]
         force   = 20 + lv + total * plan[3]

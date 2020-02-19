@@ -33,8 +33,55 @@ function combat_system_add_team_by_actor(battle, actor, team_type)
 	end
 end
 
+function combat_system_create_pve_battle(player)
+	local battle = BattleMT:new()
+	combat_system_add_team_by_actor(battle, player, TEAM_TYPE_ATTACKER)	
+	local team = player:GetTeam()
+	local enemy_count = 0
+	if team then
+		enemy_count = #(team:GetMembers())  * 2
+	else
+		enemy_count = 2
+	end
+
+	local player_lv = player:GetProperty(PROP_LV)
+	local enemy_actors = {}
+	for i=1,enemy_count do
+		local actor = actor_manager_create_actor(utils_next_uid('actor'))
+		actor:SetProperty(PROP_ACTOR_TYPE, ACTOR_TYPE_NPC)
+		actor:SetProperty(PROP_NAME,  'test'..i)
+		actor:SetProperty(PROP_AVATAR_ID,  '强盗')
+		actor:SetProperty(PROP_LV,  player_lv)
+		actor:ClearAssignPoints()
+		actor:ApplySummonQual('芙蓉仙子')
+		actor:SetProperty(PROP_ASSIGN_HEALTH, player_lv)
+		actor:SetProperty(PROP_ASSIGN_MAGIC, player_lv)
+		actor:SetProperty(PROP_ASSIGN_FORCE, player_lv)
+		actor:SetProperty(PROP_ASSIGN_STAMINA , player_lv)
+		actor:SetProperty(PROP_ASSIGN_AGILITY, player_lv)
+		actor:SetProperty(PROP_SCENE_ID, player:GetProperty(PROP_SCENE_ID))
+		actor:SetProperty(PROP_IS_AUTO_COMMAND, true)
+
+		actor:SetProperty(PROP_COMBAT_POS_ID,-1)
+        actor:SetProperty(PROP_TEAM_TYPE,-1)
+
+	
+		battle:AddActor(actor, TEAM_TYPE_DEFENDER, i)
+	end
+	__battles__[battle.id] = battle
+	return battle
+		
+end
+
 function combat_system_create_battle(atk_actor, def_actor)
 	local battle = BattleMT:new()
+	local team = atk_actor:GetTeam()
+	if team then
+		if team:HasMember(def_actor) then
+			return 
+		end
+	end
+
 	combat_system_add_team_by_actor(battle, atk_actor, TEAM_TYPE_ATTACKER)
 	combat_system_add_team_by_actor(battle, def_actor, TEAM_TYPE_DEFENDER)
 	
@@ -46,6 +93,13 @@ function combat_system_remove_battle(battle_id)
 	__battles__[battle.id]  = nil
 end
 
+function combat_system_send_message(battle, proto, msg)
+	for i, actor in pairs(battle.actors) do
+		if actor:IsPlayer() then
+			net_send_message(actor:GetID(), proto, cjson.encode(msg))
+		end
+	end
+end
 
 stub[PTO_C2S_COMBAT_CREATE] = function(req)
 	local actor = actor_manager_fetch_player_by_id(req.pid)
@@ -57,27 +111,34 @@ stub[PTO_C2S_COMBAT_CREATE] = function(req)
 	battle:PrepareBattle()
 	local resp = req
 	resp.battle = battle:Serialize()
-	net_send_message_to_all_players(PTO_S2C_COMBAT_CREATE,cjson.encode(resp))
+	combat_system_send_message(battle, PTO_S2C_COMBAT_CREATE, resp)
 end
 
 stub[PTO_C2S_COMBAT_START] = function(req)
 	local atk = actor_manager_fetch_player_by_id(req.atk)
 	local def = actor_manager_fetch_player_by_id(req.def)
 	local battle = combat_system_create_battle(atk,def)
+	if not battle then return end
 	battle:StartBattle()
 	local resp = req
 	resp.battle = battle:Serialize()
-	net_send_message_to_all_players(PTO_S2C_COMBAT_START,cjson.encode(resp))
+	combat_system_send_message(battle, PTO_S2C_COMBAT_START,resp)
 end
 
-stub[PTO_C2S_PVE_BATTLE_START] = function(req)
-	local atk = actor_manager_fetch_player_by_id(req.atk)
-	-- local battle = combat_system_create_battle(atk,def)
-	-- battle:StartBattle()
-	-- local resp = req
-	-- resp.battle = battle:Serialize()
-	-- net_send_message_to_all_players(PTO_S2C_COMBAT_START,cjson.encode(resp))
+stub[PTO_C2S_COMBAT_PVP_START] = function(req)
 	
+end
+
+stub[PTO_C2S_COMBAT_PVE_START] = function(req)
+	local player = actor_manager_fetch_player_by_id(req.pid)
+	if not player then return end
+
+	local battle = combat_system_create_pve_battle(player)
+	if not battle then return end
+	battle:StartBattle()
+	local resp = req
+	resp.battle = battle:Serialize()
+	combat_system_send_message(battle, PTO_S2C_COMBAT_START,resp)
 end
 
 function handle_turn_commands(battle)

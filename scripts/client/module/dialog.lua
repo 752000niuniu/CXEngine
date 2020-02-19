@@ -29,7 +29,7 @@ function npc_on_show_dialog(player, target)
 				func=function()
 					local req = {}
 					req.pid = player:GetID()
-					net_send_message(PTO_C2S_PVE_BATTLE_START, cjson.encode(req))
+					net_send_message(PTO_C2S_COMBAT_PVE_START, cjson.encode(req))
 				end
 			},
 			{
