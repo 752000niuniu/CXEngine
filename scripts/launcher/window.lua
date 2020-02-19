@@ -4,6 +4,7 @@ local SourceSB = imgui.CreateStrbuf('print("hello")',2560)
 local IPSB = imgui.CreateStrbuf('127.0.0.1',256)
 local PortSB = imgui.CreateStrbuf('45000',256)
 local DbgPortSB = imgui.CreateStrbuf('9600',256)
+local DataPathSB = imgui.CreateStrbuf(vfs_get_workdir()..'data/' ,256)
 local PlayerNameSB = imgui.CreateStrbuf('simulator',256)
 local PosX = imgui.CreateStrbuf('200',128)
 local PosY = imgui.CreateStrbuf('2790',128)
@@ -81,6 +82,8 @@ function launcher_update()
 点击这些按钮就是启动对应帐号的客户端。
 如果刷新不出来，帐号信息刷新按钮可以多点几次
 帐号信息保存在res/storage/account.data
+
+梦幻西游经典版目录下的所有资源放到data/目录下
 
 有问题请加群：983630090]])
 		imgui.EndTooltip()
