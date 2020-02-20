@@ -260,7 +260,7 @@ function ui_show_bag()
     if not player then return end
     imgui.Begin('Bag')
 
-    if imgui.CollapsingHeader('CMD', ImGuiTreeNodeFlags_DefaultOpen) then
+    if imgui.CollapsingHeader('命令##CMD', ImGuiTreeNodeFlags_DefaultOpen) then
         imgui.InputText("玩家名字", PlayerNameSB)
          
         local player = actor_manager_fetch_local_player()
@@ -335,7 +335,7 @@ function ui_show_bag()
         
     end
 
-    if imgui.CollapsingHeader('MyPal') then
+    if imgui.CollapsingHeader('染色') then
         if COLOR_SCHEMES then
             for i=1,#COLOR_SCHEMES.segments-1 do
                 imgui.BeginGroup()
@@ -395,7 +395,7 @@ function ui_show_bag()
         end)
     end
     
-    if imgui.CollapsingHeader('AvatarRole') then
+    if imgui.CollapsingHeader('角色形象') then
         local avatar_role_tbl = content_system_get_table('role')    
         local role_keys = fetch_role_keys(avatar_role_tbl)
         imgui_std_horizontal_button_layout(avatar_role_tbl,gen_next_sortk_fn(avatar_role_tbl), function(k,v)
@@ -407,7 +407,7 @@ function ui_show_bag()
         end)
     end
 
-    if imgui.CollapsingHeader('AvatarWeapon') then
+    if imgui.CollapsingHeader('角色武器') then
         local avatar_weapon_tbl =  content_system_get_table('weapon')    
         local avatar_key = player:GetProperty(PROP_AVATAR_ID)
         local keys = fetch_weapon_keys(avatar_weapon_tbl,avatar_key)

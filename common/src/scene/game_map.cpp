@@ -42,7 +42,7 @@ GameMap::GameMap(uint32 mapID)
 
 				m_Row = m_XyqMap->Row();
 				m_Col = m_XyqMap->Col();
-				cxlog_info("初始化GameMap %d %d ", m_Row, m_Col);
+				cxlog_info("init GameMap %d %d ", m_Row, m_Col);
 
 				m_CellWidth = m_Col * 16;
 				m_CellHeight = m_Row * 12;
