@@ -218,6 +218,7 @@ function init_scene_table()
         { name = 'ID', fmt='i' },
         { name = 'name'},
         { name = 'map_id', fmt='i' },
+        { name = 'bgm' },
         { name = 'script'},
         { name = 'birth_pos', fmt='pos' }
     })

@@ -46,13 +46,24 @@ function on_scene_manager_init()
             end
         end
     end
+end
 
-
+function on_scene_manager_uninit_scene(name)
+    local scene_id = scene_manager_get_current_scene_id() 
+    local scene_tbl = content_system_get_table('scene')
+    if scene_tbl[scene_id].bgm ~='' then
+        audio_manager_stop(scene_tbl[scene_id].bgm)
+    end
 end
 
 function on_scene_manager_init_scene(name)
     local scene_id = scene_manager_get_current_scene_id() 
     local transport_tbl = content_system_get_table('transport')
+
+    local scene_tbl = content_system_get_table('scene')
+    if scene_tbl[scene_id].bgm ~='' then
+        audio_manager_play(scene_tbl[scene_id].bgm, true)
+    end
 
     for ID, v in pairs(transports) do
         if v.anim then

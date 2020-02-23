@@ -40,6 +40,10 @@ end
 local PlayerNameSB = imgui.CreateStrbuf('test',256)
 local ToSceneFilterSB = imgui.CreateStrbuf('',256)
 local LocalPlayerDebugButtons = {
+    {   'BGM',function(player)
+        audio_manager_toggle_bgm()
+    end
+    },
     {   'HUD',function(player)
             ui_toggle_show_hud()
         end

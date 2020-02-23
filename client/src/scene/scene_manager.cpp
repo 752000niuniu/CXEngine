@@ -184,6 +184,7 @@ void SceneManager::Update()
 		{
 			if (m_pCurrentScene)
 			{
+				script_system_call_function(script_system_get_luastate(), "on_scene_manager_uninit_scene", m_pCurrentScene->GetName());
 				m_pCurrentScene->UnLoad();
 				m_pCurrentScene = nullptr;
 			}

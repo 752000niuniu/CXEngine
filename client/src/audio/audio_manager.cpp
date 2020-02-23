@@ -23,7 +23,7 @@ struct AudioFile {
 	bool erase;
 	bool start;
 };
-
+bool g_BGMToggle = true;
 std::deque<AudioFile*> g_AudioFiles;
 
 void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount)
@@ -33,7 +33,7 @@ void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uin
 		return;
 	}
 
-	if (!audioFile->erase) {
+	if (!audioFile->erase && g_BGMToggle) {
 		ma_decoder* pDecoder = &audioFile->decoder;
 		ma_uint64 read = ma_decoder_read_pcm_frames(pDecoder, pOutput, frameCount);
 		if (read < frameCount) {
@@ -137,9 +137,15 @@ int lua_audio_manager_play(lua_State* L){
 	return 0;
 }
 
+void audio_manager_toggle_bgm(){
+	g_BGMToggle = !g_BGMToggle;
+}
+
 void luaopen_audio_manager(lua_State* L)
 {
 	script_system_register_luac_function_with_name(L,"audio_manager_play", lua_audio_manager_play);
 	script_system_register_function(L, audio_manager_stop);
 	script_system_register_function(L, audio_manager_clear);
+	script_system_register_function(L, audio_manager_toggle_bgm);
+	
 }
