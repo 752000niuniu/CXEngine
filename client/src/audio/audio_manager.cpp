@@ -1,5 +1,7 @@
 #include "audio_manager.h"
 #include "lua_bind.h"
+#include "tsv.h"
+#include "resource_manager.h"
 
 #include <extras/stb_vorbis.c>
 #define  DR_FLAC_IMPLEMENTATION
@@ -14,10 +16,10 @@
 #include <miniaudio.h>
 
 struct AudioFile {
-	CXString path;
-	bool loop;
 	ma_device device;
 	ma_decoder decoder;
+	CXString path;
+	bool loop;
 	bool erase;
 	bool start;
 };
@@ -88,8 +90,15 @@ int audio_manager_play(const char* path, bool loop)
 	ma_device& device = file->device;
 	ma_decoder& decoder = file->decoder;
 
-	ma_result result;
-	result = ma_decoder_init_file(path, NULL, &decoder);
+	auto residsplits = utils::split_by_cnt(path, '-', 2);
+	uint32 pack_index = std::stoul(residsplits[0], 0);
+	uint32 wasID = std::stoul(residsplits[1], 0, 16);
+	uint64_t resid = res_encode_was(pack_index, wasID);
+	uint8_t* pData;
+	size_t size;
+	int type = RESOURCE_MANAGER_INSTANCE->LoadWDFData(resid, pData, size);
+	
+	ma_result result = ma_decoder_init_memory(pData, size, NULL, &decoder);
 	if (result != MA_SUCCESS) {
 		return -2;
 	}
@@ -117,8 +126,10 @@ int audio_manager_play(const char* path, bool loop)
 	return 0;
 };
 
-#define L
+#ifdef L
 #undef L
+#endif // L
+
 int lua_audio_manager_play(lua_State* L){
 	const char* path = lua_tostring(L, 1);
 	bool loop = lua_toboolean(L, 2);

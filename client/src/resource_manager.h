@@ -59,6 +59,9 @@ public:
 	Sprite* LoadWASSprite(uint32_t pack,uint32 wasId,bool sync = false, std::vector<PalSchemePart>* patMatrix = nullptr);
 
 	void UnLoadWASSprite(uint32_t pack, uint32 wasId);
+
+	int LoadWDFData(uint64_t id, uint8_t*& pData, size_t& size);
+
     
 	void Clear();
 

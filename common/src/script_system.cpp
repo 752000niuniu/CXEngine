@@ -44,6 +44,7 @@
 #include <cxlua.h>
 #include <tsv.h>
 
+static bool g_DebugInCpp = false;
 static lua_State* L = nullptr;
 void luaopen_script_system(lua_State* L);
 
@@ -108,11 +109,13 @@ void script_system_run_main_script()
 
 void script_system_init()
 {
+	if (g_DebugInCpp)return;
 	script_system_call_function(L , "on_script_system_init");
 }
 
 bool script_system_update()
 {
+	if (g_DebugInCpp)return true;
 	std::vector<any> rets = script_system_call_function(L, "on_script_system_update");
 	bool success = any_cast<bool>(rets[0]);
 	return success;
@@ -121,11 +124,13 @@ bool script_system_update()
 
 void script_system_draw()
 {
+	if (g_DebugInCpp)return;
 	script_system_call_function(L,"on_script_system_draw");
 }
 
 void script_system_deinit()
 {
+	if (g_DebugInCpp)return;
 	script_system_call_function(L,"on_script_system_deinit");
 }
 

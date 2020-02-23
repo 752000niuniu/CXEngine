@@ -377,6 +377,22 @@ void ResourceManager::UnLoadSprite(uint64_t resID)
 
 }
 
+int ResourceManager::LoadWDFData(uint64_t id,uint8_t*& pData, size_t& size)
+{
+	uint32_t pack = 0;
+	uint32_t wasID = 0;
+	RESOURCE_MANAGER_INSTANCE->DecodeWAS(id, pack, wasID);
+
+	if (s_Loaders.find(pack) == s_Loaders.end())
+	{
+		s_Loaders[pack] = new NE::WDF(utils::GetPathByPackID(pack));
+	}
+	
+	s_Loaders[pack]->LoadFileData(wasID, pData, size);
+	int type = NE::check_file_type((char*)pData, size);
+	return type;
+}
+
 int resource_get_action_id(lua_State* L)
 {
 	auto type = (int)lua_tointeger(L, 1);
@@ -416,15 +432,10 @@ int res_get_was(lua_State* L) {
 	uint32_t pack = (uint32_t)lua_tointeger(L, 1);
 	uint32_t wasid = (uint32_t)lua_tointeger(L, 2);
 	const char* path = lua_tostring(L, 3);
-
-	if (s_Loaders.find(pack) == s_Loaders.end())
-	{
-		s_Loaders[pack] = new NE::WDF(utils::GetPathByPackID(pack));
-	}
+	 
 	uint8_t* pData;
 	size_t size;
-	s_Loaders[pack]->LoadFileData(wasid, pData, size);
-	NE::EFileType type = NE::check_file_type((char*)pData, size);
+	int type = RESOURCE_MANAGER_INSTANCE->LoadWDFData(res_encode_was(pack, wasid), pData, size);
 	lua_pushinteger(L, type);
 	return 1;
 }
