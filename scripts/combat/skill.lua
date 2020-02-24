@@ -35,7 +35,8 @@ function skill_init_by_templ(skill, templ)
     skill.atk_anim = templ.atk_anim
     skill.group_kill = templ.group_kill 	--是否群体攻击
     skill.combo = templ.combo				--是否连击
-	skill.type = templ.type				
+    skill.type = templ.type				
+    skill.sound = templ.sound				
 	skill.SkillOnStart = templ.SkillOnStart
 	skill.SkillOnEnd = templ.SkillOnEnd
 	skill.SkillOnHit = templ.SkillOnHit
@@ -167,6 +168,8 @@ function on_attack_action_callback(attack_action)
         if skill.SkillOnHit then
             skill.SkillOnHit(skill, master, target, skill.group_kill_counter, atk_info.atk_counter)
         end
+        target:PlaySound('behit')
+
         target:AddFrontAnim(anim)
         
         local damage = atk_info.hp_deltas[atk_info.atk_counter].target
@@ -188,6 +191,9 @@ function on_attack_action_callback(attack_action)
                 local clps_action = target:GetAvatar(ACTION_CLPS)
                 clps_action:Reset()
                 clps_action:SetLoop(0, 1)                                
+                clps_action:AddStartCallback(function(anim)
+                    target:PlaySound('clps')
+                end)               
                 clps_action:AddFrameCallback(clps_action:GetGroupFrameCount(),  function()
                     skill.target_end = true
                 end)
@@ -227,7 +233,6 @@ function skill_create_spell_anim(skill, effect, target)
         anim:SetOffsetY(-30)
     end
     
-    
     if skill.sub_type ~= SKILL_SUBTYPE_DEFAULT then
         anim:AddStopCallback(function()
             if skill.SkillOnHit then
@@ -244,10 +249,9 @@ function skill_create_spell_anim(skill, effect, target)
             if skill.SkillOnHit then
                 skill.SkillOnHit(skill, master, target, target_i, skill.spell_combo_counter)
             end
-            if skill.sub_type == SKILL_SUBTYPE_DEFAULT or skill.sub_type == SKILL_SUBTYPE_HEAL then
-                local hp_delta = effect.hp_deltas[skill.spell_combo_counter].target
-                target:ShowBeatNumber(hp_delta)
-            end
+            target:PlaySound('behit')
+            local hp_delta = effect.hp_deltas[skill.spell_combo_counter].target
+            target:ShowBeatNumber(hp_delta)
         end)
     end
     target:AddFrontAnim(anim)
@@ -260,10 +264,17 @@ function skill_cast_spell(battle, skill)
     skill.target_end = false
     skill.spell_combo_counter = skill.spell_combo_counter + 1
 
+    if skill.sound ~='' then
+        audio_manager_play(skill.sound)
+    end
+    
     local master = skill.master
     local cast_action = master:GetAvatar(ACTION_CAST)
     cast_action:Reset()
     cast_action:SetLoop(-1)
+    cast_action:AddStartCallback(function(anim)
+        master:PlaySound('cast') 
+    end)
     cast_action:AddFrameCallback(cast_action:GetGroupFrameCount()/2,function()
         for target_i,effect in ipairs(skill.effects) do    
             local target = battle:FindActor(effect.target_id)
@@ -286,7 +297,10 @@ function skill_cast_spell(battle, skill)
                             elseif effect.life_state.target == ACTOR_LIFE_DEAD then
                                 local clps_action = target:GetAvatar(ACTION_CLPS)
                                 clps_action:Reset()
-                                clps_action:SetLoop(0, 1)                                
+                                clps_action:SetLoop(0, 1)      
+                                clps_action:AddStartCallback(function(anim)
+                                    target:PlaySound('clps')
+                                end)               
                                 clps_action:AddFrameCallback(clps_action:GetGroupFrameCount(),  function()
                                     skill_target_end_counter(skill)
                                 end)
@@ -322,6 +336,10 @@ function skill_cast_atk(battle, skill)
     skill.caster_end = false
     skill.target_end = false
 
+    if skill.sound ~='' then
+        audio_manager_play(skill.sound)
+    end
+    
     master:ClearAction()
     master:PushAction(ACTION_BATIDLE)
     local atk_info = skill.effects[skill.group_kill_counter]
@@ -352,9 +370,13 @@ function skill_cast_atk(battle, skill)
     attack_action.target = target
     
     local key_frame = attack_get_keyframe(master)
+    attack_action:AddStartCallback(function(anim)
+        master:PlaySound('attack')
+    end)
     attack_action:AddFrameCallback(key_frame, on_attack_action_callback)
     attack_action:AddLoopCallback(function(anim, counter)
         if counter < atk_info.combo then
+            master:PlaySound('attack')
             attack_action:AddFrameCallback(key_frame, on_attack_action_callback)
         end
     end)

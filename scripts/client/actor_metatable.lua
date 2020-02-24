@@ -102,4 +102,23 @@ function AnimationMT:DrawBoundingBox()
 end
 
 
+function ActorMT:PlaySound(action)
+    local avatar = self:GetProperty(PROP_AVATAR_ID)
+    if avatar:find('-') then
+        local tbl = content_system_get_table('role_sound')
+        if tbl[avatar] and tbl[avatar][action]~='' then
+            audio_manager_play(tbl[avatar][action])
+        end
+    else
+        local tbl = content_system_get_table('summon_sound')
+        if tbl[avatar] and tbl[avatar][action]~='' then
+            audio_manager_play(tbl[avatar][action])
+        end
+    end
+end
 
+function ActorMT:GetSceneBGMName()
+    local scene_tbl = content_system_get_table('scene')
+    local scene_id = self:GetProperty(PROP_SCENE_ID)
+    return scene_tbl[scene_id].bgm
+end

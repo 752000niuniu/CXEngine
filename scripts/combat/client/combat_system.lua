@@ -334,7 +334,7 @@ function on_battle_start(self)
     local player = actor_manager_fetch_local_player()
     local bgm = player:GetSceneBGMName()
     audio_manager_stop(bgm)
-    audio_manager_play('10-8905924A')
+    audio_manager_play('10-8905924A', true)
 end
 
 

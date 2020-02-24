@@ -104,6 +104,7 @@ function init_skill_template_table()
     local tbl  = utils_parse_tsv(vfs_get_tsvpath('skill'),{
         { name='ID', fmt='i'},
         { name='name'},
+        { name='sound'},
         { name='type'},
         { name='sub_type',fmt='i',def=0},
         { name='school',fmt='i',def=0},
@@ -244,6 +245,39 @@ function init_transport_table()
     return ret
 end
 
+
+function init_summon_sound() 
+    local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('sound_summon'),{
+        { name = 'ID' } ,
+        { name = 'clps' } ,
+        { name = 'attack' } ,
+        { name = 'cast' } ,
+        { name = 'behit' } ,
+        { name = 'defend' } ,
+    })
+    local ret = {}
+    for i, row in ipairs(tbl) do
+        ret[row.ID] = row
+    end
+    return ret
+end
+
+function init_role_sound() 
+    local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('sound_role'),{
+        { name = 'ID' },
+        { name = 'clps' },
+        { name = 'attack' },
+        { name = 'cast' },
+        { name = 'behit' },
+        { name = 'defend' },
+    })
+    local ret = {}
+    for i, row in ipairs(tbl) do
+        ret[row.ID] = row
+    end
+    return ret
+end
+
 function content_system_init()
     cxlog_info('content_system_init')
     
@@ -266,6 +300,9 @@ function content_system_init()
     content_system_set_table('scene', init_scene_table())
 
     content_system_set_table('transport', init_transport_table())
+
+    content_system_set_table('summon_sound', init_summon_sound())
+    content_system_set_table('role_sound', init_role_sound())
     
     
 end

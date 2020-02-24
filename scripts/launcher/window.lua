@@ -1,3 +1,5 @@
+script_system_dofile('../generator/sound_tsv_parser.lua')
+
 local AccountSB = imgui.CreateStrbuf('simulator',256)
 local PasswordSB = imgui.CreateStrbuf('123456',256)
 local SourceSB = imgui.CreateStrbuf('print("hello")',2560)
@@ -90,7 +92,7 @@ function launcher_update()
 	end
 
 
-	if false and command_arg_check('Debug') then
+	if command_arg_check('Debug') then
 
 		res,show_demo = imgui.Checkbox('Demo',show_demo)
 		if show_demo then
@@ -140,7 +142,7 @@ function launcher_update()
 		net_send_message(PTO_C2S_GM, cjson.encode({type='exit'}))
 	end
 
-	if false and command_arg_check('Debug') then
+	if command_arg_check('Debug') then
 		if imgui.Button('启动DA 4711') then
 			local path = vfs_makepath('internals/luadebugger/vscode/Debug/vsdbgadapter.exe')
 			local cwd = vfs_makepath('internals/luadebugger/vscode/')
@@ -197,6 +199,10 @@ function launcher_update()
 		-- if imgui.Button('生成Protocol') then
 		-- 	script_system_dofile('../generator/protocol.lua')	
 		-- end
+
+		if imgui.Button('parse sound') then
+			parse_sound_tsv()
+		end
 	end
 
 	if imgui.Button('更新帐号信息') then
@@ -268,10 +274,6 @@ function launcher_update()
             end
 		end)
 	end
-
-	
-
-
 	imgui.End()
 end
 
