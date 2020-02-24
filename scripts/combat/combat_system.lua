@@ -297,6 +297,11 @@ function BattleMT:EndBattle()
         end
         
         animation_manager_clear()
+
+        local player = actor_manager_fetch_local_player()
+        local bgm = player:GetSceneBGMName()
+        audio_manager_stop('10-8905924A')
+        audio_manager_play(bgm)
     end
 
     for i,actor in ipairs(self.actors) do

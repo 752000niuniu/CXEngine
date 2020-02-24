@@ -1033,3 +1033,10 @@ end
 function ActorMT:RemoveSummonOwner()
     self:SetProperty(PROP_SUMMON_OWNER, 0)
 end
+
+
+function ActorMT:GetSceneBGMName()
+    local scene_tbl = content_system_get_table('scene')
+    local scene_id = self:GetProperty(PROP_SCENE_ID)
+    return scene_tbl[scene_id].bgm
+end
