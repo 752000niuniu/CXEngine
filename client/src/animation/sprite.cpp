@@ -443,6 +443,14 @@ void Animation::Update()
 					}
 					else if (m_LoopMode == ANIMATION_LOOPMODE_STOPFIX) {
 						CurrentFrame = GroupFrameCount - 1;
+					}else if(m_LoopMode == ANIMATION_LOOPMODE_CHANGE_DIR){
+						CurrentFrame = 0;
+						if (Dir < GroupCount) {
+							Dir = Dir + 1;
+						}
+						if (Dir == GroupCount) {
+							Dir = 0;
+						}
 					}
 					
 					if (m_LoopCounter < m_LoopCount ) {

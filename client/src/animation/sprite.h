@@ -67,6 +67,7 @@ enum EAnimationLoopMode
 {
 	ANIMATION_LOOPMODE_RESTART=0,
 	ANIMATION_LOOPMODE_STOPFIX,
+	ANIMATION_LOOPMODE_CHANGE_DIR,
 };
 
 class Animation : public BaseSprite

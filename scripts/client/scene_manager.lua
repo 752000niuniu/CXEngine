@@ -144,6 +144,9 @@ function on_scene_manager_draw(name)
             v.anim:Draw()
         end
     end
+    if ui_show_options_on_draw then
+        ui_show_options_on_draw()
+    end
     if scene_list[name] then
         scene_list[name].OnSceneDraw()
     end

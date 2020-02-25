@@ -30,6 +30,103 @@ local IPSB = imgui.CreateStrbuf('127.0.0.1',256)
 local PortSB = imgui.CreateStrbuf('45000',256)
 
 
+
+local im_pa_select_avatar_name = '名称'
+local im_pa_select_avatar_type = '类型'
+local im_pa_select_avatar_action = '动作'
+
+local select_avatar_types = {
+    'avatar_role',
+    'avatar_weapon',
+    'avatar_npc',
+    'avatar_scene_npc',
+    'avatar_summon'
+}
+local select_avatar_names = {}
+local select_avatar_actions = {}
+
+local select_animation
+
+
+action_affix_keys = {'idle','walk','sit','angry','sayhi','dance','salute','clps','cry','batidle','attack','cast','behit','runto','runback','defend','unknown'}
+function imgui_show_play_anim()
+    if imgui.Button(im_pa_select_avatar_type..'##im_pa_type') then
+        imgui.OpenPopup('OPP_im_pa_select_avatar_type')
+    end
+    if imgui.BeginPopup('OPP_im_pa_select_avatar_type') then
+        imgui.HorizontalLayout(select_avatar_types,next,function(k,v)
+            if imgui.Button(v..'##'..v) then
+                im_pa_select_avatar_type = v
+                select_avatar_names = {}
+                local tbl = content_system_get_table(im_pa_select_avatar_type)
+                for k,v in pairs(tbl) do 
+                    table.insert(select_avatar_names,k)
+                end
+                table.sort(select_avatar_names)
+                imgui.CloseCurrentPopup()
+            end
+        end,400)
+        imgui.EndPopup()
+    end
+
+    if imgui.Button(im_pa_select_avatar_name..'##im_pa_name') then
+        imgui.OpenPopup('OPP_im_pa_select_avatar_name')
+    end
+    if imgui.BeginPopup('OPP_im_pa_select_avatar_name') then
+        imgui.HorizontalLayout(select_avatar_names,next,function(k,v)
+            if imgui.Button(v..'##'..v) then
+                im_pa_select_avatar_name = v
+                select_avatar_actions= {}
+                local tbl = content_system_get_table(im_pa_select_avatar_type)
+                local row = tbl[im_pa_select_avatar_name]
+                for i,k in ipairs(action_affix_keys) do
+                    if row[k] and row[k] ~= '' then
+                        if row[k]:find(',') then
+                            local v1,v2 = row[k]:match('(.+),(.+)')
+                            table.insert(select_avatar_actions, v1)
+                            table.insert(select_avatar_actions, v2)
+                        else
+                            table.insert(select_avatar_actions, row[k])
+                        end
+                    end
+                end
+                
+                imgui.CloseCurrentPopup()
+            end
+        end,400)
+        imgui.EndPopup()
+    end
+
+    imgui.HorizontalLayout(select_avatar_actions,next,function(k,v)
+        if imgui.Button(v..'##'..v) then
+            if  select_animation~=nil then
+                animation_destroy(select_animation)
+                select_animation = nil
+            end
+            
+            local pack, was = res_decode(res_parse_resid(v))
+            select_animation = animation_create(pack,was)
+            select_animation:SetPos(450,360)
+            select_animation:SetFrameInterval(0.128)
+            select_animation:Reset()
+            select_animation:SetLoop(0,2)
+            select_animation:Play()
+        end
+    end)
+
+   
+    
+end
+
+
+
+function ui_show_options_on_draw()
+    
+    if select_animation then
+        select_animation:Update()
+        select_animation:Draw()
+    end    
+end
 function ui_show_options()
     if not ui_is_show_options then return end
     local player = actor_manager_fetch_local_player()
@@ -104,6 +201,10 @@ function ui_show_options()
             end
         end)
     end
+
+    if imgui.CollapsingHeader('PlayAnim') then
+        imgui_show_play_anim()
+    end  
 
     if imgui.CollapsingHeader('Login') then 
         

@@ -302,7 +302,7 @@ function read_avatar_role()
 end
 
 function read_avatar_weapon()
-    local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('avatar_role'),{
+    return utils_parse_tsv_by_main_key(vfs_get_tsvpath('avatar_weapon'),{
         { name = 'ID' } ,
         { name = 'name' } ,
         { name = 'type' } ,
@@ -325,14 +325,34 @@ function read_avatar_weapon()
         { name = 'runback' } ,
         { name = 'defend' } ,
         { name = 'unknown' } ,
-    })
-    local ret = {}
-    for i, row in ipairs(tbl) do
-        ret[row.ID] = row
-    end
-    return ret
+    },'ID')
 end
 
+function read_avatar_scene_npc_table()
+    return utils_parse_tsv_by_main_key(vfs_get_tsvpath('avatar_scene_npc'),{
+        { name = 'ID' } ,
+        { name = 'idle' } ,
+        { name = 'walk' } ,
+        { name = 'sit' } ,
+    },'ID')
+end
+
+function read_avatar_summon_table()
+    return utils_parse_tsv_by_main_key(vfs_get_tsvpath('avatar_summon'),{
+        { name = 'ID' },
+        { name = 'idle' },
+        { name = 'walk' },
+        { name = 'clps' },
+        { name = 'batidle' },
+        { name = 'attack' },
+        { name = 'cast' },
+        { name = 'behit' },
+        { name = 'runto' },
+        { name = 'runback' },
+        { name = 'defend' },
+        { name = 'unknown' },
+    }, 'ID')
+end
 
 function content_system_init()
     cxlog_info('content_system_init')
@@ -340,6 +360,10 @@ function content_system_init()
     content_system_set_table('avatar_role', read_avatar_role())
     content_system_set_table('avatar_weapon', read_avatar_weapon())
     content_system_set_table('avatar_npc', read_npc_table())
+
+    content_system_set_table('avatar_scene_npc', read_avatar_scene_npc_table())
+    content_system_set_table('avatar_summon', read_avatar_summon_table())
+
     content_system_set_table('magic', read_magic_table())
     content_system_set_table('maps', read_map_table())
     content_system_set_table('actor_template', read_actor_template())

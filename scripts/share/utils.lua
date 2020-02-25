@@ -158,7 +158,6 @@ function utils_parse_tsv_to_rows(path)
     return tbl, col_names
 end
 
-
 function utils_parse_tsv(path, columns)
     local tbl = {}
     local col_names = {}
@@ -213,6 +212,16 @@ function utils_parse_tsv(path, columns)
     end
     return tbl, col_names
 end
+
+function utils_parse_tsv_by_main_key(path, columns, main_key)
+    local tbl, col_names = utils_parse_tsv(path, columns)
+    local ret = {}
+    for i, row in ipairs(tbl) do
+        ret[row[main_key]] = row
+    end
+    return ret
+end
+
 
 function file_read_int4(file)
     local n = file:read(4)
