@@ -112,7 +112,7 @@ end
 
 
 function ActorMT:ApplySummonQual(name)
-    local tbl = content_system_get_table('summon')
+    local tbl = content_system_get_table('summon_quality')
     local templ = tbl[name]
     if not templ then return end
     self:SetProperty(PROP_SUMMON_ATK_QUAL ,templ.atk_qual)

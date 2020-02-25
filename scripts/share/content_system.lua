@@ -184,8 +184,8 @@ function init_npc_table()
     return tbl
 end
 
-function init_summon_table()
-    local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('summon'),{
+function init_summon_quality_table()
+    local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('summon_quality'),{
         { name = 'name' },
         { name = 'take_level', fmt='i', def=0},
         { name = 'battle_level', fmt='i',def=0 },
@@ -351,7 +351,7 @@ function content_system_init()
     content_system_set_table('equip', init_equip_templ_table())
 
     content_system_set_table('npc', init_npc_table())
-    content_system_set_table('summon', init_summon_table())
+    content_system_set_table('summon_quality', init_summon_quality_table())
 
     content_system_set_table('scene', init_scene_table())
 

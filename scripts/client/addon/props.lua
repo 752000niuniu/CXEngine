@@ -639,7 +639,7 @@ function ui_show_props()
                 imgui.OpenPopup('BBQualSelector')
             end
             if imgui.BeginPopup('BBQualSelector') then
-                local tbl = content_system_get_table('summon')
+                local tbl = content_system_get_table('summon_quality')
                 imgui.HorizontalLayout(tbl,next,function(k,v) 
                     if imgui.Button(k..'##bb_templ') then
                         net_manager_player_dostring(string.format([[ 

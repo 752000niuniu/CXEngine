@@ -1,4 +1,5 @@
 script_system_dofile('../generator/sound_tsv_parser.lua')
+script_system_dofile('summon_handle.lua')
 
 local AccountSB = imgui.CreateStrbuf('simulator',256)
 local PasswordSB = imgui.CreateStrbuf('123456',256)
@@ -202,6 +203,10 @@ function launcher_update()
 
 		if imgui.Button('parse sound') then
 			parse_sound_tsv()
+		end
+
+		if imgui.Button('HandleAvatarNpc') then
+			handle_avatar_npc()
 		end
 	end
 
