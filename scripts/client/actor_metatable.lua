@@ -122,3 +122,16 @@ function ActorMT:GetSceneBGMName()
     local scene_id = self:GetProperty(PROP_SCENE_ID)
     return scene_tbl[scene_id].bgm
 end
+
+
+function ActorMT:GetAtkKeyFrame()
+    local avatar = self:GetProperty(PROP_AVATAR_ID)
+    if avatar:find('-') then
+        local tbl = content_system_get_table('avatar_role')
+        return tbl[avatar].atk_key
+    else
+        local tbl = content_system_get_table('avatar_npc')
+        if not tbl[avatar] then return 0 end
+        return tbl[avatar].atk_key
+    end
+end

@@ -8,16 +8,7 @@ function content_system_set_table(name, tbl)
     content_tables[name] = tbl
 end
 
-local function read_tsv_index_by_main_key(filename, b_parse_value, main_key)
-    local tbl_raw = utils_parse_tsv_file_as_table(fs_get_tsv_path(filename), b_parse_value)
-    local tbl = {}
-    for i,row in ipairs(tbl_raw) do
-        row.row_pos = i
-        tbl[row[main_key]] = row
 
-    end
-    return tbl
-end
 
 function read_magic_table()
     -- cxlog_info('read_magic_table')
@@ -278,11 +269,76 @@ function init_role_sound()
     return ret
 end
 
+function read_avatar_role()
+    local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('avatar_role'),{
+        { name = 'ID' } ,
+        { name = 'name' } ,
+        { name = 'role' } ,
+        { name = 'weapon_type' } ,
+        { name = 'idle' } ,
+        { name = 'walk' } ,
+        { name = 'sit' } ,
+        { name = 'angry' } ,
+        { name = 'sayhi' } ,
+        { name = 'dance' } ,
+        { name = 'salute' } ,
+        { name = 'clps' } ,
+        { name = 'cry' } ,
+        { name = 'batidle' } ,
+        { name = 'attack' } ,
+        { name = 'cast' } ,
+        { name = 'behit' } ,
+        { name = 'runto' } ,
+        { name = 'runback' } ,
+        { name = 'defend' } ,
+        { name = 'unknown' } ,
+        { name = 'atk_key', fmt='i', def=0} ,
+    })
+    local ret = {}
+    for i, row in ipairs(tbl) do
+        ret[row.ID] = row
+    end
+    return ret
+end
+
+function read_avatar_weapon()
+    local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('avatar_role'),{
+        { name = 'ID' } ,
+        { name = 'name' } ,
+        { name = 'type' } ,
+        { name = 'role' } ,
+        { name = 'level' } ,
+        { name = 'idle' } ,
+        { name = 'walk' } ,
+        { name = 'sit' } ,
+        { name = 'angry' } ,
+        { name = 'sayhi' } ,
+        { name = 'dance' } ,
+        { name = 'salute' } ,
+        { name = 'clps' } ,
+        { name = 'cry' } ,
+        { name = 'batidle' } ,
+        { name = 'attack' } ,
+        { name = 'cast' } ,
+        { name = 'behit' } ,
+        { name = 'runto' } ,
+        { name = 'runback' } ,
+        { name = 'defend' } ,
+        { name = 'unknown' } ,
+    })
+    local ret = {}
+    for i, row in ipairs(tbl) do
+        ret[row.ID] = row
+    end
+    return ret
+end
+
+
 function content_system_init()
     cxlog_info('content_system_init')
     
-    content_system_set_table('role', read_tsv_index_by_main_key('avatar_role',false,'ID'))
-    content_system_set_table('weapon', read_tsv_index_by_main_key('avatar_weapon',false,'ID'))
+    content_system_set_table('avatar_role', read_avatar_role())
+    content_system_set_table('avatar_weapon', read_avatar_weapon())
     content_system_set_table('avatar_npc', read_npc_table())
     content_system_set_table('magic', read_magic_table())
     content_system_set_table('maps', read_map_table())

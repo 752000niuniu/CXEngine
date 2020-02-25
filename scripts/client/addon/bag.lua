@@ -400,7 +400,7 @@ function ui_show_bag()
     end
     
     if imgui.CollapsingHeader('角色形象') then
-        local avatar_role_tbl = content_system_get_table('role')    
+        local avatar_role_tbl = content_system_get_table('avatar_role')    
         local role_keys = fetch_role_keys(avatar_role_tbl)
         imgui_std_horizontal_button_layout(avatar_role_tbl,gen_next_sortk_fn(avatar_role_tbl), function(k,v)
             net_manager_player_dostring(string.format([[
@@ -412,7 +412,7 @@ function ui_show_bag()
     end
 
     if imgui.CollapsingHeader('角色武器') then
-        local avatar_weapon_tbl =  content_system_get_table('weapon')    
+        local avatar_weapon_tbl =  content_system_get_table('avatar_weapon')    
         local avatar_key = player:GetProperty(PROP_AVATAR_ID)
         local keys = fetch_weapon_keys(avatar_weapon_tbl,avatar_key)
         imgui_std_horizontal_button_layout(avatar_weapon_tbl,custom_gen_next_sortk_fn(avatar_weapon_tbl,keys), function(k,v)

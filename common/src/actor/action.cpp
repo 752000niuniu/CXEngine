@@ -18,35 +18,7 @@
 #include <script_system.h>
 #include "logger.h"
 
-
-
 #define  PERFRAME_TIME (0.016f*2.5f)
-std::map<CXString, int> g_AttackKeyFrame = {
-	{"FYN-DBSWORDS" ,5 },
-	{"FYN-RING" ,9 },
-	{"GJL-CLAW" ,7 },
-	{"GJL-WAND" ,8 },
-	{"HMR-CLAW" ,9 },
-	{"HMR-WHIP" ,7 },
-	{"HTG-AXE" ,7 },
-	{"HTG-HAMMER" ,8 },
-	{"JMW-AXE" ,7 },
-	{"JMW-KNIFE" ,7 },
-	{"JXK-KNIFE" ,4 },
-	{"JXK-SWORD" ,6 },
-	{"LTZ-FAN" ,8 },
-	{"LTZ-SPEAR" ,6 },
-	{"STB-HAMMER" ,6 },
-	{"STB-SPEAR" ,10 },
-	{"WTJ-RIBBON" ,8 },
-	{"WTJ-RING" ,4 },
-	{"XCE-RIBBON" ,7 },
-	{"XCE-WAND" ,4 },
-	{"XYS-FAN" ,4 },
-	{"XYS-SWORD" ,5 },
-	{"YNX-DBSWORDS" ,5 },
-	{"YNX-WHIP" ,7 }
-};
 
 static std::vector<std::string> s_ActionSet = { u8"idle",u8"walk",u8"sit",u8"angry",u8"sayhi",u8"dance",u8"salute",u8"clps",u8"cry",u8"batidle",u8"attack",u8"cast",u8"behit",u8"runto",u8"runback",u8"defend",u8"unknown" };;
 std::string action_get_name(int i)
@@ -899,10 +871,6 @@ BeatNumber* ActionStateMachine::GetBeatNumber()
 }
 #endif
 
-int action_get_attack_key_frame(const char* str)
-{
-	return g_AttackKeyFrame[str];
-}
 
 int action_calc_run_to_pos(lua_State*L){
 	Actor* actor = lua_check_actor(L, 1);
@@ -915,7 +883,6 @@ int action_calc_run_to_pos(lua_State*L){
 
 void luaopen_action(lua_State* L)
 {
-	script_system_register_function(L, action_get_attack_key_frame);
 	script_system_register_luac_function(L, action_calc_run_to_pos);
 }
 

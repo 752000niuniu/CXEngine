@@ -7,7 +7,7 @@ function calc_run_to_pos(actor, target)
     targetAvatar:SetDir(math_get_reverse_dir(dir))
     if attackAvatar and targetAvatar then
         local actor_avtar_id = actor:GetProperty(PROP_AVATAR_ID)
-        local attackKeyframe = action_get_attack_key_frame(actor_avtar_id)
+        local attackKeyframe = actor:GetAtkKeyFrame()
         if attackKeyframe == 0 then attackKeyframe = attackAvatar:GetKeyFrame() end
         local attackFrame = attackKeyframe
         local targetFrame = targetAvatar:GetGroupFrameCount() - 1 

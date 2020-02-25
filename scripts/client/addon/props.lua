@@ -350,7 +350,7 @@ function ui_show_props()
         if imgui.BeginPopup('PopupAvatar') then
             local avatar_tbl 
             if actor_type == ACTOR_TYPE_PLAYER then
-                avatar_tbl = content_system_get_table('role')    
+                avatar_tbl = content_system_get_table('avatar_role')    
             elseif actor_type == ACTOR_TYPE_SUMMON then
                 avatar_tbl = content_system_get_table('avatar_npc')  
                 local tmp = {}
@@ -381,7 +381,7 @@ function ui_show_props()
             end
 
             if imgui.BeginPopup('PopupWeaponAvatar') then
-                local avatar_weapon_tbl =  content_system_get_table('weapon')    
+                local avatar_weapon_tbl =  content_system_get_table('avatar_weapon')    
                 local avatar_key = actor:GetProperty(PROP_AVATAR_ID)
                 local keys = fetch_weapon_keys(avatar_weapon_tbl,avatar_key)
               
