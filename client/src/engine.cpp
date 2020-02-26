@@ -1,7 +1,6 @@
 #include "engine.h"	
 #include "graphics/texture.h"
 #include "sprite_batch.h"
-#include "cube_batch.h"
 #include "time/timer_manager.h"
 #include "input_manager.h"
 #include <script_system.h>

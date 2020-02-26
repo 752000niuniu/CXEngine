@@ -34,12 +34,10 @@ add_executable(SimpleEngine
     src/graphics/transform.cpp
     src/graphics/bitmap.cpp
     src/graphics/ui_renderer.cpp
-    src/cube_batch.cpp
     src/engine.cpp
     src/game.cpp
     src/input_manager.cpp
     src/net.cpp
-    src/objects/map_object.cpp
     src/objects/object.cpp
     src/main.cpp
     src/resource_manager.cpp
@@ -47,9 +45,7 @@ add_executable(SimpleEngine
     src/sprite_renderer.cpp
     src/text_renderer.cpp
     src/texture_manager.cpp
-    src/tiny_thread_pool.cpp
     src/ui.cpp
-    src/vertex.cpp
     src/window.cpp
     src/audio/audio_manager.cpp
 
