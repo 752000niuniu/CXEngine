@@ -73,7 +73,11 @@ stub[PTO_C2C_PLAYER_ENTER] = function(req)
 
         local req = {}
 	    req.pid = player:GetID()
-	    net_send_message(PTO_C2S_FETCH_TEAM, cjson.encode(req))
+		net_send_message(PTO_C2S_FETCH_TEAM, cjson.encode(req))
+		
+		if not player:GetProperty(PROP_SETTING_BGM) then
+			audio_manager_toggle_bgm()
+		end
 	end
 end
 

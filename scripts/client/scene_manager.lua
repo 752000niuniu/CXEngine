@@ -1,18 +1,6 @@
-scene_list_name = {}
 
 transports =  transports or {}
-
-
-local scene_lua_files = 
-{
-    {name='PackageUnpacker' ,  file= 'scene/package_unpacker.lua'},
-    {name='BattleScene' ,            file= 'scene/battle_scene.lua'},
-    {name='东海湾全景' ,       file= 'scene/fangcunshan_scene.lua'},
-    {name='Splash' ,            file= 'scene/splash_scene.lua'},
-    {name='TestScene' ,          file= 'scene/test_scene.lua'}
-}
-
-local scene_list = {}
+scene_list = scene_list or {}
 	
 function on_scene_manager_init()
     local scene_tbl = content_system_get_table('scene')
@@ -39,10 +27,6 @@ function on_scene_manager_init()
                 fun()
             else
                 cxlog_info(fun,err)
-            end
-    
-            for name,v in pairs(scene_list) do
-                table.insert(scene_list_name, name)
             end
         end
     end
@@ -154,30 +138,6 @@ function on_scene_manager_draw(name)
 end
 
 function scene_manager_reload(name)
-    for i,v in ipairs(scene_lua_files) do
-        if v.name == name then
-            local path = vfs_get_luapath(v.file)
-            local module = {
-                exports = {},
-                env = _ENV
-            } 
-            scene_list[v.name] = module
-            setmetatable(module,{ __index = function(t,k)
-                local env = rawget(t, "env")
-                local v = rawget(env, k); if v then return v end
-                local exports = rawget(t, "exports")
-                local v = rawget(exports, k); if v then return v end 
-            end})
-            local fun,err = loadfile(path,'bt',module)
-            if fun then
-                fun()
-                scene_list[name].OnSceneInit() 
-                return
-            else
-                cxlog_info(fun,err)
-            end
-        end
-    end
 end
 
 local KEY_RELEASE_MOVE_AMOUT = 30

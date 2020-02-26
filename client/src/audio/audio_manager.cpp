@@ -140,6 +140,10 @@ int lua_audio_manager_play(lua_State* L){
 void audio_manager_toggle_bgm(){
 	g_BGMToggle = !g_BGMToggle;
 }
+bool audio_manager_is_bgm_on() {
+	return g_BGMToggle;
+}
+
 
 void luaopen_audio_manager(lua_State* L)
 {
@@ -147,5 +151,6 @@ void luaopen_audio_manager(lua_State* L)
 	script_system_register_function(L, audio_manager_stop);
 	script_system_register_function(L, audio_manager_clear);
 	script_system_register_function(L, audio_manager_toggle_bgm);
+	script_system_register_function(L, audio_manager_is_bgm_on);
 	
 }

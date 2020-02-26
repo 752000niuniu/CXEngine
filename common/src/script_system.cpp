@@ -36,8 +36,10 @@
 #include "protocol.h"
 #include "actor/action.h"
 #include "actor/actor_manager.h"
-#include "scene/scene_manager.h"
 #endif // !CXLUAX
+#ifdef SIMPLE_ENGINE
+#include <scene/scene_manager.h>
+#endif
 #include <cxlua.h>
 #include <tsv.h>
 

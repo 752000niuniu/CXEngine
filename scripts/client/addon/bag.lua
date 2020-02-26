@@ -42,6 +42,9 @@ local ToSceneFilterSB = imgui.CreateStrbuf('',256)
 local LocalPlayerDebugButtons = {
     {   'BGM',function(player)
         audio_manager_toggle_bgm()
+        net_manager_player_dostring(string.format([[ 
+            player:SetProperty(PROP_SETTING_BGM, %s)
+        ]],  audio_manager_is_bgm_on() ))
     end
     },
     {   'HUD',function(player)
