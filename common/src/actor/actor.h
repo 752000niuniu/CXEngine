@@ -85,12 +85,11 @@ public:
 	void SetTarget(Actor* target) { m_Target = target; };
 	Actor* GetTarget() { return m_Target; };
 
-	BaseScene* GetScene();
-
-	MoveHandle* GetMoveHandle() { return m_MoveHandle; }
 
 	CXString GetWeaponAvatarID();
 #ifndef SIMPLE_SERVER
+	MoveHandle* GetMoveHandle() { return m_MoveHandle; }
+	BaseScene* GetScene();
 	std::vector<NE::PalSchemePart>& GetPalette() { return m_PatMatrix; }
 	void SetPalette(std::vector<NE::PalSchemePart> patMatrix) { m_PatMatrix = patMatrix; }
 	ActionStateMachine* GetASM() { return m_ASM; };
@@ -152,7 +151,7 @@ protected:
 	std::list<Pos> m_MoveList;
 	std::list<Pos> m_BackupMoveList;
 	
-	MoveHandle* m_MoveHandle;
+	
 	
 	std::vector<NE::PalSchemePart> m_PatMatrix;
 	std::vector<ActorProp> m_Props;
@@ -160,6 +159,7 @@ protected:
 	Actor* m_Target;
 	CXString m_SayText;
 #ifndef SIMPLE_SERVER
+	MoveHandle* m_MoveHandle;
 	TextView* m_SayWidget;
 	UITextView* m_NameTV;
 	UITextView* m_SayTV;

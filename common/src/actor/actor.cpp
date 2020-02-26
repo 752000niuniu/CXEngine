@@ -1,14 +1,14 @@
 #include "actor.h"
-#include "scene/game_map.h"
-#include "actor/player.h"
-#include "scene/scene_manager.h"
+#include "cxlua.h"
 #include "utils.h"
-#include "lua.hpp"
-#include "window.h"
 #include "cxmath.h"
 #include "actor_manager.h"
-#ifndef SIMPLE_SERVER
 #include "action.h"
+#ifndef SIMPLE_SERVER
+#include "actor/move.h"
+#include "scene/game_map.h"
+#include "window.h"
+#include "scene/scene_manager.h"
 #include "input_manager.h"
 #include "animation/sprite.h"
 #include "text_renderer.h"
@@ -16,9 +16,6 @@
 #include "graphics/ui_renderer.h"
 #include "nanovg.h"
 #endif
-#include "move.h"
-#include "lua.h"
-#include "cxlua.h"
 #include <script_system.h>
 #include "actor_enum.h"
 
@@ -37,8 +34,8 @@ Actor::Actor(uint64_t pid)
 
 	m_PatMatrix.clear();
 
-	m_MoveHandle = new MoveHandle(this);
 #ifndef SIMPLE_SERVER
+	m_MoveHandle = new MoveHandle(this);
 	m_SayWidget = new TextView();
 	m_SayWidget->PaddingHorizontal = 4;
 	m_SayWidget->PaddingVertical = 2;
@@ -73,8 +70,9 @@ Actor::Actor(uint64_t pid)
 Actor::~Actor()
 {
 	m_PatMatrix.clear();
-	SafeDelete(m_MoveHandle);
+	
 #ifndef SIMPLE_SERVER
+	SafeDelete(m_MoveHandle);
 	INPUT_MANAGER_INSTANCE->UnRegisterView(this);
 	SafeDelete(m_ASM);
 	SafeDelete(m_SayWidget);
@@ -85,8 +83,8 @@ Actor::~Actor()
 
 void Actor::OnUpdate()
 {
-	m_MoveHandle->Update();
 #ifndef SIMPLE_SERVER
+	m_MoveHandle->Update();
 	m_ASM->Update();
 	if (m_SayDuration > 0)
 	{
@@ -302,11 +300,6 @@ float Actor::GetMoveDestAngle(Pos dest)
 	return ::GMath::Astar_GetAngle(pos.x,pos.y, dest.x, dest.y);
 }
 
-BaseScene* Actor::GetScene()
-{
-	return scene_manager_fetch_scene(m_Props[PROP_SCENE_ID].toInt());
-}
-
 CXString Actor::GetWeaponAvatarID()
 {
 	if (m_Props[PROP_ACTOR_TYPE].toInt() == ACTOR_TYPE_NPC)
@@ -314,6 +307,11 @@ CXString Actor::GetWeaponAvatarID()
 	return m_Props[PROP_WEAPON_AVATAR_ID].toString();
 }
 #ifndef SIMPLE_SERVER
+BaseScene* Actor::GetScene()
+{
+	return scene_manager_fetch_scene(m_Props[PROP_SCENE_ID].toInt());
+}
+
 Bound Actor::GetViewBounds()
 {
 	auto* avatar = m_ASM->GetAvatar();
@@ -471,11 +469,13 @@ int actor_translate_y(lua_State* L) {
 }
 
 
-int actor_move_to(lua_State* L){
+int actor_move_to(lua_State* L) {
+#ifndef SIMPLE_SERVER
 	Actor* actor = lua_check_actor(L, 1);
 	float x = (float)lua_tonumber(L, 2);
 	float y = (float)lua_tonumber(L, 3);
 	actor->GetMoveHandle()->MoveTo(x, y);
+#endif
 	return 0;
 }
 int actor_say(lua_State* L) {

@@ -2,7 +2,7 @@
 
 #include "define_types.h"
 #include "entity.h"
-#include "actor/player.h"
+#include "pos.h"
 
 class GameMap;
 /*

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "actor.h"
-#include "actor/player.h"
 
 class BaseScene;
 bool actor_manager_is_local_player(Actor* actor);
@@ -10,7 +9,7 @@ void actor_manager_set_scene(int id);
 
 Actor* actor_manager_fetch_local_player();
 
-Player* actor_manager_find_player_by_name(const char* name);
+Actor* actor_manager_find_player_by_name(const char* name);
 
 
 void actor_manager_update();

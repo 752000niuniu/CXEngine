@@ -5,7 +5,6 @@
 #include "ezio/socket_address.h"
 #include "ezio/tcp_connection.h"
 #include "ezio/tcp_server.h"
-#include "actor/player.h"
 using namespace ezio;
 
 

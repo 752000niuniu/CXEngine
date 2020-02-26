@@ -1,10 +1,9 @@
 #include "scene_manager.h"
 #include "cxrandom.h"
-#include "scene/was_viewer_scene.h"
-#include "scene/ui_scene.h"
 #include <script_system.h>
 #include "profile.h"
-#include "scene.h"
+#include <scene/base_scene.h>
+#include <scene/game_map.h>
 #include "input_manager.h"
 #include "game.h"
 #include "cxmath.h"
@@ -16,7 +15,6 @@
 #include "animation/sprite.h"
 #include "cxlua.h"
 #include "graphics/ui_renderer.h"
-#include "combat/combat.h"
 
 
 static bool s_DrawMask, s_DrawStrider, s_DrawCell, s_DrawMap, s_DrawAnnouncement, s_AutoRun;
@@ -71,7 +69,6 @@ void SceneManager::Init()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	
 	UIRenderer::GetInstance();
-	CombatSystem::GetInstance();
 };
 
 void SceneManager::SwitchScene(String name)
@@ -260,7 +257,7 @@ BaseScene* SceneManager::GetCurrentScene()
 };
 
 
-Player* scene_find_player(const char* player_name)
+Actor* scene_find_player(const char* player_name)
 {
 	return actor_manager_find_player_by_name(player_name);
 }
@@ -285,24 +282,9 @@ void scene_manager_deinit()
 	SCENE_MANAGER_INSTANCE->DeleteSingleton();
 }
 
-void scene_set_announcement(const char* text)
-{
-	BaseScene* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if (scene)
-	{
-		dynamic_cast<Scene*>(scene)->SetAnnouncement(text);
-	}
 
-}
 
-void scene_set_chat(const char* text)
-{
-	BaseScene* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if (scene)
-	{
-		dynamic_cast<Scene*>(scene)->SetChat(text);
-	}
-}
+
 
 void scene_manager_switch_scene_by_name(const char* name)
 {
@@ -322,26 +304,15 @@ void scene_manager_switch_scene_by_id(int id)
 
 void scene_manager_add_scene(int id , const char* name)
 {
-	SCENE_MANAGER_INSTANCE->AddScene(new Scene( id , name ));
+	SCENE_MANAGER_INSTANCE->AddScene(new BaseScene( id , name ));
 }
 
 void scene_manager_add_custom_scene(int scene_id, const char* name, int map_id)
 {
 	cxlog_info("scene_manager_add_custom_scene %d %s %d\n", scene_id, name, map_id);
-	BaseScene* scene=nullptr;
-	if (strcmp(name, "WASViewer") == 0) {
-		scene = new WASViewerScene(scene_id, name);
-	}
-	else if (strcmp(name, "UIScene") == 0) {
-		scene = new UIScene(scene_id, name);
-	}
-	else {
-		scene = new BaseScene(scene_id, name);
-	}
-	if(scene!=nullptr) {
-		scene->SetMapID(map_id);
-		SCENE_MANAGER_INSTANCE->AddScene(scene);
-	}
+	BaseScene* scene = new BaseScene(scene_id, name);;
+	scene->SetMapID(map_id);
+	SCENE_MANAGER_INSTANCE->AddScene(scene);
 }
 
 
@@ -426,6 +397,7 @@ int scene_get_map_offset(lua_State*L){
 	lua_pushinteger(L, y);
 	return 2;
 }
+
 void luaopen_scene_manager(lua_State* L)
 {
 	script_system_register_function(L, scene_manager_init);
@@ -447,9 +419,6 @@ void luaopen_scene_manager(lua_State* L)
 	script_system_register_function(L, scene_manager_switch_scene_by_id);
 	script_system_register_function(L, scene_manager_switch_scene_by_name);
 
-
-	script_system_register_function(L, scene_set_announcement);
-	script_system_register_function(L, scene_set_chat);
 
 	script_system_register_function(L, scene_manager_get_current_scene_id);
 

@@ -31,8 +31,7 @@ public:
 		int Height;
 		Texture* Texture;
 		bool IsEmotion;
-		bool EmotionUpdated;
-		FrameAnimation* Emotion;
+		bool EmotionUpdated; 
 		FontGlyph()
 		{
 			EmotionUpdated = false;
@@ -40,7 +39,6 @@ public:
 			GlyphIndex = 0;
 			Advance = 0;
 			IsEmotion = false;
-			Emotion = nullptr;
 			Texture = nullptr;
 		}
 	};

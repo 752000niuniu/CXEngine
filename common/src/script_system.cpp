@@ -5,7 +5,6 @@
 #include "singleton.h"
 #include "file_system.h" 
 #include "logger.h"
-#include "window.h"
 
 #include "file_loading.h"
 #include "imgui/cximgui.h"
@@ -14,6 +13,7 @@
 #include "luadbg.h"
 
 #ifdef SIMPLE_ENGINE
+#include "window.h"
 #include "game.h"
 #include "ui.h"
 #include "text_renderer.h"
@@ -22,7 +22,6 @@
 #include "animation/sprite.h"
 #include "resource_manager.h"
 #include "sprite_renderer.h"
-#include "animation/frame_animation.h"
 #include "audio/audio_manager.h"
 #include "graphics/ui_renderer.h"
 #endif
@@ -34,12 +33,10 @@
 #ifndef CXLUAX
 #include "time/time_manager.h"
 #include "time/timer_manager.h"
-#include "scene/scene_manager.h"
-#include "scene/scene.h"
 #include "protocol.h"
-#include "combat/combat.h"
 #include "actor/action.h"
 #include "actor/actor_manager.h"
+#include "scene/scene_manager.h"
 #endif // !CXLUAX
 #include <cxlua.h>
 #include <tsv.h>
@@ -59,34 +56,32 @@ void script_system_prepare_init()
 	luaopen_cximgui(L);
 	luaopen_logger(L);
 	luaopen_ne_support(L);
-	luaopen_window(L);
 #ifndef CXLUAX
 	luaopen_timer_manager(L);
 	luaopen_actor(L);
 	luaopen_actor_manager(L);
-	luaopen_scene(L);
-	luaopen_scene_manager(L);
 	luaopen_protocol(L);
 	luaopen_cxlua(L);
 #else
 	luaopen_cxlua(L);
 #endif // !CXLUAX
 #ifdef SIMPLE_ENGINE
+	luaopen_window(L);
 	luaopen_game(L);
 	luaopen_resource_manager(L);
 	luaopen_input_manager(L);
 	luaopen_ui(L);
 	luaopen_sprite_renderer(L);
 	luaopen_text_renderer(L);
-	luaopen_frame_animation(L);
 	luaopen_sprite(L);
 	luaopen_net(L);
-	luaopen_combat_system(L);
 	luaopen_audio_manager(L);
 	luaopen_ui_renderer(L);
 	luaopen_action(L);
+	luaopen_scene_manager(L);
 #endif
 #ifdef SIMPLE_SERVER
+
 	luaopen_game_server(L);
 #endif // !SIMPLE_SERVER
 

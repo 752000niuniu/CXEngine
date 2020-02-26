@@ -5,8 +5,6 @@ set(GAME_SOURCES_HEADER ${_GAME_SOURCES_HEADER} PARENT_SCOPE)
 
 set(GAME_COMMON_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/protocol.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/combat/combat.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/combat/skill.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/imgui/cximgui.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/imgui/imgui_impl_glfw.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/imgui/imgui_impl_opengl3.cpp
@@ -22,9 +20,6 @@ set(GAME_COMMON_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/script_system.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/profile.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/state.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/scene/base_scene.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/scene/game_map.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/actor/move.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/astar/astar.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actor/action.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/actor/actor_enum.cpp

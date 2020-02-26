@@ -4,7 +4,6 @@
 #include "utils.h"
 #include "window.h"
 #include "sprite_renderer.h"
-#include "scene/scene.h"
 #include "scene/scene_manager.h"
 #include "file_system.h"
 
@@ -50,8 +49,8 @@ void ImageView::OnDraw()
 
 bool ImageView::OnClick(int button, int x, int y)
 {
-	dynamic_cast<Scene*>(SCENE_MANAGER_INSTANCE->GetCurrentScene())->
-		OnSmapClick(m_HoverX, m_HoverY, (float)Width - 18.f * 2,( float)Height - 15.f * 2);
+	/*dynamic_cast<Scene*>(SCENE_MANAGER_INSTANCE->GetCurrentScene())->
+		OnSmapClick(m_HoverX, m_HoverY, (float)Width - 18.f * 2,( float)Height - 15.f * 2);*/
 	return true;
 }
 

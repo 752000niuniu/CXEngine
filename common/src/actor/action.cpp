@@ -7,14 +7,14 @@
 #include "resource_manager.h"
 #include "animation/sprite.h"
 #include "texture_manager.h"
-#endif
-#include "cxmath.h"
-#include "time/timer_manager.h"
+#include "scene/scene_manager.h"
 #include "window.h"
 #include "scene/base_scene.h"
 #include "scene/game_map.h"
+#endif
+#include "cxmath.h"
+#include "time/timer_manager.h"
 #include "actor_manager.h"
-#include "scene/scene_manager.h"
 #include <script_system.h>
 #include "logger.h"
 

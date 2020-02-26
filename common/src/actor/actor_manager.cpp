@@ -1,14 +1,13 @@
 #include "actor_manager.h"
 #include "actor.h"
-#include "actor/player.h"
-#include "window.h"
-#include "scene/scene_manager.h"
-#include "scene/base_scene.h"
-#include "scene/game_map.h"
 #include "utils.h"
 #include "cxmath.h"
 #ifndef SIMPLE_SERVER
+#include "scene/base_scene.h"
+#include "scene/game_map.h"
+#include "window.h"
 #include "animation/sprite.h"
+#include "scene/scene_manager.h"
 #endif
 
 std::map<uint64_t, Actor*> g_Players;
@@ -54,10 +53,10 @@ Actor* actor_manager_fetch_local_player()
 	return nullptr;
 }
 
-Player* actor_manager_find_player_by_name(const char* name){
+Actor* actor_manager_find_player_by_name(const char* name){
 	for(auto& it : g_Players){
 		if(it.second->GetName() ==std::string(name)){
-			return dynamic_cast<Player*>(it.second);
+			return it.second;
 		}
 	}
 	return nullptr;

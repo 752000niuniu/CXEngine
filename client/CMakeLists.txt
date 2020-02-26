@@ -22,7 +22,6 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../common/src PREFIX "Source Files
 add_executable(SimpleEngine
     ${SOURCES_HEADER_PRI}
     src/algorithm.cpp
-    src/animation/frame_animation.cpp
     src/animation/sprite.cpp
     src/camera.cpp
     src/components/base_component.cpp
@@ -44,8 +43,6 @@ add_executable(SimpleEngine
     src/objects/object.cpp
     src/main.cpp
     src/resource_manager.cpp
-    src/scene/ui_scene.cpp
-    src/scene/was_viewer_scene.cpp
     src/sprite_batch.cpp
     src/sprite_renderer.cpp
     src/text_renderer.cpp
@@ -59,8 +56,9 @@ add_executable(SimpleEngine
 
     ${GAME_SOURCES_HEADER}
     ${GAME_COMMON_SRCS}
-    src/actor/player.cpp
-    src/scene/scene.cpp
+    src/actor/move.cpp
+    src/scene/base_scene.cpp
+    src/scene/game_map.cpp
 	src/scene/scene_manager.cpp
 )
 

@@ -9,10 +9,10 @@
 #include "utils.h"
 #include "input_manager.h"
 #include "graphics/bitmap.h"
-#include "animation/frame_animation.h"
+#include "resource_manager.h"
+#include "sprite_renderer.h"
 
 std::vector<uint32_t> s_EmotionIDs = { 0x4D3D1188,0x6E7A8E8F,0x403105F2,0xD3C23894,0xEDD63AB1,0xC8AA7848,0xA5D718B1,0xE0C6F0D3,0x572F2A4D,0xA1E13E27,0xB2F4A198,0xEDEBCFCF,0x3B3D19C0,0x9EEC6DE4,0x1B1B8326,0x525FCCF9,0xAD9E8BAD,0xE9A1E271,0x1C7C95C4,0x1500E768,0x30615DBC,0x3694C64F,0xFD438646,0x4FAD347C,0x743AF90F,0x853F3BC9,0xD6436048,0x74E0F5FA,0x8E0063E2,0x5BA9CF5E,0xE8E08FA9,0x888536BF,0xBEDE7D41,0xF06B6B9E,0x58FAA400,0x270D5C71,0xE5FF2DE2,0xBE3150EE,0x11C5EA40,0x73F3BF9D,0xCCD6B7E8,0x66D0E07C,0x9A8BFB91,0xCA47B474,0x590CAA9B,0x4E20C2E6,0x44B657A9,0x978F8F8A,0x522BC68F,0xA8A9B15D,0xE53DE56A,0xE88B5354,0x0417C932,0xC699AB3E,0x19CA9706,0xFCD58523,0xCD8F0AD6,0x978B9123,0x0E658C4C,0x12BE1C3E,0x85AC8CCB,0x707ABF50,0x58C9FAB0,0xAA7B3B42,0xF2FBDA6E,0x4D3D1188,0x4D3D1188,0x4D3D1188,0x4D3D1188,0x4D3D1188,0x4D3D1188,0x4D3D1188,0x4D3D1188,0x4D3D1188,0xFC4215EC,0xD086F684,0xFCCAA9B5,0xACE9C474,0x87621B9F,0xCDC95381,0x396C4E03,0xB06B70C0,0xADE1576E,0xFB472367,0xEDA67286,0x15CA26D9,0xDC9C1E87,0xB5786848,0xC2A7A47D,0x7EEB3422,0x8F20BE2E,0xA1E7B566,0x11729962,0xEF498C25,0xF95512DC,0xF5509B1C,0x7F869E1E,0x107CF5F3,0xF45DCF6A,0x99AFED62,0x4D3D1188,0xC8BBEEA3,0x225ECF82,0xD5C14B62,0xA8BC861D,0x7229A70C,0x4FF6E07A,0xDF1F56AC,0x488EBBD6,0x4806AE3B,0x09574327,0x7A9F28C7,0xB7E060C1,0x5887677B };
-std::vector<FrameAnimation*> s_Emotions;
 
 
 static int s_FontSizeSmall = 12;
@@ -255,15 +255,15 @@ bool TextRenderer::LoadGlyph(uint32_t charcode, bool emotion)
 	{
 		auto longID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WZIFEWDF, charcode);
 		RESOURCE_MANAGER_INSTANCE->LoadWASSpriteByID(longID, true);
-		FrameAnimation* pEmotion = new FrameAnimation(longID);
-		fontglyph->Emotion = pEmotion;
-		fontglyph->GlyphIndex = 0;
-		fontglyph->Advance = pEmotion->GetWidth();
+		//FrameAnimation* pEmotion = new FrameAnimation(longID);
+		//fontglyph->Emotion = pEmotion;
+		//fontglyph->GlyphIndex = 0;
+		//fontglyph->Advance = pEmotion->GetWidth();
 		
-		fontglyph->Left =  pEmotion->GetKeyX();
+		/*fontglyph->Left =  pEmotion->GetKeyX();
 		fontglyph->Top = pEmotion->GetKeyY();
 		fontglyph->Width = pEmotion->GetWidth();
-		fontglyph->Height = pEmotion->GetHeight();
+		fontglyph->Height = pEmotion->GetHeight();*/
 	}
 	else
 	{
@@ -453,11 +453,11 @@ void TextRenderer::DrawTextW(std::wstring text,int x,int y, Alighment align,int 
 				}
 				else
 				{
-					fontGlyph->Emotion->SetPos({ (int)pen_x,(int)(pen_y-m_BearingY + m_FontHeight/2 - fontGlyph->Height/2) });
-					if (!fontGlyph->EmotionUpdated)
-						fontGlyph->Emotion->OnUpdate();
+					//fontGlyph->Emotion->SetPos({ (int)pen_x,(int)(pen_y-m_BearingY + m_FontHeight/2 - fontGlyph->Height/2) });
+					/*if (!fontGlyph->EmotionUpdated)
+						fontGlyph->Emotion->OnUpdate();*/
 					fontGlyph->EmotionUpdated = true;
-					fontGlyph->Emotion->Draw();
+					//fontGlyph->Emotion->Draw();
 
 					pen_x = pen_x + fontGlyph->Advance;
 					previous = 0;
@@ -514,11 +514,11 @@ void TextRenderer::DrawTextW(std::wstring text,int x,int y, Alighment align,int 
 				}
 				else
 				{
-					fontGlyph->Emotion->SetPos({ (int)pen_x,(int)(pen_y - m_BearingY + m_FontHeight / 2 - fontGlyph->Height / 2) });
-					if (!fontGlyph->EmotionUpdated)
-						fontGlyph->Emotion->OnUpdate();
+					//fontGlyph->Emotion->SetPos({ (int)pen_x,(int)(pen_y - m_BearingY + m_FontHeight / 2 - fontGlyph->Height / 2) });
+					//if (!fontGlyph->EmotionUpdated)
+						//fontGlyph->Emotion->OnUpdate();
 					fontGlyph->EmotionUpdated = true;
-					fontGlyph->Emotion->Draw();
+					//fontGlyph->Emotion->Draw();
 
 					pen_x = pen_x + fontGlyph->Advance;
 					previous = 0;

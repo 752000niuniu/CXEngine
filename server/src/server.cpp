@@ -5,7 +5,6 @@
 #include "protocol.h"
 #include "ezio/endian_utils.h"
 #include "ezio/buffer.h"
-#include "actor/player.h"
 #include "logger.h"
 #include <script_system.h>
 #include "net_thread_queue.h"

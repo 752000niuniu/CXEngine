@@ -23,12 +23,8 @@ add_executable(SimpleServer
   ${PRIVATE_HEADERS}
   ${GAME_SOURCES_HEADER}
   ${GAME_COMMON_SRCS}
-  src/actor/player.cpp
-  src/scene/scene.cpp
-  src/scene/scene_manager.cpp
   src/main.cpp
   src/server.cpp
-  src/window.cpp
 )
 
 if(MSVC)

@@ -1,11 +1,10 @@
 #include "move.h"
 #include "window.h"
-#include "actor.h"
+#include "actor/actor.h"
 #include "cxmath.h"
 #include "scene/base_scene.h"
 #include "scene/game_map.h"
-#include "action.h"
-#include <scene/scene_manager.h>
+#include <actor/action.h>
 
 MoveHandle::MoveHandle(Actor* actor)
 	:m_Actor(actor)
@@ -80,12 +79,10 @@ void MoveHandle::Update()
 			m_bMoveWithDuration = false;
 
 			if (!m_Actor->IsCombat()) {
-#ifndef SIMPLE_SERVER 
 				m_Actor->GetASM()->ClearAction();
 				ActionInfo info;
 				info.actionID = ACTION_IDLE;
 				m_Actor->GetASM()->PushAction(info);
-#endif
 			}
 		}
 	}
@@ -110,7 +107,6 @@ void MoveHandle::MoveOnScreenWithDuration(Pos offset, float move_dur,bool keepdi
 	m_bMoveWithDuration = true;
 	m_bKeepDir = keepdir;
 }
-
 void MoveHandle::MoveTo(float x, float y)
 {
 	m_bMoveWithDuration = false;
@@ -127,7 +123,7 @@ void MoveHandle::MoveTo(float x, float y)
 		return;
 	}
 
-	if(scene_is_combat()){
+	if(m_Actor->IsCombat()){
 		m_BackupMoveList.clear();
 		m_MoveList.clear();
 	}
@@ -143,12 +139,10 @@ void MoveHandle::MoveTo(float x, float y)
 
 	m_Actor->SetMoveToPos({ x,y });
 	if(!m_Actor->IsCombat()){
-#ifndef SIMPLE_SERVER 
 		m_Actor->GetASM()->ClearAction();
 		ActionInfo info;
 		info.actionID = ACTION_WALK;
 		m_Actor->GetASM()->PushAction(info);
-#endif
 	}
 	
 	m_bMove = true;

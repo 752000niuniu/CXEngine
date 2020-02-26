@@ -1,5 +1,7 @@
 #include "timer.h"
+#ifndef SIMPLE_SERVER
 #include "window.h"
+#endif
 
 Timer::Timer()
 	:m_TargetTime(1.0f)
@@ -83,7 +85,9 @@ bool Timer::Update()
 	}
 	if (m_CountingDown && m_CurrentTime >= 0)
 	{
-		m_CurrentTime -= WINDOW_INSTANCE->GetDeltaTimeMilliseconds() ;
+#ifndef SIMPLE_SERVER
+		m_CurrentTime -= WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
+#endif
 		if (m_CurrentTime < 0)
 		{
 			m_ExcecutingFunction();
@@ -98,7 +102,9 @@ bool Timer::Update()
 	}
 	else if (!m_CountingDown && m_CurrentTime <= m_TargetTime)
 	{
-		m_CurrentTime = WINDOW_INSTANCE->GetDeltaTimeMilliseconds() ;
+#ifndef SIMPLE_SERVER
+		m_CurrentTime -= WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
+#endif
 		if (m_CurrentTime > m_TargetTime)
 		{
 			m_ExcecutingFunction();

@@ -2,7 +2,8 @@
 
 #include <define_types.h>
 #include <tsv.h>
-#include "scene/scene.h"
+#include "scene/base_scene.h"
+#include "actor/actor.h"
 
 
 class SceneManager : public Singleton<SceneManager>
@@ -66,7 +67,7 @@ private:
 
 #define SCENE_MANAGER_INSTANCE SceneManager::GetInstance()
 
-Player* scene_find_player(const char* player_name);
+Actor* scene_find_player(const char* player_name);
 void scene_set_player(const char* player_name);
 void scene_add_player_by_templ_name(const char* templ_name, int actorType);
 void scene_add_player(const char* player_name, int x, int y, int dir, int role_id, int weapon_id);
