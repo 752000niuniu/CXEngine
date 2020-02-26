@@ -21,33 +21,43 @@
             "cwd": "${workspaceFolder}\\"
         },
         {
-            "name": "Client10",
-            "type": "cxlua",
-            "request": "attach",
-            "ip": "127.0.0.1",
-            "port": 9610,
-            "cwd": "${workspaceFolder}\\"
-        },
-        {
             "name": "Launcher",
             "type": "cxlua",
-            "request": "attach",
+            "request": "launch",
             "ip": "127.0.0.1",
             "port": 9400,
-            "cwd": "${workspaceFolder}\\"
+            "cwd": "${workspaceFolder}\\",
+            "program" : "bin\\Debug\\cxluax.exe",
+            "args" : [
+                "--script_path=scripts/launcher/",
+                "-Debug"
+            ]
         },
         {
-            "name": "launch",
+            "name": "ClientLaunch",
             "type": "cxlua",
             "request": "launch",
             "ip": "127.0.0.1",
             "port": 9600,
             "cwd": "${workspaceFolder}\\",
-            // "debugServer": 4711,
             "program" : "bin\\Debug\\SimpleEngine.exe",
+            "stopOnEntry" : true,
             "args" : [
                 "--script_path=scripts/client/"
             ]
-        }
+        },
+        {
+            "name": "ServerLaunch",
+            "type": "cxlua",
+            "request": "launch",
+            "ip": "127.0.0.1",
+            "port": 9500,
+            "stopOnEntry" : true,
+            "cwd": "${workspaceFolder}\\",
+            "program" : "bin\\Debug\\SimpleServer.exe",
+            "args" : [
+                "--script_path=scripts/server/"
+            ] 
+        },
     ]
 }

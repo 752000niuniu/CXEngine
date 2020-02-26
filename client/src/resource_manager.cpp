@@ -428,11 +428,12 @@ void resource_manager_deinit()
 	RESOURCE_MANAGER_INSTANCE->Clear();
 }
 
+
 int res_get_was(lua_State* L) {
 	uint32_t pack = (uint32_t)lua_tointeger(L, 1);
 	uint32_t wasid = (uint32_t)lua_tointeger(L, 2);
 	const char* path = lua_tostring(L, 3);
-	 
+
 	uint8_t* pData;
 	size_t size;
 	int type = RESOURCE_MANAGER_INSTANCE->LoadWDFData(res_encode_was(pack, wasid), pData, size);
@@ -440,42 +441,8 @@ int res_get_was(lua_State* L) {
 	return 1;
 }
 
-uint64_t res_encode_was(uint32_t pack, uint32_t wasID) {
-	uint64_t resID = pack; return (resID << 32) | wasID;
-}
-
-void res_decode_was(uint64_t resID, uint32_t& pack, uint32_t& wasID) {
-	pack = resID >> 32; wasID = (resID & 4294967295);
-}
-
-int res_encode(lua_State* L) {
-	uint32_t pack = (uint32_t)lua_tointeger(L, 1);
-	uint32_t wasid = (uint32_t)lua_tointeger(L, 2);
-	lua_pushinteger(L, RESOURCE_MANAGER_INSTANCE->EncodeWAS(pack, wasid));
-	return 1;
-}
-
-int res_decode(lua_State* L) {
-	uint64_t res = (uint64_t)lua_tointeger(L, 1);
-	uint32_t pack = 0;
-	uint32_t wasID = 0;
-	RESOURCE_MANAGER_INSTANCE->DecodeWAS(res, pack, wasID);
-	lua_pushinteger(L, pack);
-	lua_pushinteger(L, wasID);
-	return 2;
-}
-
-int res_parse_resid(lua_State*L){
-	const char* str = lua_tostring(L, 1);
-	auto strs = utils::split(str, '-');
-	if(strs.size()!=2){
-		lua_pushinteger(L, 0);
-		return 1;
-	}
-	uint32 pack = std::stoul(strs[0], 0);
-	uint32 wasID = std::stoul(strs[1], 0, 16);
-	lua_pushinteger(L, res_encode_was(pack,wasID));
-	return 1;
+void test_tsv(const char* path){
+	utils::tsv tbl(path);
 }
 
 void luaopen_resource_manager(lua_State* L)
@@ -514,16 +481,17 @@ void luaopen_resource_manager(lua_State* L)
 	REG_ENUM(AVATAR_TYPE_COUNT);
 #undef REG_ENUM
 
-	script_system_register_luac_function(L, res_encode);
-	script_system_register_luac_function(L, res_decode);
-
+	
 	script_system_register_function(L, resource_manager_init);
 	script_system_register_function(L, resource_manager_update);
 	script_system_register_function(L, resource_manager_deinit);
+
+	script_system_register_function(L, test_tsv);
+
+	
 	script_system_register_luac_function(L, resource_get_action_id);
 	script_system_register_luac_function(L, resource_get_weapon_id);
 	
 	script_system_register_luac_function(L, res_get_was);
-
-	script_system_register_luac_function(L, res_parse_resid);
+	
 }

@@ -93,14 +93,14 @@ end
 
 function init_skill_template_table()
     local tbl  = utils_parse_tsv(vfs_get_tsvpath('skill'),{
-        { name='ID', fmt='i'},
+        { name='ID', fmt='i',def=0},
         { name='name'},
         { name='sound'},
         { name='type'},
         { name='sub_type',fmt='i',def=0},
         { name='school',fmt='i',def=0},
         { name='combo', fmt='i', def=0},
-        { name='atk_anim', fmt=res_parse_resid, def=0},
+        { name='atk_anim'},
         { name='group_kill', fmt='i', def=0},
         { name='cast_anim', fmt='i', def=0},
         { name='act_turn', fmt='i', def=0}
@@ -108,6 +108,7 @@ function init_skill_template_table()
 
     local ret = {}
     for i,row in ipairs(tbl) do
+        row.atk_anim = res_parse_resid(row.atk_anim)
         ret[row.ID] = row
     end
     return ret
@@ -118,12 +119,13 @@ function init_buff_template_table()
         { name='ID', fmt='i'},
         { name='name'},
         { name='type',def=0},
-        { name='buff_anim', fmt=res_parse_resid, def=0},
+        { name='buff_anim'},
         { name='turn', fmt='i', def=0},
     })
 
     local ret = {}
     for i,row in ipairs(tbl) do
+        row.buff_anim = res_parse_resid(row.buff_anim)
         ret[row.ID] = row
     end
     return ret
@@ -187,15 +189,15 @@ end
 function init_summon_quality_table()
     local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('summon_quality'),{
         { name = 'name' },
-        { name = 'take_level', fmt='i', def=0},
-        { name = 'battle_level', fmt='i',def=0 },
-        { name = 'atk_qual', fmt='i' },
-        { name = 'def_qual', fmt='i' },
-        { name = 'health_qual', fmt='i' },
-        { name = 'magic_qual', fmt='i' },
-        { name = 'speed_qual', fmt='i' },
-        { name = 'dodge_qual', fmt='i' },
-        { name = 'grow_coef', fmt='n' },
+        { name = 'take_level' },
+        { name = 'battle_level' },
+        { name = 'atk_qual', fmt='i' , def=0 },
+        { name = 'def_qual', fmt='i' , def=0 },
+        { name = 'health_qual', fmt='i' , def=0 },
+        { name = 'magic_qual', fmt='i' , def=0 },
+        { name = 'speed_qual', fmt='i' , def=0 },
+        { name = 'dodge_qual', fmt='i' , def=0 },
+        { name = 'grow_coef', fmt='n' , def=0 },
     })
 
     local ret = {}
@@ -207,9 +209,9 @@ end
 
 function init_scene_table()
     local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('scene'),{
-        { name = 'ID', fmt='i' },
+        { name = 'ID', fmt='i', def=0},
         { name = 'name'},
-        { name = 'map_id', fmt='i' },
+        { name = 'map_id', fmt='i',def=0 },
         { name = 'bgm' },
         { name = 'script'},
         { name = 'birth_pos', fmt='pos' }
@@ -270,7 +272,7 @@ function init_role_sound()
 end
 
 function read_avatar_role()
-    local tbl,col_names = perf_call('1', utils_parse_tsv, vfs_get_tsvpath('avatar_role'),{
+    local tbl,col_names =  utils_parse_tsv(vfs_get_tsvpath('avatar_role'),{
         { name = 'ID' } ,
         { name = 'name' } ,
         { name = 'role' } ,

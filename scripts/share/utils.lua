@@ -158,7 +158,40 @@ function utils_parse_tsv_to_rows(path)
     return tbl, col_names
 end
 
-function utils_parse_tsv(path, columns)
+-- function utils_parse_tsv(path, columns)
+--     local tbl , col_names = utils_parse_tsv_file_as_table(path, columns)
+--     for idx,col in ipairs(columns) do
+--         for irow, row in ipairs(tbl) do
+--             local key = col.name
+--             if col.def and row[key] == '' then
+--                 row[key] = col.def
+--             else
+--                 if col.fmt then
+--                     if col.fmt == 'i' then
+--                         row[key] = math.tointeger(row[key])
+--                     elseif col.fmt == 'n' then
+--                         row[key] = tonumber(row[key])
+--                     elseif col.fmt == 'pos' then
+--                         local v = utils_string_split(row[key], ',')
+--                         local pos = {}
+--                         if #v == 2 then
+--                             pos.x = math.tointeger(v[1])
+--                             pos.y = math.tointeger(v[2])
+--                         else
+--                             pos.x = 0
+--                             pos.y = 0
+--                         end
+--                         row[key] = pos
+--                     elseif type(col.fmt)=='function' then
+--                         row[key] = col.fmt(row[key])
+--                     end
+--                 end
+--             end
+--         end
+--     end
+--     return tbl, col_names
+-- end
+function utils_parse_tsv_old(path, columns)
     local tbl = {}
     local col_names = {}
     local col_indices = {}
