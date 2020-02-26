@@ -4,7 +4,6 @@ function content_system_get_table(name)
 end
 
 function content_system_set_table(name, tbl)
-    cxlog_info('content_system_set_table', name)
     content_tables[name] = tbl
 end
 
@@ -270,7 +269,7 @@ function init_role_sound()
 end
 
 function read_avatar_role()
-    local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('avatar_role'),{
+    local tbl,col_names = perf_call('1', utils_parse_tsv, vfs_get_tsvpath('avatar_role'),{
         { name = 'ID' } ,
         { name = 'name' } ,
         { name = 'role' } ,
@@ -354,35 +353,34 @@ function read_avatar_summon_table()
     }, 'ID')
 end
 
+function perf_call(name, f,...)
+    local now = time_now()
+    local ret = table.pack(f(...))
+    local dt = time_now() - now
+    cxlog_info(string.format('%s:\t%dms',name,dt))
+    return table.unpack(ret)
+end
+
 function content_system_init()
     cxlog_info('content_system_init')
     
-    content_system_set_table('avatar_role', read_avatar_role())
-    content_system_set_table('avatar_weapon', read_avatar_weapon())
-    content_system_set_table('avatar_npc', read_npc_table())
-
-    content_system_set_table('avatar_scene_npc', read_avatar_scene_npc_table())
-    content_system_set_table('avatar_summon', read_avatar_summon_table())
-
-    content_system_set_table('magic', read_magic_table())
-    content_system_set_table('maps', read_map_table())
-    content_system_set_table('actor_template', read_actor_template())
-
-    content_system_set_table('skill', init_skill_template_table())
-    content_system_set_table('buff', init_buff_template_table())
-
-    content_system_set_table('school', init_school_templ_table())
-    content_system_set_table('equip', init_equip_templ_table())
-
-    content_system_set_table('npc', init_npc_table())
-    content_system_set_table('summon_quality', init_summon_quality_table())
-
-    content_system_set_table('scene', init_scene_table())
-
-    content_system_set_table('transport', init_transport_table())
-
-    content_system_set_table('summon_sound', init_summon_sound())
-    content_system_set_table('role_sound', init_role_sound())
-    
+    content_system_set_table('avatar_role', perf_call('read_avatar_role', read_avatar_role) )
+    content_system_set_table('avatar_weapon', perf_call('read_avatar_weapon', read_avatar_weapon) )
+    content_system_set_table('avatar_npc', perf_call('read_npc_table', read_npc_table) )
+    content_system_set_table('avatar_scene_npc', perf_call('read_avatar_scene_npc_table', read_avatar_scene_npc_table) )
+    content_system_set_table('avatar_summon', perf_call('read_avatar_summon_table', read_avatar_summon_table) )
+    content_system_set_table('magic', perf_call('read_magic_table', read_magic_table) )
+    content_system_set_table('maps', perf_call('read_map_table', read_map_table) )
+    content_system_set_table('actor_template', perf_call('read_actor_template', read_actor_template) )
+    content_system_set_table('skill', perf_call('init_skill_template_table', init_skill_template_table) )
+    content_system_set_table('buff', perf_call('init_buff_template_table', init_buff_template_table) )
+    content_system_set_table('school', perf_call('init_school_templ_table', init_school_templ_table) )
+    content_system_set_table('equip', perf_call('init_equip_templ_table', init_equip_templ_table) )
+    content_system_set_table('npc', perf_call('init_npc_table', init_npc_table) )
+    content_system_set_table('summon_quality', perf_call('init_summon_quality_table', init_summon_quality_table) )
+    content_system_set_table('scene', perf_call('init_scene_table', init_scene_table) )
+    content_system_set_table('transport', perf_call('init_transport_table', init_transport_table) )
+    content_system_set_table('summon_sound', perf_call('init_summon_sound', init_summon_sound) )
+    content_system_set_table('role_sound', perf_call('init_role_sound', init_role_sound) )
     
 end
