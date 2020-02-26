@@ -52,8 +52,6 @@ end
 function handle_avatar_npc()
     local avatar_npc_tbl,avatar_npc_cnames = read_npc_table()
     local summon_tbl, summon_cnames = init_summon_quality_table()
-
-    
     local rows={}
     for id, row in pairs(avatar_npc_tbl) do
         if not summon_tbl[id] then
@@ -65,6 +63,19 @@ function handle_avatar_npc()
     -- end)
 
     utils_save_rows_to_tsv(vfs_get_tsvpath('test2'), avatar_npc_cnames,rows )
+end
 
+
+function output_names()
+    local tbl,cnames  = utils_parse_tsv(vfs_get_tsvpath('scene_npc'),{
+        {name = 'id'},
+        {name = 'name'}
+    },'name')
+
+    local names = {}
+    for i,row in ipairs(tbl) do
+        table.insert(names,row.name)
+        cxlog_info('name', row.name)
+    end
 
 end

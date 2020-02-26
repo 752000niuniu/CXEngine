@@ -174,36 +174,38 @@ function utils_parse_tsv(path, columns)
             if line~='' and not line:match('^%*') then
                 local row = {} 
                 local vals = utils_string_split_fixcnt(line,'\t',#col_names)
-                for i,key in ipairs(col_names) do
-                    local col = columns[i]
-                    if col and col.name == key then
-                        if col.def then
-                            if vals[i] == '' then
-                                vals[i] = col.def
+                for idx,col in ipairs(columns) do
+                    for i,key in ipairs(col_names) do
+                        if col.name == key then
+                            if col.def then
+                                if vals[i] == '' then
+                                    vals[i] = col.def
+                                end
                             end
-                        end
-                        
-                        if col.fmt == 'n' then
-                            row[key] = tonumber(vals[i])
-                        elseif col.fmt == 'i' then
-                            row[key] = math.tointeger(vals[i])
-                        elseif col.fmt == 'pos' then
-                            local v = utils_string_split(vals[i], ',')
-                            local pos = {}
-                            if #v == 2 then
-                                pos.x = math.tointeger(v[1])
-                                pos.y = math.tointeger(v[2])
+                            
+                            if col.fmt == 'n' then
+                                row[key] = tonumber(vals[i])
+                            elseif col.fmt == 'i' then
+                                row[key] = math.tointeger(vals[i])
+                            elseif col.fmt == 'pos' then
+                                local v = utils_string_split(vals[i], ',')
+                                local pos = {}
+                                if #v == 2 then
+                                    pos.x = math.tointeger(v[1])
+                                    pos.y = math.tointeger(v[2])
+                                else
+                                    pos.x = 0
+                                    pos.y = 0
+                                end
+                                row[key] = pos
+                            elseif type(col.fmt)=='function' then
+                                row[key] = col.fmt(vals[i])
                             else
-                                pos.x = 0
-                                pos.y = 0
-                            end
-                            row[key] = pos
-                        elseif type(col.fmt)=='function' then
-                            row[key] = col.fmt(vals[i])
-                        else
-                            row[key] = vals[i]
+                                row[key] = vals[i]
+                            end 
+                            break
                         end
-                    end
+                    end        
                 end
                 table.insert(tbl,row)
             end
@@ -548,4 +550,14 @@ local proto_to_name = {
 
 function proto_name(proto)
     return proto_to_name[proto] or proto
+end
+
+imgui.InputTextEx = function(name, sb, width)
+    if width then
+        imgui.PushItemWidth(width)
+        local res = imgui.InputText(name, sb)
+        imgui.PopItemWidth()
+    else
+        return imgui.InputText(name, sb)
+    end
 end

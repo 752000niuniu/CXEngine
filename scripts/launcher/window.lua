@@ -208,6 +208,10 @@ function launcher_update()
 		if imgui.Button('HandleAvatarNpc') then
 			handle_avatar_npc()
 		end
+
+		if imgui.Button('TestHandle') then
+			output_names()
+		end
 	end
 
 	if imgui.Button('更新帐号信息') then

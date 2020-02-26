@@ -34,7 +34,7 @@ local PortSB = imgui.CreateStrbuf('45000',256)
 local im_pa_select_avatar_name = '名称'
 local im_pa_select_avatar_type = '类型'
 local im_pa_select_avatar_action = '动作'
-
+local AnimResSB =  imgui.CreateStrbuf('',256)
 local select_avatar_types = {
     'avatar_role',
     'avatar_weapon',
@@ -46,10 +46,25 @@ local select_avatar_names = {}
 local select_avatar_actions = {}
 
 local select_animation
-
+function reset_play_anim(v)
+    if  select_animation~=nil then
+        animation_destroy(select_animation)
+        select_animation = nil
+    end
+    
+    local pack, was = res_decode(res_parse_resid(v))
+    select_animation = animation_create(pack,was)
+    select_animation:SetPos(600,500)
+    select_animation:SetFrameInterval(0.128)
+    select_animation:Reset()
+    select_animation:SetLoop(0,2)
+    select_animation:Play()
+end
 
 action_affix_keys = {'idle','walk','sit','angry','sayhi','dance','salute','clps','cry','batidle','attack','cast','behit','runto','runback','defend','unknown'}
 function imgui_show_play_anim()
+
+
     if imgui.Button(im_pa_select_avatar_type..'##im_pa_type') then
         imgui.OpenPopup('OPP_im_pa_select_avatar_type')
     end
@@ -99,18 +114,7 @@ function imgui_show_play_anim()
 
     imgui.HorizontalLayout(select_avatar_actions,next,function(k,v)
         if imgui.Button(v..'##'..v) then
-            if  select_animation~=nil then
-                animation_destroy(select_animation)
-                select_animation = nil
-            end
-            
-            local pack, was = res_decode(res_parse_resid(v))
-            select_animation = animation_create(pack,was)
-            select_animation:SetPos(450,360)
-            select_animation:SetFrameInterval(0.128)
-            select_animation:Reset()
-            select_animation:SetLoop(0,2)
-            select_animation:Play()
+            reset_play_anim( v)
         end
     end)
 
@@ -133,6 +137,13 @@ function ui_show_options()
     if not player then return end
     
     imgui.Begin('Options')
+
+        
+    imgui.InputTextEx('AnimResSB',AnimResSB,120)
+    imgui.SameLine()
+    if imgui.Button('查看') then
+        reset_play_anim(AnimResSB:str())
+    end
 
     if imgui.CollapsingHeader('PosInfo') then
         local mx, my = imgui.GetMousePos()
