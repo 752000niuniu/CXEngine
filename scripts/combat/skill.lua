@@ -369,7 +369,7 @@ function skill_cast_atk(battle, skill)
     attack_action.atk_info = atk_info
     attack_action.target = target
     
-    local key_frame = attack_get_keyframe(master)
+    local key_frame = master:GetAtkKeyFrame()
     attack_action:AddStartCallback(function(anim)
         master:PlaySound('attack')
     end)

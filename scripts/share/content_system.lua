@@ -69,7 +69,8 @@ function read_npc_table()
         { name = 'runto' },
         { name = 'runback' },
         { name = 'defend' },
-        { name = 'unknown' }
+        { name = 'unknown' },
+        { name = 'atk_key', fmt='i', def =0 }
     })    
 
     local ret = {}

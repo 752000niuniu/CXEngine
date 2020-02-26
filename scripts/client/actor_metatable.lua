@@ -131,7 +131,10 @@ function ActorMT:GetAtkKeyFrame()
         return tbl[avatar].atk_key
     else
         local tbl = content_system_get_table('avatar_npc')
-        if not tbl[avatar] then return 0 end
-        return tbl[avatar].atk_key
+        if not tbl[avatar] or tbl[avatar].atk_key==0 then
+            local attack_action = self:GetAvatar(ACTION_ATTACK)
+            return attack_action:GetKeyFrame()
+        end
+        return tbl[avatar].atk_key        
     end
 end
