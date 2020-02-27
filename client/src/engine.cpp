@@ -42,7 +42,7 @@ void Engine::Update()
 {
 	m_DeltaTime = WINDOW_INSTANCE->GetDeltaTime();
 
-	TIMER_MANAGER_INTANCE->Update();
+	TIMER_MANAGER_INTANCE->Update(m_DeltaTime * 1000);
 
     SCENE_MANAGER_INSTANCE->Update();
 
