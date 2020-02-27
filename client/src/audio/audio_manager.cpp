@@ -66,6 +66,7 @@ void audio_manager_clear() {
 
 int audio_manager_play(const char* path, bool loop)
 {
+	if (strcmp(path, "") == 0)return -1;
 	if (g_AudioFiles.size() > 0) {
 		for (auto it = g_AudioFiles.begin(); it != g_AudioFiles.end();) {
 			if ((*it)->erase) {

@@ -292,8 +292,8 @@ int timer_manager_add_timer(lua_State* L){
 	return 0;
 }
 
-void timer_remove(){
-
+void timer_manager_remove_timer(const char* timer_name){
+	TIMER_MANAGER_INTANCE->RemoveTimer(timer_name);
 }
 
 void luaopen_timer_manager(lua_State* L)
@@ -303,5 +303,6 @@ void luaopen_timer_manager(lua_State* L)
 	script_system_register_function(L, timer_manager_deinit);
 
 	script_system_register_luac_function(L, timer_manager_add_timer);
-	script_system_register_function(L, timer_remove);
+	script_system_register_function(L, timer_manager_remove_timer);
+	
 }

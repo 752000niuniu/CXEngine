@@ -302,18 +302,18 @@ function read_avatar_summon_table()
     return utils_parse_tsv_by_main_key('avatar_summon',nil, 'ID')
 end
 
-function read_battle_map()
-    local tbl,col_names = utils_parse_tsv('battle_map')
+function read_scene_monster()
+    local tbl,col_names = utils_parse_tsv('scene_monster')
     local ret = {}
     for i,row in ipairs(tbl) do
-        local ss = utils_string_split(row.monster,'、')
+        local ss = utils_string_split(row.monster,',')
         row.monster = {}
         for i,s in ipairs(ss) do
             table.insert(row.monster, s)
         end
         ret[row.name] = row
     end
-    
+    return ret
 end
 
 function perf_call(name, f,...)
@@ -332,6 +332,7 @@ function content_system_init()
     content_system_set_table('avatar_npc',  read_npc_table) 
     content_system_set_table('avatar_scene_npc',  read_avatar_scene_npc_table) 
     content_system_set_table('avatar_summon',  read_avatar_summon_table) 
+    content_system_set_table('scene_monster', read_scene_monster)
     content_system_set_table('magic',  read_magic_table) 
     content_system_set_table('maps',  read_map_table) 
     content_system_set_table('actor_template',  read_actor_template) 
@@ -345,5 +346,4 @@ function content_system_init()
     content_system_set_table('transport',  init_transport_table) 
     content_system_set_table('summon_sound',  init_summon_sound) 
     content_system_set_table('role_sound',  init_role_sound) 
-    content_system_set_table('battle_map', read_battle_map)
 end

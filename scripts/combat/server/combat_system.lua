@@ -34,26 +34,45 @@ function combat_system_add_team_by_actor(battle, actor, team_type)
 end
 
 function combat_system_create_pve_battle(player)
+	local scene_id = player:GetProperty(PROP_SCENE_ID)
+	local scene_name = player:GetSceneName()
+	local scene_monster_tbl = content_system_get_table('scene_monster')
+	local monsters = scene_monster_tbl[scene_name].monster
+	if not monsters then return end
+
 	local battle = BattleMT:new()
 	combat_system_add_team_by_actor(battle, player, TEAM_TYPE_ATTACKER)	
 	local team = player:GetTeam()
 	local enemy_count = 0
 	if team then
-		enemy_count = #(team:GetMembers())  * 2
+		local team_people = #team:GetMembers()
+		if team_people == 1 then
+			enemy_count =  math.random(1,3)
+		elseif team_people == 2 then
+			enemy_count =  math.random(2,4)
+		elseif team_people == 3 then
+			enemy_count =  math.random(3,6)
+		elseif team_people == 4 then
+			enemy_count =  math.random(5,8)
+		elseif team_people == 5 then
+			enemy_count =  math.random(7,10)
+		end
 	else
-		enemy_count = 2
+		enemy_count = math.random(1,3)
 	end
 
 	local player_lv = player:GetProperty(PROP_LV)
 	local enemy_actors = {}
 	for i=1,enemy_count do
+		local monster_name = monsters[math.random(1,#monsters)] 
+
 		local actor = actor_manager_create_actor(utils_next_uid('actor'))
 		actor:SetProperty(PROP_ACTOR_TYPE, ACTOR_TYPE_NPC)
-		actor:SetProperty(PROP_NAME,  'test'..i)
-		actor:SetProperty(PROP_AVATAR_ID,  '强盗')
+		actor:SetProperty(PROP_NAME,  monster_name)
+		actor:SetProperty(PROP_AVATAR_ID,  monster_name)
 		actor:SetProperty(PROP_LV,  player_lv)
 		actor:ClearAssignPoints()
-		actor:ApplySummonQual('芙蓉仙子')
+		actor:ApplySummonQual(monster_name)
 		actor:SetProperty(PROP_ASSIGN_HEALTH, player_lv)
 		actor:SetProperty(PROP_ASSIGN_MAGIC, player_lv)
 		actor:SetProperty(PROP_ASSIGN_FORCE, player_lv)

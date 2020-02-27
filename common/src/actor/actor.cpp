@@ -477,7 +477,19 @@ int actor_move_to(lua_State* L) {
 	actor->GetMoveHandle()->MoveTo(x, y);
 #endif
 	return 0;
+
 }
+
+int actor_is_moving(lua_State* L) {
+#ifndef SIMPLE_SERVER
+	Actor* actor = lua_check_actor(L, 1);
+	lua_pushboolean(L, actor->GetMoveHandle()->IsMove());
+	return 1;
+#endif
+	return 0;
+}
+
+
 int actor_say(lua_State* L) {
 #ifndef SIMPLE_SERVER
 	Actor* actor = lua_check_actor(L, 1);
@@ -881,6 +893,7 @@ luaL_Reg mt_actor[] = {
 { "TranslateX", actor_translate_x },
 { "TranslateY", actor_translate_y },
 { "MoveTo", actor_move_to },
+{ "IsMoving", actor_is_moving},
 { "Say", actor_say },
 { "ShowDialog", actor_show_dialog},
 { "ClearFrames", actor_clear_frames },

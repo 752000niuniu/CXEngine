@@ -38,13 +38,16 @@ function on_scene_manager_uninit_scene(name)
     if scene_tbl[scene_id].bgm ~='' then
         audio_manager_stop(scene_tbl[scene_id].bgm)
     end
+    timer_manager_remove_timer('TimerWildBattle')
 end
 
 function on_scene_manager_init_scene(name)
+    cxlog_info('on_scene_manager_init_scene', name)
     local scene_id = scene_manager_get_current_scene_id() 
     local transport_tbl = content_system_get_table('transport')
 
     local scene_tbl = content_system_get_table('scene')
+    local scene_monster_tbl = content_system_get_table('scene_monster')
     if scene_tbl[scene_id].bgm ~='' then
         audio_manager_play(scene_tbl[scene_id].bgm, true)
     end
@@ -77,6 +80,19 @@ function on_scene_manager_init_scene(name)
     if scene_list[name] then
         scene_list[name].OnSceneInit() 
     end
+    
+    if scene_monster_tbl[name] and not name:match('大雁塔%d层') then
+        timer_manager_add_timer('TimerWildBattle',5000,function()
+            local player = actor_manager_fetch_local_player()
+            if player:IsCombat() then
+                return
+            else
+                local req = {}
+                req.pid = player:GetID()
+                net_send_message(PTO_C2S_COMBAT_PVE_START, cjson.encode(req))
+            end
+        end, true)    
+    end
 end
 
 function on_scene_manager_update(name)
@@ -85,7 +101,7 @@ function on_scene_manager_update(name)
     end
 
     local player = actor_manager_fetch_local_player()
-    if player then
+    if player and not player:IsCombat() then
         local x,y = player:GetPos()
         for ID,trans in pairs(transports) do
             if math_get_distance(x,y,trans.pos.x ,trans.pos.y) <= 100 then
