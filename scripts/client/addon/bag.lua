@@ -265,7 +265,7 @@ function ui_show_bag()
     if not ui_is_show_bag then return end
     local player = actor_manager_fetch_local_player()
     if not player then return end
-    imgui.Begin('Bag')
+    imgui.Begin('Window')
 
     if imgui.CollapsingHeader('命令##CMD', ImGuiTreeNodeFlags_DefaultOpen) then
         imgui.InputText("玩家名字", PlayerNameSB)

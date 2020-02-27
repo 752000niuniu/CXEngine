@@ -211,13 +211,16 @@ function init_scene_table()
     local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('scene'),{
         { name = 'ID', fmt='i', def=0},
         { name = 'name'},
+        { name = 'entry_pos'},
         { name = 'map_id', fmt='i',def=0 },
         { name = 'bgm' },
         { name = 'script'},
-        { name = 'birth_pos', fmt='pos' }
+        { name = 'birth_pos', fmt='pos' },
+        { name = 'transports' }
     })
     local ret = {}
     for i, row in ipairs(tbl) do
+        if row.name == '' then break end
         ret[row.ID] = row
     end
     return ret
