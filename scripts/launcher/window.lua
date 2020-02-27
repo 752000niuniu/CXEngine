@@ -201,8 +201,13 @@ function launcher_update()
 		-- 	script_system_dofile('../generator/protocol.lua')	
 		-- end
 
-		if imgui.Button('parse sound') then
-			parse_sound_tsv()
+		if imgui.Button('Test') then
+			local cnt = 1
+			timer_manager_add_timer('test1',100,function()
+				print('hello' ..cnt)
+				cnt = cnt + 1
+				return cnt > 5
+			end,true)
 		end
 
 		if imgui.Button('HandleAvatarNpc') then

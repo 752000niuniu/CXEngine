@@ -29,7 +29,7 @@ do
 	at_exit_manager_init()
 	io_service_context_init()
 	luadbg_listen(9400)
-	luadbg_enable_log(true)
+	luadbg_enable_log(false)
 
 	iw_init()
 	iw_set_font(vfs_get_workdir()..'/res/font/simsun.ttc')
@@ -40,9 +40,6 @@ do
 	cx_client:set_on_connection(function(conn)
 		-- cxlog_info('conn-connected : ', conn:connected())
 	end)
-
-
-
 	cx_client:set_on_message(function(conn, buf, ts)
 		while buf:readable_size() >= CX_MSG_HEADER_LEN do
 			local len = buf:PeekAsInt()
@@ -60,12 +57,15 @@ do
 	cx_client:set_auto_reconnect(true)
 	
 	launcher_init()
+	timer_manager_init()
 	event_loop:RunTaskEvery(function()
 		if iw_should_close() then 
 			event_loop:Quit()
+			timer_manager_deinit()
 			return
 		end
 		iw_begin_render()
+		timer_manager_update(16)
 		launcher_update()
 		iw_end_render()
 	end,16)

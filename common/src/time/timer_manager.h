@@ -4,7 +4,6 @@
 #include <functional>
 #include "singleton.h"
 
-using tstring=std::string;
 class Timer;
 
 class TimerManager final: public Singleton<TimerManager>
@@ -13,35 +12,30 @@ public:
 	TimerManager();
 	~TimerManager();
 
-	void Update();
+	void Update(float64 dt);
 
-	bool CreateTimer(const tstring & name, float32 targetTime, bool countingDown,
-		bool loop, std::function<void()> func, bool paused = false);
-	bool RemoveTimer(const tstring & name);
-	void PauseTimer(const tstring & name, bool paused);
-	void SetCountingDownTimer(const tstring & name, bool countingDown);
-	void SetLoopTimer(const tstring & name, bool looping);
-	void ResetTimer(const tstring & name, bool paused = false);
-	void SetTargetTimeTimer(const tstring & name, float32 targetTime, bool reset = true, bool paused = false);
-	void SetFunctionTimer(const tstring & name, const std::function<void()> & func);
-	float64 ForceEndTimer(const tstring & name);
-	void ForwardTimer(const tstring & name, float64 time);
+	bool CreateTimer(const std::string& name, float32 targetTime, std::function<void()> func, bool loop = false, bool countingDown = true, bool paused = false);
+	bool RemoveTimer(const std::string & name);
+	void PauseTimer(const std::string & name, bool paused);
+	void SetCountingDownTimer(const std::string & name, bool countingDown);
+	void SetLoopTimer(const std::string & name, bool looping);
+	void ResetTimer(const std::string & name, bool paused = false);
+	void SetTargetTimeTimer(const std::string & name, float32 targetTime, bool reset = true, bool paused = false);
+	void SetFunctionTimer(const std::string & name, const std::function<void()> & func);
+	float64 ForceEndTimer(const std::string & name);
+	void ForwardTimer(const std::string & name, float64 time);
 	void ForwardAllTimers(float64 time);
 
-	int32 GetTimerMinutes(const tstring & name) const;
-	int32 GetTimerSeconds(const tstring & name) const;
-	int32 GetTimerTotalSeconds(const tstring & name) const;
-	float64 GetTimerTargetTime(const tstring & name) const;
-	float64 GetTimerAccurateTime(const tstring & name) const;
+	int32 GetTimerMinutes(const std::string & name) const;
+	int32 GetTimerSeconds(const std::string & name) const;
+	int32 GetTimerTotalSeconds(const std::string & name) const;
+	float64 GetTimerTargetTime(const std::string & name) const;
+	float64 GetTimerAccurateTime(const std::string & name) const;
 
 private:
-	std::map<const tstring, ::Timer> m_TimerContainer;
-	std::map<const tstring, ::Timer> m_GarbageContainer;
+	std::map<const std::string, ::Timer> m_TimerContainer;
+	std::map<const std::string, ::Timer> m_GarbageContainer;
 
-	TimerManager(const TimerManager& yRef);
-	TimerManager(TimerManager&& yRef);
-	TimerManager& operator=(const TimerManager& yRef);
-	TimerManager& operator=(TimerManager&& yRef);
 };
 
 #define TIMER_MANAGER_INTANCE TimerManager::GetInstance()

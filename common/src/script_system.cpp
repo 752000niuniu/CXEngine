@@ -11,6 +11,7 @@
 #include "net_thread_queue.h"
 #include "lua_net.h"
 #include "luadbg.h"
+#include "time/timer_manager.h"
 
 #ifdef SIMPLE_ENGINE
 #include "window.h"
@@ -32,7 +33,6 @@
 
 #ifndef CXLUAX
 #include "time/time_manager.h"
-#include "time/timer_manager.h"
 #include "protocol.h"
 #include "actor/action.h"
 #include "actor/actor_manager.h"
@@ -58,8 +58,9 @@ void script_system_prepare_init()
 	luaopen_cximgui(L);
 	luaopen_logger(L);
 	luaopen_ne_support(L);
-#ifndef CXLUAX
 	luaopen_timer_manager(L);
+
+#ifndef CXLUAX
 	luaopen_actor(L);
 	luaopen_actor_manager(L);
 	luaopen_protocol(L);

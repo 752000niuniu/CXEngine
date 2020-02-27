@@ -25,6 +25,9 @@ add_executable(cxluax
   ${COMMON_SOURCE_DIR}/imgui/cximgui.cpp
   ${COMMON_SOURCE_DIR}/imgui/imgui_impl_glfw.cpp
   ${COMMON_SOURCE_DIR}/imgui/imgui_impl_opengl3.cpp
+  ${COMMON_SOURCE_DIR}/time/timer.cpp
+  ${COMMON_SOURCE_DIR}/time/timer_manager.cpp
+
   src/window.cpp
 )
 

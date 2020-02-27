@@ -23,15 +23,10 @@
         {
             "name": "Launcher",
             "type": "cxlua",
-            "request": "launch",
+            "request": "attach",
             "ip": "127.0.0.1",
             "port": 9400,
             "cwd": "${workspaceFolder}\\",
-            "program" : "bin\\Debug\\cxluax.exe",
-            "args" : [
-                "--script_path=scripts/launcher/",
-                "-Debug"
-            ]
         },
         {
             "name": "ClientLaunch",
@@ -58,6 +53,19 @@
             "args" : [
                 "--script_path=scripts/server/"
             ] 
+        },
+        {
+            "name": "LauncherLaunch",
+            "type": "cxlua",
+            "request": "launch",
+            "ip": "127.0.0.1",
+            "port": 9400,
+            "cwd": "${workspaceFolder}\\",
+            "program": "bin\\Debug\\cxluax.exe",
+            "args": [
+                "--script_path=scripts/launcher/",
+                "-Debug"
+            ]
         },
     ]
 }

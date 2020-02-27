@@ -16,7 +16,7 @@ TimerManager::~TimerManager()
 
 }
 
-void TimerManager::Update()
+void TimerManager::Update(float64 dt)
 {
 	//clean up the trash
 	for (auto & it : m_GarbageContainer)
@@ -27,7 +27,7 @@ void TimerManager::Update()
 
 	for (auto it = m_TimerContainer.begin(); it != m_TimerContainer.end();)
 	{
-		if (it->second.Update())
+		if (it->second.Update(dt))
 		{
 			m_TimerContainer.erase(it++);
 		}
@@ -38,18 +38,8 @@ void TimerManager::Update()
 	}
 }
 
-bool TimerManager::CreateTimer(const std::string & name, float32 targetTime,
-	bool countingDown, bool loop,
-	std::function<void()> func, bool paused)
+bool TimerManager::CreateTimer(const std::string& name, float32 targetTime, std::function<void()> func, bool loop, bool countingDown, bool paused)
 {
-	for (auto & it : m_TimerContainer)
-	{
-		if (it.first == name)
-		{
-			return false;
-		}
-	}
-
 	for (auto it = m_TimerContainer.begin(); it != m_TimerContainer.end(); ++it)
 	{
 		if (it->first == name)
@@ -263,39 +253,41 @@ void timer_manager_init()
 }
 
 
-void timer_manager_update()
+int timer_manager_update(lua_State*L)
 {
-	TIMER_MANAGER_INTANCE->Update();
+	float dt = (float)lua_tonumber(L, 1);
+	TIMER_MANAGER_INTANCE->Update(dt);
+	return 0;
 }
+
 void timer_manager_deinit()
 {
 	TIMER_MANAGER_INTANCE->DeleteSingleton();
 }
 
-int timer_create(lua_State* L){
+int timer_manager_add_timer(lua_State* L){
 	const char* name = lua_tostring(L, 1);
-	float target_time = (float)lua_tonumber(L, 2);
-	int opt_argn = 3;
-	bool counter_down = true;
-	if (lua_isboolean(L, opt_argn)) {
-		counter_down = lua_toboolean(L, opt_argn++);
-	}
-	bool loop = false;
-	if (lua_isboolean(L, opt_argn)) {
-		loop = lua_toboolean(L, opt_argn++);
-	}
-	int ref = -1;
-	if (lua_isfunction(L, opt_argn)) {
-		lua_pushvalue(L, opt_argn);
-		ref = luaL_ref(L, LUA_REGISTRYINDEX);
-		TIMER_MANAGER_INTANCE->CreateTimer(name, target_time, counter_down, loop, [ref]() {
-			if (ref != -1) {
-				lua_State* L = script_system_get_luastate();
-				lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
-				int res = lua_pcall(L, 0, 0, 0);
-				check_lua_error(L, res);
+	float dur = (float)lua_tonumber(L, 2);
+	bool loop = lua_toboolean(L, 4);
+	
+	if (lua_isfunction(L, 3)) {
+		lua_pushvalue(L, 3);
+		int ref = luaL_ref(L, LUA_REGISTRYINDEX);
+		TIMER_MANAGER_INTANCE->CreateTimer(name, dur, [L, name, ref, loop]() {
+			lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
+			int res = lua_pcall(L, 0, loop ? 1 : 0, 0);
+			check_lua_error(L, res);
+			if (loop) {
+				bool end = lua_toboolean(L, -1);
+				if (end) {
+					TIMER_MANAGER_INTANCE->RemoveTimer(name);
+					luaL_unref(L, LUA_REGISTRYINDEX, ref);
+				}
+			}
+			else {
 				luaL_unref(L, LUA_REGISTRYINDEX, ref);
-			}});
+			}
+		}, loop);
 	}
 	return 0;
 }
@@ -307,9 +299,9 @@ void timer_remove(){
 void luaopen_timer_manager(lua_State* L)
 {
 	script_system_register_function(L, timer_manager_init);
-	script_system_register_function(L, timer_manager_update);
+	script_system_register_luac_function(L, timer_manager_update);
 	script_system_register_function(L, timer_manager_deinit);
 
-	script_system_register_luac_function(L, timer_create);
+	script_system_register_luac_function(L, timer_manager_add_timer);
 	script_system_register_function(L, timer_remove);
 }

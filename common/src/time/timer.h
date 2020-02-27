@@ -16,7 +16,7 @@ public:
 	Timer& operator=(const Timer& yRef);
 	Timer& operator=(Timer&& yRef);
 
-	bool Update();
+	bool Update(float64 dt);
 	void SetPaused(bool paused);
 	void SetCountingDown(bool countingDown);
 	void SetLoop(bool looping);

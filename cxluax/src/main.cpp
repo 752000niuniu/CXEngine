@@ -14,6 +14,7 @@
 #include <ezio/io_service_context.h>
 #include "cxlua.h"
 #include "net_thread_queue.h"
+#include <time/timer_manager.h>
 
 
 int main(int argc, char  *argv[])
@@ -31,6 +32,7 @@ int main(int argc, char  *argv[])
 	luaopen_ne_support(L);
 	luaopen_window(L);
 	luaopen_cxlua(L);
+	luaopen_timer_manager(L);
 
 	int res = luaL_loadbuffer(L, script_system_lua_code, strlen(script_system_lua_code), "__script_system_lua_code__");
 	check_lua_error(L, res);

@@ -77,7 +77,7 @@ Timer& Timer::operator=(Timer&& yRef)
 	return *this;
 }
 
-bool Timer::Update()
+bool Timer::Update(float64 dt)
 {
 	if (m_Paused)
 	{
@@ -85,9 +85,7 @@ bool Timer::Update()
 	}
 	if (m_CountingDown && m_CurrentTime >= 0)
 	{
-#ifndef SIMPLE_SERVER
-		m_CurrentTime -= WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
-#endif
+		m_CurrentTime -= dt;
 		if (m_CurrentTime < 0)
 		{
 			m_ExcecutingFunction();
@@ -102,9 +100,7 @@ bool Timer::Update()
 	}
 	else if (!m_CountingDown && m_CurrentTime <= m_TargetTime)
 	{
-#ifndef SIMPLE_SERVER
-		m_CurrentTime -= WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
-#endif
+		m_CurrentTime -= dt;
 		if (m_CurrentTime > m_TargetTime)
 		{
 			m_ExcecutingFunction();
