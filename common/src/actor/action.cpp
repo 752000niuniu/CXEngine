@@ -756,7 +756,18 @@ void ActionStateMachine::EnsureLoadAction(int action)
 	if (action < ACTION_IDLE || action >= ACTION_COUNT)return;
 
 	if (m_AvatarActions.find(action) == m_AvatarActions.end()) {
-		auto resid = RESOURCE_MANAGER_INSTANCE->GetActorActionResID(m_Actor->GetProperty(PROP_ACTOR_TYPE).toInt(), m_AvatarID, action);
+		int avatar_type = 0;
+		int actor_type = m_Actor->GetProperty(PROP_ACTOR_TYPE).toInt();
+		if (actor_type == ACTOR_TYPE_PLAYER) {
+			avatar_type = AVATAR_TYPE_ROLE;
+		}
+		else if (actor_type == ACTOR_TYPE_SUMMON) {
+			avatar_type = AVATAR_TYPE_SUMMON;
+		}
+		else if (actor_type == ACTOR_TYPE_NPC) {
+			avatar_type = AVATAR_TYPE_NPC;
+		}
+		auto resid = RESOURCE_MANAGER_INSTANCE->GetActorActionResID(avatar_type, m_AvatarID, action);
 		if (resid == 0)return;
 		if (m_Actor->GetPalette().size() != 0) {
 			m_AvatarActions[action] = new Animation(resid, &m_Actor->GetPalette());
@@ -888,5 +899,7 @@ int action_calc_run_to_pos(lua_State*L){
 void luaopen_action(lua_State* L)
 {
 	script_system_register_luac_function(L, action_calc_run_to_pos);
+	script_system_register_function(L, action_get_name);
+	
 }
 

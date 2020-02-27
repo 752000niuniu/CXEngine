@@ -40,6 +40,12 @@ end
 local PlayerNameSB = imgui.CreateStrbuf('test',256)
 local ToSceneFilterSB = imgui.CreateStrbuf('',256)
 local LocalPlayerDebugButtons = {
+    {   '野外遇怪',function(player)
+        net_manager_player_dostring(string.format([[ 
+            player:SetProperty(PROP_SETTING_WILD_BATTLE, %s)
+        ]],  not player:GetProperty(PROP_SETTING_WILD_BATTLE)))
+    end
+    },
     {   'BGM',function(player)
         audio_manager_toggle_bgm()
         net_manager_player_dostring(string.format([[ 
@@ -52,7 +58,9 @@ local LocalPlayerDebugButtons = {
         end
     },{
         '客户端重载', function(player)
+            local scene_name = player:GetSceneName()
             actor_manager_clear_all()
+            
             script_system_dofile('../share/enums.lua')
             script_system_dofile('actor_metatable.lua')
             script_system_dofile('../share/actor_metatable.lua')
@@ -60,7 +68,8 @@ local LocalPlayerDebugButtons = {
 
             script_system_dofile('input_manager.lua')
 
-            scene_manager_reload()
+            script_system_dofile('scene_manager.lua')
+            scene_manager_reload(scene_name)
             game_map_reset_map_offset()
 
             script_system_dofile('actor_manager.lua')

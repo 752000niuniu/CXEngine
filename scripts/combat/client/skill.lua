@@ -2,6 +2,9 @@
 function calc_run_to_pos(actor, target)
     local dir = actor:GetDir()
     local attackAvatar = actor:GetAvatar(ACTION_ATTACK)
+    if not attackAvatar then
+        return 0,0
+    end
     attackAvatar:SetDir(dir)
     local targetAvatar = target:GetAvatar(ACTION_BEHIT)
     targetAvatar:SetDir(math_get_reverse_dir(dir))

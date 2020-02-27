@@ -259,47 +259,55 @@ function init_role_sound()
 end
 
 function read_avatar_role()
-    local tbl,col_names =  utils_parse_tsv('avatar_role',{
-        { name = 'ID' } ,
-        { name = 'name' } ,
-        { name = 'role' } ,
-        { name = 'weapon_type' } ,
-        { name = 'idle' } ,
-        { name = 'walk' } ,
-        { name = 'sit' } ,
-        { name = 'angry' } ,
-        { name = 'sayhi' } ,
-        { name = 'dance' } ,
-        { name = 'salute' } ,
-        { name = 'clps' } ,
-        { name = 'cry' } ,
-        { name = 'batidle' } ,
-        { name = 'attack' } ,
-        { name = 'cast' } ,
-        { name = 'behit' } ,
-        { name = 'runto' } ,
-        { name = 'runback' } ,
-        { name = 'defend' } ,
-        { name = 'unknown' } ,
-        { name = 'atk_key', fmt='i', def=0} ,
-    })
-    local ret = {}
-    for i, row in ipairs(tbl) do
-        ret[row.ID] = row
+    local ret = utils_parse_tsv_by_main_key('avatar_role',nil,'ID')
+    for k, row in pairs(ret) do
+        if row.idle == '' and row.batidle ~='' then
+            row.idle = row.batidle
+        end
+        if row.batidle =='' and row.idle~='' then
+            row.batidle = row.idle
+        end
     end
     return ret
 end
 
 function read_avatar_weapon()
-    return utils_parse_tsv_by_main_key('avatar_weapon',nil,'ID')
+    local ret = utils_parse_tsv_by_main_key('avatar_weapon',nil,'ID')
+    for k, row in pairs(ret) do
+        if row.idle == '' and row.batidle ~='' then
+            row.idle = row.batidle
+        end
+        if row.batidle =='' and row.idle~='' then
+            row.batidle = row.idle
+        end
+    end
+    return ret
 end
 
 function read_avatar_scene_npc_table()
-    return utils_parse_tsv_by_main_key('avatar_scene_npc',nil,'ID')
+    local ret = utils_parse_tsv_by_main_key('avatar_scene_npc',nil,'ID')
+    for k, row in pairs(ret) do
+        if row.idle == '' and row.batidle ~='' then
+            row.idle = row.batidle
+        end
+        if row.batidle =='' and row.idle~='' then
+            row.batidle = row.idle
+        end
+    end
+    return ret
 end
 
 function read_avatar_summon_table()
-    return utils_parse_tsv_by_main_key('avatar_summon',nil, 'ID')
+    local ret = utils_parse_tsv_by_main_key('avatar_summon',nil,'ID')
+    for k, row in pairs(ret) do
+        if row.idle == '' and row.batidle ~='' then
+            row.idle = row.batidle
+        end
+        if row.batidle =='' and row.idle~='' then
+            row.batidle = row.idle
+        end
+    end
+    return ret
 end
 
 function read_scene_monster()

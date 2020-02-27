@@ -112,3 +112,4 @@ prop_spell_resistance_skill_lv	int	0	1
 prop_pal_matrix	str	{}	1
 prop_is_auto_command	bool	false	1
 prop_setting_bgm	bool	true	1
+prop_setting_wild_battle	bool	true	1

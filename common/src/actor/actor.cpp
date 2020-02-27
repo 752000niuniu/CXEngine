@@ -696,7 +696,7 @@ int actor_move_on_screen_with_duration(lua_State*L) {
 	float offx = (float)lua_tonumber(L, 2);
 	float offy = (float)lua_tonumber(L, 3);
 	float dur  = (float)lua_tonumber(L, 4);
-	bool keep_dir = lua_toboolean(L, 5) != 0;
+	bool keep_dir = lua_toboolean(L, 5);
 	actor->GetMoveHandle()->MoveOnScreenWithDuration({ offx,offy }, dur, keep_dir);
 #endif
 	return 0;

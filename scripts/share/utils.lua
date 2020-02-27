@@ -595,3 +595,36 @@ end
 utils_parse_tsv = function(name, columns)
     return utils_parse_tsv_file(vfs_get_tsvpath(name), columns)
 end
+
+function utils_get_action_res_id(avatar_type, id, action_id)
+    local tbl
+    local action_name = action_get_name(action_id)
+    cxlog_info('utils_get_action_res_id', avatar_type, id, action_name)
+    if avatar_type == AVATAR_TYPE_ROLE then
+        tbl = content_system_get_table('avatar_role') 
+    elseif avatar_type == ACTOR_TYPE_NPC then
+        tbl = content_system_get_table('avatar_scene_npc') 
+        if not tbl[id] then
+            tbl = content_system_get_table('avatar_summon') 
+        end
+    elseif avatar_type == ACTOR_TYPE_SUMMON then
+        tbl = content_system_get_table('avatar_summon') 
+        if not tbl[id] then
+            tbl = content_system_get_table('avatar_scene_npc') 
+        end
+    elseif avatar_type == AVATAR_TYPE_WEAPON then
+        tbl = content_system_get_table('avatar_weapon') 
+    end
+
+    local idstr = tbl[id][action_name]
+    local ids = utils_string_split(idstr,',')
+    if #ids > 1 then
+        local which = math.random(1,#ids)
+        local resstr = ids[which]
+        local resid  = res_parse_resid(resstr)
+        return resid
+    else
+        local resid  = res_parse_resid(idstr)
+        return resid
+    end
+end

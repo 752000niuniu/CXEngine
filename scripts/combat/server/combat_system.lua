@@ -37,8 +37,16 @@ function combat_system_create_pve_battle(player)
 	local scene_id = player:GetProperty(PROP_SCENE_ID)
 	local scene_name = player:GetSceneName()
 	local scene_monster_tbl = content_system_get_table('scene_monster')
-	local monsters = scene_monster_tbl[scene_name].monster
-	if not monsters then return end
+	local avatar_summon = content_system_get_table('avatar_summon')
+	local candidates = scene_monster_tbl[scene_name].monster
+	if not candidates then return end
+	local monsters = {}
+	for i,monster in ipairs(candidates) do
+		if avatar_summon[monster] then
+			table.insert(monsters,monster)
+		end
+	end
+	if #monsters == 0 then return end
 
 	local battle = BattleMT:new()
 	combat_system_add_team_by_actor(battle, player, TEAM_TYPE_ATTACKER)	

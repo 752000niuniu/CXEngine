@@ -84,12 +84,15 @@ function on_scene_manager_init_scene(name)
     if scene_monster_tbl[name] and not name:match('大雁塔%d层') then
         timer_manager_add_timer('TimerWildBattle',5000,function()
             local player = actor_manager_fetch_local_player()
+            if not player:GetProperty(PROP_SETTING_WILD_BATTLE) then return end
             if player:IsCombat() then
                 return
             else
-                local req = {}
-                req.pid = player:GetID()
-                net_send_message(PTO_C2S_COMBAT_PVE_START, cjson.encode(req))
+                if player:IsMoving() then
+                    local req = {}
+                    req.pid = player:GetID()
+                    net_send_message(PTO_C2S_COMBAT_PVE_START, cjson.encode(req))
+                end
             end
         end, true)    
     end
@@ -154,6 +157,8 @@ function on_scene_manager_draw(name)
 end
 
 function scene_manager_reload(name)
+    on_scene_manager_uninit_scene(name)
+    on_scene_manager_init_scene(name)
 end
 
 local KEY_RELEASE_MOVE_AMOUT = 30

@@ -27,6 +27,7 @@ enum EAvatarTableType
 {
 	AVATAR_TYPE_ROLE = 0,
 	AVATAR_TYPE_WEAPON,
+	AVATAR_TYPE_SUMMON,
 	AVATAR_TYPE_NPC,
 	AVATAR_TYPE_COUNT
 };
@@ -74,32 +75,19 @@ public:
 	uint64_t GetActorActionResID(int actorType, CXString id, int actionID);
 	uint64_t GetWeaponActionResID(CXString id, int actionID);
 
-	uint64_t GetActionResID(int type, int roleID, int actionID);
-	uint64_t GetWeaponResID(int weaponID, int actionID);
-
-	int GetRoleID(CXString id);
-
-	int GetRoleIDByName(int actorType, const char* templ_name);
 	void OnUpdate();
 
-	int ActorTypeToAvatarType(int actorType);
 
 	void ExportWas(uint64_t id,CXString path);
 	
 
 private:
-	utils::tsv* FindAvatarTable(int actor_type);
 	ResourceManager();
 
 	~ResourceManager();
 
 	std::map<uint64_t, NE::PalSchemes> m_PalSchemesMap;
 	std::map<std::string, Texture*> Textures;
-	
-	utils::tsv m_AvatarRoleTSV;
-	utils::tsv m_AvatarWeaponTSV;
-	utils::tsv m_AvatarNpcTSV; 
-
 	std::map<uint64_t, std::vector<PalSpriteInfo*>> m_Sprites;
 };
 #define  RESOURCE_MANAGER_INSTANCE ResourceManager::GetInstance()

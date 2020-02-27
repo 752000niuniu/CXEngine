@@ -73,7 +73,7 @@ enum EActorPropType
 end
 
 function solve()
-    local tbl  = utils_parse_tsv(vfs_get_tsvpath('actor_template'),{
+    local tbl  = utils_parse_tsv('actor_template',{
         { name='name'},
         { name='type'},
         { name='def'},
