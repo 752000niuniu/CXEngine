@@ -3,8 +3,8 @@ function content_system_get_table(name)
     return content_tables[name] 
 end
 
-function content_system_set_table(name, tbl)
-    content_tables[name] = tbl
+function content_system_set_table(name, func, ...)
+    content_tables[name] = perf_call('content_system_set_table '..name,func, ...)
 end
 
 
@@ -50,7 +50,7 @@ function read_map_table()
     return tbl
 end
 function read_npc_table()
-    local tbl  = utils_parse_tsv(vfs_get_tsvpath('avatar_npc'),{
+    local tbl  = utils_parse_tsv('avatar_npc',{
         { name = 'ID'},
         { name = 'can_take', fmt='i', def =0},
         { name = 'idle' },
@@ -81,7 +81,7 @@ function read_npc_table()
 end
 
 function read_actor_template()
-    local tbl  = utils_parse_tsv(vfs_get_tsvpath('actor_template'),{
+    local tbl  = utils_parse_tsv('actor_template',{
         { name='name'},
         { name='type'},
         { name='def'},
@@ -92,7 +92,7 @@ end
 
 
 function init_skill_template_table()
-    local tbl  = utils_parse_tsv(vfs_get_tsvpath('skill'),{
+    local tbl  = utils_parse_tsv('skill',{
         { name='ID', fmt='i',def=0},
         { name='name'},
         { name='sound'},
@@ -100,7 +100,7 @@ function init_skill_template_table()
         { name='sub_type',fmt='i',def=0},
         { name='school',fmt='i',def=0},
         { name='combo', fmt='i', def=0},
-        { name='atk_anim'},
+        { name='atk_anim', fmt='res', def=0 },
         { name='group_kill', fmt='i', def=0},
         { name='cast_anim', fmt='i', def=0},
         { name='act_turn', fmt='i', def=0}
@@ -108,31 +108,29 @@ function init_skill_template_table()
 
     local ret = {}
     for i,row in ipairs(tbl) do
-        row.atk_anim = res_parse_resid(row.atk_anim)
         ret[row.ID] = row
     end
     return ret
 end
 
 function init_buff_template_table()
-    local tbl  = utils_parse_tsv(vfs_get_tsvpath('buff'),{
+    local tbl  = utils_parse_tsv('buff',{
         { name='ID', fmt='i'},
         { name='name'},
         { name='type',def=0},
-        { name='buff_anim'},
+        { name='buff_anim', fmt='res', def=0},
         { name='turn', fmt='i', def=0},
     })
 
     local ret = {}
     for i,row in ipairs(tbl) do
-        row.buff_anim = res_parse_resid(row.buff_anim)
         ret[row.ID] = row
     end
     return ret
 end
 
 function init_school_templ_table()
-    local tbl = utils_parse_tsv(vfs_get_tsvpath('school'),{
+    local tbl = utils_parse_tsv('school',{
         {name = 'ID' , fmt = 'i'},
         {name = 'name'}
     })
@@ -144,7 +142,7 @@ function init_school_templ_table()
 end
 
 function init_equip_templ_table()
-    local tbl = utils_parse_tsv(vfs_get_tsvpath('equip'),{
+    local tbl = utils_parse_tsv('equip',{
         {name = 'name'},
         {name = 'type'},
         {name = 'base_target', fmt = 'n' , def = 0},
@@ -175,7 +173,7 @@ local function prop_name_to_id(name)
 end
 
 function init_npc_table()
-    local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('npc'),{
+    local tbl,col_names = utils_parse_tsv('npc',{
         { name = 'ID' ,fmt='i'},
         { name = 'scene_id', fmt='i', def =0  },
         { name = 'name' },
@@ -187,7 +185,7 @@ function init_npc_table()
 end
 
 function init_summon_quality_table()
-    local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('summon_quality'),{
+    local tbl,col_names = utils_parse_tsv('summon_quality',{
         { name = 'name' },
         { name = 'take_level' },
         { name = 'battle_level' },
@@ -208,7 +206,7 @@ function init_summon_quality_table()
 end
 
 function init_scene_table()
-    local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('scene'),{
+    local tbl,col_names = utils_parse_tsv('scene',{
         { name = 'ID', fmt='i', def=0},
         { name = 'name'},
         { name = 'entry_pos'},
@@ -227,7 +225,7 @@ function init_scene_table()
 end
 
 function init_transport_table()
-    local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('transport'),{
+    local tbl,col_names = utils_parse_tsv('transport',{
         { name = 'ID', fmt='i' },
         { name = 'name'},
         { name = 'scene', fmt='i' },
@@ -243,14 +241,7 @@ end
 
 
 function init_summon_sound() 
-    local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('sound_summon'),{
-        { name = 'ID' } ,
-        { name = 'clps' } ,
-        { name = 'attack' } ,
-        { name = 'cast' } ,
-        { name = 'behit' } ,
-        { name = 'defend' } ,
-    })
+    local tbl,col_names = utils_parse_tsv('sound_summon',nil)
     local ret = {}
     for i, row in ipairs(tbl) do
         ret[row.ID] = row
@@ -259,14 +250,7 @@ function init_summon_sound()
 end
 
 function init_role_sound() 
-    local tbl,col_names = utils_parse_tsv(vfs_get_tsvpath('sound_role'),{
-        { name = 'ID' },
-        { name = 'clps' },
-        { name = 'attack' },
-        { name = 'cast' },
-        { name = 'behit' },
-        { name = 'defend' },
-    })
+    local tbl,col_names = utils_parse_tsv('sound_role',nil)
     local ret = {}
     for i, row in ipairs(tbl) do
         ret[row.ID] = row
@@ -275,7 +259,7 @@ function init_role_sound()
 end
 
 function read_avatar_role()
-    local tbl,col_names =  utils_parse_tsv(vfs_get_tsvpath('avatar_role'),{
+    local tbl,col_names =  utils_parse_tsv('avatar_role',{
         { name = 'ID' } ,
         { name = 'name' } ,
         { name = 'role' } ,
@@ -307,56 +291,29 @@ function read_avatar_role()
 end
 
 function read_avatar_weapon()
-    return utils_parse_tsv_by_main_key(vfs_get_tsvpath('avatar_weapon'),{
-        { name = 'ID' } ,
-        { name = 'name' } ,
-        { name = 'type' } ,
-        { name = 'role' } ,
-        { name = 'level' } ,
-        { name = 'idle' } ,
-        { name = 'walk' } ,
-        { name = 'sit' } ,
-        { name = 'angry' } ,
-        { name = 'sayhi' } ,
-        { name = 'dance' } ,
-        { name = 'salute' } ,
-        { name = 'clps' } ,
-        { name = 'cry' } ,
-        { name = 'batidle' } ,
-        { name = 'attack' } ,
-        { name = 'cast' } ,
-        { name = 'behit' } ,
-        { name = 'runto' } ,
-        { name = 'runback' } ,
-        { name = 'defend' } ,
-        { name = 'unknown' } ,
-    },'ID')
+    return utils_parse_tsv_by_main_key('avatar_weapon',nil,'ID')
 end
 
 function read_avatar_scene_npc_table()
-    return utils_parse_tsv_by_main_key(vfs_get_tsvpath('avatar_scene_npc'),{
-        { name = 'ID' } ,
-        { name = 'idle' } ,
-        { name = 'walk' } ,
-        { name = 'sit' } ,
-    },'ID')
+    return utils_parse_tsv_by_main_key('avatar_scene_npc',nil,'ID')
 end
 
 function read_avatar_summon_table()
-    return utils_parse_tsv_by_main_key(vfs_get_tsvpath('avatar_summon'),{
-        { name = 'ID' },
-        { name = 'idle' },
-        { name = 'walk' },
-        { name = 'clps' },
-        { name = 'batidle' },
-        { name = 'attack' },
-        { name = 'cast' },
-        { name = 'behit' },
-        { name = 'runto' },
-        { name = 'runback' },
-        { name = 'defend' },
-        { name = 'unknown' },
-    }, 'ID')
+    return utils_parse_tsv_by_main_key('avatar_summon',nil, 'ID')
+end
+
+function read_battle_map()
+    local tbl,col_names = utils_parse_tsv('battle_map')
+    local ret = {}
+    for i,row in ipairs(tbl) do
+        local ss = utils_string_split(row.monster,'、')
+        row.monster = {}
+        for i,s in ipairs(ss) do
+            table.insert(row.monster, s)
+        end
+        ret[row.name] = row
+    end
+    
 end
 
 function perf_call(name, f,...)
@@ -370,23 +327,23 @@ end
 function content_system_init()
     cxlog_info('content_system_init')
     
-    content_system_set_table('avatar_role', perf_call('read_avatar_role', read_avatar_role) )
-    content_system_set_table('avatar_weapon', perf_call('read_avatar_weapon', read_avatar_weapon) )
-    content_system_set_table('avatar_npc', perf_call('read_npc_table', read_npc_table) )
-    content_system_set_table('avatar_scene_npc', perf_call('read_avatar_scene_npc_table', read_avatar_scene_npc_table) )
-    content_system_set_table('avatar_summon', perf_call('read_avatar_summon_table', read_avatar_summon_table) )
-    content_system_set_table('magic', perf_call('read_magic_table', read_magic_table) )
-    content_system_set_table('maps', perf_call('read_map_table', read_map_table) )
-    content_system_set_table('actor_template', perf_call('read_actor_template', read_actor_template) )
-    content_system_set_table('skill', perf_call('init_skill_template_table', init_skill_template_table) )
-    content_system_set_table('buff', perf_call('init_buff_template_table', init_buff_template_table) )
-    content_system_set_table('school', perf_call('init_school_templ_table', init_school_templ_table) )
-    content_system_set_table('equip', perf_call('init_equip_templ_table', init_equip_templ_table) )
-    content_system_set_table('npc', perf_call('init_npc_table', init_npc_table) )
-    content_system_set_table('summon_quality', perf_call('init_summon_quality_table', init_summon_quality_table) )
-    content_system_set_table('scene', perf_call('init_scene_table', init_scene_table) )
-    content_system_set_table('transport', perf_call('init_transport_table', init_transport_table) )
-    content_system_set_table('summon_sound', perf_call('init_summon_sound', init_summon_sound) )
-    content_system_set_table('role_sound', perf_call('init_role_sound', init_role_sound) )
-    
+    content_system_set_table('avatar_role',  read_avatar_role) 
+    content_system_set_table('avatar_weapon',  read_avatar_weapon) 
+    content_system_set_table('avatar_npc',  read_npc_table) 
+    content_system_set_table('avatar_scene_npc',  read_avatar_scene_npc_table) 
+    content_system_set_table('avatar_summon',  read_avatar_summon_table) 
+    content_system_set_table('magic',  read_magic_table) 
+    content_system_set_table('maps',  read_map_table) 
+    content_system_set_table('actor_template',  read_actor_template) 
+    content_system_set_table('skill',  init_skill_template_table) 
+    content_system_set_table('buff',  init_buff_template_table) 
+    content_system_set_table('school',  init_school_templ_table) 
+    content_system_set_table('equip',  init_equip_templ_table) 
+    content_system_set_table('npc',  init_npc_table) 
+    content_system_set_table('summon_quality',  init_summon_quality_table) 
+    content_system_set_table('scene',  init_scene_table) 
+    content_system_set_table('transport',  init_transport_table) 
+    content_system_set_table('summon_sound',  init_summon_sound) 
+    content_system_set_table('role_sound',  init_role_sound) 
+    content_system_set_table('battle_map', read_battle_map)
 end

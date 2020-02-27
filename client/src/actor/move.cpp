@@ -109,13 +109,6 @@ void MoveHandle::MoveOnScreenWithDuration(Pos offset, float move_dur,bool keepdi
 }
 void MoveHandle::MoveTo(float x, float y)
 {
-	m_bMoveWithDuration = false;
-	m_bKeepDir = false;
-	if (!m_Actor->GetScene())return;
-	if (!m_Actor->GetProperty(PROP_CAN_MOVE).toBool())return;
-	GameMap* map = m_Actor->GetScene()->GetGameMap();
-	if (!map)return;
-
 	Pos pos = m_Actor->GetPos();
 	if (GMath::Astar_GetDistanceSquare(pos.x, pos.y, x, y) < 16) {
 		m_Actor->SetPos(x, y);
@@ -123,6 +116,11 @@ void MoveHandle::MoveTo(float x, float y)
 		return;
 	}
 
+	if (!m_Actor->GetScene())return;
+	if (!m_Actor->GetProperty(PROP_CAN_MOVE).toBool())return;
+	GameMap* map = m_Actor->GetScene()->GetGameMap();
+	if (!map)return;
+	
 	if(m_Actor->IsCombat()){
 		m_BackupMoveList.clear();
 		m_MoveList.clear();
@@ -144,7 +142,13 @@ void MoveHandle::MoveTo(float x, float y)
 		info.actionID = ACTION_WALK;
 		m_Actor->GetASM()->PushAction(info);
 	}
-	
+	m_bMoveWithDuration = false;
+	m_bKeepDir = false;
 	m_bMove = true;
+}
+
+void MoveHandle::StopMove()
+{
+	m_bMove = false;
 }
 

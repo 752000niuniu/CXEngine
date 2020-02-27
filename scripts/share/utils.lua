@@ -591,3 +591,7 @@ imgui.InputTextEx = function(name, sb, width)
         return imgui.InputText(name, sb)
     end
 end
+
+utils_parse_tsv = function(name, columns)
+    return utils_parse_tsv_file(vfs_get_tsvpath(name), columns)
+end

@@ -16,6 +16,7 @@ public:
 	void MoveOnScreenWithDuration(Pos offset,float move_dur,bool keep_dir);
 	void MoveTo(float x, float y);
 	bool IsMove() { return m_bMove; };
+	void StopMove();
 	
 private:
 	std::list<Pos> m_MoveList;

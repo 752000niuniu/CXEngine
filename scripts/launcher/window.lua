@@ -202,12 +202,30 @@ function launcher_update()
 		-- end
 
 		if imgui.Button('Test') then
-			local cnt = 1
-			timer_manager_add_timer('test1',100,function()
-				print('hello' ..cnt)
-				cnt = cnt + 1
-				return cnt > 5
-			end,true)
+
+			local tbl,cnames = utils_parse_tsv('battle_map')
+			local tbl2,cnames= utils_parse_tsv('avatar_summon')
+
+			local names1={}
+			for i,row in ipairs(tbl) do
+				local sps = utils_string_split(row.monster,'、') 
+				for i,k in ipairs(sps) do
+					names1[k] = true
+				end
+			end
+
+			local names2={}
+			for i,row in ipairs(tbl2) do
+				names2[row.ID] = true
+			end
+
+			local remain={}
+			for k,v in pairs(names1) do
+				if not names2[k] then
+					table.insert(remain,k)
+				end
+			end
+			local s=1;
 		end
 
 		if imgui.Button('HandleAvatarNpc') then
