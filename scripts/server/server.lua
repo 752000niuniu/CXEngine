@@ -2,6 +2,20 @@ script_system_dofile('../share/vfs.lua')
 script_system_dofile('../share/utils.lua')
 
 
+function net_send_message(pid, proto, msg)
+	cxlog_info('net_send_message',pid,proto_name(proto), msg)
+	return net_send_message_in_c(pid, proto , msg)
+end
+
+function net_send_message_to_players(pids, proto, msg)
+	cxlog_info('net_send_message_to_players',cjson.encode(pids),proto_name(proto), msg)
+	return net_send_message_to_players_in_c(pids, proto, msg)
+end
+
+function net_send_message_to_all_players(proto, msg)
+	cxlog_info('net_send_message_to_all_players',proto_name(proto), msg)
+	return net_send_message_to_all_players_in_c(proto, msg)
+end
 
 
 

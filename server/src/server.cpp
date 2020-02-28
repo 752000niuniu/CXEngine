@@ -27,11 +27,6 @@ GameServer* CXGameServer = NULL;
 
 ezio::EventLoop g_MainLoop;
 
-void net_send_message(uint64_t pid, int proto, const char* msg);
-
-int net_send_message_to_players(lua_State* L);
-
-int net_send_message_to_all_players(lua_State* L);
 
 int insert_pid_connection_pair(lua_State* L);
 
@@ -181,18 +176,17 @@ void game_server_stop()
 }
 
 
-int net_send_message(lua_State* L) {
+int net_send_message_in_c(lua_State* L) {
 	uint64_t pid = (uint64_t)lua_tointeger(L, 1);
 	int proto = (int)lua_tointeger(L, 2);
 	const char* msg = lua_tostring(L, 3);
-	cxlog_info("net_send_message pid:%lld proto:%d js:%s\n", pid, proto, msg);
 	CXGameServer->SendMessageToPlayer(pid, proto, msg);
 	return 0;
 }
 
 
 
-int net_send_message_to_players(lua_State* L) {
+int net_send_message_to_players_in_c(lua_State* L) {
 	std::vector<uint64_t> pids;
 	int len = (int)luaL_len(L, 1);
 	int i = 0;
@@ -205,19 +199,17 @@ int net_send_message_to_players(lua_State* L) {
 	}
 	int proto = (int)lua_tointeger(L, 2);
 	const char* msg = lua_tostring(L, 3);
-	cxlog_info("net_send_message_to_players proto:%d js:%s\n",  proto, msg);
 	CXGameServer->SendMessageToPlayers(pids, proto, msg);
 	return 0;
 }
 
-int net_send_message_to_all_players(lua_State* L) {
+int net_send_message_to_all_players_in_c(lua_State* L) {
 	int proto = (int)lua_tointeger(L, 1);
 	const char* msg = lua_tostring(L, 2);
 	ezio::Buffer buf;
 	buf.Write(proto);
 	buf.Write(msg, strlen(msg));
 	buf.Prepend((int)buf.readable_size());
-	cxlog_info("net_send_message_to_all_players proto:%d js:%s\n", proto, msg);
 	CXGameServer->GetLoop()->RunTask([buf]() {
 		for (auto& it : g_PlayerConnections) {
 			it.second->Send({ buf.Peek(),buf.readable_size() });
@@ -244,9 +236,9 @@ int erase_pid_connection_pair(lua_State*L ) {
 
 void luaopen_game_server(lua_State* L)
 {
-	script_system_register_luac_function(L, net_send_message);
-	script_system_register_luac_function(L, net_send_message_to_players);
-	script_system_register_luac_function(L, net_send_message_to_all_players);
+	script_system_register_luac_function(L, net_send_message_in_c);
+	script_system_register_luac_function(L, net_send_message_to_players_in_c);
+	script_system_register_luac_function(L, net_send_message_to_all_players_in_c);
 
 	script_system_register_function(L, game_server_start);
 	script_system_register_luac_function(L, game_server_update);

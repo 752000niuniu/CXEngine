@@ -15,27 +15,6 @@ function scene_system_init()
         npc:SetProperty(PROP_SCENE_ID, npc_templ.scene_id)
         table.insert(npcs, npc)
     end
-    
-    -- local team 
-    -- for i, npc in ipairs(npcs) do
-    --     if i <= 10 then
-    --         if i == 1 then
-    --             team = team_system_create_team(npc)
-    --         else
-    --             team:AddMember(npc)
-    --         end
-    --     end
-    -- end
-
-    -- for i, npc in ipairs(npcs) do
-    --     if i > 11 then
-    --         if i == 12 then
-    --             team = team_system_create_team(npc)
-    --         else
-    --             team:AddMember(npc)
-    --         end
-    --     end
-    -- end
 end
 
 function scene_system_update()

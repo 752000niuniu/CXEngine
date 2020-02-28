@@ -62,8 +62,6 @@ void Astar::PrintMap(std::string filename, int w, int h)
 bool Astar::PathFinding(int sx, int sy, int ex, int ey)
 {
 	//printf("sx %d sy %d ex %d ey %d\n", sx, sy, ex, ey);
-	// 	13 ，35
-	// 115，20
 	mOpenList.clear();
 	mCloseList.clear();
 	mVisOpen.clear();
@@ -84,7 +82,6 @@ bool Astar::PathFinding(int sx, int sy, int ex, int ey)
 		mCloseList.push_back(cur_node);
 
 		if (cur_node->x == ex && cur_node->y == ey) {
-			cxlog_info("搜索完成\n");
 			Node* p = cur_node;
 			do {
 				Pos tmpPos;

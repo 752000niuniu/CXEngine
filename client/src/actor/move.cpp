@@ -110,7 +110,6 @@ void MoveHandle::MoveOnScreenWithDuration(Pos offset, float move_dur,bool keepdi
 }
 void MoveHandle::MoveTo(float x, float y)
 {
-	cxlog_info("Move  To %.2f %.2f\n", x, y);
 	Pos pos = m_Actor->GetPos();
 	if (GMath::Astar_GetDistanceSquare(pos.x, pos.y, x, y) < 16) {
 		m_Actor->SetPos(x, y);

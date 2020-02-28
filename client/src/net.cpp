@@ -213,8 +213,7 @@ void net_manager_connect()
 	}
 }
 
-void net_send_message(int proto, const char* msg) {
-	cxlog_info("net_send_message %d %s\n", proto, msg);
+void net_send_message_in_c(int proto, const char* msg) {
 	g_Client->SendMessageToServer(proto, msg);
 }
 
@@ -233,5 +232,5 @@ void luaopen_net(lua_State* L)
 	script_system_register_function(L, net_manager_deinit);
 
 	script_system_register_function(L, net_manager_reconnect);
-	script_system_register_function(L, net_send_message);	
+	script_system_register_function(L, net_send_message_in_c);	
 }

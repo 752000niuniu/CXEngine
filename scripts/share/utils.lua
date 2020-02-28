@@ -599,21 +599,27 @@ end
 function utils_get_action_res_id(avatar_type, id, action_id)
     local tbl
     local action_name = action_get_name(action_id)
-    cxlog_info('utils_get_action_res_id', avatar_type, id, action_name)
     if avatar_type == AVATAR_TYPE_ROLE then
         tbl = content_system_get_table('avatar_role') 
+        cxlog_info('read action', AVATAR_TYPE_ROLE, id, action_name)
     elseif avatar_type == ACTOR_TYPE_NPC then
         tbl = content_system_get_table('avatar_scene_npc') 
         if not tbl[id] then
             tbl = content_system_get_table('avatar_summon') 
         end
+        cxlog_info('read action', ACTOR_TYPE_NPC, id, action_name)
     elseif avatar_type == ACTOR_TYPE_SUMMON then
         tbl = content_system_get_table('avatar_summon') 
         if not tbl[id] then
             tbl = content_system_get_table('avatar_scene_npc') 
         end
+        cxlog_info('read action', ACTOR_TYPE_SUMMON, id, action_name)
     elseif avatar_type == AVATAR_TYPE_WEAPON then
         tbl = content_system_get_table('avatar_weapon') 
+        cxlog_info('read action', AVATAR_TYPE_WEAPON, id, action_name)
+    else 
+        cxlog_info('read action error', avatar_type, id, action_name)
+        return 
     end
 
     local idstr = tbl[id][action_name]

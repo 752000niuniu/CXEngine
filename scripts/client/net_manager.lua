@@ -1,5 +1,10 @@
 stub = stub or {}
 
+function net_send_message(proto,msg)
+	cxlog_info('net_send_message', proto_name(proto),msg)
+	return net_send_message_in_c(proto,msg)
+end
+
 function on_player_send_chat_message(msg)
 	local player = actor_manager_fetch_local_player()
 	player:Say(msg)
@@ -101,13 +106,6 @@ end
 
 function net_manager_actor_dostring(pid, fmt, ...)
 	local code = string.format(fmt, ...)
-	-- local code
-	-- if select('#',...) > 0 then
-	-- 	code = string.format(fmt, ...)
-	-- else
-	-- 	code = fmt
-	-- end
-
 	local req = {
 		pid = pid,
 		code = code
