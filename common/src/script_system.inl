@@ -20,7 +20,7 @@ function script_system_dofile(relative_path, env)
 		print('script_system_dofile',path)
         fun()
     else
-        print(fun,err)
+        print(err)
     end
 end
 )_";

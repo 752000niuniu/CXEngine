@@ -169,13 +169,6 @@ stub[PTO_C2S_COMBAT_PVE_START] = function(req)
 end
 
 function handle_turn_commands(battle)
-	local send_pids = {}
-	for i,actor in ipairs(battle.actors) do
-		if actor:IsPlayer() then
-			table.insert(send_pids, actor:GetID())
-		end
-	end
-
 	table.sort(battle.cmds, function(a,b)
 		local pa = battle:FindActor(a.master)
 		local pb = battle:FindActor(b.master)
@@ -194,9 +187,7 @@ function handle_turn_commands(battle)
 		end
 	end
 
-	for i, pid in ipairs(send_pids) do
-		net_send_message(pid, PTO_S2C_COMBAT_EXECUTE, cjson.encode(all_skills))
-	end
+	combat_system_send_message(battle, PTO_S2C_COMBAT_EXECUTE, cjson.encode(all_skills))
 end
 
 stub[PTO_C2S_COMBAT_CMD] = function(req)

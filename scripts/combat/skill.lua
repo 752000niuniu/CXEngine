@@ -652,7 +652,8 @@ function process_turn_command(battle, master_id, target_id, skill_id)
 	skill.master = master
 	skill.state = SKILL_STATE_DEFAULT
     skill.success = true
-	local target = battle:FindActor(target_id)
+    local target = battle:FindActor(target_id)
+    --target有可能为空，因为某些actor可能dead 或者逃跑
     if not target then
         local targets = {}
         for i,actor in ipairs(battle.actors) do
@@ -660,7 +661,10 @@ function process_turn_command(battle, master_id, target_id, skill_id)
                 table.insert(targets, actor)
             end
         end
-        if #targets == 0 then return end
+        if #targets == 0 then 
+            cxlog_info('process_turn_command target找不到')
+            return 
+        end
         target = targets[math.random(1,#targets)]
 	end
     skill.target = target
@@ -669,15 +673,14 @@ function process_turn_command(battle, master_id, target_id, skill_id)
 	skill.templ = skill_table[skill_id]
 	skill_init_by_templ(skill, skill.templ)			
 
-    cxlog_info('ban', master:GetProperty(PROP_COMBAT_SKILL_BAN_SPELL), 
-    master:GetProperty(PROP_COMBAT_SKILL_BAN_ATK)) 
-
     if skill_id == 1 then
         if master:GetProperty(PROP_COMBAT_SKILL_BAN_ATK) then
-           return 
+            cxlog_info('ban atk') 
+            return 
         end
     elseif skill.type == 'atk' or skill.type == 'spell' then
         if master:GetProperty(PROP_COMBAT_SKILL_BAN_SPELL) then
+            cxlog_info('ban spell') 
            return 
         end
     end
