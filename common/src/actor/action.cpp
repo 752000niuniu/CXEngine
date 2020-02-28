@@ -546,10 +546,8 @@ void ActionStateMachine::Update()
 	if (!avatar)return;
 	avatar->Update();
 	if (avatar->GetState() == ANIMATION_STOP) {
-		CXString actor_name = m_Actor->GetProperty(PROP_NAME).toString();
-		actor_name = utils::Utf8ToGB2312(actor_name.c_str());
 		cxlog_info("%s pop action %s\n", 
-			actor_name.c_str(),
+			m_Actor->GetLogName(),
 			action_get_name(m_ActionID).c_str());
 		auto info = m_ActionQueue.front();
 		int frontID = info.actionID;

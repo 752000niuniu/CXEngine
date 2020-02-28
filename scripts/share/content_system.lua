@@ -258,6 +258,15 @@ function init_role_sound()
     return ret
 end
 
+function init_summon_variation()
+    local tbl,col_names = utils_parse_tsv('summon_variation',nil)
+    local ret = {}
+    for i, row in ipairs(tbl) do
+        ret[row.ID] = row
+    end
+    return ret
+end
+
 function read_avatar_role()
     local ret = utils_parse_tsv_by_main_key('avatar_role',nil,'ID')
     for k, row in pairs(ret) do
@@ -354,4 +363,5 @@ function content_system_init()
     content_system_set_table('transport',  init_transport_table) 
     content_system_set_table('summon_sound',  init_summon_sound) 
     content_system_set_table('role_sound',  init_role_sound) 
+    content_system_set_table('summon_variation',  init_summon_variation) 
 end

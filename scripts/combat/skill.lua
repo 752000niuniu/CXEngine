@@ -179,7 +179,7 @@ function on_attack_action_callback(attack_action)
         attack_action:Pause(math.floor(anim:GetGroupFrameTime()* 1000))
         behit_action:Pause(math.floor(anim:GetGroupFrameTime()* 1000))
 
-        local dir_x ,dir_y = master:GetAttackVec()
+        local dir_x ,dir_y = skill.atk_dir_x, skill.atk_dir_y
         target:MoveOnScreenWithDuration(dir_x*24,dir_y*24, anim:GetGroupFrameTime() ,true)
     end)
     
@@ -200,12 +200,12 @@ function on_attack_action_callback(attack_action)
                 target:PushAction(ACTION_CLPS)
                 target:MoveActionToBack()
             else
-                local dir_x ,dir_y = master:GetAttackVec()
+                local dir_x ,dir_y = skill.atk_dir_x, skill.atk_dir_y
                 target:MoveOnScreenWithDuration(-dir_x*24,-dir_y*24,PERFRAME_TIME*2,true)
                 skill.target_end = true   
             end
         else 
-            local dir_x ,dir_y = master:GetAttackVec()
+            local dir_x ,dir_y = skill.atk_dir_x, skill.atk_dir_y
             target:MoveOnScreenWithDuration(-dir_x*24,-dir_y*24,PERFRAME_TIME*2,true)
         end
     end)
@@ -343,17 +343,15 @@ function skill_cast_atk(battle, skill)
     local target = battle:FindActor(target_id)
     master:SetTarget(target)
     master:FaceTo(target)
+    skill.atk_dir_x, skill.atk_dir_y = master:GetAttackVec()
 
     local runto_action = master:GetAvatar(ACTION_RUNTO)
     runto_action:Reset()
     runto_action:SetLoop(-1)
     runto_action:SetFrameInterval(PERFRAME_TIME)
     local runto_x, runto_y = calc_run_to_pos(master,target)
-    runto_action.to_x = runto_x
-    runto_action.to_y = runto_y
-
     runto_action:AddStartCallback(function(anim)
-        master:MoveOnScreenWithDuration(anim.to_x,anim.to_y,anim:GetGroupFrameTime()-PERFRAME_TIME,true)
+        master:MoveOnScreenWithDuration(runto_x,runto_y,anim:GetGroupFrameTime()-PERFRAME_TIME,true)
     end)
     master:PushAction(ACTION_RUNTO)
 

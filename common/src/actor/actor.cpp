@@ -300,6 +300,13 @@ float Actor::GetMoveDestAngle(Pos dest)
 	return ::GMath::Astar_GetAngle(pos.x,pos.y, dest.x, dest.y);
 }
 
+const char* Actor::GetLogName()
+{
+	static CXString logName;
+	logName = utils::Utf8ToGB2312(GetProperty(PROP_NAME).toString().c_str());
+	return logName.c_str();
+}
+
 CXString Actor::GetWeaponAvatarID()
 {
 	if (m_Props[PROP_ACTOR_TYPE].toInt() == ACTOR_TYPE_NPC)

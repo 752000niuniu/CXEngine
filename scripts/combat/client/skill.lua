@@ -2,17 +2,13 @@
 function calc_run_to_pos(actor, target)
     local dir = actor:GetDir()
     local attackAvatar = actor:GetAvatar(ACTION_ATTACK)
-    if not attackAvatar then
-        return 0,0
-    end
+    assert(attackAvatar~=nil, actor:GetName())
     attackAvatar:SetDir(dir)
     local targetAvatar = target:GetAvatar(ACTION_BEHIT)
     targetAvatar:SetDir(math_get_reverse_dir(dir))
     if attackAvatar and targetAvatar then
-        local actor_avtar_id = actor:GetProperty(PROP_AVATAR_ID)
-        local attackKeyframe = actor:GetAtkKeyFrame()
-        if attackKeyframe == 0 then attackKeyframe = attackAvatar:GetKeyFrame() end
-        local attackFrame = attackKeyframe
+        local attackFrame = actor:GetAtkKeyFrame()
+        if attackFrame == 0 then attackFrame = attackAvatar:GetKeyFrame() end
         local targetFrame = targetAvatar:GetGroupFrameCount() - 1 
         local x, y = target:GetPos()
         local minus_target_key_y_plus_half_height_minus_attack_half_height = 
@@ -37,6 +33,7 @@ function calc_run_to_pos(actor, target)
         local src_x,src_y = actor:GetPos()
         local runto_x = x - src_x
         local runto_y = y - src_y
+        cxlog_info('calc_run_to_pos', src_x, src_y, runto_x,runto_y, 'master', actor:GetName(),'target', target:GetName())
         return runto_x ,runto_y
     end
 end

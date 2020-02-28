@@ -1040,3 +1040,59 @@ function ActorMT:GetSceneBGMName()
     local scene_id = self:GetProperty(PROP_SCENE_ID)
     return scene_tbl[scene_id].bgm
 end
+
+
+function ActorMT:GetRandomSkillID(type)
+    type = type or 'atk'
+    local skill_tbl = content_system_get_table('skill')
+    if self:IsSummon() or self:IsNPC() then
+        local set = {}
+        for id, skill in pairs(skill_tbl) do
+            if skill.school == 0 and skill.type == type  then
+                table.insert(set, id)
+            end
+        end
+        if #set == 0 then return 1 end
+        local which = math.random(1,#set) 
+        return set[which]
+    elseif self:IsPlayer() then
+        local set = {}
+        for id, skill in pairs(skill_tbl) do
+            if skill.school == self:GetProperty(PROP_SCHOOL) and skill.type == type  then
+                table.insert(set, id)
+            end
+        end
+        if #set == 0 then return 1 end
+        local which = math.random(1,#set) 
+        return set[which]
+    else
+        return 1
+    end
+end
+
+function ActorMT:Variation()
+    if not self:IsSummon() and not self:IsNPC() then return end
+    local name = self:GetProperty(PROP_AVATAR_ID)
+    local pal_tbl = content_system_get_table('summon_variation')
+    if not pal_tbl[name] then return end
+    local path = vfs_get_tablepath('wasee_pal') .. '/'.. pal_tbl[name].path
+    path = util_utf8_to_gb2312(path)
+    local color_schems = decode_mypal(path)
+
+
+    local new_pal = {}
+    new_pal.segments = color_schems.segments
+    for seg_i=1,#color_schems.segments-1 do
+        local seg_mats = color_schems[seg_i]
+        local mat  = seg_mats[#seg_mats]
+        local seg_pal = {}
+        seg_pal.from = color_schems.segments[seg_i]
+        seg_pal.to = color_schems.segments[seg_i+1]
+        seg_pal.mat = mat
+        table.insert(new_pal, seg_pal)
+    end
+    self:SetProperty(PROP_PAL_MATRIX, cjson.encode(new_pal))
+    if IsClient() then
+        self:ChangePalMatrix(new_pal)
+    end
+end

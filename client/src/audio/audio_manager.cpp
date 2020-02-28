@@ -26,7 +26,7 @@ struct AudioFile {
 };
 bool g_BGMToggle = true;
 std::deque<AudioFile*> g_AudioFiles;
-
+void audio_manager_clear();
 void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount)
 {
 	AudioFile* audioFile = (AudioFile*)pDevice->pUserData;
@@ -36,8 +36,11 @@ void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uin
 	Actor* m_Actor = actor_manager_fetch_local_player();
 	if (m_Actor != nullptr) {
 		if (m_Actor->GetProperty(PROP_SETTING_BGM).toBool()) {
+			audio_manager_clear();
 			return;
 		}
+	}else{
+		return;
 	}
 
 	if (!audioFile->erase) {

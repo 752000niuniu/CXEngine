@@ -164,30 +164,20 @@ function BattleMT:AutoCommand(actor)
     actor:SetProperty(PROP_TURN_READY, true)
 
     local rand = math.random(1,10)
-    if rand >= 0 then
+    if rand <=5 then
         local cmd = {}
         local target = self:RandomSelectEnemy(actor)
-        cmd.type = 'ATK'
         cmd.master = actor:GetID()
         cmd.target = target:GetID()
-        cmd.skill_id = 1
+        cmd.skill_id = actor:GetRandomSkillID('atk')
         table.insert(self.cmds, cmd)
         return
-    elseif rand == 2 then
+    else
         local cmd = {}
         local target = self:RandomSelectEnemy(actor)
-        cmd.type = 'ATK'
         cmd.master = actor:GetID()
         cmd.target = target:GetID()
-        cmd.skill_id = 1
-        table.insert(self.cmds, cmd)
-    elseif rand == 3 then
-        local cmd = {}
-        local target = self:RandomSelectEnemy(actor)
-        cmd.type = 'ATK'
-        cmd.master = actor:GetID()
-        cmd.target = target:GetID()
-        cmd.skill_id = 10
+        cmd.skill_id = actor:GetRandomSkillID('spell')
         table.insert(self.cmds, cmd)
     end
 end

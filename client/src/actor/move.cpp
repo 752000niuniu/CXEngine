@@ -99,7 +99,10 @@ void MoveHandle::MoveOnScreen(float x, float y)
 
 void MoveHandle::MoveOnScreenWithDuration(Pos offset, float move_dur,bool keepdir)
 {
-	Pos dest = m_Actor->GetPos() + offset;
+	Pos src = m_Actor->GetPos();
+	Pos dest = src + offset;
+	cxlog_info("%s move on screen %.1f,%.1f => %.1f,%.1f dur %.1f keepdir %d moveList %d\n",	
+		m_Actor->GetLogName(), src.x, src.y, dest.x, dest.y, move_dur,keepdir, m_MoveList.size());
 	m_MoveDuration = move_dur;
 	m_Actor->SetMoveToPos(dest);
 	float dist = std::sqrt(m_Actor->GetMoveDestDistSquare(dest));
@@ -114,6 +117,8 @@ void MoveHandle::MoveTo(float x, float y)
 	if (GMath::Astar_GetDistanceSquare(pos.x, pos.y, x, y) < 16) {
 		m_Actor->SetPos(x, y);
 		m_bMove = false;
+		m_BackupMoveList.clear();
+		m_MoveList.clear();
 		return;
 	}
 

@@ -40,6 +40,11 @@ end
 local PlayerNameSB = imgui.CreateStrbuf('test',256)
 local ToSceneFilterSB = imgui.CreateStrbuf('',256)
 local LocalPlayerDebugButtons = {
+    
+    {   '变异',function(player)
+        player:Variation()
+    end
+    },
     {   '野外遇怪',function(player)
         net_manager_player_dostring(string.format([[ 
             player:SetProperty(PROP_SETTING_WILD_BATTLE, %s)

@@ -69,8 +69,7 @@ function combat_system_create_pve_battle(player)
 		enemy_count = math.random(1,3)
 	end
 
-	local player_lv = player:GetProperty(PROP_LV)
-	local enemy_actors = {}
+	local player_lv = player:GetProperty(PROP_LV) 
 	for i=1,enemy_count do
 		local monster_name = monsters[math.random(1,#monsters)] 
 
@@ -92,7 +91,9 @@ function combat_system_create_pve_battle(player)
 		actor:SetProperty(PROP_COMBAT_POS_ID,-1)
         actor:SetProperty(PROP_TEAM_TYPE,-1)
 
-	
+		if math.random(1,10) == 1 then
+			actor:Variation()
+		end
 		battle:AddActor(actor, TEAM_TYPE_DEFENDER, i)
 	end
 	__battles__[battle.id] = battle
@@ -169,6 +170,15 @@ stub[PTO_C2S_COMBAT_PVE_START] = function(req)
 end
 
 function handle_turn_commands(battle)
+-----先记录当前actors里面玩家的pid，因为战斗处理有可能移除掉---------
+	local send_pids = {}
+	for i,actor in ipairs(battle.actors) do
+		if actor:IsPlayer() then
+			table.insert(send_pids, actor:GetID())
+		end
+	end
+---------------------------------------------------------------------	
+
 	table.sort(battle.cmds, function(a,b)
 		local pa = battle:FindActor(a.master)
 		local pb = battle:FindActor(b.master)
@@ -187,7 +197,9 @@ function handle_turn_commands(battle)
 		end
 	end
 
-	combat_system_send_message(battle, PTO_S2C_COMBAT_EXECUTE, cjson.encode(all_skills))
+	for i, pid in ipairs(send_pids) do
+		net_send_message(pid, PTO_S2C_COMBAT_EXECUTE, cjson.encode(all_skills))
+	end
 end
 
 stub[PTO_C2S_COMBAT_CMD] = function(req)

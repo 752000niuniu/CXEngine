@@ -85,6 +85,7 @@ public:
 	void SetTarget(Actor* target) { m_Target = target; };
 	Actor* GetTarget() { return m_Target; };
 
+	const char* GetLogName();
 
 	CXString GetWeaponAvatarID();
 #ifndef SIMPLE_SERVER
