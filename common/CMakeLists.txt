@@ -9,7 +9,6 @@ set(GAME_COMMON_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/imgui/imgui_impl_glfw.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/imgui/imgui_impl_opengl3.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/time/time.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/time/time_manager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/time/timer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/time/timer_manager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/entity.cpp

@@ -32,7 +32,6 @@
 #endif // SIMPLE_SERVER
 
 #ifndef CXLUAX
-#include "time/time_manager.h"
 #include "protocol.h"
 #include "actor/action.h"
 #include "actor/actor_manager.h"

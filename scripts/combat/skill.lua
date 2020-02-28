@@ -264,9 +264,7 @@ function skill_cast_spell(battle, skill)
     skill.target_end = false
     skill.spell_combo_counter = skill.spell_combo_counter + 1
 
-    if skill.sound ~='' then
-        audio_manager_play(skill.sound)
-    end
+    audio_manager_play(skill.sound)
     
     local master = skill.master
     local cast_action = master:GetAvatar(ACTION_CAST)
@@ -336,9 +334,7 @@ function skill_cast_atk(battle, skill)
     skill.caster_end = false
     skill.target_end = false
 
-    if skill.sound ~='' then
-        audio_manager_play(skill.sound)
-    end
+    audio_manager_play(skill.sound)
     
     master:ClearAction()
     master:PushAction(ACTION_BATIDLE)

@@ -86,7 +86,8 @@ function net_manager_stub()
 end
 
 
-function net_manager_player_dostring(code)
+function net_manager_player_dostring(fmt, ...)
+	local code = string.format(fmt, ...)
 	local player = actor_manager_fetch_local_player()
 	if player then
 		local req = {

@@ -2,6 +2,7 @@
 #include "lua_bind.h"
 #include "tsv.h"
 #include "resource_manager.h"
+#include <actor\actor_manager.h>
 
 #include <extras/stb_vorbis.c>
 #define  DR_FLAC_IMPLEMENTATION
@@ -32,8 +33,14 @@ void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uin
 	if (audioFile == NULL) {
 		return;
 	}
+	Actor* m_Actor = actor_manager_fetch_local_player();
+	if (m_Actor != nullptr) {
+		if (m_Actor->GetProperty(PROP_SETTING_BGM).toBool()) {
+			return;
+		}
+	}
 
-	if (!audioFile->erase && g_BGMToggle) {
+	if (!audioFile->erase) {
 		ma_decoder* pDecoder = &audioFile->decoder;
 		ma_uint64 read = ma_decoder_read_pcm_frames(pDecoder, pOutput, frameCount);
 		if (read < frameCount) {

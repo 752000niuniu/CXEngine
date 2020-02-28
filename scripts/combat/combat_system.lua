@@ -302,6 +302,8 @@ function BattleMT:EndBattle()
         local bgm = player:GetSceneBGMName()
         audio_manager_stop('10-8905924A')
         audio_manager_play(bgm,true)
+
+        timer_manager_pause_timer('TimerWildBattle',false)
     end
 
     for i,actor in ipairs(self.actors) do

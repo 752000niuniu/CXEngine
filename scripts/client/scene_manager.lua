@@ -35,9 +35,7 @@ end
 function on_scene_manager_uninit_scene(name)
     local scene_id = scene_manager_get_current_scene_id() 
     local scene_tbl = content_system_get_table('scene')
-    if scene_tbl[scene_id].bgm ~='' then
-        audio_manager_stop(scene_tbl[scene_id].bgm)
-    end
+    audio_manager_stop(scene_tbl[scene_id].bgm)
     timer_manager_remove_timer('TimerWildBattle')
 end
 
@@ -48,9 +46,7 @@ function on_scene_manager_init_scene(name)
 
     local scene_tbl = content_system_get_table('scene')
     local scene_monster_tbl = content_system_get_table('scene_monster')
-    if scene_tbl[scene_id].bgm ~='' then
-        audio_manager_play(scene_tbl[scene_id].bgm, true)
-    end
+    audio_manager_play(scene_tbl[scene_id].bgm, true)
 
     for ID, v in pairs(transports) do
         if v.anim then
@@ -86,6 +82,8 @@ function on_scene_manager_init_scene(name)
             local player = actor_manager_fetch_local_player()
             if not player:GetProperty(PROP_SETTING_WILD_BATTLE) then return end
             if player:IsCombat() then
+                timer_manager_end_timer('TimerWildBattle')
+                timer_manager_pause_timer('TimerWildBattle',true)
                 return
             else
                 if player:IsMoving() then
