@@ -19,6 +19,10 @@ end
 function actor_ev_on_click(actor, button, x, y)
 	cxlog_info('ACTOR_EV_ON_CLICK',button,x,y)
 	local player = actor_manager_fetch_local_player()
+	if player == actor then
+		cxlog_info('点到了自己')
+		return
+	end
     local msg = {}
     msg.pid = player:GetID()
     msg.target = actor:GetID()

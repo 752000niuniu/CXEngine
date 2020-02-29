@@ -104,11 +104,13 @@ end
 
 function ActorMT:PlaySound(action)
     local avatar = self:GetProperty(PROP_AVATAR_ID)
+    cxlog_info(avatar.. 'PlaySound  '.. action)
     if avatar:find('-') then
         local tbl = content_system_get_table('role_sound')
         audio_manager_play(tbl[avatar][action])
     else
         local tbl = content_system_get_table('summon_sound')
+        if not tbl[avatar] then return end
         audio_manager_play(tbl[avatar][action])
     end
 end

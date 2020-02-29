@@ -153,6 +153,11 @@ function on_attack_action_callback(attack_action)
     local master = skill.master
     master:SetTarget(target)
 
+    if master == target then
+        cxlog_info('怎么打到自己了???')
+        skill.target_end = true
+        return
+    end
     local behit_action = target:GetAvatar(ACTION_BEHIT)
     behit_action:Reset()
     behit_action:SetLoop(-1)
