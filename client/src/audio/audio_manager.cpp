@@ -24,7 +24,7 @@ struct AudioFile {
 	bool erase;
 	bool start;
 };
-bool g_BGMToggle = true;
+bool g_BGMSwithOn = true;
 std::deque<AudioFile*> g_AudioFiles;
 void audio_manager_clear();
 void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount)
@@ -33,17 +33,8 @@ void data_callback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uin
 	if (audioFile == NULL) {
 		return;
 	}
-	Actor* m_Actor = actor_manager_fetch_local_player();
-	if (m_Actor != nullptr) {
-		if (m_Actor->GetProperty(PROP_SETTING_BGM).toBool()) {
-			audio_manager_clear();
-			return;
-		}
-	}else{
-		return;
-	}
-
-	if (!audioFile->erase) {
+	
+	if (!audioFile->erase && g_BGMSwithOn) {
 		ma_decoder* pDecoder = &audioFile->decoder;
 		ma_uint64 read = ma_decoder_read_pcm_frames(pDecoder, pOutput, frameCount);
 		if (read < frameCount) {
@@ -76,7 +67,7 @@ void audio_manager_clear() {
 
 int audio_manager_play(const char* path, bool loop)
 {
-	if (strcmp(path, "") == 0)return -1;
+	if (strcmp(path, "") == 0 || !g_BGMSwithOn)return -1;
 	if (g_AudioFiles.size() > 0) {
 		for (auto it = g_AudioFiles.begin(); it != g_AudioFiles.end();) {
 			if ((*it)->erase) {
@@ -149,10 +140,10 @@ int lua_audio_manager_play(lua_State* L){
 }
 
 void audio_manager_toggle_bgm(){
-	g_BGMToggle = !g_BGMToggle;
+	g_BGMSwithOn = !g_BGMSwithOn;
 }
 bool audio_manager_is_bgm_on() {
-	return g_BGMToggle;
+	return g_BGMSwithOn;
 }
 
 

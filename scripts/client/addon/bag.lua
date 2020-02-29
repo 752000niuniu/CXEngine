@@ -52,9 +52,10 @@ local LocalPlayerDebugButtons = {
     end
     },
     {   'BGM',function(player)
+        audio_manager_toggle_bgm()
         net_manager_player_dostring([[ 
             player:SetProperty(PROP_SETTING_BGM, %s)
-        ]],  not player:GetProperty(PROP_SETTING_BGM))
+        ]],  audio_manager_is_bgm_on())
     end
     },
     {   'HUD',function(player)

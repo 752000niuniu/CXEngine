@@ -610,8 +610,9 @@ int actor_change_pal_matrix(lua_State*L) {
 		lua_pop(L, 1);
 		patMatrix.push_back(seg_matrix);
 	}
+	int action = actor->GetASM()->GetActionID();
 	actor->GetASM()->Reset();
-	actor->SetActionID(ACTION_BATIDLE);
+	actor->SetActionID(action);
 	actor->SetPalette(patMatrix);
 	actor->GetASM()->Reset();
 	return 0;

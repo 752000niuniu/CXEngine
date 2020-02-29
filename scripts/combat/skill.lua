@@ -160,6 +160,8 @@ function on_attack_action_callback(attack_action)
         local avatar = target:GetAvatar()
         local pack, was = res_decode(skill.atk_anim)
         local anim = animation_create(pack,was)
+        local group_time = anim:GetGroupFrameTime()
+        cxlog_info('behit_action:AddFrameCallback',pack,was,group_time)
         skill.anim = anim
         anim:SetLoop(-1)
         local offy = -avatar:GetFrameKeyY() + avatar:GetFrameHeight() / 2.0
@@ -180,6 +182,7 @@ function on_attack_action_callback(attack_action)
         behit_action:Pause(math.floor(anim:GetGroupFrameTime()* 1000))
 
         local dir_x ,dir_y = skill.atk_dir_x, skill.atk_dir_y
+        cxlog_info('behit_action:AddFrameCallback',pack,was,anim:GetGroupFrameTime())
         target:MoveOnScreenWithDuration(dir_x*24,dir_y*24, anim:GetGroupFrameTime() ,true)
     end)
     
