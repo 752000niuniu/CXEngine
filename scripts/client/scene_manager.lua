@@ -78,7 +78,7 @@ function on_scene_manager_init_scene(name)
     end
     
     if scene_monster_tbl[name] and not name:match('大雁塔%d层') then
-        timer_manager_add_timer('TimerWildBattle',5000,function()
+        timer_manager_add_timer('TimerWildBattle',15000,function()
             local player = actor_manager_fetch_local_player()
             if not player:GetProperty(PROP_SETTING_WILD_BATTLE) then return end
             if player:IsCombat() then

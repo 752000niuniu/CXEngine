@@ -64,7 +64,6 @@ local LocalPlayerDebugButtons = {
     },{
         '客户端重载', function(player)
             local scene_name = player:GetSceneName()
-            actor_manager_clear_all()
             
             script_system_dofile('../share/enums.lua')
             script_system_dofile('actor_metatable.lua')
@@ -74,8 +73,7 @@ local LocalPlayerDebugButtons = {
             script_system_dofile('input_manager.lua')
 
             script_system_dofile('scene_manager.lua')
-            scene_manager_reload(scene_name)
-            game_map_reset_map_offset()
+         
 
             script_system_dofile('actor_manager.lua')
           
@@ -86,6 +84,11 @@ local LocalPlayerDebugButtons = {
     
             script_system_dofile('../combat/combat_system.lua')
             combat_system_init()
+
+            scene_manager_reload(scene_name)
+            game_map_reset_map_offset()
+
+            actor_manager_clear_all()
 
             game_server_on_connection(true)
             collectgarbage()
