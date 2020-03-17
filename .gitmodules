@@ -68,4 +68,4 @@
 	url = https://github.com/oceancx/nanovg
 [submodule "internals/ejoy2d"]
 	path = internals/ejoy2d
-	url = git@github.com:oceancx/ejoy2d.git
+	url = https://github.com/oceancx/ejoy2d.git
