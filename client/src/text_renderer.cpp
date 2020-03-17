@@ -386,6 +386,18 @@ void TextRenderer::DrawTextC(const char* cstr, int x, int y, Alighment align, in
 	DrawTextW(text, x, y, align, bound_width, color,showEmotion);
 }
 
+/**
+http://www.angelcode.com/products/bmfont/doc/pixel_shader.html
+http://www.angelcode.com/products/bmfont/doc/render_text.html
+Rendering colored text with outline
+When the bitmap font has been generated with a baked outline, i.e. the outline is pre-generated in the font texture, the text is best rendered in two passes to avoid the outline for a character to overlap the previous character.
+
+In the first pass the application should use only the alpha channel of the font texture as the transparency value when rendering the border.
+
+In the second pass the application should use only the color channels of the font texture as the transparency value to render the characters over the border.
+
+With a two-pass rendering like this it is also very easy to apply different colors to the border and the internal characters dynamically without the need to pre-color the font in the texture. The application simply needs to multiply the transparency value the desired color before blending it to the screen.
+**/
 void TextRenderer::DrawTextW(std::wstring text,int x,int y, Alighment align,int bound_width,glm::vec3 color,bool showEmotion)
 {
 	EnsureLoadText(text,showEmotion);

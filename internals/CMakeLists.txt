@@ -14,4 +14,4 @@ add_subdirectory(imgui)
 add_subdirectory(gsm-cmake)
 add_subdirectory(miniaudio-cmake)
 add_subdirectory(nanovg)
-
+add_subdirectory(ejoy2d)
