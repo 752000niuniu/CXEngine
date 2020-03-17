@@ -93,21 +93,18 @@ void script_system_prepare_init()
 	check_lua_error(L, res);
 }
 
- 
+
 
 void script_system_run_main_script()
 {
 	int res = luaL_dofile(L, FileSystem::GetLuaPath("main.lua").c_str());
-	if (!check_lua_error(L, res, FileSystem::GetLuaPath("main.lua").c_str()))
-	{
-		DebugBreak();
-	}
+	check_lua_error(L, res);
 }
 
 void script_system_init()
 {
 	if (g_DebugInCpp)return;
-	script_system_call_function(L , "on_script_system_init");
+	script_system_call_function(L, "on_script_system_init");
 }
 
 bool script_system_update()
@@ -122,16 +119,16 @@ bool script_system_update()
 void script_system_draw()
 {
 	if (g_DebugInCpp)return;
-	script_system_call_function(L,"on_script_system_draw");
+	script_system_call_function(L, "on_script_system_draw");
 }
 
 void script_system_deinit()
 {
 	if (g_DebugInCpp)return;
-	script_system_call_function(L,"on_script_system_deinit");
+	script_system_call_function(L, "on_script_system_deinit");
 }
 
-lua_State* script_system_get_luastate ()
+lua_State* script_system_get_luastate()
 {
 	return L;
 }
@@ -139,13 +136,13 @@ lua_State* script_system_get_luastate ()
 any script_system_get_globle(const char* name)
 {
 	lua_getglobal(L, name);
-	any v = lua_getanyvalue(L,-1);
+	any v = lua_getanyvalue(L, -1);
 	lua_pop(L, 1);
 	return v;
 }
 
 
-bool process_is_server(){
+bool process_is_server() {
 #ifdef SIMPLE_SERVER
 	return true;
 #else
@@ -159,7 +156,7 @@ uint64_t time_now() {
 }
 uint64_t time_now_nano() {
 	auto now = std::chrono::system_clock::now();
-	return  now.time_since_epoch().count() ;
+	return  now.time_since_epoch().count();
 }
 
 
@@ -168,7 +165,7 @@ void luaopen_script_system(lua_State* L)
 
 #define REG_ENUM(name, macro)  (lua_pushinteger(L, macro),lua_setglobal(L, name))
 #ifdef SIMPLE_SERVER
-	REG_ENUM("SIMPLE_SERVER",SIMPLE_SERVER);
+	REG_ENUM("SIMPLE_SERVER", SIMPLE_SERVER);
 #endif
 #ifdef SIMPLE_ENGINE
 	REG_ENUM("SIMPLE_ENGINE", SIMPLE_ENGINE);
@@ -181,5 +178,5 @@ void luaopen_script_system(lua_State* L)
 	script_system_register_function(L, process_is_server);
 	script_system_register_function(L, time_now);
 	script_system_register_function(L, time_now_nano);
-	
+
 }

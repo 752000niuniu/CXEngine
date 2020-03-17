@@ -15,20 +15,23 @@
 #include "animation/sprite.h"
 #include "cxlua.h"
 #include "graphics/ui_renderer.h"
+#include "sprite_renderer.h"
+#include "texture_manager.h"
 
 
 static bool s_DrawMask, s_DrawStrider, s_DrawCell, s_DrawMap, s_DrawAnnouncement, s_AutoRun;
+static int sLastDrawCall = 0;
 /*
 lua 尽快完成tsv解析  然后把scene创建放在lua
 */
 SceneManager::SceneManager()
-:m_pCurrentScene(nullptr),
-m_pNextScene(nullptr),
-m_PlayerEnterX(0),
-m_PlayerEnterY(0),
-m_SwitchingScene(false)
+	:m_pCurrentScene(nullptr),
+	m_pNextScene(nullptr),
+	m_PlayerEnterX(0),
+	m_PlayerEnterY(0),
+	m_SwitchingScene(false)
 {
-	
+
 }
 
 SceneManager::~SceneManager()
@@ -42,14 +45,14 @@ SceneManager::~SceneManager()
 	UIRenderer::GetInstance()->DeleteSingleton();
 }
 
-void SceneManager::Init() 
+void SceneManager::Init()
 {
 	script_system_call_function(script_system_get_luastate(), "on_scene_manager_init");
 
 	glGenFramebuffers(1, &m_Fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_Fbo);
 
-	int screenWidth = WINDOW_INSTANCE->GetWidth(); 
+	int screenWidth = WINDOW_INSTANCE->GetWidth();
 	int screenHeight = WINDOW_INSTANCE->GetHeight();
 	glGenTextures(1, &m_TextureColor);
 	glBindTexture(GL_TEXTURE_2D, m_TextureColor);
@@ -61,13 +64,13 @@ void SceneManager::Init()
 	glGenRenderbuffers(1, &m_Rbo);
 	glBindRenderbuffer(GL_RENDERBUFFER, m_Rbo);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screenWidth, screenHeight);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_Rbo); 
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_Rbo);
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
 		cxlog_err("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
 	}
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	
+
 	UIRenderer::GetInstance();
 };
 
@@ -98,7 +101,7 @@ void SceneManager::SwitchScene(int id)
 	}
 }
 
- 
+
 
 void SceneManager::AddScene(BaseScene* scene)
 {
@@ -173,7 +176,7 @@ void SceneManager::OnWindowFrameSizeChanged()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void SceneManager::Update() 
+void SceneManager::Update()
 {
 	if (m_SwitchingScene)
 	{
@@ -185,11 +188,11 @@ void SceneManager::Update()
 				m_pCurrentScene->UnLoad();
 				m_pCurrentScene = nullptr;
 			}
-			
+
 			m_pCurrentScene = m_pNextScene;
 			m_pCurrentScene->Load();
-			
-			script_system_call_function(script_system_get_luastate(), "on_scene_manager_init_scene" ,m_pCurrentScene->GetName());
+
+			script_system_call_function(script_system_get_luastate(), "on_scene_manager_init_scene", m_pCurrentScene->GetName());
 		}
 		m_SwitchingScene = false;
 	}
@@ -198,22 +201,23 @@ void SceneManager::Update()
 		if (m_pCurrentScene)
 		{
 			m_pCurrentScene->Update();
-			script_system_call_function(script_system_get_luastate(),"on_scene_manager_update", m_pCurrentScene->GetName());
+			script_system_call_function(script_system_get_luastate(), "on_scene_manager_update", m_pCurrentScene->GetName());
 		}
-	} 
+	}
 };
 
-void function_to_select_shader_or_blend_state(const ImDrawList* parent_list, const ImDrawCmd* cmd){
+void function_to_select_shader_or_blend_state(const ImDrawList* parent_list, const ImDrawCmd* cmd) {
 	glDisable(GL_BLEND);
 }
 
-void function_to_restore_shader_or_blend_state(const ImDrawList* parent_list, const ImDrawCmd* cmd){
+void function_to_restore_shader_or_blend_state(const ImDrawList* parent_list, const ImDrawCmd* cmd) {
 	glEnable(GL_BLEND);
 }
 
-void SceneManager::Draw() 
+void SceneManager::Draw()
 {
 	if (m_SwitchingScene)return;
+	SpriteRenderer::GetInstance()->ResetDrawCall();
 	int gameWidth = WINDOW_INSTANCE->GetWidth();
 	int gameHeight = WINDOW_INSTANCE->GetHeight();
 
@@ -236,18 +240,20 @@ void SceneManager::Draw()
 	ImGui::SetNextWindowViewport(mainViewport->ID);
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-	ImGui::Begin("Game", nullptr, ImGuiWindowFlags_NoDecoration );
+	ImGui::Begin("Game", nullptr, ImGuiWindowFlags_NoDecoration);
 	ImGui::PopStyleVar();
 	ImVec2 cursorPos = ImGui::GetCursorPos();
 	auto cspos = ImGui::GetCursorScreenPos();
 	m_ImGuiCursorPos = Pos(cspos.x, cspos.y);
 	ImGui::GetWindowDrawList()->AddCallback(function_to_select_shader_or_blend_state, nullptr);
-	ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_TextureColor, cspos, ImVec2(cspos.x+gameWidth,cspos.y+gameHeight), ImVec2(0, 1), ImVec2(1, 0));
-	ImGui::GetWindowDrawList()->AddCallback(function_to_restore_shader_or_blend_state , nullptr);
+	ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_TextureColor, cspos, ImVec2(cspos.x + gameWidth, cspos.y + gameHeight), ImVec2(0, 1), ImVec2(1, 0));
+	ImGui::GetWindowDrawList()->AddCallback(function_to_restore_shader_or_blend_state, nullptr);
 	ImGui::SetCursorPos(cursorPos);
-	if(m_pCurrentScene){
+	if (m_pCurrentScene) {
 		script_system_call_function(script_system_get_luastate(), "on_game_imgui_update", m_pCurrentScene->GetName());
 	}
+
+	sLastDrawCall = SpriteRenderer::GetInstance()->GetDrawCall();
 	ImGui::End();
 };
 
@@ -293,18 +299,18 @@ void scene_manager_switch_scene_by_name(const char* name)
 
 void scene_manager_switch_scene_by_id(int id)
 {
-	auto& scenes=  SCENE_MANAGER_INSTANCE->GetAllScene();
-	for(auto& it :scenes){
-		if(it.second->GetSceneID()==id){
+	auto& scenes = SCENE_MANAGER_INSTANCE->GetAllScene();
+	for (auto& it : scenes) {
+		if (it.second->GetSceneID() == id) {
 			SCENE_MANAGER_INSTANCE->SwitchScene(it.second->GetName());
 			return;
 		}
 	}
 }
 
-void scene_manager_add_scene(int id , const char* name)
+void scene_manager_add_scene(int id, const char* name)
 {
-	SCENE_MANAGER_INSTANCE->AddScene(new BaseScene( id , name ));
+	SCENE_MANAGER_INSTANCE->AddScene(new BaseScene(id, name));
 }
 
 void scene_manager_add_custom_scene(int scene_id, const char* name, int map_id)
@@ -344,9 +350,9 @@ int scene_manager_get_imgui_cursor_pos(lua_State* L) {
 	return 2;
 };
 
-int scene_manager_get_current_scene_id(){
+int scene_manager_get_current_scene_id() {
 	auto* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
-	if(scene){
+	if (scene) {
 		return scene->GetSceneID();
 	}
 	return 0;
@@ -355,7 +361,7 @@ int scene_manager_get_current_scene_id(){
 bool scene_is_combat()
 {
 	auto* actor = actor_manager_fetch_local_player();
-	if(actor){
+	if (actor) {
 		return actor->IsCombat();
 	}
 	return false;
@@ -372,22 +378,22 @@ void scene_set_map(int mapid)
 	}
 }
 
-void game_map_reset_map_offset(){
+void game_map_reset_map_offset() {
 	auto* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
 	if (scene) {
-		if(scene->GetGameMap()){
+		if (scene->GetGameMap()) {
 			scene->GetGameMap()->ResetMapOffset();
 		}
 	}
 }
 
-int scene_get_map_offset(lua_State*L){
+int scene_get_map_offset(lua_State* L) {
 	int x = 0;
 	int y = 0;
 	auto* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
 	if (scene) {
 		auto* map = scene->GetGameMap();
-		if(map){
+		if (map) {
 			x = map->GetMapOffsetX();
 			y = map->GetMapOffsetY();
 		}
@@ -397,8 +403,28 @@ int scene_get_map_offset(lua_State*L){
 	return 2;
 }
 
+int debug_get_drawcall(){
+	return sLastDrawCall;
+}
+
+int debug_get_texture_count() {
+	return TEXTURE_MANAGER_INSTANCE->GetTextureCount();
+}
+
+int debug_get_sprites_count() {
+	return RESOURCE_MANAGER_INSTANCE->GetSpriteCount();
+}
+
+
 void luaopen_scene_manager(lua_State* L)
 {
+
+	script_system_register_function(L, debug_get_drawcall);
+	script_system_register_function(L, debug_get_texture_count);
+	script_system_register_function(L, debug_get_sprites_count);
+
+	
+
 	script_system_register_function(L, scene_manager_init);
 	script_system_register_function(L, scene_manager_update);
 	script_system_register_function(L, scene_manager_draw);
@@ -414,7 +440,7 @@ void luaopen_scene_manager(lua_State* L)
 
 	script_system_register_luac_function(L, scene_manager_get_imgui_cursor_pos);
 
-	
+
 	script_system_register_function(L, scene_manager_switch_scene_by_id);
 	script_system_register_function(L, scene_manager_switch_scene_by_name);
 

@@ -7,6 +7,7 @@ struct NE::Sprite;
 struct NE::Sprite::Sequence;
 using CXPos = Pos;
 using NE::PalSchemePart;
+struct PalSpriteInfo;
 class BaseSprite : public View
 {
 public:
@@ -38,7 +39,9 @@ public:
 	uint64_t ResID;
 	CXPos Pos;
 	CXPos Offset;
+	PalSpriteInfo* spritInfo;
 	NE::Sprite* m_pSprite;
+	std::vector<PalSchemePart>* m_PalPart;
 	float FrameInterval;
 	float PlayTime;
 	

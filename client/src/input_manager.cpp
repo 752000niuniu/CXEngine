@@ -7,14 +7,14 @@
 
 
 InputManager::InputManager()
-:Singleton<InputManager>(),
-m_Keys(1024,false),
-m_KeyStates(1024,0),
-m_FirstMouse(true),
-m_MousePos(0,0),
-m_WindowPos(0,0),
-m_FocusView(nullptr),
-m_Camera(nullptr)
+	:Singleton<InputManager>(),
+	m_Keys(2048, false),
+	m_KeyStates(2048, 0),
+	m_FirstMouse(true),
+	m_MousePos(0, 0),
+	m_WindowPos(0, 0),
+	m_FocusView(nullptr),
+	m_Camera(nullptr)
 {
 
 }
@@ -29,11 +29,11 @@ void InputManager::SetCamera(Camera* camera)
 	m_Camera = camera;
 }
 
-void InputManager::RegisterView(View*v)
+void InputManager::RegisterView(View* v)
 {
 	m_RegisterViews.insert(v);
 }
-void InputManager::UnRegisterView(View*v)
+void InputManager::UnRegisterView(View* v)
 {
 	if (m_FocusView == v)
 	{
@@ -49,7 +49,7 @@ IntPos InputManager::GetMouseIntPos()
 
 void InputManager::Init()
 {
-	
+
 }
 
 void InputManager::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
@@ -143,6 +143,7 @@ void InputManager::MouseButtonCallback(GLFWwindow* window, int button, int actio
 
 void InputManager::KeyCallbackFunc(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
+	if (key < 0)return;
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
@@ -195,7 +196,7 @@ void InputManager::KeyCallbackFunc(GLFWwindow* window, int key, int scancode, in
 
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, true);
-		
+
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 			m_Camera->ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -273,14 +274,14 @@ void InputManager::MouseCallbackFunc(GLFWwindow* window, float xpos, float ypos)
 				it->dragY = iypos;
 				break;
 			}
-			
+
 			if (utils::BoundHitTest(it->GetViewBounds(), m_MousePos))
 			{
 				it->OnHover(m_MousePos.x, m_MousePos.y);
 			}
 		}
 	}
-	
+
 	lua_State* L = script_system_get_luastate();
 	script_system_call_function(L, "input_manager_on_mouse_move", m_MousePos.x, m_MousePos.y);
 	//std::cout << "MouseX:" << xpos << "\tMouseY:" << ypos << std::endl;
@@ -312,7 +313,7 @@ void InputManager::RequestFocus(View* view)
 	}
 	else
 	{
-		if (m_FocusView != nullptr )
+		if (m_FocusView != nullptr)
 		{
 			if (m_FocusView != view)
 			{
@@ -359,14 +360,14 @@ void input_manager_deinit()
 {
 	INPUT_MANAGER_INSTANCE->DeleteSingleton();
 }
-int input_manager_get_mouse_pos(lua_State*L){
+int input_manager_get_mouse_pos(lua_State* L) {
 	auto pos = INPUT_MANAGER_INSTANCE->GetMouseIntPos();
 	lua_pushnumber(L, pos.x);
 	lua_pushnumber(L, pos.y);
 	return 2;
 }
 
-int input_manager_set_window_pos(lua_State*L) {
+int input_manager_set_window_pos(lua_State* L) {
 	float x = (float)lua_tonumber(L, 1);
 	float y = (float)lua_tonumber(L, 2);
 	INPUT_MANAGER_INSTANCE->SetWindowPos(x, y);

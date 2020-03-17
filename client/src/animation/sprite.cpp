@@ -29,25 +29,19 @@ Texture* UtilsGetFrameTexture(Sprite* m_pSprite, int index)
 	return TextureManager::GetInstance()->LoadTexture(path, frame.Width, frame.Height, true, (uint8_t*)frame.Src.data());
 }
 
-BaseSprite::BaseSprite(uint64_t resoureID, std::vector<PalSchemePart>* patMatrix )
+BaseSprite::BaseSprite(uint64_t resoureID, std::vector<PalSchemePart>* patMatrix)
 	:ResID(resoureID)
 {
 	if (resoureID == 0) { m_pSprite = nullptr; return; }
-	PalSpriteInfo* spritInfo = nullptr;
-	if (patMatrix) {
-		spritInfo = RESOURCE_MANAGER_INSTANCE->LoadSprite(resoureID, patMatrix);
-	}
-	else {
-		spritInfo = RESOURCE_MANAGER_INSTANCE->LoadSprite(resoureID, nullptr);
-	}
-	
+	spritInfo = RESOURCE_MANAGER_INSTANCE->LoadSprite(resoureID, patMatrix);
+	spritInfo->refCount++;
 
 	m_pSprite = spritInfo->sprite;
 	Width = m_pSprite->Width;
 	Height = m_pSprite->Height;
 	KeyX = m_pSprite->KeyX;
 	KeyY = m_pSprite->KeyY;
-	TotalFrames = m_pSprite->GroupCount*m_pSprite->GroupFrameCount;
+	TotalFrames = m_pSprite->GroupCount * m_pSprite->GroupFrameCount;
 	GroupFrameCount = m_pSprite->GroupFrameCount;
 	GroupCount = m_pSprite->GroupCount;
 	m_pSprite->Path = std::to_string(resoureID) + "/" + std::to_string(spritInfo->pati);
@@ -65,11 +59,18 @@ BaseSprite::BaseSprite(uint64_t resoureID, std::vector<PalSchemePart>* patMatrix
 	bEnableDrag = false;
 }
 
-BaseSprite::BaseSprite(uint32_t pkg, uint32_t wasID, std::vector<PalSchemePart>* patMatrix ) :BaseSprite(RESOURCE_MANAGER_INSTANCE->EncodeWAS(pkg, wasID),patMatrix) {}
+BaseSprite::BaseSprite(uint32_t pkg, uint32_t wasID, std::vector<PalSchemePart>* patMatrix) :BaseSprite(RESOURCE_MANAGER_INSTANCE->EncodeWAS(pkg, wasID), patMatrix) {}
 
 BaseSprite::~BaseSprite()
 {
 	INPUT_MANAGER_INSTANCE->UnRegisterView(this);
+	spritInfo->refCount--;
+	if (spritInfo->refCount == 0) {
+		for (int i = 0; i < m_pSprite->GroupFrameCount * m_pSprite->GroupCount; i++) {
+			TEXTURE_MANAGER_INSTANCE->UnloadTexture(UtilsGetFramePath(m_pSprite, i));
+		}
+		RESOURCE_MANAGER_INSTANCE->UnLoadSprite(ResID, &spritInfo->pat);
+	}
 	m_pSprite = nullptr;
 }
 
@@ -120,9 +121,10 @@ int BaseSprite::GetFrameHeight(int index /*= -1*/)
 void BaseSprite::EnableDrag(bool enable)
 {
 	bEnableDrag = enable;
-	if(bEnableDrag){
+	if (bEnableDrag) {
 		INPUT_MANAGER_INSTANCE->RegisterView(this);
-	}else{
+	}
+	else {
 		INPUT_MANAGER_INSTANCE->UnRegisterView(this);
 	}
 }
@@ -148,7 +150,7 @@ void BaseSprite::OnDragMove(int dx, int dy)
 	Pos.y += (float)dy;
 }
 
-Animation::Animation(uint64_t resoureID /*= 0*/, std::vector<PalSchemePart>* patMatrix ) :BaseSprite(resoureID, patMatrix)
+Animation::Animation(uint64_t resoureID /*= 0*/, std::vector<PalSchemePart>* patMatrix) :BaseSprite(resoureID, patMatrix)
 {
 	m_Visible = true;
 	m_State = ANIMATION_STOP;
@@ -191,24 +193,24 @@ Animation::Animation(uint64_t resoureID /*= 0*/, std::vector<PalSchemePart>* pat
 }
 
 Animation::Animation(uint32_t pkg, uint32_t wasID, std::vector<PalSchemePart>* patMatrix)
-	:Animation(RESOURCE_MANAGER_INSTANCE->EncodeWAS(pkg, wasID),patMatrix)
+	:Animation(RESOURCE_MANAGER_INSTANCE->EncodeWAS(pkg, wasID), patMatrix)
 {
 
 }
 
 Animation::~Animation()
 {
-	lua_State*L = script_system_get_luastate();
+	lua_State* L = script_system_get_luastate();
 	for (auto& data : m_CallbackQueueLua) {
 		luaL_unref(L, LUA_REGISTRYINDEX, data.func);
 	}
 	if (m_LuaRef != LUA_NOREF) {
 		luaL_unref(L, LUA_REGISTRYINDEX, m_LuaRef);
 	}
-	
+
 }
 
-void Animation::SetLoop(int loop,int mode)
+void Animation::SetLoop(int loop, int mode)
 {
 	if (loop < 0) {
 		m_LoopCounter = 0;
@@ -253,13 +255,13 @@ void Animation::Replay()
 
 void Animation::AddCallbackLua(float dur, int funcRef)
 {
-	CBDataLua data(dur,funcRef);
+	CBDataLua data(dur, funcRef);
 	m_CallbackQueueLua.push_back(data);
 }
 
 void Animation::AddCallback(float dur, function<void()> func)
 {
-	CBData data(dur,func);
+	CBData data(dur, func);
 	m_CallbackQueue.push_back(std::move(data));
 }
 
@@ -279,7 +281,7 @@ void Animation::TranslateTo(CXPos pos, int duration)
 void Animation::Translate(CXPos pos, int duration)
 {
 	m_bTranslate = true;
-	m_Duration = duration/1000.f;
+	m_Duration = duration / 1000.f;
 	m_TranslationPos = Pos;
 	m_TranslationToPos = pos;
 	m_Velocity = CXPos((m_TranslationToPos.x - m_TranslationPos.x) / m_Duration, (m_TranslationToPos.y - m_TranslationPos.y) / m_Duration);
@@ -367,10 +369,10 @@ void Animation::Update()
 	if (m_State == ANIMATION_PLAY) {
 		if (m_bLockFrame) return;
 		if (m_bTranslate) {
-			float dist = std::pow(m_Velocity.x*dt, 2) + std::pow(m_Velocity.y*dt, 2);
+			float dist = std::pow(m_Velocity.x * dt, 2) + std::pow(m_Velocity.y * dt, 2);
 			if (GMath::Astar_GetDistanceSquare(m_TranslationPos.x, m_TranslationPos.y, m_TranslationToPos.x, m_TranslationToPos.y) > dist) {
-				m_TranslationPos.x = m_TranslationPos.x + m_Velocity.x*dt;
-				m_TranslationPos.y = m_TranslationPos.y + m_Velocity.y*dt;
+				m_TranslationPos.x = m_TranslationPos.x + m_Velocity.x * dt;
+				m_TranslationPos.y = m_TranslationPos.y + m_Velocity.y * dt;
 			}
 			else {
 				m_TranslationPos.x = m_TranslationToPos.x;
@@ -380,10 +382,10 @@ void Animation::Update()
 		}
 
 		if (m_bTranslatePos) {
-			float dist = std::pow(m_Velocity.x*dt, 2) + std::pow(m_Velocity.y*dt, 2);
+			float dist = std::pow(m_Velocity.x * dt, 2) + std::pow(m_Velocity.y * dt, 2);
 			if (GMath::Astar_GetDistanceSquare(Pos.x, Pos.y, m_TranslationToPos.x, m_TranslationToPos.y) > dist) {
-				Pos.x = Pos.x + m_Velocity.x*dt;
-				Pos.y = Pos.y + m_Velocity.y*dt;
+				Pos.x = Pos.x + m_Velocity.x * dt;
+				Pos.y = Pos.y + m_Velocity.y * dt;
 			}
 			else {
 				Pos.x = m_TranslationToPos.x;
@@ -411,7 +413,7 @@ void Animation::Update()
 		for (auto& wrap : m_CallbackQueueLua) {
 			wrap.dur -= dt;
 			if (wrap.dur <= 0) {
-				lua_State*L = script_system_get_luastate();
+				lua_State* L = script_system_get_luastate();
 				int ref = wrap.func;
 				CallLuaFunByRef(ref);
 				wrap.markd = true;
@@ -430,7 +432,7 @@ void Animation::Update()
 		if (PlayTime >= FrameInterval)
 		{
 			m_bFrameUpdate = true;
-			PlayTime = (PlayTime - std::floor(PlayTime / FrameInterval)*FrameInterval);
+			PlayTime = (PlayTime - std::floor(PlayTime / FrameInterval) * FrameInterval);
 			CurrentFrame = CurrentFrame + 1;
 			if (m_Callbacks.find(CurrentFrame) != m_Callbacks.end()) {
 				m_Callbacks[CurrentFrame]();
@@ -443,7 +445,8 @@ void Animation::Update()
 					}
 					else if (m_LoopMode == ANIMATION_LOOPMODE_STOPFIX) {
 						CurrentFrame = GroupFrameCount - 1;
-					}else if(m_LoopMode == ANIMATION_LOOPMODE_CHANGE_DIR){
+					}
+					else if (m_LoopMode == ANIMATION_LOOPMODE_CHANGE_DIR) {
 						CurrentFrame = 0;
 						if (Dir < GroupCount) {
 							Dir = Dir + 1;
@@ -452,8 +455,8 @@ void Animation::Update()
 							Dir = 0;
 						}
 					}
-					
-					if (m_LoopCounter < m_LoopCount ) {
+
+					if (m_LoopCounter < m_LoopCount) {
 						m_LoopCounter = m_LoopCounter + 1;
 						if (m_LoopCBRef != -1) {
 							lua_State* L = script_system_get_luastate();
@@ -470,8 +473,8 @@ void Animation::Update()
 								luaL_unref(L, LUA_REGISTRYINDEX, m_LoopCBRef);
 								m_LoopCBRef = -1;
 							}
-							
-							Stop();			
+
+							Stop();
 							return;
 						}
 					}
@@ -484,11 +487,11 @@ void Animation::Update()
 			}
 		}
 
-		
+
 
 	}
 	else if (m_State == ANIMATION_STOP) {
-		
+
 	}
 	else if (m_State == ANIMATION_PAUSE) {
 		int ms = (int)(dt * 1000);
@@ -512,20 +515,21 @@ void Animation::Draw()
 	if (!m_pSprite)return;
 	if (!m_Visible)return;
 
-	auto* texture = UtilsGetFrameTexture(m_pSprite, Dir*GroupFrameCount + CurrentFrame);
+	auto* texture = UtilsGetFrameTexture(m_pSprite, Dir * GroupFrameCount + CurrentFrame);
 	if (texture)
 	{
-		auto& frame = m_pSprite->Frames[Dir*GroupFrameCount + CurrentFrame];
-		if(m_bTranslate){
+		auto& frame = m_pSprite->Frames[Dir * GroupFrameCount + CurrentFrame];
+		if (m_bTranslate) {
 			SPRITE_RENDERER_INSTANCE->DrawFrameSprite(texture,
 				glm::vec2(m_TranslationPos.x - frame.KeyX, m_TranslationPos.y - frame.KeyY),
 				glm::vec2(frame.Width, frame.Height), DegreeToRadian(m_Rotation), glm::vec3(1.0f, 1.0f, 1.0f));
-		}else{
+		}
+		else {
 			SPRITE_RENDERER_INSTANCE->DrawFrameSprite(texture,
 				glm::vec2(Pos.x - frame.KeyX, Pos.y - frame.KeyY),
 				glm::vec2(frame.Width, frame.Height), DegreeToRadian(m_Rotation), glm::vec3(1.0f, 1.0f, 1.0f));
 		}
-		
+
 	}
 }
 
@@ -553,7 +557,7 @@ BeatNumber::BeatNumber() :
 	m_Visible(false),
 	m_PauseTime(0.2f)
 {
-	
+
 }
 
 void BeatNumber::Update()
@@ -561,7 +565,7 @@ void BeatNumber::Update()
 	if (!m_Visible)return;
 	float dt = WINDOW_INSTANCE->GetDeltaTime();
 	m_PlayTime += dt;
-	if(m_bBeat){
+	if (m_bBeat) {
 		for (int i = 0; i < m_Digits.size(); i++)
 		{
 			Digit& dig = m_Digits[i];
@@ -569,22 +573,22 @@ void BeatNumber::Update()
 			if (m_PlayTime > start_time) {
 				float dur = m_PlayTime - start_time;
 				auto& anim = m_ShowHeal ? m_HealAnim : m_HitAnim;
-				dig.y = (anim.m_pSprite->Height * m_BeatHeights / m_BeatTime)*dur;
-				if (dig.y > anim.m_pSprite->Height * m_BeatHeights * 2) {
+				dig.y = (anim.m_pSprite->Height * m_BeatHeights / m_BeatTime) * dur;
+				if (dig.y > anim.m_pSprite->Height* m_BeatHeights * 2) {
 					dig.y = 0;
 					if (i == m_Digits.size() - 1) {
 						m_bBeat = false;
 						m_PlayTime = -m_PauseTime;
 					}
 				}
-				else if (dig.y > anim.m_pSprite->Height*m_BeatHeights) {
+				else if (dig.y > anim.m_pSprite->Height* m_BeatHeights) {
 					dig.y = anim.m_pSprite->Height * m_BeatHeights * 2 - dig.y;
 				}
 			}
 		}
 	}
 	else {
-		if(m_PlayTime>=0){
+		if (m_PlayTime >= 0) {
 			m_PlayTime = 0;
 			m_Visible = false;
 		}
@@ -599,7 +603,7 @@ void BeatNumber::Draw()
 	for (int i = 0; i < m_Digits.size(); i++)
 	{
 		Digit& dig = m_Digits[i];
-		float x = px + i*m_AdvanceX;
+		float x = px + i * m_AdvanceX;
 		float y = m_Pos.y - dig.y;
 		auto& anim = m_ShowHeal ? m_HealAnim : m_HitAnim;
 		auto* texture = UtilsGetFrameTexture(anim.m_pSprite, dig.digit);
@@ -621,7 +625,7 @@ void BeatNumber::SetPos(float x, float y)
 
 void BeatNumber::SetNumber(float number)
 {
-	if(number>0)
+	if (number > 0)
 		m_ShowHeal = true;
 	else
 		m_ShowHeal = false;
@@ -684,7 +688,7 @@ void AnimationManager::Update()
 	}
 	for (auto it = m_Animations.begin(); it != m_Animations.end();) {
 		if ((*it)->GetState() == ANIMATION_STOP) {
-			delete *it;
+			delete* it;
 			it = m_Animations.erase(it);
 		}
 		else {
@@ -697,7 +701,7 @@ void AnimationManager::Update()
 	}
 	for (auto it = m_BeatNumbers.begin(); it != m_BeatNumbers.end();) {
 		if ((*it)->GetVisible() == false) {
-			delete *it;
+			delete* it;
 			it = m_BeatNumbers.erase(it);
 		}
 		else {
@@ -730,7 +734,7 @@ BaseSprite* lua_check_base_sprite(lua_State* L, int index)
 }
 
 
-Animation* lua_check_animation(lua_State*L, int index)
+Animation* lua_check_animation(lua_State* L, int index)
 {
 	return lua_check_pointer<Animation>(L, index);
 }
@@ -1025,7 +1029,7 @@ int animation_set_visible(lua_State* L) {
 	return 0;
 }
 
-int animation_translate(lua_State*L) {
+int animation_translate(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	float x = (float)lua_tonumber(L, 2);
 	float y = (float)lua_tonumber(L, 3);
@@ -1047,16 +1051,16 @@ int animation_translate(lua_State*L) {
 int animation_add_loop_callback(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	if (lua_isfunction(L, 2)) {
-		lua_pushvalue(L, 2);	
+		lua_pushvalue(L, 2);
 		int ref = luaL_ref(L, LUA_REGISTRYINDEX);
 		animation->AddLoopCallback(ref);
 	}
-	
+
 	return 0;
 }
 
 
-int animation_add_callback(lua_State*L) {
+int animation_add_callback(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	float dur = (float)lua_tonumber(L, 2);
 	if (lua_isfunction(L, 3)) {
@@ -1070,21 +1074,21 @@ int animation_add_callback(lua_State*L) {
 	return 0;
 }
 
-int animation_add_frame_callback(lua_State*L){
+int animation_add_frame_callback(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	int frame = (int)lua_tointeger(L, 2);
 	if (lua_isfunction(L, 3)) {
 		lua_pushvalue(L, 3);
-	//	lua_pushvalue(L, 1);
-	//	lua_setupvalue(L, -2, 1);
+		//	lua_pushvalue(L, 1);
+		//	lua_setupvalue(L, -2, 1);
 
 		int ref = luaL_ref(L, LUA_REGISTRYINDEX);
-		animation->AddCallbackLua(animation->FrameInterval*frame, ref);
+		animation->AddCallbackLua(animation->FrameInterval * frame, ref);
 	}
 	return 0;
 }
 
-int animation_add_start_callback(lua_State*L){
+int animation_add_start_callback(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	if (lua_isfunction(L, 2)) {
 		lua_pushvalue(L, 2);
@@ -1094,7 +1098,7 @@ int animation_add_start_callback(lua_State*L){
 	return 0;
 }
 
-int animation_add_update_callback(lua_State*L){
+int animation_add_update_callback(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	if (lua_isfunction(L, 2)) {
 		lua_pushvalue(L, 2);
@@ -1104,7 +1108,7 @@ int animation_add_update_callback(lua_State*L){
 	return 0;
 }
 
-int animation_remove_update_callback(lua_State*L){
+int animation_remove_update_callback(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	animation->RemoveUpdateCallback();
 	return 0;
@@ -1117,18 +1121,18 @@ int animation_remove_loop_callback(lua_State* L) {
 }
 
 
-int animation_get_key_frame(lua_State*L) {
+int animation_get_key_frame(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	lua_pushinteger(L, animation->GetAttackKeyFrame());
 	return 1;
 }
 
-int animation_reset(lua_State*L) {
+int animation_reset(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	animation->Reset();
 	return 0;
 }
-int animation_add_stop_callback(lua_State*L){
+int animation_add_stop_callback(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	if (lua_isfunction(L, 2)) {
 		lua_pushvalue(L, 2);
@@ -1152,12 +1156,12 @@ int animation_set_offset_y(lua_State* L) {
 	return 0;
 }
 
-int animation_is_group_end_update(lua_State*L){
+int animation_is_group_end_update(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	lua_pushboolean(L, animation->IsGroupEndUpdate());
 	return 1;
 }
-int animation_is_frame_update(lua_State*L){
+int animation_is_frame_update(lua_State* L) {
 	auto* animation = lua_check_animation(L, 1);
 	lua_pushboolean(L, animation->IsFrameUpdate());
 	return 1;
@@ -1175,7 +1179,7 @@ int animation_index(lua_State* L) {
 	// 1 = table, 2 = key
 	const char* key = lua_tostring(L, 2);
 	//cxlog_info("animation_index , %s\n", key);
-	lua_getmetatable(L, 1);		
+	lua_getmetatable(L, 1);
 	lua_getfield(L, -1, key);
 	if (!lua_isnil(L, -1)) {
 		//cxlog_info("index type %d %s\n", lua_type(L, -1), key);
@@ -1194,7 +1198,7 @@ int animation_index(lua_State* L) {
 	}
 }
 
-int animation_newindex(lua_State*L){
+int animation_newindex(lua_State* L) {
 	// 1 = table, 2 = key, 3 = value
 	lua_getuservalue(L, 1);
 	lua_replace(L, 1);
@@ -1204,7 +1208,7 @@ int animation_newindex(lua_State*L){
 
 
 int animation_destroy(lua_State* L) {
-	Animation* ptr = lua_check_animation(L,1);
+	Animation* ptr = lua_check_animation(L, 1);
 	delete ptr;
 	return 0;
 }
@@ -1257,7 +1261,7 @@ void lua_push_base_sprite(lua_State* L, BaseSprite* sprite)
 	lua_setmetatable(L, -2);
 }
 
-void lua_push_animation(lua_State*L, Animation* sprite)
+void lua_push_animation(lua_State* L, Animation* sprite)
 {
 	lua_rawgeti(L, LUA_REGISTRYINDEX, sprite->GetLuaRef());
 	if (luaL_newmetatable(L, "MT_ANIMATION")) {
@@ -1287,25 +1291,25 @@ int base_sprite_get_metatable(lua_State* L) {
 	return 1;
 }
 
-int beat_number_update(lua_State*L) {
+int beat_number_update(lua_State* L) {
 	auto* bn = lua_check_pointer<BeatNumber>(L, 1);
 	bn->Update();
 	return 0;
 }
 
-int beat_number_draw(lua_State*L){
+int beat_number_draw(lua_State* L) {
 	auto* bn = lua_check_pointer<BeatNumber>(L, 1);
 	bn->Draw();
 	return 0;
 }
 
-int beat_number_beat(lua_State*L) {
+int beat_number_beat(lua_State* L) {
 	auto* bn = lua_check_pointer<BeatNumber>(L, 1);
 	bn->Beat();
 	return 0;
 }
 
-int beat_number_set_pos(lua_State*L) {
+int beat_number_set_pos(lua_State* L) {
 	auto* bn = lua_check_pointer<BeatNumber>(L, 1);
 	float x = (float)lua_tonumber(L, 2);
 	float y = (float)lua_tonumber(L, 3);
@@ -1313,7 +1317,7 @@ int beat_number_set_pos(lua_State*L) {
 	return 0;
 }
 
-int beat_number_set_number(lua_State*L) {
+int beat_number_set_number(lua_State* L) {
 	auto* bn = lua_check_pointer<BeatNumber>(L, 1);
 	float  num = (float)lua_tonumber(L, 2);
 	bn->SetNumber(num);
@@ -1329,7 +1333,7 @@ luaL_Reg MT_BEAT_NUMBER[] = {
 	{ "SetNumber",beat_number_set_number },
 };
 
-int beat_number_create(lua_State*L)
+int beat_number_create(lua_State* L)
 {
 	lua_push_pointer(L, new BeatNumber());
 	if (luaL_newmetatable(L, "MT_BEAT_NUMBER")) {
@@ -1360,13 +1364,13 @@ void luaopen_sprite(lua_State* L)
 {
 	script_system_register_luac_function(L, animation_create);
 	script_system_register_luac_function(L, animation_destroy);
-	
+
 	script_system_register_luac_function(L, base_sprite_get_metatable);
 	script_system_register_luac_function(L, beat_number_create);
 
 	script_system_register_function(L, animation_manager_update);
 	script_system_register_function(L, animation_manager_draw);
 	script_system_register_function(L, animation_manager_clear);
-	
+
 }
 

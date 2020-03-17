@@ -38,6 +38,8 @@ public:
 	void Bind() { m_pShader->Bind(); };
 	void UnBind() {	m_pShader->Unbind();};
     void UpdateProjection();
+    void ResetDrawCall() { m_DrawCall = 0; }
+    int GetDrawCall() { return m_DrawCall; }
 private:
     // Render state
     Shader* m_pShader;
@@ -47,6 +49,7 @@ private:
 	GLuint symmetricalQuadVAO;
     // Initializes and configures the quad's buffer and vertex attributes
     void initRenderData();
+    int m_DrawCall;
 };
 #define SPRITE_RENDERER_INSTANCE SpriteRenderer::GetInstance()
 

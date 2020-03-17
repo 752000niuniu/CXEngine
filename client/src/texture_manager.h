@@ -17,6 +17,7 @@ using Map=std::unordered_map<String,Texture*>;
     void UnloadTexture(String path);
     Texture* GetTexture(String path) ;
     void ClearAll();
+    int GetTextureCount();
 private:
     
     Map m_Textures;

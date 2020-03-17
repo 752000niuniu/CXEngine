@@ -1,5 +1,5 @@
 
-local ui_is_show_hud = false
+local ui_is_show_hud = true
 function ui_toggle_show_hud()
     ui_is_show_hud = not ui_is_show_hud
     return ui_is_show_hud
@@ -12,6 +12,10 @@ function ui_hud_update()
     if not ui_is_show_hud then return end
 
     imgui.Text('    \n    FPS:'.. math.floor(1/window_system_get_fps()))
+    
+    imgui.Text('DrawCall : '..debug_get_drawcall())
+    imgui.Text('TextureCount : '..debug_get_texture_count())
+    imgui.Text('SpriteCount : '..debug_get_sprites_count())
 
 
     local w = imgui.GetWindowSize()

@@ -38,6 +38,7 @@ function combat_system_create_pve_battle(player)
 	local scene_name = player:GetSceneName()
 	local scene_monster_tbl = content_system_get_table('scene_monster')
 	local avatar_summon = content_system_get_table('avatar_summon')
+	if not scene_monster_tbl[scene_name] then return end
 	local candidates = scene_monster_tbl[scene_name].monster
 	if not candidates then return end
 	local monsters = {}

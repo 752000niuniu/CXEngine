@@ -64,12 +64,12 @@ namespace utils
 
 }
 
-bool utils_is_pal_scheme_part_equal(std::vector<PalSchemePart> pat1, std::vector<PalSchemePart> pat2) 
+bool utils_is_pal_scheme_part_equal(std::vector<PalSchemePart> pat1, std::vector<PalSchemePart> pat2)
 {
 	size_t sz1 = pat1.size() * sizeof(PalSchemePart);
 	size_t sz2 = pat2.size() * sizeof(PalSchemePart);
 	if (sz1 != sz2)return false;
-	return memcmp(pat1.data(), pat2.data(), sz1) ==0;
+	return memcmp(pat1.data(), pat2.data(), sz1) == 0;
 }
 
 
@@ -86,14 +86,14 @@ ResourceManager::~ResourceManager()
 
 void ResourceManager::Clear()
 {
-    
+
 }
 
 Sprite* ResourceManager::LoadWASSpriteByID(uint64_t resID, bool sync, std::vector<PalSchemePart>* patMatrix)
 {
 	if (!resID)return nullptr;
 	std::string path(std::to_string(resID));
-	uint32_t pack = 0; 
+	uint32_t pack = 0;
 	uint32_t wasID = 0;
 	DecodeWAS(resID, pack, wasID);
 
@@ -115,14 +115,14 @@ Sprite* ResourceManager::LoadWASSpriteByID(uint64_t resID, bool sync, std::vecto
 		else
 		{
 			iothread->PostTask(path.c_str(), [this, pack, wasID, patMatrix](const char* path)->bool
-			{
-				if (s_Loaders.find(pack) == s_Loaders.end())
 				{
-					s_Loaders[pack] = new NE::WDF(utils::GetPathByPackID(pack));
-				}
-				s_Loaders[pack]->LoadSprite(wasID, patMatrix);
-				return true;
-			});
+					if (s_Loaders.find(pack) == s_Loaders.end())
+					{
+						s_Loaders[pack] = new NE::WDF(utils::GetPathByPackID(pack));
+					}
+					s_Loaders[pack]->LoadSprite(wasID, patMatrix);
+					return true;
+				});
 			return nullptr;
 		}
 	}
@@ -130,7 +130,7 @@ Sprite* ResourceManager::LoadWASSpriteByID(uint64_t resID, bool sync, std::vecto
 
 void ResourceManager::UnLoadWASSpriteByID(uint64_t resID)
 {
-	uint32_t pack; 
+	uint32_t pack;
 	uint32_t wasID;
 	DecodeWAS(resID, pack, wasID);
 	if (s_Loaders.find(pack) == s_Loaders.end())
@@ -145,10 +145,10 @@ void ResourceManager::UnLoadWASSpriteByID(uint64_t resID)
 }
 
 
-Sprite* ResourceManager::LoadWASSprite(uint32_t pack, uint32 wasID,bool sync, std::vector<PalSchemePart>* patMatrix )
+Sprite* ResourceManager::LoadWASSprite(uint32_t pack, uint32 wasID, bool sync, std::vector<PalSchemePart>* patMatrix)
 {
 	auto resID = EncodeWAS(pack, wasID);
-	return LoadWASSpriteByID(resID,sync, patMatrix);
+	return LoadWASSpriteByID(resID, sync, patMatrix);
 }
 
 void ResourceManager::UnLoadWASSprite(uint32_t pack, uint32 wasID)
@@ -181,7 +181,7 @@ uint64_t ResourceManager::GetActionResID(int type, CXString id, int action)
 
 uint64_t ResourceManager::GetActorActionResID(int actorType, CXString roleID, int actionID)
 {
-	return GetActionResID(actorType,roleID,actionID);
+	return GetActionResID(actorType, roleID, actionID);
 }
 
 uint64_t ResourceManager::GetWeaponActionResID(CXString id, int actionID)
@@ -203,14 +203,18 @@ PalSpriteInfo* ResourceManager::LoadSprite(uint64_t resID, std::vector<PalScheme
 	if (it != m_Sprites.end()) {
 		if (pat == nullptr) {
 			//assert(it->second.size() == 1);
-			return it->second[0];
+			if (it->second[0] != nullptr) {
+				return it->second[0];
+			}
 		}
 		else {
 			auto& spinfos = it->second;
 			for (auto* info : spinfos)
 			{
-				if (utils_is_pal_scheme_part_equal(*pat, info->pat)) {
-					return info;
+				if (info != nullptr) {
+					if (utils_is_pal_scheme_part_equal(*pat, info->pat)) {
+						return info;
+					}
 				}
 			}
 		}
@@ -223,26 +227,66 @@ PalSpriteInfo* ResourceManager::LoadSprite(uint64_t resID, std::vector<PalScheme
 	{
 		s_Loaders[pack] = new NE::WDF(utils::GetPathByPackID(pack));
 	}
-	if(pat){
+	if (pat) {
 		info->sprite = s_Loaders[pack]->UnpackSprite(wasid, *pat);
 		info->pat = *pat;
-		info->pati =(int) m_Sprites[resID].size();
-	}else{
+		info->pati = (int)m_Sprites[resID].size();
+	}
+	else {
 		info->sprite = s_Loaders[pack]->UnpackSprite(wasid, {});
 		info->pat = {};
 		info->pati = 0;
 	}
-	
-	m_Sprites[resID].push_back(info);
+	info->refCount = 0;
+	bool update = false;
+	for (int i = 0; i < m_Sprites[resID].size(); i++) {
+		auto* v = m_Sprites[resID][i];
+		if (v == nullptr) {
+			m_Sprites[resID][i] = info;
+			update = true;
+			break;
+		}
+	}
+	if (!update) {
+		m_Sprites[resID].push_back(info);
+	}
 	return info;
 }
 
-void ResourceManager::UnLoadSprite(uint64_t resID)
-{
 
+
+void ResourceManager::UnLoadSprite(uint64_t resID, std::vector<PalSchemePart>* pat)
+{
+	auto it = m_Sprites.find(resID);
+	if (it != m_Sprites.end()) {
+		if (pat == nullptr) {
+			//assert(it->second.size() == 1);
+			auto* info = it->second[0];
+			assert(info->refCount == 0);
+			delete info->sprite;
+			info->sprite = nullptr;
+			delete info;
+			it->second[0] = nullptr;
+		}
+		else {
+			auto& spinfos = it->second;
+			int i = 0;
+			for (auto* info : spinfos)
+			{
+				if (utils_is_pal_scheme_part_equal(*pat, info->pat)) {
+					assert(info->refCount == 0);
+					delete info->sprite;
+					info->sprite = nullptr;
+					delete info;
+					it->second[i] = nullptr;
+				}
+				i++;
+			}
+		}
+	}
 }
 
-int ResourceManager::LoadWDFData(uint64_t id,uint8_t*& pData, size_t& size)
+int ResourceManager::LoadWDFData(uint64_t id, uint8_t*& pData, size_t& size)
 {
 	uint32_t pack = 0;
 	uint32_t wasID = 0;
@@ -252,12 +296,16 @@ int ResourceManager::LoadWDFData(uint64_t id,uint8_t*& pData, size_t& size)
 	{
 		s_Loaders[pack] = new NE::WDF(utils::GetPathByPackID(pack));
 	}
-	
+
 	s_Loaders[pack]->LoadFileData(wasID, pData, size);
 	int type = NE::check_file_type((char*)pData, size);
 	return type;
 }
 
+int ResourceManager::GetSpriteCount()
+{
+	return m_Sprites.size();
+}
 
 
 void resource_manager_init()
@@ -272,7 +320,7 @@ void resource_manager_update()
 
 }
 void resource_manager_deinit()
- {
+{
 	RESOURCE_MANAGER_INSTANCE->Clear();
 }
 
@@ -326,12 +374,12 @@ void luaopen_resource_manager(lua_State* L)
 	REG_ENUM(AVATAR_TYPE_COUNT);
 #undef REG_ENUM
 
-	
+
 	script_system_register_function(L, resource_manager_init);
 	script_system_register_function(L, resource_manager_update);
 	script_system_register_function(L, resource_manager_deinit);
 
-	
+
 	script_system_register_luac_function(L, res_get_was);
-	
+
 }
