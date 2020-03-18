@@ -11,6 +11,7 @@ find_package(gsm)
 find_package(miniaudio)
 find_package(nanovg)
 find_package(ejoy2d)
+find_package(moongl)
 
 file(GLOB_RECURSE  SOURCES_CPP "src/*.cpp" )
 file(GLOB_RECURSE  SOURCES_HEADER_PRI "src/*.h"  "src/*.hpp" "src/*.inl")
@@ -115,6 +116,7 @@ target_link_libraries(SimpleEngine
     miniaudio
     nanovg
     ejoy2d
+    moongl
 )
 
 # add_custom_command(TARGET SimpleEngine

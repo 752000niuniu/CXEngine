@@ -38,6 +38,10 @@
 #endif // !CXLUAX
 #ifdef SIMPLE_ENGINE
 #include <scene/scene_manager.h>
+extern "C" {
+#include <internal.h>
+#define luaL_requirelib(L,name,fn) (luaL_requiref(L, name, fn, 1),lua_pop(L, 1))
+}
 #endif
 #include <cxlua.h>
 #include <tsv.h>
@@ -81,6 +85,7 @@ void script_system_prepare_init()
 	luaopen_ui_renderer(L);
 	luaopen_action(L);
 	luaopen_scene_manager(L);
+	luaL_requirelib(L, "gl", luaopen_moongl);
 #endif
 #ifdef SIMPLE_SERVER
 
