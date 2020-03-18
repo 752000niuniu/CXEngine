@@ -69,3 +69,6 @@
 [submodule "internals/ejoy2d"]
 	path = internals/ejoy2d
 	url = https://github.com/oceancx/ejoy2d.git
+[submodule "internals/moongl"]
+	path = internals/moongl
+	url = https://github.com/oceancx/moongl.git
