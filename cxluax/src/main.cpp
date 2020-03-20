@@ -17,7 +17,7 @@
 #include <time/timer_manager.h>
 
 
-int main(int argc, char  *argv[])
+int main(int argc, char* argv[])
 {
 	handle_command_args(argc, argv);
 	FileSystem::InitWorkPath();
@@ -39,11 +39,8 @@ int main(int argc, char  *argv[])
 	res = lua_pcall(L, 0, LUA_MULTRET, 0);
 	check_lua_error(L, res);
 
-	res = luaL_dofile(L, FileSystem::GetLuaPath("main.lua").c_str());
-	if (!check_lua_error(L, res, FileSystem::GetLuaPath("main.lua").c_str()))
-	{
-		DebugBreak();
-	}
+	res = luaL_dofile(L, command_arg_opt_str("luapath", FileSystem::GetLuaPath("main.lua").c_str()));
+	check_lua_error(L, res);
 	lua_close(L);
 
 	return 0;

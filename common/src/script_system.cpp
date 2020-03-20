@@ -102,7 +102,7 @@ void script_system_prepare_init()
 
 void script_system_run_main_script()
 {
-	int res = luaL_dofile(L, FileSystem::GetLuaPath("main.lua").c_str());
+	int res = luaL_dofile(L, command_arg_opt_str("luapath", FileSystem::GetLuaPath("main.lua").c_str()));
 	check_lua_error(L, res);
 }
 

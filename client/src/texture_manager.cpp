@@ -78,5 +78,5 @@ void TextureManager::ClearAll()
 
 int TextureManager::GetTextureCount()
 {
-	return m_Textures.size();
+	return (int)m_Textures.size();
 }

@@ -23,24 +23,16 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../common/src PREFIX "Source Files
 
 add_executable(SimpleEngine
     ${SOURCES_HEADER_PRI}
-    src/algorithm.cpp
     src/animation/sprite.cpp
     src/camera.cpp
-    src/components/base_component.cpp
-    src/components/transform_component.cpp
-    src/graphics/graphics_2d.cpp
-    src/graphics/object_2d.cpp
-    src/graphics/renderer.cpp
     src/graphics/shader.cpp
     src/graphics/texture.cpp
-    src/graphics/transform.cpp
     src/graphics/bitmap.cpp
     src/graphics/ui_renderer.cpp
     src/engine.cpp
     src/game.cpp
     src/input_manager.cpp
     src/net.cpp
-    src/objects/object.cpp
     src/main.cpp
     src/resource_manager.cpp
     src/sprite_batch.cpp

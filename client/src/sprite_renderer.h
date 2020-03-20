@@ -31,10 +31,10 @@ public:
 	void DrawTexture(Texture* texture, glm::vec2 position, glm::vec2 size = glm::vec2(0, 0), GLfloat rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f));
     void DrawSprite(Texture* texture, glm::vec2 position, glm::vec2 size = glm::vec2(0, 0), GLfloat rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f));
     void DrawMask(Texture* texture, glm::vec2 position, glm::vec2 size = glm::vec2(0, 0), GLfloat rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f));
+    void DrawFrameSprite(unsigned int textureID, glm::vec2 position, glm::vec2 size = glm::vec2(0, 0), GLfloat rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f));
     void DrawFrameSprite(Texture* texture, glm::vec2 position, glm::vec2 size = glm::vec2(0, 0), GLfloat rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f));
     void DrawMapSprite(Texture* texture, glm::vec2 position, glm::vec2 size = glm::vec2(0, 0), GLfloat rotate = 0.0f, GLfloat alpha=0.0f);
-	void DrawBitmap(Texture* texture, glm::vec2 position, glm::vec2 size = glm::vec2(1, 1), glm::vec3 color = glm::vec3(1.0f),GLfloat alpha = 0.0f );
-	void DrawBitmapSymmetrical(Texture* texture, glm::vec2 position, glm::vec2 size = glm::vec2(1, 1), glm::vec3 color = glm::vec3(1.0f), GLfloat alpha = 0.0f);
+	void DrawBitmap(Texture* texture, glm::vec2 position, glm::vec2 size = glm::vec2(1, 1), glm::vec3 color = glm::vec3(1.0f),GLfloat alpha = 0.0f ,bool symmetrical= false);
 	void Bind() { m_pShader->Bind(); };
 	void UnBind() {	m_pShader->Unbind();};
     void UpdateProjection();
