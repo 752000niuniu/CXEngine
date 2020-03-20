@@ -28,7 +28,7 @@ SpriteRenderer::SpriteRenderer()
 
 SpriteRenderer::~SpriteRenderer()
 {
-	glDeleteVertexArrays(1, &this->quadVAO);
+	glDeleteVertexArrays(1, &quadVAO);
 	if (m_pShader)
 	{
 		glDeleteProgram(m_pShader->GetProgramID());
@@ -62,24 +62,27 @@ void SpriteRenderer::DrawTexture(unsigned int textureID, glm::vec2 position, glm
 {
 	DrawFrameSprite(textureID, position, size, rotate, color);
 }
+
 void SpriteRenderer::DrawFrameSprite(Texture* texture, glm::vec2 position, glm::vec2 size, GLfloat rotate, glm::vec3 color)
 {
 	DrawFrameSprite(texture->GetTextureID(), position, size, rotate, color);
 }
 
+static inline glm::mat4 mat_mul(glm::vec2 position, glm::vec2 size, GLfloat rotate) {
+	glm::mat4 model;
+	model = glm::translate(model, glm::vec3(position, 0.0f));  // First translate (transformations are: scale happens first, then rotation and then finall translation happens; reversed order)
+	model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f)); // Move origin of rotation to center of quad
+	model = glm::rotate(model, rotate, glm::vec3(0.0f, 0.0f, 1.0f)); // Then rotate
+	model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f)); // Move origin back
+	model = glm::scale(model, glm::vec3(size, 1.0f)); // Last scale
+	return model;
+}
 
 void SpriteRenderer::DrawSprite(Texture* texture, glm::vec2 position, glm::vec2 size, GLfloat rotate, glm::vec3 color)
 {
 	// Prepare transformations
 	m_pShader->Bind();
-	glm::mat4 model;
-	model = glm::translate(model, glm::vec3(position, 0.0f));  // First translate (transformations are: scale happens first, then rotation and then finall translation happens; reversed order)
-
-	model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f)); // Move origin of rotation to center of quad
-	model = glm::rotate(model, rotate, glm::vec3(0.0f, 0.0f, 1.0f)); // Then rotate
-	model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f)); // Move origin back
-
-	model = glm::scale(model, glm::vec3(size, 1.0f)); // Last scale
+	glm::mat4 model = mat_mul(position, size, rotate);
 
 	glUniformMatrix4fv(glGetUniformLocation(m_pShader->GetProgramID(), "model"), 1, GL_FALSE, (GLfloat*)(&model));
 
@@ -105,16 +108,10 @@ void SpriteRenderer::DrawSprite(Texture* texture, glm::vec2 position, glm::vec2 
 void SpriteRenderer::DrawBitmap(Texture* texture, glm::vec2 position, glm::vec2 size, glm::vec3 color, GLfloat alpha, bool symmetrical)
 {
 	m_pShader->Bind();
-	glm::mat4 model;
-	model = glm::translate(model, glm::vec3(position, 0.0f));  // First translate (transformations are: scale happens first, then rotation and then finall translation happens; reversed order)
-	model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f)); // Move origin of rotation to center of quad
-	model = glm::rotate(model, 0.0f, glm::vec3(0.0f, 0.0f, 1.0f)); // Then rotate
-	model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f)); // Move origin back
-	model = glm::scale(model, glm::vec3(size, 1.0f)); // Last scale
 
+	glm::mat4 model = mat_mul(position, size, 0);
 	glUniformMatrix4fv(glGetUniformLocation(m_pShader->GetProgramID(), "model"), 1, GL_FALSE, (GLfloat*)(&model));
 
-	// Render textured quad
 	glUniform3f(glGetUniformLocation(m_pShader->GetProgramID(), "spriteColor"), color.x, color.y, color.z);
 	glUniform1f(glGetUniformLocation(m_pShader->GetProgramID(), "alpha"), alpha);
 
@@ -139,17 +136,9 @@ void SpriteRenderer::DrawMask(Texture* texture, glm::vec2 position, glm::vec2 si
 {
 	// Prepare transformations
 	m_pShader->Bind();
-	glm::mat4 model;
-	model = glm::translate(model, glm::vec3(position, 0.0f));  // First translate (transformations are: scale happens first, then rotation and then finall translation happens; reversed order)
-
-	model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f)); // Move origin of rotation to center of quad
-	model = glm::rotate(model, rotate, glm::vec3(0.0f, 0.0f, 1.0f)); // Then rotate
-	model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f)); // Move origin back
-
-	model = glm::scale(model, glm::vec3(size, 1.0f)); // Last scale
+	glm::mat4 model = mat_mul(position, size, rotate);
 
 	glUniformMatrix4fv(glGetUniformLocation(m_pShader->GetProgramID(), "model"), 1, GL_FALSE, (GLfloat*)(&model));
-
 	// Render textured quad
 	glUniform3f(glGetUniformLocation(m_pShader->GetProgramID(), "spriteColor"), color.x, color.y, 0);
 	//glUniform3f(glGetUniformLocation(m_pShader->GetProgramID(), "spriteColor"), 0.5f, color.y, 0);
@@ -176,12 +165,7 @@ void SpriteRenderer::DrawMask(Texture* texture, glm::vec2 position, glm::vec2 si
 void SpriteRenderer::DrawFrameSprite(unsigned int textureID, glm::vec2 position, glm::vec2 size, GLfloat rotate, glm::vec3 color)
 {
 	m_pShader->Bind();
-	glm::mat4 model;
-	model = glm::translate(model, glm::vec3(position, 0.0f));  // First translate (transformations are: scale happens first, then rotation and then finall translation happens; reversed order)
-	model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f)); // Move origin of rotation to center of quad
-	model = glm::rotate(model, rotate, glm::vec3(0.0f, 0.0f, 1.0f)); // Then rotate
-	model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f)); // Move origin back
-	model = glm::scale(model, glm::vec3(size, 1.0f)); // Last scale
+	glm::mat4 model = mat_mul(position, size, rotate);
 
 	glUniformMatrix4fv(glGetUniformLocation(m_pShader->GetProgramID(), "model"), 1, GL_FALSE, (GLfloat*)(&model));
 
@@ -205,12 +189,8 @@ void SpriteRenderer::DrawMapSprite(Texture* texture, glm::vec2 position, glm::ve
 {
 	// Prepare transformations
 	m_pShader->Bind();
-	glm::mat4 model;
-	model = glm::translate(model, glm::vec3(position, 0.0f));  // First translate (transformations are: scale happens first, then rotation and then finall translation happens; reversed order)
-	model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f)); // Move origin of rotation to center of quad
-	model = glm::rotate(model, rotate, glm::vec3(0.0f, 0.0f, 1.0f)); // Then rotate
-	model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f)); // Move origin back
-	model = glm::scale(model, glm::vec3(size, 1.0f)); // Last scale
+
+	glm::mat4 model = mat_mul(position, size, rotate);
 
 	glUniformMatrix4fv(glGetUniformLocation(m_pShader->GetProgramID(), "model"), 1, GL_FALSE, (GLfloat*)(&model));
 
@@ -261,11 +241,11 @@ void SpriteRenderer::initRenderData()
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-		glGenVertexArrays(1, &quadVAO);
-		glBindVertexArray(quadVAO);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
-		glBindVertexArray(0);
+	glGenVertexArrays(1, &quadVAO);
+	glBindVertexArray(quadVAO);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
+	glBindVertexArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -285,11 +265,11 @@ void SpriteRenderer::initRenderData()
 	glBindBuffer(GL_ARRAY_BUFFER, symmetricalVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(symmetricalVertices), symmetricalVertices, GL_STATIC_DRAW);
 
-		glGenVertexArrays(1, &symmetricalQuadVAO);
-		glBindVertexArray(symmetricalQuadVAO);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
-		glBindVertexArray(0);
+	glGenVertexArrays(1, &symmetricalQuadVAO);
+	glBindVertexArray(symmetricalQuadVAO);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
+	glBindVertexArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

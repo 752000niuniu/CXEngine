@@ -34,6 +34,7 @@ add_executable(SimpleEngine
     src/input_manager.cpp
     src/net.cpp
     src/main.cpp
+    src/test.cpp
     src/resource_manager.cpp
     src/sprite_batch.cpp
     src/sprite_renderer.cpp
