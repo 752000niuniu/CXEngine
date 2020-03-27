@@ -46,7 +46,7 @@ extern "C" {
 #include <cxlua.h>
 #include <tsv.h>
 
-static bool g_DebugInCpp = true;
+static bool g_DebugInCpp = false;
 static lua_State* L = nullptr;
 void luaopen_script_system(lua_State* L);
 
@@ -111,14 +111,14 @@ void script_system_init()
 	/************************************************************************/
 	/* 先提取一个was                                                                     */
 	/************************************************************************/
-	const char* wdfPath = R"(e:/Github/YZXY/res/data/magic.wdf)";
+	/*const char* wdfPath = R"(e:/Github/YZXY/res/data/magic.wdf)";
 	NE::WDF wdf(wdfPath);
 	wdf.UnpackSprite(0xC12C2663, {});
 	wdf.SaveWAS(0xC12C2663, R"(e:/Github/YZXY/res/test.was)");
 
 	const char* wasPath = R"(e:/Github/YZXY/res/test.was)";
 	NE::WAS was(wasPath);
-	was.Decode();
+	was.Decode();*/
 
 	if (g_DebugInCpp)return;
 	script_system_call_function(L, "on_script_system_init");
