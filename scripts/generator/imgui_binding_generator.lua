@@ -1,4 +1,3 @@
-
 function remove_empty_lines(content) 
     local t = {}
     local line_count = 1
@@ -22,18 +21,20 @@ end
 imgui_header_separate_flags = {
     { '',                                   'skip'},
     { [[struct ImDrawChannel;]],            'parse struct'},
-    { [[typedef unsigned int ImGuiID;]],    'parse typedef'},
+    { [[typedef int ImGuiCol;]],            'parse typedef'},
     { [[struct ImVec2]],                    'parse ImVec2'},
     { [[struct ImVec4]],                    'parse ImVec4'},
     { [[namespace ImGui]],                  'parse ImGuiAPI'},
     { [[enum ImGuiWindowFlags_]],           'parse enum blocks'},
     { [[#define IMGUI_PAYLOAD_TYPE_COLOR_3F     "_COL3F"]],     'skip'},
     { [[enum ImGuiDataType_]],              'parse enum blocks'},
+    { [[struct ImNewDummy {};]],                'skip'},
     { [[struct ImGuiStyle]],                'skip'},
     { [[#ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS]],     'skip'},
-    { [[#ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS]],     'skip'},
-    { [[namespace ImGui]],                  'skip'},
-    { [[#endif]],                           'skip'},
+    { [[struct ImGuiOnceUponAFrame]],                  'skip'},
+    { [[#ifdef IMGUI_USE_BGRA_PACKED_COLOR]],     'skip'},
+    { [[struct ImColor]],                           'skip'},
+    { [[#ifndef ImDrawCallback]],          'skip'},
     { [[enum ImDrawCornerFlags_]],          'parse enum blocks'},
     { [[struct ImDrawList]],                'parse ImDrawList'},
     { [[struct ImDrawData]],                'skip'},
@@ -506,15 +507,16 @@ function hook_write_fname(prop_name)
     return prop_name
 end
 
-function output_imguiapis()
-    print([[#include "cximgui.h"]]) 
-    print([[#include <imgui.h>]]) 
-    print([[#include <string.h>]]) 
+function output_imguiapis(cximgui_path)
+    local cximgui_file = io.open(cximgui_path,'w')
+    cximgui_file:write([[#include "cximgui.h"]]..'\n') 
+    cximgui_file:write([[#include <imgui.h>]]..'\n') 
+    cximgui_file:write([[#include <string.h>]]..'\n') 
     local unsupported_func = {}
     for i,proto in ipairs(imgui_apis) do
-        print('//'..proto:ToString())
+        cximgui_file:write('//'..proto:ToString()..'\n')
         if not proto.supported then
-            print('//UnSupported '.. proto.name)
+            cximgui_file:write('//UnSupported '.. proto.name..'\n')
             table.insert(unsupported_func, proto:WrapName())
         else
             local call_api_args = {}
@@ -704,33 +706,33 @@ function output_imguiapis()
                 table.insert(fun_impl, '};')
                 
                 local imp = table.concat(fun_impl,'\n')
-                print(imp)
-                print('')
+                cximgui_file:write(imp..'\n')
+                cximgui_file:write(''..'\n')
             end
         end
     end
-    print('\n//total func', #imgui_apis, 'unSupported', #unsupported_func)
+    cximgui_file:write('\n//total func', #imgui_apis, 'unSupported', #unsupported_func..'\n')
 
 
-    print('luaL_Reg cximgui_methods[] = {')
+    cximgui_file:write('luaL_Reg cximgui_methods[] = {'..'\n')
     local last_name = ''
     local name_identifier = 2
     for i,proto in ipairs(imgui_apis) do
         if proto.supported then
             if last_name ~= proto.name then
                 name_identifier = 2
-                print(string.format('\t{"%s",%s},', hook_write_fname(proto.name),'cximgui_'.. proto:WrapName()) )   
+                cximgui_file:write(string.format('\t{"%s",%s},', hook_write_fname(proto.name),'cximgui_'.. proto:WrapName()) ..'\n')   
             else
-                print(string.format('\t{"%s",%s},', hook_write_fname(proto.name..name_identifier),'cximgui_'.. proto:WrapName()) )   
+                cximgui_file:write(string.format('\t{"%s",%s},', hook_write_fname(proto.name..name_identifier),'cximgui_'.. proto:WrapName()) ..'\n')   
                 name_identifier = name_identifier+1
             end
         end
         last_name = proto.name
     end 
-    print('\t{ NULL, NULL }')
-    print('};')
+    cximgui_file:write('\t{ NULL, NULL }'..'\n')
+    cximgui_file:write('};'..'\n')
 
-    print([[
+    cximgui_file:write([[
 
 struct CXIMStrBuf {
     char* str;
@@ -945,7 +947,9 @@ void luaopen_cximgui(lua_State* L) {
     luaL_setmetatable(L, "mt_cximgui");
     lua_setglobal(L, "imgui");
 }
-]])
+]]..'\n')
+    cximgui_file:close()
+    os.rename( cximgui_path, vfs_makepath('common/src/imgui/cximgui.cpp'))
 end
 
 function parse_imgui_header(path)
@@ -954,7 +958,7 @@ function parse_imgui_header(path)
     content = content:gsub('//.-\n','\n')   --去掉注释
     content = content:gsub('/%*.-%*/','')   
     content = remove_empty_lines(content)    
-
+    
     imgui_typedefs['size_t'] = 'unsigned int'
     local parsed_skip_file = io.open(vfs_makepath('scripts/client/parsed_skip_file.txt') ,'w')
     
@@ -988,8 +992,7 @@ function parse_imgui_header(path)
     end
     parsed_skip_file:close()
     
-    output_imguiapis()
- 
+    output_imguiapis(vfs_makepath('common/src/imgui/cximgui_new.cpp'))
 end
 
 
@@ -1010,12 +1013,12 @@ function output_imgui_enums(path)
             file:write( string.format('REG_IMGUI_ENUM(%s);\n',name) )
         end
     end
-    file:close(new_content)
+    file:close()
+
+    os.rename(path, vfs_makepath('common/src/imgui/cximgui_enums.inl'))
 end
 
-output_imgui_enums(vfs_makepath('common/src/client/cximgui_enums.inl'))
-
-
+output_imgui_enums(vfs_makepath('common/src/imgui/cximgui_enums_new.inl'))
 
 
 
