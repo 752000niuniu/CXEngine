@@ -619,7 +619,7 @@ function output_imguiapis(cximgui_path)
                     
                 elseif arg.type == 'bool' then
                     if arg.def then
-                        fun_impl:write_line( '\t%s %s = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)%s' ,arg.type, arg.name , arg.def)
+                        fun_impl:write_line( '\t%s %s = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)%s;' ,arg.type, arg.name , arg.def)
                     else
                         fun_impl:write_line( '\t%s %s = lua_toboolean(L, __argi__++);' ,arg.type, arg.name)
                     end                                        
