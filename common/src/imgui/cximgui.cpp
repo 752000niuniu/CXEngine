@@ -52,7 +52,7 @@ int cximgui_GetDrawData(lua_State* L){
 //void  ShowDemoWindow(bool* p_open);
 int cximgui_ShowDemoWindow_1_bp(lua_State* L){
 	int __argi__ = 1;
-	bool p_open = lua_toboolean(L, __argi__++);
+	bool p_open = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)NULL
 	ImGui::ShowDemoWindow(&p_open);
 	lua_pushboolean(L, p_open);
 	return 1;
@@ -61,7 +61,7 @@ int cximgui_ShowDemoWindow_1_bp(lua_State* L){
 //void  ShowAboutWindow(bool* p_open);
 int cximgui_ShowAboutWindow_1_bp(lua_State* L){
 	int __argi__ = 1;
-	bool p_open = lua_toboolean(L, __argi__++);
+	bool p_open = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)NULL
 	ImGui::ShowAboutWindow(&p_open);
 	lua_pushboolean(L, p_open);
 	return 1;
@@ -70,7 +70,7 @@ int cximgui_ShowAboutWindow_1_bp(lua_State* L){
 //void  ShowMetricsWindow(bool* p_open);
 int cximgui_ShowMetricsWindow_1_bp(lua_State* L){
 	int __argi__ = 1;
-	bool p_open = lua_toboolean(L, __argi__++);
+	bool p_open = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)NULL
 	ImGui::ShowMetricsWindow(&p_open);
 	lua_pushboolean(L, p_open);
 	return 1;
@@ -118,7 +118,7 @@ int cximgui_GetVersion(lua_State* L){
 int cximgui_Begin_3_sbpi(lua_State* L){
 	int __argi__ = 1;
 	const char* name = lua_tostring(L, __argi__++);
-	bool p_open = lua_toboolean(L, __argi__++);
+	bool p_open = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)NULL
 	ImGuiWindowFlags flags = (ImGuiWindowFlags)luaL_optinteger(L, __argi__++, 0);
 	bool __ret__ = ImGui::Begin(name,&p_open,flags);
 	lua_pushboolean(L, __ret__);
@@ -141,7 +141,7 @@ int cximgui_BeginChild_4_sv2bi(lua_State* L){
 	size.x = (float)luaL_optnumber(L,__argi__  ,size_def.x);
 	size.y = (float)luaL_optnumber(L,__argi__+1,size_def.y);
 	if( size.x != size_def.x || size.y != size_def.y  ) __argi__+=2;
-	bool border = lua_toboolean(L, __argi__++);
+	bool border = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)false
 	ImGuiWindowFlags flags = (ImGuiWindowFlags)luaL_optinteger(L, __argi__++, 0);
 	bool __ret__ = ImGui::BeginChild(str_id,size,border,flags);
 	lua_pushboolean(L, __ret__);
@@ -157,7 +157,7 @@ int cximgui_BeginChild_4_iv2bi(lua_State* L){
 	size.x = (float)luaL_optnumber(L,__argi__  ,size_def.x);
 	size.y = (float)luaL_optnumber(L,__argi__+1,size_def.y);
 	if( size.x != size_def.x || size.y != size_def.y  ) __argi__+=2;
-	bool border = lua_toboolean(L, __argi__++);
+	bool border = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)false
 	ImGuiWindowFlags flags = (ImGuiWindowFlags)luaL_optinteger(L, __argi__++, 0);
 	bool __ret__ = ImGui::BeginChild(id,size,border,flags);
 	lua_pushboolean(L, __ret__);
@@ -1882,7 +1882,7 @@ int cximgui_SetNextItemOpen_2_bi(lua_State* L){
 int cximgui_Selectable_4_sbiv2(lua_State* L){
 	int __argi__ = 1;
 	const char* label = lua_tostring(L, __argi__++);
-	bool selected = lua_toboolean(L, __argi__++);
+	bool selected = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)false
 	ImGuiSelectableFlags flags = (ImGuiSelectableFlags)luaL_optinteger(L, __argi__++, 0);
 	ImVec2 size_def = ImVec2(0,0);
 	ImVec2 size;
@@ -2057,7 +2057,7 @@ int cximgui_EndMainMenuBar(lua_State* L){
 int cximgui_BeginMenu_2_sb(lua_State* L){
 	int __argi__ = 1;
 	const char* label = lua_tostring(L, __argi__++);
-	bool enabled = lua_toboolean(L, __argi__++);
+	bool enabled = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)true
 	bool __ret__ = ImGui::BeginMenu(label,enabled);
 	lua_pushboolean(L, __ret__);
 	return 1;
@@ -2074,8 +2074,8 @@ int cximgui_MenuItem_4_ssbb(lua_State* L){
 	int __argi__ = 1;
 	const char* label = lua_tostring(L, __argi__++);
 	const char* shortcut = luaL_optstring(L, __argi__++, NULL);
-	bool selected = lua_toboolean(L, __argi__++);
-	bool enabled = lua_toboolean(L, __argi__++);
+	bool selected = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)false
+	bool enabled = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)true
 	bool __ret__ = ImGui::MenuItem(label,shortcut,selected,enabled);
 	lua_pushboolean(L, __ret__);
 	return 1;
@@ -2087,7 +2087,7 @@ int cximgui_MenuItem_4_ssbpb(lua_State* L){
 	const char* label = lua_tostring(L, __argi__++);
 	const char* shortcut = lua_tostring(L, __argi__++);
 	bool p_selected = lua_toboolean(L, __argi__++);
-	bool enabled = lua_toboolean(L, __argi__++);
+	bool enabled = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)true
 	bool __ret__ = ImGui::MenuItem(label,shortcut,&p_selected,enabled);
 	lua_pushboolean(L, __ret__);
 	lua_pushboolean(L, p_selected);
@@ -2143,7 +2143,7 @@ int cximgui_BeginPopupContextWindow_3_sib(lua_State* L){
 	int __argi__ = 1;
 	const char* str_id = luaL_optstring(L, __argi__++, NULL);
 	ImGuiMouseButton mouse_button = (ImGuiMouseButton)luaL_optinteger(L, __argi__++, 1);
-	bool also_over_items = lua_toboolean(L, __argi__++);
+	bool also_over_items = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)true
 	bool __ret__ = ImGui::BeginPopupContextWindow(str_id,mouse_button,also_over_items);
 	lua_pushboolean(L, __ret__);
 	return 1;
@@ -2163,7 +2163,7 @@ int cximgui_BeginPopupContextVoid_2_si(lua_State* L){
 int cximgui_BeginPopupModal_3_sbpi(lua_State* L){
 	int __argi__ = 1;
 	const char* name = lua_tostring(L, __argi__++);
-	bool p_open = lua_toboolean(L, __argi__++);
+	bool p_open = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)NULL
 	ImGuiWindowFlags flags = (ImGuiWindowFlags)luaL_optinteger(L, __argi__++, 0);
 	bool __ret__ = ImGui::BeginPopupModal(name,&p_open,flags);
 	lua_pushboolean(L, __ret__);
@@ -2207,7 +2207,7 @@ int cximgui_Columns_3_isb(lua_State* L){
 	int __argi__ = 1;
 	int count = (int)luaL_optinteger(L, __argi__++, 1);
 	const char* id = luaL_optstring(L, __argi__++, NULL);
-	bool border = lua_toboolean(L, __argi__++);
+	bool border = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)true
 	ImGui::Columns(count,id,border);
 	return 0;
 };
@@ -2288,7 +2288,7 @@ int cximgui_EndTabBar(lua_State* L){
 int cximgui_BeginTabItem_3_sbpi(lua_State* L){
 	int __argi__ = 1;
 	const char* label = lua_tostring(L, __argi__++);
-	bool p_open = lua_toboolean(L, __argi__++);
+	bool p_open = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)NULL
 	ImGuiTabItemFlags flags = (ImGuiTabItemFlags)luaL_optinteger(L, __argi__++, 0);
 	bool __ret__ = ImGui::BeginTabItem(label,&p_open,flags);
 	lua_pushboolean(L, __ret__);
@@ -2697,7 +2697,7 @@ int cximgui_CalcTextSize_4_ssbn(lua_State* L){
 	int __argi__ = 1;
 	const char* text = lua_tostring(L, __argi__++);
 	const char* text_end = luaL_optstring(L, __argi__++, NULL);
-	bool hide_text_after_double_hash = lua_toboolean(L, __argi__++);
+	bool hide_text_after_double_hash = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)false
 	float wrap_width = (float)luaL_optnumber(L, __argi__++, -1.0f);
 	ImVec2 __ret__ = ImGui::CalcTextSize(text,text_end,hide_text_after_double_hash,wrap_width);
 	lua_pushnumber(L, __ret__.x);
@@ -2784,7 +2784,7 @@ int cximgui_IsKeyDown_1_i(lua_State* L){
 int cximgui_IsKeyPressed_2_ib(lua_State* L){
 	int __argi__ = 1;
 	int user_key_index = (int)lua_tointeger(L, __argi__++);
-	bool repeat = lua_toboolean(L, __argi__++);
+	bool repeat = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)true
 	bool __ret__ = ImGui::IsKeyPressed(user_key_index,repeat);
 	lua_pushboolean(L, __ret__);
 	return 1;
@@ -2813,7 +2813,7 @@ int cximgui_GetKeyPressedAmount_3_inn(lua_State* L){
 //void  CaptureKeyboardFromApp(bool want_capture_keyboard_value);
 int cximgui_CaptureKeyboardFromApp_1_b(lua_State* L){
 	int __argi__ = 1;
-	bool want_capture_keyboard_value = lua_toboolean(L, __argi__++);
+	bool want_capture_keyboard_value = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)true
 	ImGui::CaptureKeyboardFromApp(want_capture_keyboard_value);
 	return 0;
 };
@@ -2831,7 +2831,7 @@ int cximgui_IsMouseDown_1_i(lua_State* L){
 int cximgui_IsMouseClicked_2_ib(lua_State* L){
 	int __argi__ = 1;
 	ImGuiMouseButton button = (ImGuiMouseButton)lua_tointeger(L, __argi__++);
-	bool repeat = lua_toboolean(L, __argi__++);
+	bool repeat = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)false
 	bool __ret__ = ImGui::IsMouseClicked(button,repeat);
 	lua_pushboolean(L, __ret__);
 	return 1;
@@ -2864,7 +2864,7 @@ int cximgui_IsMouseHoveringRect_3_v2v2b(lua_State* L){
 	ImVec2 r_max;
 	r_max.x = (float)lua_tonumber(L,__argi__++);
 	r_max.y = (float)lua_tonumber(L,__argi__++);
-	bool clip = lua_toboolean(L, __argi__++);
+	bool clip = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)true
 	bool __ret__ = ImGui::IsMouseHoveringRect(r_min,r_max,clip);
 	lua_pushboolean(L, __ret__);
 	return 1;
@@ -2951,7 +2951,7 @@ int cximgui_SetMouseCursor_1_i(lua_State* L){
 //void  CaptureMouseFromApp(bool want_capture_mouse_value);
 int cximgui_CaptureMouseFromApp_1_b(lua_State* L){
 	int __argi__ = 1;
-	bool want_capture_mouse_value = lua_toboolean(L, __argi__++);
+	bool want_capture_mouse_value = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)true
 	ImGui::CaptureMouseFromApp(want_capture_mouse_value);
 	return 0;
 };
@@ -3073,7 +3073,7 @@ int cximgui_ImDrawList_PushClipRect_3_v2v2b(lua_State* L){
 	ImVec2 clip_rect_max;
 	clip_rect_max.x = (float)lua_tonumber(L,__argi__++);
 	clip_rect_max.y = (float)lua_tonumber(L,__argi__++);
-	bool intersect_with_current_clip_rect = lua_toboolean(L, __argi__++);
+	bool intersect_with_current_clip_rect = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)false
 	ImGui::GetOverlayDrawList()->PushClipRect(clip_rect_min,clip_rect_max,intersect_with_current_clip_rect);
 	return 0;
 };

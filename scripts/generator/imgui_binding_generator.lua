@@ -338,8 +338,8 @@ function parse_funcargs_cap(args, brace_repls)
                     return brace_repls[math.tointeger(index)]
                 end)
                 equal_right = equal_right:gsub(' ','')
-                arg.def = equal_right
-            end
+                    arg.def = equal_right
+                end
             table.insert(all_args, arg)
         end
     end
@@ -618,7 +618,11 @@ function output_imguiapis(cximgui_path)
                     end
                     
                 elseif arg.type == 'bool' then
-                    fun_impl:write_line( '\t%s %s = lua_toboolean(L, __argi__++);' ,arg.type, arg.name)
+                    if arg.def then
+                        fun_impl:write_line( '\t%s %s = lua_isboolean(L, __argi__) ? lua_toboolean(L, __argi__++) : (bool)%s' ,arg.type, arg.name , arg.def)
+                    else
+                        fun_impl:write_line( '\t%s %s = lua_toboolean(L, __argi__++);' ,arg.type, arg.name)
+                    end                                        
                     local call_arg = arg:IsPtr() and ('&'..arg.name) or arg.name
                     table.insert(call_api_args, call_arg)
                 else
