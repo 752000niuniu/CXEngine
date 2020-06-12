@@ -240,7 +240,7 @@ void SceneManager::Draw()
 	ImGui::SetNextWindowViewport(mainViewport->ID);
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-	ImGui::Begin("Game", nullptr, ImGuiWindowFlags_NoDecoration);
+	ImGui::Begin("Game", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking);
 	ImGui::PopStyleVar();
 	ImVec2 cursorPos = ImGui::GetCursorPos();
 	auto cspos = ImGui::GetCursorScreenPos();

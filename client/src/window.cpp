@@ -106,6 +106,7 @@ void Window::Init(int w,int h)
 	glfwSetWindowPos(m_pWindow, (monitorW - m_WindowWidth) / 2, (monitorH - m_WindowHeight) / 2);
 
 	glfwMakeContextCurrent(m_pWindow);
+	glfwSwapInterval(1);
 	GLenum err = glewInit();
 	if (GLEW_OK !=err) {
 		cxlog_err("glewInit error! %s\n", glewGetErrorString(err));
@@ -114,21 +115,29 @@ void Window::Init(int w,int h)
 	// GLEW generates GL error because it calls glGetString(GL_EXTENSIONS), we'll consume it here.
 	glGetError();
 
-	glfwSwapInterval(1);
 
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
+    //io.ConfigViewportsNoAutoMerge = true;
+    //io.ConfigViewportsNoTaskBarIcon = true;
+ 
+	ImGui::StyleColorsDark();
+	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+    ImGuiStyle& style = ImGui::GetStyle();
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        style.WindowRounding = 0.0f;
+        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+    }
+
 	ImGui_ImplGlfw_InitForOpenGL(m_pWindow, false);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
 	io.Fonts->AddFontFromFileTTF(FileSystem::GetGameFontPath().c_str(), 14.0f, NULL, io.Fonts->GetGlyphRangesChineseFull());
-
-	ImGui::GetStyle().WindowRounding = 0.0f;
-	ImGui::StyleColorsDark();
-
 
 	glfwSetFramebufferSizeCallback(m_pWindow, glfw_framebuffer_size_callback);
 	glfwSetCursorPosCallback(m_pWindow, glfw_mouse_callback);
@@ -150,9 +159,12 @@ void Window::Show()
 	ImGuiIO& io = ImGui::GetIO();
     while (!glfwWindowShouldClose(m_pWindow))
 	{
+		
 		auto now = glfwGetTime();
 		m_FPS = (float)(now - previous);
 		previous = now;
+		
+		glfwPollEvents();
 	
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -163,20 +175,19 @@ void Window::Show()
 
 		ImGui::Render();
 		int display_w, display_h;
-		glfwMakeContextCurrent(m_pWindow);
 		glfwGetFramebufferSize(m_pWindow, &display_w, &display_h);
 		glViewport(0, 0, display_w, display_h);
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-		{
-			ImGui::UpdatePlatformWindows();
-			ImGui::RenderPlatformWindowsDefault();
-		}
+  		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            GLFWwindow* backup_current_context = glfwGetCurrentContext();
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+            glfwMakeContextCurrent(backup_current_context);
+        }
 
-		glfwMakeContextCurrent(m_pWindow);
-		glfwSwapBuffers(m_pWindow);
-		glfwPollEvents();
+        glfwSwapBuffers(m_pWindow);
     }
 	
 	script_system_deinit();
