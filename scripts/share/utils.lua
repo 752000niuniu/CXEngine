@@ -75,7 +75,7 @@ end
 
 
 imgui.HorizontalLayout = function(tbl, next_fn, cb, wrap_w)
-    local line_width = wrap_w or imgui.GetContentRegionAvailWidth() 
+    local line_width = wrap_w or imgui.GetContentRegionAvail()
     local cx, cy = imgui.GetCursorPos()
     local layout_x = cx
     do
