@@ -289,9 +289,6 @@ void scene_manager_deinit()
 }
 
 
-
-
-
 void scene_manager_switch_scene_by_name(const char* name)
 {
 	SCENE_MANAGER_INSTANCE->SwitchScene(name);
