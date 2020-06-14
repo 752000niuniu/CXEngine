@@ -214,6 +214,21 @@ void function_to_restore_shader_or_blend_state(const ImDrawList* parent_list, co
 	glEnable(GL_BLEND);
 }
 
+void SceneManager::DrawImGui(float css_x, float css_y)
+{
+	int gameWidth = WINDOW_INSTANCE->GetWidth();
+	int gameHeight = WINDOW_INSTANCE->GetHeight();
+
+	m_ImGuiCursorPos = Pos(css_x, css_y);
+	ImGui::GetWindowDrawList()->AddCallback(function_to_select_shader_or_blend_state, nullptr);
+	ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_TextureColor, ImVec2(css_x, css_y), ImVec2(css_x + gameWidth, css_y + gameHeight), ImVec2(0, 1), ImVec2(1, 0));
+	ImGui::GetWindowDrawList()->AddCallback(function_to_restore_shader_or_blend_state, nullptr);
+	if (m_pCurrentScene) {
+		script_system_call_function(script_system_get_luastate(), "on_game_imgui_update", m_pCurrentScene->GetName());
+	}
+
+}
+
 void SceneManager::Draw()
 {
 	if (m_SwitchingScene)return;
@@ -233,29 +248,9 @@ void SceneManager::Draw()
 	UIRenderer::GetInstance()->Draw();
 	UIRenderer::GetInstance()->End();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	ImGuiViewport* mainViewport = ImGui::GetMainViewport();
-	ImGui::SetNextWindowPos(mainViewport->Pos);
-	ImGui::SetNextWindowSize(mainViewport->Size);
-	ImGui::SetNextWindowViewport(mainViewport->ID);
-
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-	ImGui::Begin("Game", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking);
-	ImGui::PopStyleVar();
-	ImVec2 cursorPos = ImGui::GetCursorPos();
-	auto cspos = ImGui::GetCursorScreenPos();
-	m_ImGuiCursorPos = Pos(cspos.x, cspos.y);
-	ImGui::GetWindowDrawList()->AddCallback(function_to_select_shader_or_blend_state, nullptr);
-	ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_TextureColor, cspos, ImVec2(cspos.x + gameWidth, cspos.y + gameHeight), ImVec2(0, 1), ImVec2(1, 0));
-	ImGui::GetWindowDrawList()->AddCallback(function_to_restore_shader_or_blend_state, nullptr);
-	ImGui::SetCursorPos(cursorPos);
-	if (m_pCurrentScene) {
-		script_system_call_function(script_system_get_luastate(), "on_game_imgui_update", m_pCurrentScene->GetName());
-	}
-
 	sLastDrawCall = SpriteRenderer::GetInstance()->GetDrawCall();
-	ImGui::End();
 };
+
 
 BaseScene* SceneManager::GetCurrentScene()
 {
@@ -278,11 +273,18 @@ void scene_manager_update()
 	SCENE_MANAGER_INSTANCE->Update();
 }
 
+int scene_manager_draw_imgui(lua_State* L)
+{
+	float x = (float)lua_tonumber(L, 1);
+	float y = (float)lua_tonumber(L, 2);
+	SCENE_MANAGER_INSTANCE->DrawImGui(x, y);
+	return 0;
+}
+
 void scene_manager_draw()
 {
 	SCENE_MANAGER_INSTANCE->Draw();
 }
-
 void scene_manager_deinit()
 {
 	SCENE_MANAGER_INSTANCE->DeleteSingleton();
@@ -400,7 +402,7 @@ int scene_get_map_offset(lua_State* L) {
 	return 2;
 }
 
-int debug_get_drawcall(){
+int debug_get_drawcall() {
 	return sLastDrawCall;
 }
 
@@ -420,11 +422,14 @@ void luaopen_scene_manager(lua_State* L)
 	script_system_register_function(L, debug_get_texture_count);
 	script_system_register_function(L, debug_get_sprites_count);
 
-	
+
 
 	script_system_register_function(L, scene_manager_init);
 	script_system_register_function(L, scene_manager_update);
 	script_system_register_function(L, scene_manager_draw);
+
+	script_system_register_luac_function(L, scene_manager_draw_imgui);
+
 	script_system_register_function(L, scene_manager_deinit);
 	script_system_register_function(L, scene_manager_add_scene);
 	script_system_register_function(L, scene_manager_add_custom_scene);

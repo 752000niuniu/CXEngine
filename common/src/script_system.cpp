@@ -108,18 +108,6 @@ void script_system_run_main_script()
 
 void script_system_init()
 {
-	/************************************************************************/
-	/* 先提取一个was                                                                     */
-	/************************************************************************/
-	/*const char* wdfPath = R"(e:/Github/YZXY/res/data/magic.wdf)";
-	NE::WDF wdf(wdfPath);
-	wdf.UnpackSprite(0xC12C2663, {});
-	wdf.SaveWAS(0xC12C2663, R"(e:/Github/YZXY/res/test.was)");
-
-	const char* wasPath = R"(e:/Github/YZXY/res/test.was)";
-	NE::WAS was(wasPath);
-	was.Decode();*/
-
 	if (g_DebugInCpp)return;
 	script_system_call_function(L, "on_script_system_init");
 }

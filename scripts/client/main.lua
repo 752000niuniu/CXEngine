@@ -59,7 +59,22 @@ function on_script_system_update()
 end
 
 function on_script_system_draw()
-	scene_manager_draw()
+    
+    local vid,x,y,w,h = imgui.GetMainViewport()
+    imgui.SetNextWindowPos(x,y)
+    imgui.SetNextWindowSize(w,h)
+    imgui.SetNextWindowViewport(vid)
+    
+    imgui.PushStyleVar2(ImGuiStyleVar_WindowPadding,0,0)
+    imgui.Begin('Game', ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking)
+    imgui.PopStyleVar()
+    
+    scene_manager_draw()
+    local cs_x,cs_y = imgui.GetCursorPos()
+    local css_x,css_y = imgui.GetCursorScreenPos()
+    scene_manager_draw_imgui(css_x,css_y)
+    imgui.SetCursorPos(cs_x,cs_y)
+    imgui.End()
 end
 
 function on_script_system_deinit()
@@ -72,6 +87,8 @@ function on_script_system_deinit()
 end
 
 do
-	window_system_init(SCREEN_WIDTH,SCREEN_HEIGHT)
+    window_system_init(SCREEN_WIDTH,SCREEN_HEIGHT)
+    iw_set_font(vfs_get_workdir()..'/res/font/msyhl.ttc')
+
 	window_system_show()	
 end

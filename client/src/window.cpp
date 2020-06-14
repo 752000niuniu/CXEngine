@@ -137,7 +137,6 @@ void Window::Init(int w,int h)
 	ImGui_ImplGlfw_InitForOpenGL(m_pWindow, false);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
-	io.Fonts->AddFontFromFileTTF(FileSystem::GetGameFontPath().c_str(), 14.0f, NULL, io.Fonts->GetGlyphRangesChineseFull());
 
 	glfwSetFramebufferSizeCallback(m_pWindow, glfw_framebuffer_size_callback);
 	glfwSetCursorPosCallback(m_pWindow, glfw_mouse_callback);
@@ -225,6 +224,11 @@ void Window::OnFrameBufferSizeCallback(int width, int height)
 	glViewport(0, 0, m_WindowWidth, m_WindowHeight);
 }
 
+void iw_set_font(const char* path) {
+	ImGuiIO& io = ImGui::GetIO();
+	io.Fonts->AddFontFromFileTTF(path, 14.0f, NULL, io.Fonts->GetGlyphRangesChineseFull());
+}
+
 void window_system_init(int w, int h)
 {
 	WINDOW_INSTANCE->Init(w, h);
@@ -267,4 +271,6 @@ void luaopen_window(lua_State* L)
 
 	script_system_register_function(L, game_get_width);
 	script_system_register_function(L, game_get_height);
+
+	script_system_register_function(L, iw_set_font);
 }

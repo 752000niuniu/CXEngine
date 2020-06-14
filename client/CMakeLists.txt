@@ -29,7 +29,6 @@ add_executable(SimpleEngine
     src/graphics/texture.cpp
     src/graphics/bitmap.cpp
     src/graphics/ui_renderer.cpp
-    src/engine.cpp
     src/game.cpp
     src/input_manager.cpp
     src/net.cpp

@@ -997,6 +997,7 @@ function parse_imgui_header(path)
     parsed_skip_file:close()
     
     output_imguiapis(vfs_makepath('common/src/imgui/cximgui_new.cpp'))
+    print('output_imguiapis done!')
 end
 
 
@@ -1023,6 +1024,7 @@ function output_imgui_enums(path)
 end
 
 output_imgui_enums(vfs_makepath('common/src/imgui/cximgui_enums_new.inl'))
+print('output_imgui_enums done!')
 
 
 
