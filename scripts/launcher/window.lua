@@ -143,6 +143,25 @@ function launcher_update()
 		net_send_message(PTO_C2S_GM, cjson.encode({type='exit'}))
 	end
 
+
+	if imgui.Button('启动教程') then
+		local exepath
+		if command_arg_check('Debug') then
+			exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'
+		else
+			exepath = vfs_get_workdir()..'bin/SimpleEngine.exe'
+		end
+		local tcmd = {
+			'start '..exepath,
+			'--cwd='..vfs_get_workdir(),
+			'--dbg_port='..DbgPortSB:str(),
+			'--script_path=scripts/examples/'
+		}
+		local cmd = table.concat(tcmd,' ')
+		cxlog_info(cmd)
+		os.execute(cmd)
+	end
+
 	if command_arg_check('Debug') then
 		if imgui.Button('启动DA 4711') then
 			local path = vfs_makepath('internals/luadebugger/vscode/Debug/vsdbgadapter.exe')

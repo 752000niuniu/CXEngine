@@ -56,6 +56,9 @@ function on_script_system_deinit()
 end
 
 do
-	window_system_init(SCREEN_WIDTH,SCREEN_HEIGHT)
+    window_system_init(SCREEN_WIDTH,SCREEN_HEIGHT)
+    iw_set_font(vfs_get_workdir()..'/res/font/msyhl.ttc')
+
+    
 	window_system_show()	
 end

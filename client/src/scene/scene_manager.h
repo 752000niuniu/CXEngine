@@ -15,10 +15,10 @@ public:
 
 	void Init();
 
-	void OnWindowFrameSizeChanged();
+	
 
 	void Update();
-	void DrawImGui(float css_x, float css_y);
+		void DrawImGui(float css_x, float css_y);
 	void Draw();
 
 	BaseScene* GetCurrentScene();

@@ -10,26 +10,23 @@ public:
 	~Window();
 	
 	void Init(int w,int h);
+	void Destroy();
 	void Show();
-
-	GLFWwindow* GetGLFWwindow(){ return m_pWindow;};
-	int GetWidth() { return m_Width; };
-	int GetHeight() { return m_Height; };
-	int GetWindowWidth() { return m_WindowWidth; };
-	int GetWindowHeight() { return m_WindowHeight; };
-	float GetCenterX() { return GetWidth()/ 2.f; }
-	float GetCenterY() { return GetHeight()/ 2.f; }
+	int GetRenderTexture();
+	GLFWwindow* GetGLFWwindow();
+	int GetWidth();
+	int GetHeight();
+	int GetWindowWidth();
+	int GetWindowHeight();
+	float GetCenterX();
+	float GetCenterY();
 	float GetDeltaTime();
 	float GetDeltaTimeMilliseconds();
 	void OnFrameBufferSizeCallback(int width, int height);
-	float GetFPS() { return m_FPS; }
-private:
-	int m_Width;
-	int m_Height;
-	int m_WindowWidth;
-	int m_WindowHeight;
-	float m_FPS;
-	GLFWwindow *m_pWindow;
+	float GetFPS();
+ 
+	int GetFrameBuffer();
+	
 };
 
 

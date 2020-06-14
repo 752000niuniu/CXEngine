@@ -49,29 +49,6 @@ void SceneManager::Init()
 {
 	script_system_call_function(script_system_get_luastate(), "on_scene_manager_init");
 
-	glGenFramebuffers(1, &m_Fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_Fbo);
-
-	int screenWidth = WINDOW_INSTANCE->GetWidth();
-	int screenHeight = WINDOW_INSTANCE->GetHeight();
-	glGenTextures(1, &m_TextureColor);
-	glBindTexture(GL_TEXTURE_2D, m_TextureColor);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, screenWidth, screenHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TextureColor, 0);
-
-	glGenRenderbuffers(1, &m_Rbo);
-	glBindRenderbuffer(GL_RENDERBUFFER, m_Rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screenWidth, screenHeight);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_Rbo);
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		cxlog_err("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
-	}
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	UIRenderer::GetInstance();
 };
 
 void SceneManager::SwitchScene(String name)
@@ -152,29 +129,7 @@ bool SceneManager::IsAutoRun()
 	return s_AutoRun;
 }
 
-void SceneManager::OnWindowFrameSizeChanged()
-{
-	glBindFramebuffer(GL_FRAMEBUFFER, m_Fbo);
 
-	int screenWidth = WINDOW_INSTANCE->GetWidth();
-	int screenHeight = WINDOW_INSTANCE->GetHeight();
-	glGenTextures(1, &m_TextureColor);
-	glBindTexture(GL_TEXTURE_2D, m_TextureColor);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, screenWidth, screenHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TextureColor, 0);
-
-	glGenRenderbuffers(1, &m_Rbo);
-	glBindRenderbuffer(GL_RENDERBUFFER, m_Rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screenWidth, screenHeight);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_Rbo);
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		cxlog_err("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
-	}
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
 
 void SceneManager::Update()
 {
@@ -221,6 +176,7 @@ void SceneManager::DrawImGui(float css_x, float css_y)
 
 	m_ImGuiCursorPos = Pos(css_x, css_y);
 	ImGui::GetWindowDrawList()->AddCallback(function_to_select_shader_or_blend_state, nullptr);
+	auto m_TextureColor = WINDOW_INSTANCE->GetRenderTexture();
 	ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_TextureColor, ImVec2(css_x, css_y), ImVec2(css_x + gameWidth, css_y + gameHeight), ImVec2(0, 1), ImVec2(1, 0));
 	ImGui::GetWindowDrawList()->AddCallback(function_to_restore_shader_or_blend_state, nullptr);
 	if (m_pCurrentScene) {
@@ -229,17 +185,20 @@ void SceneManager::DrawImGui(float css_x, float css_y)
 
 }
 
+
+
 void SceneManager::Draw()
 {
 	if (m_SwitchingScene)return;
+	glBindFramebuffer(GL_FRAMEBUFFER, WINDOW_INSTANCE->GetFrameBuffer());
+	
 	SpriteRenderer::GetInstance()->ResetDrawCall();
 	int gameWidth = WINDOW_INSTANCE->GetWidth();
 	int gameHeight = WINDOW_INSTANCE->GetHeight();
-
-	glBindFramebuffer(GL_FRAMEBUFFER, SCENE_MANAGER_INSTANCE->GetFboID());
-	glViewport(0, 0, gameWidth, gameHeight);
-	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+glViewport(0, 0, gameWidth, gameHeight);
+glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
 	if (m_pCurrentScene) {
 		m_pCurrentScene->Draw();
 		script_system_call_function(script_system_get_luastate(), "on_scene_manager_draw", m_pCurrentScene->GetName());
@@ -247,8 +206,9 @@ void SceneManager::Draw()
 	UIRenderer::GetInstance()->Begin();
 	UIRenderer::GetInstance()->Draw();
 	UIRenderer::GetInstance()->End();
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	sLastDrawCall = SpriteRenderer::GetInstance()->GetDrawCall();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 };
 
 
@@ -273,7 +233,7 @@ void scene_manager_update()
 	SCENE_MANAGER_INSTANCE->Update();
 }
 
-int scene_manager_draw_imgui(lua_State* L)
+ int scene_manager_draw_imgui(lua_State* L)
 {
 	float x = (float)lua_tonumber(L, 1);
 	float y = (float)lua_tonumber(L, 2);
@@ -357,6 +317,15 @@ int scene_manager_get_current_scene_id() {
 	return 0;
 }
 
+string scene_manager_get_current_scene_name() {
+	auto* scene = SCENE_MANAGER_INSTANCE->GetCurrentScene();
+	if (scene) {
+		return scene->GetName();
+	}
+	return "";
+}
+
+
 bool scene_is_combat()
 {
 	auto* actor = actor_manager_fetch_local_player();
@@ -428,7 +397,8 @@ void luaopen_scene_manager(lua_State* L)
 	script_system_register_function(L, scene_manager_update);
 	script_system_register_function(L, scene_manager_draw);
 
-	script_system_register_luac_function(L, scene_manager_draw_imgui);
+		script_system_register_luac_function(L, scene_manager_draw_imgui);
+
 
 	script_system_register_function(L, scene_manager_deinit);
 	script_system_register_function(L, scene_manager_add_scene);
@@ -448,6 +418,7 @@ void luaopen_scene_manager(lua_State* L)
 
 
 	script_system_register_function(L, scene_manager_get_current_scene_id);
+	script_system_register_function(L, scene_manager_get_current_scene_name);
 
 	script_system_register_function(L, scene_manager_sync_draw_cbx);
 

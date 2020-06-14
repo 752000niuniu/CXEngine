@@ -166,7 +166,8 @@ function fix_input_manager_mouse_pos()
     input_manager_set_window_pos(wx-x,wy-y)
 end
 
-function on_game_imgui_update(name)
+function on_game_imgui_update()
+    local name = scene_manager_get_current_scene_name()
     fix_input_manager_mouse_pos()
     
     if scene_list[name] then

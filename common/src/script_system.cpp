@@ -116,8 +116,13 @@ bool script_system_update()
 {
 	if (g_DebugInCpp)return true;
 	std::vector<any> rets = script_system_call_function(L, "on_script_system_update");
-	bool success = any_cast<bool>(rets[0]);
-	return success;
+	if (rets.size() > 0) {
+		bool success = any_cast<bool>(rets[0]);
+		return success;
+	}
+	else {
+		return true;
+	}
 }
 
 

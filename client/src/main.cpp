@@ -10,8 +10,6 @@ int main(int argc, char *argv[])
 	handle_command_args(argc,argv);
 	FileSystem::InitWorkPath();
 
-	kbase::AtExitManager exit_manager;
-	ezio::IOServiceContext::Init();
 	script_system_prepare_init();
 	script_system_run_main_script();
 	return 0;

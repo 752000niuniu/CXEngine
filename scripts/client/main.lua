@@ -30,7 +30,7 @@ script_system_dofile('module/summon.lua')
 SERVER_HOST = command_arg_opt_str('host','127.0.0.1')
 SERVER_PORT = command_arg_opt_int('port', 45000)
 DBG_PORT = command_arg_opt_int('dbg_port', 9600)
-luadbg_listen(DBG_PORT)
+
 
 
 
@@ -48,7 +48,6 @@ function on_script_system_init()
     load_all_addons()
     net_manager_init(SERVER_HOST, SERVER_PORT)
 end
-
 function on_script_system_update()
 	input_manager_update()
     net_manager_update()
@@ -59,7 +58,6 @@ function on_script_system_update()
 end
 
 function on_script_system_draw()
-    
     local vid,x,y,w,h = imgui.GetMainViewport()
     imgui.SetNextWindowPos(x,y)
     imgui.SetNextWindowSize(w,h)
@@ -86,9 +84,33 @@ function on_script_system_deinit()
     actor_manager_deinit()
 end
 
+
+function update()
+    input_manager_update()
+    net_manager_update()
+    timer_manager_update(window_system_get_dt())
+    resource_manager_update()
+    scene_manager_update()
+    on_game_imgui_update()
+end
+
+function draw()
+    scene_manager_draw()
+end
+
 do
+    
+	at_exit_manager_init()
+    io_service_context_init()
+    luadbg_listen(DBG_PORT)
     window_system_init(SCREEN_WIDTH,SCREEN_HEIGHT)
     iw_set_font(vfs_get_workdir()..'/res/font/msyhl.ttc')
-
 	window_system_show()	
+    -- on_script_system_init()
+
+    -- while not iw_should_close() do
+    --     iw_render(update,draw)
+    -- end
+
+    -- iw_deinit()
 end
