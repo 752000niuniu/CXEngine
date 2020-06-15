@@ -19,13 +19,13 @@
 #define GAME_SCREEN_WIDTH 800
 #define GAME_SCREEN_HEIGHT 600
 static const float MS_PER_UPDATE = 1000 / 60.f / 1000;
-
-int m_Width;
-int m_Height;
+int m_Width = 0;
+int m_Height = 0;
 int m_WindowWidth;
 int m_WindowHeight;
-float m_FPS;
-GLFWwindow* m_pWindow;
+float m_FPS = MS_PER_UPDATE;
+GLFWwindow* m_pWindow = nullptr;
+static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 
 unsigned int m_Fbo;
@@ -45,7 +45,35 @@ int Window::GetRenderTexture() { return m_TextureColor; }
 int Window::GetFrameBuffer() { return m_Fbo; }
 static void glfw_framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-	WINDOW_INSTANCE->OnFrameBufferSizeCallback(width, height);
+	m_WindowWidth = width;
+	m_WindowHeight = height;
+	m_Width = width;
+	m_Height = height;
+	SpriteRenderer::GetInstance()->UpdateProjection();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, m_Fbo);
+
+	int screenWidth = WINDOW_INSTANCE->GetWidth();
+	int screenHeight = WINDOW_INSTANCE->GetHeight();
+	glGenTextures(1, &m_TextureColor);
+	glBindTexture(GL_TEXTURE_2D, m_TextureColor);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, screenWidth, screenHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TextureColor, 0);
+
+	glGenRenderbuffers(1, &m_Rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, m_Rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screenWidth, screenHeight);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_Rbo);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		cxlog_err("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+	}
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+	glViewport(0, 0, m_WindowWidth, m_WindowHeight);
 }
 
 static void glfw_button_callback(GLFWwindow* window, int button, int action, int mods)
@@ -82,10 +110,7 @@ static void glfw_error_callback(int error, const char* description) {
 
 Window::Window()
 {
-	m_Width = 0;
-	m_Height = 0;
-	m_FPS = MS_PER_UPDATE;
-	m_pWindow = nullptr;
+
 }
 
 Window::~Window() {
@@ -94,6 +119,42 @@ Window::~Window() {
 
 void Window::Init(int w, int h)
 {
+}
+
+void Window::Destroy()
+{
+
+}
+
+void Window::Show()
+{
+
+}
+
+float Window::GetDeltaTime()
+{
+	return m_FPS;
+}
+
+
+float Window::GetDeltaTimeMilliseconds()
+{
+	return m_FPS * 1000.f;
+}
+
+void Window::OnFrameBufferSizeCallback(int width, int height)
+{
+
+}
+
+void iw_set_font(const char* path) {
+	ImGuiIO& io = ImGui::GetIO();
+	io.Fonts->AddFontFromFileTTF(path, 14.0f, NULL, io.Fonts->GetGlyphRangesChineseFull());
+}
+
+void iw_init(int w, int h)
+{
+
 	if (!glfwInit()) {
 		cxlog_err("glfwInit error!");
 		exit(EXIT_FAILURE);
@@ -203,121 +264,6 @@ void Window::Init(int w, int h)
 	UIRenderer::GetInstance();
 }
 
-void Window::Destroy()
-{
-	script_system_deinit();
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
-
-	glfwDestroyWindow(m_pWindow);
-	glfwTerminate();
-
-	auto* ne_thread = file_loading_thread();
-	delete ne_thread;
-	ne_thread = nullptr;
-}
-
-void Window::Show()
-{
-	script_system_init();
-	double previous = glfwGetTime();
-	double lag = 0;
-	double delta = 0;
-	ImGuiIO& io = ImGui::GetIO();
-	while (!glfwWindowShouldClose(m_pWindow))
-	{
-		auto now = glfwGetTime();
-		m_FPS = (float)(now - previous);
-		previous = now;
-
-		glfwPollEvents();
-
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-
-		script_system_update();
-		script_system_draw();
-
-		ImGui::Render();
-		int display_w, display_h;
-		glfwGetFramebufferSize(m_pWindow, &display_w, &display_h);
-		glViewport(0, 0, display_w, display_h);
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-		{
-			GLFWwindow* backup_current_context = glfwGetCurrentContext();
-			ImGui::UpdatePlatformWindows();
-			ImGui::RenderPlatformWindowsDefault();
-			glfwMakeContextCurrent(backup_current_context);
-		}
-
-		glfwSwapBuffers(m_pWindow);
-	}
-
-	Destroy();
-}
-
-float Window::GetDeltaTime()
-{
-	return m_FPS;
-}
-
-
-float Window::GetDeltaTimeMilliseconds()
-{
-	return m_FPS * 1000.f;
-}
-
-void Window::OnFrameBufferSizeCallback(int width, int height)
-{
-	m_WindowWidth = width;
-	m_WindowHeight = height;
-	m_Width = width;
-	m_Height = height;
-	SpriteRenderer::GetInstance()->UpdateProjection();
-
-	glBindFramebuffer(GL_FRAMEBUFFER, m_Fbo);
-
-	int screenWidth = WINDOW_INSTANCE->GetWidth();
-	int screenHeight = WINDOW_INSTANCE->GetHeight();
-	glGenTextures(1, &m_TextureColor);
-	glBindTexture(GL_TEXTURE_2D, m_TextureColor);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, screenWidth, screenHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TextureColor, 0);
-
-	glGenRenderbuffers(1, &m_Rbo);
-	glBindRenderbuffer(GL_RENDERBUFFER, m_Rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screenWidth, screenHeight);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_Rbo);
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		cxlog_err("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
-	}
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-
-	glViewport(0, 0, m_WindowWidth, m_WindowHeight);
-}
-
-void iw_set_font(const char* path) {
-	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontFromFileTTF(path, 14.0f, NULL, io.Fonts->GetGlyphRangesChineseFull());
-}
-
-void window_system_init(int w, int h)
-{
-	WINDOW_INSTANCE->Init(w, h);
-}
-
-void window_system_show()
-{
-	WINDOW_INSTANCE->Show();
-}
 void window_system_set_floating(int opt, int value)
 {
 	WINDOW_INSTANCE;
@@ -345,11 +291,18 @@ bool iw_should_close()
 {
 	return glfwWindowShouldClose(WINDOW_INSTANCE->GetGLFWwindow());
 }
-static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
 
 void iw_deinit() {
-	WINDOW_INSTANCE->Destroy();
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
+	glfwDestroyWindow(m_pWindow);
+	glfwTerminate();
+
+	auto* ne_thread = file_loading_thread();
+	delete ne_thread;
+	ne_thread = nullptr;
 }
 
 void iw_function_to_select_shader_or_blend_state(const ImDrawList* parent_list, const ImDrawCmd* cmd) {
@@ -360,75 +313,59 @@ void iw_function_to_restore_shader_or_blend_state(const ImDrawList* parent_list,
 	glEnable(GL_BLEND);
 }
 
-void iw_init() {
-	WINDOW_INSTANCE->Init(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
-}
 
 int iw_render(lua_State* L)
 {
-	auto* win = WINDOW_INSTANCE->GetGLFWwindow();
-	int gameWidth = WINDOW_INSTANCE->GetWidth();
-	int gameHeight = WINDOW_INSTANCE->GetHeight();
-	int display_w, display_h;
-	glfwGetFramebufferSize(win, &display_w, &display_h);
-	glfwPollEvents();
-
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-
-	glBindFramebuffer(GL_FRAMEBUFFER, m_Fbo);
-	glViewport(0, 0, gameWidth, gameHeight);
-	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	lua_pushvalue(L, 2);
-	lua_pcall(L, 0, 0, 0);
-	UIRenderer::GetInstance()->Begin();
-	UIRenderer::GetInstance()->Draw();
-	UIRenderer::GetInstance()->End();
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	ImGuiViewport* mainViewport = ImGui::GetMainViewport();
-	ImGui::SetNextWindowPos(mainViewport->Pos);
-	ImGui::SetNextWindowSize(mainViewport->Size);
-	ImGui::SetNextWindowViewport(mainViewport->ID);
-
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-	ImGui::Begin("Game", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking);
-	ImGui::PopStyleVar();
-
-	ImVec2 cursorPos = ImGui::GetCursorPos();
-	auto cspos = ImGui::GetCursorScreenPos();
-	ImGui::GetWindowDrawList()->AddCallback(iw_function_to_select_shader_or_blend_state, nullptr);
-	ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_TextureColor, cspos, ImVec2(cspos.x + gameWidth, cspos.y + gameHeight), ImVec2(0, 1), ImVec2(1, 0));
-	ImGui::GetWindowDrawList()->AddCallback(iw_function_to_restore_shader_or_blend_state, nullptr);
-	ImGui::SetCursorPos(cursorPos);
 	lua_pushvalue(L, 1);
-	lua_pcall(L, 0, 0, 0);
-	ImGui::End();
-
-
-	ImGui::Render();
-	glViewport(0, 0, display_w, display_h);
-	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-	glClear(GL_COLOR_BUFFER_BIT);
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	int ref = luaL_ref(L, LUA_REGISTRYINDEX);
+	double previous = glfwGetTime();
+	double lag = 0;
+	double delta = 0;
 	ImGuiIO& io = ImGui::GetIO();
-	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	while (!glfwWindowShouldClose(m_pWindow))
 	{
-		GLFWwindow* backup_current_context = glfwGetCurrentContext();
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
-		glfwMakeContextCurrent(backup_current_context);
+		auto now = glfwGetTime();
+		m_FPS = (float)(now - previous);
+		previous = now;
+
+		glfwPollEvents();
+
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		if (ref != -1) {
+			lua_State* L = script_system_get_luastate();
+			lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
+			int res = lua_pcall(L,0, 0, 0);
+			check_lua_error(L, res);
+		}
+
+		ImGui::Render();
+		int display_w, display_h;
+		glfwGetFramebufferSize(m_pWindow, &display_w, &display_h);
+		glViewport(0, 0, display_w, display_h);
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			GLFWwindow* backup_current_context = glfwGetCurrentContext();
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+			glfwMakeContextCurrent(backup_current_context);
+		}
+
+		glfwSwapBuffers(m_pWindow);
 	}
-	glfwSwapBuffers(win);
+
+	luaL_unref(L, LUA_REGISTRYINDEX, ref);
+	ref = -1;
 	return 0;
+
 }
 
 void luaopen_window(lua_State* L)
 {
-	script_system_register_function(L, window_system_init);
-	script_system_register_function(L, window_system_show);
 	script_system_register_function(L, window_system_set_floating);
 	script_system_register_function(L, window_system_get_dt);
 	script_system_register_function(L, window_system_get_fps);
@@ -437,12 +374,12 @@ void luaopen_window(lua_State* L)
 	script_system_register_function(L, game_get_height);
 
 
-	script_system_register_function(L, iw_init);
 	script_system_register_function(L, iw_deinit);
 	script_system_register_function(L, iw_should_close);
 
 	script_system_register_function(L, iw_set_font);
 
+	script_system_register_function(L, iw_init);
 
 	script_system_register_luac_function(L, iw_render);
 

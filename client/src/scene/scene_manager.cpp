@@ -191,12 +191,12 @@ void SceneManager::Draw()
 {
 	if (m_SwitchingScene)return;
 	glBindFramebuffer(GL_FRAMEBUFFER, WINDOW_INSTANCE->GetFrameBuffer());
-	
+
 	SpriteRenderer::GetInstance()->ResetDrawCall();
 	int gameWidth = WINDOW_INSTANCE->GetWidth();
 	int gameHeight = WINDOW_INSTANCE->GetHeight();
-glViewport(0, 0, gameWidth, gameHeight);
-glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	glViewport(0, 0, gameWidth, gameHeight);
+	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	if (m_pCurrentScene) {
@@ -233,7 +233,7 @@ void scene_manager_update()
 	SCENE_MANAGER_INSTANCE->Update();
 }
 
- int scene_manager_draw_imgui(lua_State* L)
+int scene_manager_draw_imgui(lua_State* L)
 {
 	float x = (float)lua_tonumber(L, 1);
 	float y = (float)lua_tonumber(L, 2);
@@ -397,7 +397,7 @@ void luaopen_scene_manager(lua_State* L)
 	script_system_register_function(L, scene_manager_update);
 	script_system_register_function(L, scene_manager_draw);
 
-		script_system_register_luac_function(L, scene_manager_draw_imgui);
+	script_system_register_luac_function(L, scene_manager_draw_imgui);
 
 
 	script_system_register_function(L, scene_manager_deinit);

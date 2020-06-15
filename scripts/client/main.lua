@@ -31,9 +31,6 @@ SERVER_HOST = command_arg_opt_str('host','127.0.0.1')
 SERVER_PORT = command_arg_opt_int('port', 45000)
 DBG_PORT = command_arg_opt_int('dbg_port', 9600)
 
-
-
-
 function on_script_system_init()
     content_system_init()
     text_renderer_init()
@@ -48,32 +45,31 @@ function on_script_system_init()
     load_all_addons()
     net_manager_init(SERVER_HOST, SERVER_PORT)
 end
-function on_script_system_update()
-	input_manager_update()
-    net_manager_update()
-    timer_manager_update(window_system_get_dt())
-    resource_manager_update()
-    scene_manager_update()
-    return true
-end
 
-function on_script_system_draw()
+function on_script_system_update()
     local vid,x,y,w,h = imgui.GetMainViewport()
     imgui.SetNextWindowPos(x,y)
     imgui.SetNextWindowSize(w,h)
     imgui.SetNextWindowViewport(vid)
-    
     imgui.PushStyleVar2(ImGuiStyleVar_WindowPadding,0,0)
     imgui.Begin('Game', ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking)
     imgui.PopStyleVar()
     
+    input_manager_update()
+    net_manager_update()
+    timer_manager_update(window_system_get_dt())
+    resource_manager_update()
+    scene_manager_update()
     scene_manager_draw()
+
     local cs_x,cs_y = imgui.GetCursorPos()
     local css_x,css_y = imgui.GetCursorScreenPos()
     scene_manager_draw_imgui(css_x,css_y)
     imgui.SetCursorPos(cs_x,cs_y)
+    
     imgui.End()
 end
+
 
 function on_script_system_deinit()
     net_manager_deinit()
@@ -84,33 +80,14 @@ function on_script_system_deinit()
     actor_manager_deinit()
 end
 
-
-function update()
-    input_manager_update()
-    net_manager_update()
-    timer_manager_update(window_system_get_dt())
-    resource_manager_update()
-    scene_manager_update()
-    on_game_imgui_update()
-end
-
-function draw()
-    scene_manager_draw()
-end
-
 do
-    
 	at_exit_manager_init()
     io_service_context_init()
     luadbg_listen(DBG_PORT)
-    window_system_init(SCREEN_WIDTH,SCREEN_HEIGHT)
+    iw_init(SCREEN_WIDTH,SCREEN_HEIGHT)
     iw_set_font(vfs_get_workdir()..'/res/font/msyhl.ttc')
-	window_system_show()	
-    -- on_script_system_init()
-
-    -- while not iw_should_close() do
-    --     iw_render(update,draw)
-    -- end
-
-    -- iw_deinit()
+    on_script_system_init()
+    iw_render(on_script_system_update)
+    on_script_system_deinit()
+    iw_deinit()
 end
