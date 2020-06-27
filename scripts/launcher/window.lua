@@ -144,22 +144,32 @@ function launcher_update()
 	end
 
 
-	if imgui.Button('启动教程') then
-		local exepath
-		if command_arg_check('Debug') then
-			exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'
-		else
-			exepath = vfs_get_workdir()..'bin/SimpleEngine.exe'
-		end
-		local tcmd = {
-			'start '..exepath,
-			'--cwd='..vfs_get_workdir(),
-			'--dbg_port='..DbgPortSB:str(),
-			'--script_path=scripts/examples/'
-		}
-		local cmd = table.concat(tcmd,' ')
-		cxlog_info(cmd)
-		os.execute(cmd)
+	if imgui.CollapsingHeader('lua代码教程') then
+		local examples = vfs_list_files(vfs_makepath('scripts/examples'))
+		imgui.HorizontalLayout(examples,next,function(k,v)
+			if v:match('.lua') then
+				local fname = v:match('([^/]+%.lua)')
+				if imgui.Button(fname.."##"..k) then
+					local exepath
+					if command_arg_check('Debug') then
+						exepath = vfs_get_workdir()..'bin/Debug/SimpleEngine.exe'
+					else
+						exepath = vfs_get_workdir()..'bin/SimpleEngine.exe'
+					end
+					local tcmd = {
+						'start '..exepath,
+						'--cwd='..vfs_get_workdir(),
+						'--dbg_port='..DbgPortSB:str(),
+						'--script_path=scripts/examples/',
+						'--luapath=scripts/examples/'..fname
+					}
+					local cmd = table.concat(tcmd,' ')
+					cxlog_info(cmd)
+					os.execute(cmd)
+				end
+			end
+			
+		end)
 	end
 
 	if command_arg_check('Debug') then
