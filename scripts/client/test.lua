@@ -29,36 +29,16 @@ script_system_dofile('module/summon.lua')
 SERVER_HOST = command_arg_opt_str('host','127.0.0.1')
 SERVER_PORT = command_arg_opt_int('port', 45000)
 DBG_PORT = command_arg_opt_int('dbg_port', 9600)
-luadbg_listen(DBG_PORT)
 
-
-function on_script_system_init()
-   
-end
-
-function on_script_system_update()
-    gl.clear_color(1.0, 0.8, 0.2, 1.0) -- GLFW orange
-    gl.clear("color", "depth")
-    imgui.Begin('WINDOW')
-    if imgui.Button('OPENGL') then
-
-    end
-    imgui.End()
-    return true
-end
-
-function on_script_system_draw()
-	
-end
-
-function on_script_system_deinit()
-   
-end
-
-do
-    window_system_init(SCREEN_WIDTH,SCREEN_HEIGHT)
-    iw_set_font(vfs_get_workdir()..'/res/font/msyhl.ttc')
-
+function update()
     
-	window_system_show()	
+end
+do
+	at_exit_manager_init()
+    io_service_context_init()
+    luadbg_listen(DBG_PORT)
+    iw_init(SCREEN_WIDTH,SCREEN_HEIGHT)
+    iw_set_font(vfs_get_workdir()..'/res/font/msyhl.ttc')
+    iw_render(update)
+    iw_deinit()
 end

@@ -15,6 +15,14 @@
 #include "cxlua.h"
 #include "sprite_renderer.h"
 #include <graphics/ui_renderer.h>
+extern "C" {
+#include <shader.h>
+#include <screen.h>
+	void font_size(const char* str, int unicode, struct font_context* ctx) {}
+	void font_glyph(const char* str, int unicode, void* buffer, struct font_context* ctx) {}
+	void font_create(int font_size, struct font_context* ctx) {}
+	void font_release(struct font_context* ctx) {}
+}
 
 #define GAME_SCREEN_WIDTH 800
 #define GAME_SCREEN_HEIGHT 600
@@ -152,9 +160,43 @@ void iw_set_font(const char* path) {
 	io.Fonts->AddFontFromFileTTF(path, 14.0f, NULL, io.Fonts->GetGlyphRangesChineseFull());
 }
 
+const char* sprite_fs = R"(#version 100
+precision lowp float;
+varying vec2 v_texcoord;
+varying vec4 v_color;
+varying vec4 v_additive;
+uniform sampler2D texture0;
+
+void main() {
+	gl_FragColor = v_color;
+	/*vec4 tmp = texture2D(texture0, v_texcoord);
+	gl_FragColor.xyz = tmp.xyz * v_color.xyz;
+	gl_FragColor.w = tmp.w;
+	gl_FragColor *= v_color.w;
+	gl_FragColor.xyz += v_additive.xyz * tmp.w;*/
+})";
+
+const char* sprite_vs = R"(#version 100
+precision lowp float;
+attribute vec4 position;
+attribute vec2 texcoord;
+attribute vec4 color;
+attribute vec4 additive;
+
+varying vec2 v_texcoord;
+varying vec4 v_color;
+varying vec4 v_additive;
+
+void main() {
+	gl_Position = position; //+ vec4(-1.0, 1.0, 0, 0);
+	v_texcoord = texcoord;
+	v_color = color;
+	v_additive = additive;
+})";
+
+
 void iw_init(int w, int h)
 {
-
 	if (!glfwInit()) {
 		cxlog_err("glfwInit error!");
 		exit(EXIT_FAILURE);
@@ -262,6 +304,10 @@ void iw_init(int w, int h)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	UIRenderer::GetInstance();
+
+	// shader_init();
+	// shader_load(0, sprite_fs, sprite_vs, 0, nullptr);
+	// screen_init(screenWidth, screenHeight, 1.f);
 }
 
 void window_system_set_floating(int opt, int value)
@@ -329,6 +375,34 @@ int iw_render(lua_State* L)
 		previous = now;
 
 		glfwPollEvents();
+	//	shader_clear(0xff00ff00);
+		// float x = 0;
+		// float y = 0;
+		// float w = 160;
+		// float h = 160;
+		// uint32_t color = 0xff0000ff;
+		// struct vertex_pack vp[4];
+		// vp[0].vx = x;
+		// vp[0].vy = y;
+		// vp[1].vx = x + w;
+		// vp[1].vy = y;
+		// vp[2].vx = x + w;
+		// vp[2].vy = y + h;
+		// vp[3].vx = x;
+		// vp[3].vy = y + h;
+
+		// int i;
+		// for (i = 0; i < 4; i++) {
+		// 	vp[i].tx = 0;
+		// 	vp[i].ty = 0;
+		// 	screen_trans(&vp[i].vx, &vp[i].vy);
+		// }
+
+		// shader_program(0, nullptr);
+		// shader_draw(vp, color, 0);
+
+		// shader_flush();
+
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -337,7 +411,7 @@ int iw_render(lua_State* L)
 		if (ref != -1) {
 			lua_State* L = script_system_get_luastate();
 			lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
-			int res = lua_pcall(L,0, 0, 0);
+			int res = lua_pcall(L, 0, 0, 0);
 			check_lua_error(L, res);
 		}
 

@@ -1,54 +1,33 @@
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+DefaultMapID = 1001
 
-
-local anim 
+SERVER_HOST = command_arg_opt_str('host','127.0.0.1')
+SERVER_PORT = command_arg_opt_int('port', 45000)
+DBG_PORT = command_arg_opt_int('dbg_port', 9600)
+local anim
 function init()
-    sprite_renderer_init()
-    timer_manager_init()
-    anim =  animation_create(23,0xCA8FDEAD)
-    anim:SetPos(100,100)
+    anim = animation_create(23,0xCA8FDEAD)
     anim:SetLoop(0)
+    anim:Play()
 end
-
 function update()
-    -- gl.viewport(0, 0, 800, 600)
-    -- gl.clear_color(1.0, 0, 0.3, 1.0) 
-    -- gl.clear("color", "depth",'stencil');
-
-    timer_manager_update(16)
-    if anim then
-        anim:Update()
-    end
+    -- gl.clear_color(0.67, 0.67, 0.87, 1.0)
+    -- gl.clear("color", "depth")
+    -- if anim then
+    --     anim:Update()
+    --     anim:Draw()
+    -- end
 end
 
-function draw()
-    if anim then
-        anim:Draw()
-    end
-end
-
-function draw_imgui()
-    if imgui.Button('wht') then
-    end
-end
 
 do
 	at_exit_manager_init()
-	io_service_context_init()
-
-	iw_init()
-	iw_set_font(vfs_get_workdir()..'/res/font/msyhl.ttc')
-	event_loop = ez_event_loop_create()
+    io_service_context_init()
+    luadbg_listen(DBG_PORT)
+    iw_init(SCREEN_WIDTH,SCREEN_HEIGHT)
+    iw_set_font(vfs_get_workdir()..'/res/font/msyhl.ttc')
     init()
-	event_loop:RunTaskEvery(function()
-		if iw_should_close() then 
-			event_loop:Quit()
-			timer_manager_deinit()
-			return
-        end
-        update()
-        iw_render(draw,draw_imgui)
-
-	end,16)
-	event_loop:Run()
-	iw_deinit()
+    iw_render(update)
+    iw_deinit()
 end
