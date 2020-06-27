@@ -62,7 +62,6 @@ void script_system_prepare_init()
 	luaopen_logger(L);
 	luaopen_ne_support(L);
 	luaopen_timer_manager(L);
-
 #ifndef CXLUAX
 	luaopen_actor(L);
 	luaopen_actor_manager(L);
@@ -102,7 +101,8 @@ void script_system_prepare_init()
 
 void script_system_run_main_script()
 {
-	int res = luaL_dofile(L, command_arg_opt_str("luapath", FileSystem::GetLuaPath("main.lua").c_str()));
+	string path = command_arg_opt_str("luapath", "main.lua");
+	int res = luaL_dofile(L, FileSystem::GetLuaPath(path).c_str());
 	check_lua_error(L, res);
 }
 

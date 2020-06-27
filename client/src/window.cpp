@@ -375,33 +375,39 @@ int iw_render(lua_State* L)
 		previous = now;
 
 		glfwPollEvents();
-	//	shader_clear(0xff00ff00);
-		// float x = 0;
-		// float y = 0;
-		// float w = 160;
-		// float h = 160;
-		// uint32_t color = 0xff0000ff;
-		// struct vertex_pack vp[4];
-		// vp[0].vx = x;
-		// vp[0].vy = y;
-		// vp[1].vx = x + w;
-		// vp[1].vy = y;
-		// vp[2].vx = x + w;
-		// vp[2].vy = y + h;
-		// vp[3].vx = x;
-		// vp[3].vy = y + h;
 
-		// int i;
-		// for (i = 0; i < 4; i++) {
-		// 	vp[i].tx = 0;
-		// 	vp[i].ty = 0;
-		// 	screen_trans(&vp[i].vx, &vp[i].vy);
-		// }
+		glViewport(0, 0, m_Width, m_Height);
+		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		// shader_program(0, nullptr);
-		// shader_draw(vp, color, 0);
 
-		// shader_flush();
+		//	shader_clear(0xff00ff00);
+			// float x = 0;
+			// float y = 0;
+			// float w = 160;
+			// float h = 160;
+			// uint32_t color = 0xff0000ff;
+			// struct vertex_pack vp[4];
+			// vp[0].vx = x;
+			// vp[0].vy = y;
+			// vp[1].vx = x + w;
+			// vp[1].vy = y;
+			// vp[2].vx = x + w;
+			// vp[2].vy = y + h;
+			// vp[3].vx = x;
+			// vp[3].vy = y + h;
+
+			// int i;
+			// for (i = 0; i < 4; i++) {
+			// 	vp[i].tx = 0;
+			// 	vp[i].ty = 0;
+			// 	screen_trans(&vp[i].vx, &vp[i].vy);
+			// }
+
+			// shader_program(0, nullptr);
+			// shader_draw(vp, color, 0);
+
+			// shader_flush();
 
 
 		ImGui_ImplOpenGL3_NewFrame();

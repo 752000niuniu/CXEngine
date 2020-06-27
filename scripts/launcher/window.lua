@@ -161,7 +161,7 @@ function launcher_update()
 						'--cwd='..vfs_get_workdir(),
 						'--dbg_port='..DbgPortSB:str(),
 						'--script_path=scripts/examples/',
-						'--luapath=scripts/examples/'..fname
+						'--luapath='..fname
 					}
 					local cmd = table.concat(tcmd,' ')
 					cxlog_info(cmd)

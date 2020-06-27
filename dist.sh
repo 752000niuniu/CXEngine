@@ -58,6 +58,7 @@ cp -r scripts/server dist/scripts/
 cp -r scripts/share dist/scripts/
 cp -r scripts/generator dist/scripts/
 cp -r scripts/launcher dist/scripts/
+cp -r scripts/examples dist/scripts/
 
 cp imgui.ini dist/
 

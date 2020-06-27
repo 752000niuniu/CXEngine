@@ -205,5 +205,6 @@ void luaopen_actor_manager(lua_State* L) {
 
 	script_system_register_luac_function(L, lua_create_actor);
 	script_system_register_luac_function(L, lua_destroy_actor);
+	printf("luaopen_actor_manager");
 }
 
