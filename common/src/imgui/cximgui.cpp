@@ -6,25 +6,13 @@
 //void  DestroyContext(ImGuiContext* ctx);
 //UnSupported DestroyContext
 //ImGuiContext*  GetCurrentContext();
-int cximgui_GetCurrentContext(lua_State* L){
-	ImGuiContext* __ret__ = ImGui::GetCurrentContext();
-	return 0;
-};
-
+//UnSupported GetCurrentContext
 //void  SetCurrentContext(ImGuiContext* ctx);
 //UnSupported SetCurrentContext
 //ImGuiIO&  GetIO();
-int cximgui_GetIO(lua_State* L){
-	ImGuiIO& __ret__ = ImGui::GetIO();
-	return 0;
-};
-
+//UnSupported GetIO
 //ImGuiStyle&  GetStyle();
-int cximgui_GetStyle(lua_State* L){
-	ImGuiStyle& __ret__ = ImGui::GetStyle();
-	return 0;
-};
-
+//UnSupported GetStyle
 //void  NewFrame();
 int cximgui_NewFrame(lua_State* L){
 	ImGui::NewFrame();
@@ -44,11 +32,7 @@ int cximgui_Render(lua_State* L){
 };
 
 //ImDrawData*  GetDrawData();
-int cximgui_GetDrawData(lua_State* L){
-	ImDrawData* __ret__ = ImGui::GetDrawData();
-	return 0;
-};
-
+//UnSupported GetDrawData
 //void  ShowDemoWindow(bool* p_open);
 int cximgui_ShowDemoWindow_1_bp(lua_State* L){
 	int __argi__ = 1;
@@ -203,11 +187,7 @@ int cximgui_IsWindowHovered_1_i(lua_State* L){
 };
 
 //ImDrawList*  GetWindowDrawList();
-int cximgui_GetWindowDrawList(lua_State* L){
-	ImDrawList* __ret__ = ImGui::GetWindowDrawList();
-	return 0;
-};
-
+//UnSupported GetWindowDrawList
 //float  GetWindowDpiScale();
 int cximgui_GetWindowDpiScale(lua_State* L){
 	float __ret__ = ImGui::GetWindowDpiScale();
@@ -216,11 +196,7 @@ int cximgui_GetWindowDpiScale(lua_State* L){
 };
 
 //ImGuiViewport*  GetWindowViewport();
-int cximgui_GetWindowViewport(lua_State* L){
-	ImGuiViewport* __ret__ = ImGui::GetWindowViewport();
-	return 0;
-};
-
+//UnSupported GetWindowViewport
 //ImVec2  GetWindowPos();
 int cximgui_GetWindowPos(lua_State* L){
 	ImVec2 __ret__ = ImGui::GetWindowPos();
@@ -528,11 +504,7 @@ int cximgui_SetScrollFromPosY_2_nn(lua_State* L){
 //void  PushFont(ImFont* font);
 //UnSupported PushFont
 //void  PopFont();
-int cximgui_PopFont(lua_State* L){
-	ImGui::PopFont();
-	return 0;
-};
-
+//UnSupported PopFont
 //void  PushStyleColor(ImGuiCol idx,ImU32 col);
 int cximgui_PushStyleColor_2_ii(lua_State* L){
 	int __argi__ = 1;
@@ -604,11 +576,7 @@ int cximgui_GetStyleColorVec4_1_i(lua_State* L){
 };
 
 //ImFont*  GetFont();
-int cximgui_GetFont(lua_State* L){
-	ImFont* __ret__ = ImGui::GetFont();
-	return 0;
-};
-
+//UnSupported GetFont
 //float  GetFontSize();
 int cximgui_GetFontSize(lua_State* L){
 	float __ret__ = ImGui::GetFontSize();
@@ -1120,18 +1088,7 @@ int cximgui_EndCombo(lua_State* L){
 //bool  Combo(const char* label,int* current_item,const char* const[],int items_count,int popup_max_height_in_items);
 //UnSupported Combo
 //bool  Combo(const char* label,int* current_item,const char* items_separated_by_zeros,int popup_max_height_in_items);
-int cximgui_Combo_4_sipsi(lua_State* L){
-	int __argi__ = 1;
-	const char* label = lua_tostring(L, __argi__++);
-	int current_item = (int)lua_tointeger(L, __argi__++);
-	const char* items_separated_by_zeros = lua_tostring(L, __argi__++);
-	int popup_max_height_in_items = (int)luaL_optinteger(L, __argi__++, -1);
-	bool __ret__ = ImGui::Combo(label,&current_item,items_separated_by_zeros,popup_max_height_in_items);
-	lua_pushboolean(L, __ret__);
-	lua_pushinteger(L, current_item);
-	return 2;
-};
-
+//UnSupported Combo
 //bool  Combo(const char* label,int* current_item,bool @1@2,void* data,int items_count,int popup_max_height_in_items);
 //UnSupported Combo
 //bool  DragFloat(const char* label,float* v,float v_speed,float v_min,float v_max,const char* format,float power);
@@ -1947,47 +1904,11 @@ int cximgui_ListBoxFooter(lua_State* L){
 };
 
 //void  PlotLines(const char* label,const float* values,int values_count,int values_offset,const char* overlay_text,float scale_min,float scale_max,ImVec2 graph_size,int stride);
-int cximgui_PlotLines_9_snpiisnnv2i(lua_State* L){
-	int __argi__ = 1;
-	const char* label = lua_tostring(L, __argi__++);
-	float values = (float)lua_tonumber(L, __argi__++);
-	int values_count = (int)lua_tointeger(L, __argi__++);
-	int values_offset = (int)luaL_optinteger(L, __argi__++, 0);
-	const char* overlay_text = luaL_optstring(L, __argi__++, NULL);
-	float scale_min = (float)luaL_optnumber(L, __argi__++, FLT_MAX);
-	float scale_max = (float)luaL_optnumber(L, __argi__++, FLT_MAX);
-	ImVec2 graph_size_def = ImVec2(0,0);
-	ImVec2 graph_size;
-	graph_size.x = (float)luaL_optnumber(L,__argi__  ,graph_size_def.x);
-	graph_size.y = (float)luaL_optnumber(L,__argi__+1,graph_size_def.y);
-	if( graph_size.x != graph_size_def.x || graph_size.y != graph_size_def.y  ) __argi__+=2;
-	int stride = (int)luaL_optinteger(L, __argi__++, sizeof(float));
-	ImGui::PlotLines(label,&values,values_count,values_offset,overlay_text,scale_min,scale_max,graph_size,stride);
-	return 0;
-};
-
+//UnSupported PlotLines
 //void  PlotLines(const char* label,float @1@2,void* data,int values_count,int values_offset,const char* overlay_text,float scale_min,float scale_max,ImVec2 graph_size);
 //UnSupported PlotLines
 //void  PlotHistogram(const char* label,const float* values,int values_count,int values_offset,const char* overlay_text,float scale_min,float scale_max,ImVec2 graph_size,int stride);
-int cximgui_PlotHistogram_9_snpiisnnv2i(lua_State* L){
-	int __argi__ = 1;
-	const char* label = lua_tostring(L, __argi__++);
-	float values = (float)lua_tonumber(L, __argi__++);
-	int values_count = (int)lua_tointeger(L, __argi__++);
-	int values_offset = (int)luaL_optinteger(L, __argi__++, 0);
-	const char* overlay_text = luaL_optstring(L, __argi__++, NULL);
-	float scale_min = (float)luaL_optnumber(L, __argi__++, FLT_MAX);
-	float scale_max = (float)luaL_optnumber(L, __argi__++, FLT_MAX);
-	ImVec2 graph_size_def = ImVec2(0,0);
-	ImVec2 graph_size;
-	graph_size.x = (float)luaL_optnumber(L,__argi__  ,graph_size_def.x);
-	graph_size.y = (float)luaL_optnumber(L,__argi__+1,graph_size_def.y);
-	if( graph_size.x != graph_size_def.x || graph_size.y != graph_size_def.y  ) __argi__+=2;
-	int stride = (int)luaL_optinteger(L, __argi__++, sizeof(float));
-	ImGui::PlotHistogram(label,&values,values_count,values_offset,overlay_text,scale_min,scale_max,graph_size,stride);
-	return 0;
-};
-
+//UnSupported PlotHistogram
 //void  PlotHistogram(const char* label,float @1@2,void* data,int values_count,int values_offset,const char* overlay_text,float scale_min,float scale_max,ImVec2 graph_size);
 //UnSupported PlotHistogram
 //void  Value(const char* prefix,bool b);
@@ -2390,39 +2311,15 @@ int cximgui_BeginDragDropSource_1_i(lua_State* L){
 //bool  SetDragDropPayload(const char* type,const void* data,size_t sz,ImGuiCond cond);
 //UnSupported SetDragDropPayload
 //void  EndDragDropSource();
-int cximgui_EndDragDropSource(lua_State* L){
-	ImGui::EndDragDropSource();
-	return 0;
-};
-
+//UnSupported EndDragDropSource
 //bool  BeginDragDropTarget();
-int cximgui_BeginDragDropTarget(lua_State* L){
-	bool __ret__ = ImGui::BeginDragDropTarget();
-	lua_pushboolean(L, __ret__);
-	return 1;
-};
-
+//UnSupported BeginDragDropTarget
 //const ImGuiPayload*  AcceptDragDropPayload(const char* type,ImGuiDragDropFlags flags);
-int cximgui_AcceptDragDropPayload_2_si(lua_State* L){
-	int __argi__ = 1;
-	const char* type = lua_tostring(L, __argi__++);
-	ImGuiDragDropFlags flags = (ImGuiDragDropFlags)luaL_optinteger(L, __argi__++, 0);
-	const ImGuiPayload* __ret__ = ImGui::AcceptDragDropPayload(type,flags);
-	return 0;
-};
-
+//UnSupported AcceptDragDropPayload
 //void  EndDragDropTarget();
-int cximgui_EndDragDropTarget(lua_State* L){
-	ImGui::EndDragDropTarget();
-	return 0;
-};
-
+//UnSupported EndDragDropTarget
 //const ImGuiPayload*  GetDragDropPayload();
-int cximgui_GetDragDropPayload(lua_State* L){
-	const ImGuiPayload* __ret__ = ImGui::GetDragDropPayload();
-	return 0;
-};
-
+//UnSupported GetDragDropPayload
 //void  PushClipRect(const ImVec2& clip_rect_min,const ImVec2& clip_rect_max,bool intersect_with_current_clip_rect);
 int cximgui_PushClipRect_3_v2v2b(lua_State* L){
 	int __argi__ = 1;
@@ -2638,11 +2535,7 @@ int cximgui_GetForegroundDrawList(lua_State* L){
 //ImDrawList*  GetForegroundDrawList(ImGuiViewport* viewport);
 //UnSupported GetForegroundDrawList
 //ImDrawListSharedData*  GetDrawListSharedData();
-int cximgui_GetDrawListSharedData(lua_State* L){
-	ImDrawListSharedData* __ret__ = ImGui::GetDrawListSharedData();
-	return 0;
-};
-
+//UnSupported GetDrawListSharedData
 //const char*  GetStyleColorName(ImGuiCol idx);
 int cximgui_GetStyleColorName_1_i(lua_State* L){
 	int __argi__ = 1;
@@ -2655,11 +2548,7 @@ int cximgui_GetStyleColorName_1_i(lua_State* L){
 //void  SetStateStorage(ImGuiStorage* storage);
 //UnSupported SetStateStorage
 //ImGuiStorage*  GetStateStorage();
-int cximgui_GetStateStorage(lua_State* L){
-	ImGuiStorage* __ret__ = ImGui::GetStateStorage();
-	return 0;
-};
-
+//UnSupported GetStateStorage
 //void  CalcListClipping(int items_count,float items_height,int* out_items_display_start,int* out_items_display_end);
 int cximgui_CalcListClipping_4_inipip(lua_State* L){
 	int __argi__ = 1;
@@ -3023,21 +2912,11 @@ int cximgui_DebugCheckVersionAndDataLayout_7_siiiiii(lua_State* L){
 //void  SetAllocatorFunctions(void* @1@2,void @3@4,void* user_data);
 //UnSupported SetAllocatorFunctions
 //void*  MemAlloc(size_t size);
-int cximgui_MemAlloc_1_i(lua_State* L){
-	int __argi__ = 1;
-	size_t size = (size_t)lua_tointeger(L, __argi__++);
-	ImGui::MemAlloc(size);
-	return 0;
-};
-
+//UnSupported MemAlloc
 //void  MemFree(void* ptr);
 //UnSupported MemFree
 //ImGuiPlatformIO&  GetPlatformIO();
-int cximgui_GetPlatformIO(lua_State* L){
-	ImGuiPlatformIO& __ret__ = ImGui::GetPlatformIO();
-	return 0;
-};
-
+//UnSupported GetPlatformIO
 //ImGuiViewport*  GetMainViewport();
 //UnSupported GetMainViewport
 //void  UpdatePlatformWindows();
@@ -3544,15 +3423,11 @@ int cximgui_ImDrawList_UpdateTextureID(lua_State* L){
 };
 
 
-//total func407unSupported71
+//total func407unSupported91
 luaL_Reg cximgui_methods[] = {
-	{"GetCurrentContext",cximgui_GetCurrentContext},
-	{"GetIO",cximgui_GetIO},
-	{"GetStyle",cximgui_GetStyle},
 	{"NewFrame",cximgui_NewFrame},
 	{"EndFrame",cximgui_EndFrame},
 	{"Render",cximgui_Render},
-	{"GetDrawData",cximgui_GetDrawData},
 	{"ShowDemoWindow",cximgui_ShowDemoWindow_1_bp},
 	{"ShowAboutWindow",cximgui_ShowAboutWindow_1_bp},
 	{"ShowMetricsWindow",cximgui_ShowMetricsWindow_1_bp},
@@ -3569,9 +3444,7 @@ luaL_Reg cximgui_methods[] = {
 	{"IsWindowCollapsed",cximgui_IsWindowCollapsed},
 	{"IsWindowFocused",cximgui_IsWindowFocused_1_i},
 	{"IsWindowHovered",cximgui_IsWindowHovered_1_i},
-	{"GetWindowDrawList",cximgui_GetWindowDrawList},
 	{"GetWindowDpiScale",cximgui_GetWindowDpiScale},
-	{"GetWindowViewport",cximgui_GetWindowViewport},
 	{"GetWindowPos",cximgui_GetWindowPos},
 	{"GetWindowSize",cximgui_GetWindowSize},
 	{"GetWindowWidth",cximgui_GetWindowWidth},
@@ -3607,7 +3480,6 @@ luaL_Reg cximgui_methods[] = {
 	{"SetScrollHereY",cximgui_SetScrollHereY_1_n},
 	{"SetScrollFromPosX",cximgui_SetScrollFromPosX_2_nn},
 	{"SetScrollFromPosY",cximgui_SetScrollFromPosY_2_nn},
-	{"PopFont",cximgui_PopFont},
 	{"PushStyleColor",cximgui_PushStyleColor_2_ii},
 	{"PushStyleColor2",cximgui_PushStyleColor_2_iv4},
 	{"PopStyleColor",cximgui_PopStyleColor_1_i},
@@ -3615,7 +3487,6 @@ luaL_Reg cximgui_methods[] = {
 	{"PushStyleVar2",cximgui_PushStyleVar_2_iv2},
 	{"PopStyleVar",cximgui_PopStyleVar_1_i},
 	{"GetStyleColorVec4",cximgui_GetStyleColorVec4_1_i},
-	{"GetFont",cximgui_GetFont},
 	{"GetFontSize",cximgui_GetFontSize},
 	{"GetFontTexUvWhitePixel",cximgui_GetFontTexUvWhitePixel},
 	{"GetColorU32",cximgui_GetColorU32_2_in},
@@ -3673,7 +3544,6 @@ luaL_Reg cximgui_methods[] = {
 	{"Bullet",cximgui_Bullet},
 	{"BeginCombo",cximgui_BeginCombo_3_ssi},
 	{"EndCombo",cximgui_EndCombo},
-	{"Combo",cximgui_Combo_4_sipsi},
 	{"DragFloat",cximgui_DragFloat_7_snpnnnsn},
 	{"DragFloat2",cximgui_DragFloat2_7_snnnnsn},
 	{"DragFloat3",cximgui_DragFloat3_7_snnnnsn},
@@ -3723,8 +3593,6 @@ luaL_Reg cximgui_methods[] = {
 	{"ListBoxHeader",cximgui_ListBoxHeader_2_sv2},
 	{"ListBoxHeader2",cximgui_ListBoxHeader_3_sii},
 	{"ListBoxFooter",cximgui_ListBoxFooter},
-	{"PlotLines",cximgui_PlotLines_9_snpiisnnv2i},
-	{"PlotHistogram",cximgui_PlotHistogram_9_snpiisnnv2i},
 	{"Value",cximgui_Value_2_sb},
 	{"Value2",cximgui_Value_2_si},
 	{"Value3",cximgui_Value_2_sI},
@@ -3771,11 +3639,6 @@ luaL_Reg cximgui_methods[] = {
 	{"LogFinish",cximgui_LogFinish},
 	{"LogButtons",cximgui_LogButtons},
 	{"BeginDragDropSource",cximgui_BeginDragDropSource_1_i},
-	{"EndDragDropSource",cximgui_EndDragDropSource},
-	{"BeginDragDropTarget",cximgui_BeginDragDropTarget},
-	{"AcceptDragDropPayload",cximgui_AcceptDragDropPayload_2_si},
-	{"EndDragDropTarget",cximgui_EndDragDropTarget},
-	{"GetDragDropPayload",cximgui_GetDragDropPayload},
 	{"PushClipRect",cximgui_PushClipRect_3_v2v2b},
 	{"PopClipRect",cximgui_PopClipRect},
 	{"SetItemDefaultFocus",cximgui_SetItemDefaultFocus},
@@ -3803,9 +3666,7 @@ luaL_Reg cximgui_methods[] = {
 	{"GetFrameCount",cximgui_GetFrameCount},
 	{"GetBackgroundDrawList",cximgui_GetBackgroundDrawList},
 	{"GetForegroundDrawList",cximgui_GetForegroundDrawList},
-	{"GetDrawListSharedData",cximgui_GetDrawListSharedData},
 	{"GetStyleColorName",cximgui_GetStyleColorName_1_i},
-	{"GetStateStorage",cximgui_GetStateStorage},
 	{"CalcListClipping",cximgui_CalcListClipping_4_inipip},
 	{"BeginChildFrame",cximgui_BeginChildFrame_3_iv2i},
 	{"EndChildFrame",cximgui_EndChildFrame},
@@ -3842,8 +3703,6 @@ luaL_Reg cximgui_methods[] = {
 	{"SaveIniSettingsToDisk",cximgui_SaveIniSettingsToDisk_1_s},
 	{"SaveIniSettingsToMemory",cximgui_SaveIniSettingsToMemory_1_ip},
 	{"DebugCheckVersionAndDataLayout",cximgui_DebugCheckVersionAndDataLayout_7_siiiiii},
-	{"MemAlloc",cximgui_MemAlloc_1_i},
-	{"GetPlatformIO",cximgui_GetPlatformIO},
 	{"UpdatePlatformWindows",cximgui_UpdatePlatformWindows},
 	{"DestroyPlatformWindows",cximgui_DestroyPlatformWindows},
 	{"FindViewportByID",cximgui_FindViewportByID_1_i},
@@ -4057,6 +3916,56 @@ int cximgui_keys_mod(lua_State*L)
 	return 1;
 }
 
+int cximgui_PlotLines_8_stisnnv2i(lua_State* L) {
+	int __argi__ = 1;
+	const char* label = lua_tostring(L, __argi__++);
+	int table_index = __argi__++;
+	int values_count = luaL_len(L, table_index);
+	float* values = new float[values_count];
+	for (int i = 0; i < values_count; i++)
+	{
+		values[i] = lua_geti(L, table_index, i + 1); lua_pop(L, 1);
+	}
+	int values_offset = (int)luaL_optinteger(L, __argi__++, 0);
+	const char* overlay_text = luaL_optstring(L, __argi__++, NULL);
+	float scale_min = (float)luaL_optnumber(L, __argi__++, FLT_MAX);
+	float scale_max = (float)luaL_optnumber(L, __argi__++, FLT_MAX);
+	ImVec2 graph_size_def = ImVec2(0, 0);
+	ImVec2 graph_size;
+	graph_size.x = (float)luaL_optnumber(L, __argi__, graph_size_def.x);
+	graph_size.y = (float)luaL_optnumber(L, __argi__ + 1, graph_size_def.y);
+	if (graph_size.x != graph_size_def.x || graph_size.y != graph_size_def.y) __argi__ += 2;
+	int stride = (int)luaL_optinteger(L, __argi__++, sizeof(float));
+    ImGui::PlotLines(label, values, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size, stride);
+    delete[]values;
+	return 0;
+};
+
+int cximgui_PlotHistogram_8_sntisnnv2i(lua_State* L) {
+	int __argi__ = 1;
+	const char* label = lua_tostring(L, __argi__++);
+	int table_index = __argi__++;
+	int values_count = luaL_len(L, table_index);
+	float* values = new float[values_count];
+	for (int i = 0; i < values_count; i++)
+	{
+		values[i] = lua_geti(L, table_index, i + 1); lua_pop(L, 1);
+	}
+	int values_offset = (int)luaL_optinteger(L, __argi__++, 0);
+	const char* overlay_text = luaL_optstring(L, __argi__++, NULL);
+	float scale_min = (float)luaL_optnumber(L, __argi__++, FLT_MAX);
+	float scale_max = (float)luaL_optnumber(L, __argi__++, FLT_MAX);
+	ImVec2 graph_size_def = ImVec2(0, 0);
+	ImVec2 graph_size;
+	graph_size.x = (float)luaL_optnumber(L, __argi__, graph_size_def.x);
+	graph_size.y = (float)luaL_optnumber(L, __argi__ + 1, graph_size_def.y);
+	if (graph_size.x != graph_size_def.x || graph_size.y != graph_size_def.y) __argi__ += 2;
+	int stride = (int)luaL_optinteger(L, __argi__++, sizeof(float));
+	ImGui::PlotHistogram(label, values, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size, stride);
+	delete[]values;
+	return 0;
+};
+
 luaL_Reg cximgui_extra_methods[] = {
 	{ "CreateStrbuf", cximgui_strbuf_create },
 { "DestroyStrbuf", cximgui_strbuf_destroy },
@@ -4068,6 +3977,8 @@ luaL_Reg cximgui_extra_methods[] = {
 { "ListBox", cximgui_ListBox_5_spipsii },
 { "ClipperList", cximgui_clipper_list },
 { "KeysMod", cximgui_keys_mod},
+{ "PlotLines", cximgui_PlotLines_8_stisnnv2i},
+{ "PlotHistogram", cximgui_PlotHistogram_8_sntisnnv2i},
 { NULL,NULL }
 };
 

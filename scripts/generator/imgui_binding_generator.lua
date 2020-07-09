@@ -228,9 +228,67 @@ function FuncProtoMT:ToString()
     table.insert(tstr, ');')
     return table.concat(tstr)
 end
+local imgui_api_ignore_fnames={
+    ['GetStyle'] = true,
+    ['ShowStyleEditor'] = true,
+    ['StyleColorsDark'] = true,
+    ['StyleColorsClassic'] = true,
+    ['StyleColorsLight'] = true,
+    ['CreateContext'] = true,
+    ['DestroyContext'] = true,
+    ['GetCurrentContext'] = true,
+    ['SetCurrentContext'] = true,
+    ['GetIO'] = true,
+    ['GetDrawData'] = true,
+    ['GetWindowDrawList'] = true,
+    ['GetWindowViewport'] = true,
+    ['SetNextWindowSizeConstraint'] = true,
+    ['PushFont'] = true,
+    ['PopFont'] = true,
+    ['GetFont'] = true,
+    ['Combo'] = true,
+    ['DragScalar'] = true,
+    ['DragScalarN'] = true,
+    ['SliderScalar'] = true,
+    ['SliderScalarN'] = true,
+    ['VSliderScalar'] = true,
+    ['InputScalar'] = true,
+    ['InputScalarN'] = true,
+    ['ListBox'] = true,
+    ['PlotLines'] = true,
+    ['PlotHistogram'] = true,
+    ['DockSpace'] = true,
+    ['DockSpaceOverViewport'] = true,
+    ['SetNextWindowDockId'] = true,
+    ['SetNextWindowDockFamily'] = true,
+    ['SetDragDropPayload'] = true,
+    ['EndDragDropSource'] = true,
+    ['BeginDragDropTarget'] = true,
+    ['AcceptDragDropPayload'] = true,
+    ['EndDragDropTarget'] = true,
+    ['GetDragDropPayload'] = true,
+    ['GetOverlayDrawList'] = true,
+    ['GetDrawListSharedData'] = true,
+    ['GetStateStorage'] = true,
+    ['SetStateStorage'] = true,
+    ['SetAllocatorFunctions'] = true,
+    ['MemAlloc'] = true,
+    ['MemFree'] = true,
+    ['GetPlatformIO'] = true,
+    ['GetMainViewport'] = true,
+    ['RenderPlatformWindowsDefault'] = true,
+    ['FindViewportByPlatformHandle'] = true
+}
 
+local imgui_api_unsupported_types = {
+    'void*',        --translate void* to int 
+    'void',
+    '...',          --translate ... into unsupported , translate const char* fmt, va_list args to const char* string
+    'const char* const items[]',
+    'items_getter'
+}   
 function FuncProtoMT:CalcSupported()
-    if self.name == 'GetMainViewport' then
+    if imgui_api_ignore_fnames[self.name] then
         self.supported = false
         return 
     end
@@ -379,67 +437,7 @@ function parse_imvec4(content)
     imgui_typedefs['ImVec4'] = 'ImVec4';
 end
 
-local imgui_api_ignore_fnames={
-    --[ImGuiStyle]
-    'GetStyle',
-    'ShowStyleEditor',
-    'StyleColorsDark',
-    'StyleColorsClassic',
-    'StyleColorsLight',
-   
-    'CreateContext',
-    'DestroyContext',
-    'GetCurrentContext',
-    'SetCurrentContext',
-    'GetIO',
-    'GetDrawData',
-    'GetWindowDrawList',
-    'GetWindowViewport',
-    'SetNextWindowSizeConstraint',
-    'PushFont',
-    'PopFont',
-    'GetFont',
-    'Combo',
-    'DragScalar',
-    'DragScalarN',
-    'SliderScalar',
-    'SliderScalarN',
-    'VSliderScalar',
-    'InputScalar',
-    'InputScalarN',
-    'ListBox',
-    'PlotLines',
-    'PlotHistogram',
-    'DockSpace',
-    'DockSpaceOverViewport',
-    'SetNextWindowDockId',
-    'SetNextWindowDockFamily',
-    'SetDragDropPayload',
-    'EndDragDropSource',
-    'BeginDragDropTarget',
-    'AcceptDragDropPayload',
-    'EndDragDropTarget',
-    'GetDragDropPayload',
-    'GetOverlayDrawList',
-    'GetDrawListSharedData',
-    'GetStateStorage',
-    'SetStateStorage',
-    'SetAllocatorFunctions',
-    'MemAlloc',
-    'MemFree',
-    'GetPlatformIO',
-    'GetMainViewport',
-    'RenderPlatformWindowsDefault',
-    'FindViewportByPlatformHandle'
-}
 
-local imgui_api_unsupported_types = {
-    'void*',        --translate void* to int 
-    'void',
-    '...',          --translate ... into unsupported , translate const char* fmt, va_list args to const char* string
-    'const char* const items[]',
-    'items_getter'
-}   
    
 function parse_imgui_api(content, namespace)
     for line in content:gmatch('.-\n') do
@@ -910,6 +908,56 @@ int cximgui_keys_mod(lua_State*L)
 	return 1;
 }
 
+int cximgui_PlotLines_8_stisnnv2i(lua_State* L) {
+	int __argi__ = 1;
+	const char* label = lua_tostring(L, __argi__++);
+	int table_index = __argi__++;
+	int values_count = luaL_len(L, table_index);
+	float* values = new float[values_count];
+	for (int i = 0; i < values_count; i++)
+	{
+		values[i] = lua_geti(L, table_index, i + 1); lua_pop(L, 1);
+	}
+	int values_offset = (int)luaL_optinteger(L, __argi__++, 0);
+	const char* overlay_text = luaL_optstring(L, __argi__++, NULL);
+	float scale_min = (float)luaL_optnumber(L, __argi__++, FLT_MAX);
+	float scale_max = (float)luaL_optnumber(L, __argi__++, FLT_MAX);
+	ImVec2 graph_size_def = ImVec2(0, 0);
+	ImVec2 graph_size;
+	graph_size.x = (float)luaL_optnumber(L, __argi__, graph_size_def.x);
+	graph_size.y = (float)luaL_optnumber(L, __argi__ + 1, graph_size_def.y);
+	if (graph_size.x != graph_size_def.x || graph_size.y != graph_size_def.y) __argi__ += 2;
+	int stride = (int)luaL_optinteger(L, __argi__++, sizeof(float));
+    ImGui::PlotLines(label, values, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size, stride);
+    delete[]values;
+	return 0;
+};
+
+int cximgui_PlotHistogram_8_sntisnnv2i(lua_State* L) {
+	int __argi__ = 1;
+	const char* label = lua_tostring(L, __argi__++);
+	int table_index = __argi__++;
+	int values_count = luaL_len(L, table_index);
+	float* values = new float[values_count];
+	for (int i = 0; i < values_count; i++)
+	{
+		values[i] = lua_geti(L, table_index, i + 1); lua_pop(L, 1);
+	}
+	int values_offset = (int)luaL_optinteger(L, __argi__++, 0);
+	const char* overlay_text = luaL_optstring(L, __argi__++, NULL);
+	float scale_min = (float)luaL_optnumber(L, __argi__++, FLT_MAX);
+	float scale_max = (float)luaL_optnumber(L, __argi__++, FLT_MAX);
+	ImVec2 graph_size_def = ImVec2(0, 0);
+	ImVec2 graph_size;
+	graph_size.x = (float)luaL_optnumber(L, __argi__, graph_size_def.x);
+	graph_size.y = (float)luaL_optnumber(L, __argi__ + 1, graph_size_def.y);
+	if (graph_size.x != graph_size_def.x || graph_size.y != graph_size_def.y) __argi__ += 2;
+	int stride = (int)luaL_optinteger(L, __argi__++, sizeof(float));
+	ImGui::PlotHistogram(label, values, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size, stride);
+	delete[]values;
+	return 0;
+};
+
 luaL_Reg cximgui_extra_methods[] = {
 	{ "CreateStrbuf", cximgui_strbuf_create },
 { "DestroyStrbuf", cximgui_strbuf_destroy },
@@ -921,6 +969,8 @@ luaL_Reg cximgui_extra_methods[] = {
 { "ListBox", cximgui_ListBox_5_spipsii },
 { "ClipperList", cximgui_clipper_list },
 { "KeysMod", cximgui_keys_mod},
+{ "PlotLines", cximgui_PlotLines_8_stisnnv2i},
+{ "PlotHistogram", cximgui_PlotHistogram_8_sntisnnv2i},
 { NULL,NULL }
 };
 
