@@ -376,9 +376,12 @@ int iw_render(lua_State* L)
 
 		glfwPollEvents();
 
+
 		glViewport(0, 0, m_Width, m_Height);
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+		
 
 
 		//	shader_clear(0xff00ff00);
@@ -410,6 +413,8 @@ int iw_render(lua_State* L)
 			// shader_flush();
 
 
+		
+
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -420,6 +425,7 @@ int iw_render(lua_State* L)
 			int res = lua_pcall(L, 0, 0, 0);
 			check_lua_error(L, res);
 		}
+		
 
 		ImGui::Render();
 		int display_w, display_h;

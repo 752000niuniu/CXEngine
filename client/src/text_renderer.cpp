@@ -31,7 +31,7 @@ static const uint32_t s_ChineseRanges[] =
 
 bool TextRenderer::IsInRange(wchar_t c)
 {
-	for (int i=0;s_ChineseRanges[i];i+=2)
+	for (int i = 0; s_ChineseRanges[i]; i += 2)
 	{
 		uint32_t l = s_ChineseRanges[i];
 		uint32_t r = s_ChineseRanges[i + 1];
@@ -64,7 +64,7 @@ TextRenderer::TextRenderer()
 	if (FT_Init_FreeType(&m_FtLib))
 		std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
 
-	
+
 	if (FT_New_Face(m_FtLib, FileSystem::GetGameFontPath().c_str(), 0, &m_FtFace))
 		std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
 
@@ -83,7 +83,7 @@ TextRenderer::TextRenderer()
 	// m_IsScaleable =  m_FtLib xxx is scale bn
 	m_FontHeight = m_FtFace->size->metrics.height >> 6;
 
-	m_BearingY  =  m_FtFace->size->metrics.ascender >> 6;
+	m_BearingY = m_FtFace->size->metrics.ascender >> 6;
 
 	m_bUseKerning = FT_HAS_KERNING(m_FtFace);
 
@@ -131,7 +131,7 @@ TextRenderer::~TextRenderer()
 
 void TextRenderer::EnsureLoadText(std::wstring text, bool showEmotion)
 {
-	EnsureLoadText(std::vector<uint32_t>(text.begin(), text.end()),showEmotion);
+	EnsureLoadText(std::vector<uint32_t>(text.begin(), text.end()), showEmotion);
 }
 
 void TextRenderer::EnsureLoadText(std::vector<uint32_t> unicodes, bool showEmotion)
@@ -139,7 +139,7 @@ void TextRenderer::EnsureLoadText(std::vector<uint32_t> unicodes, bool showEmoti
 	for (size_t i = 0; i < unicodes.size(); i++)
 	{
 		uint32_t charcode = -1;
-		int cnt = GetCharcode(unicodes, i, charcode,showEmotion);
+		int cnt = GetCharcode(unicodes, i, charcode, showEmotion);
 		if (cnt == 0)
 		{
 			LoadGlyph(charcode);
@@ -194,7 +194,7 @@ int TextRenderer::GetCharcode(const std::vector<uint32_t>& unicodes, size_t i, u
 				charcode = s_EmotionIDs[index];
 				return (int)cnt;
 			}
-			
+
 		}
 		else
 		{
@@ -207,7 +207,7 @@ int TextRenderer::GetCharcode(const std::vector<uint32_t>& unicodes, size_t i, u
 int TextRenderer::GetCharcode(const std::wstring& text, size_t i, uint32_t& charcode, bool showEmotion)
 {
 	std::vector<uint32_t> unicodes(text.begin(), text.end());
-	return GetCharcode(unicodes, i, charcode,showEmotion);
+	return GetCharcode(unicodes, i, charcode, showEmotion);
 }
 
 void TextRenderer::DrawGlyphTexture(uint32_t id, float xpos, float ypos, float w, float h)
@@ -259,7 +259,7 @@ bool TextRenderer::LoadGlyph(uint32_t charcode, bool emotion)
 		//fontglyph->Emotion = pEmotion;
 		//fontglyph->GlyphIndex = 0;
 		//fontglyph->Advance = pEmotion->GetWidth();
-		
+
 		/*fontglyph->Left =  pEmotion->GetKeyX();
 		fontglyph->Top = pEmotion->GetKeyY();
 		fontglyph->Width = pEmotion->GetWidth();
@@ -291,11 +291,11 @@ bool TextRenderer::LoadGlyph(uint32_t charcode, bool emotion)
 		if (!fontglyph->Texture)
 			return false;
 	}
-	m_FontGlyphs.insert({charcode,fontglyph});
+	m_FontGlyphs.insert({ charcode,fontglyph });
 	return true;
 }
 
-int TextRenderer::MeasureRange(std::wstring text, int start ,int end,bool showEmotion)
+int TextRenderer::MeasureRange(std::wstring text, int start, int end, bool showEmotion)
 {
 	EnsureLoadText(text);
 	int pen_x = 0;
@@ -304,11 +304,11 @@ int TextRenderer::MeasureRange(std::wstring text, int start ,int end,bool showEm
 	for (int n = start; n < end; n++)
 	{
 		uint32_t charcode = -1;
-		int cnt = GetCharcode(text,n,charcode,showEmotion);
+		int cnt = GetCharcode(text, n, charcode, showEmotion);
 		n += cnt;
 		if (charcode == '\n') continue;
 		auto& fontGlyph = m_FontGlyphs[charcode];
-		if (m_bUseKerning && previous &&fontGlyph->GlyphIndex)
+		if (m_bUseKerning && previous && fontGlyph->GlyphIndex)
 		{
 			FT_Vector  delta;
 			FT_Get_Kerning(m_FtFace, previous, fontGlyph->GlyphIndex,
@@ -336,7 +336,7 @@ TextRenderer::MeasureInfo TextRenderer::MeasureText(std::wstring text, int bound
 	for (size_t n = 0; n < text.size(); n++)
 	{
 		uint32_t charcode = -1;
-		int cnt = GetCharcode(text, n, charcode,showEmotion);
+		int cnt = GetCharcode(text, n, charcode, showEmotion);
 		n += cnt;
 		const auto& fontGlyph = m_FontGlyphs[charcode];
 		if ((charcode == '\n') ||
@@ -356,7 +356,7 @@ TextRenderer::MeasureInfo TextRenderer::MeasureText(std::wstring text, int bound
 		}
 		else
 		{
-			if (m_bUseKerning && previous &&fontGlyph->GlyphIndex)
+			if (m_bUseKerning && previous && fontGlyph->GlyphIndex)
 			{
 				FT_Vector  delta;
 				FT_Get_Kerning(m_FtFace, previous, fontGlyph->GlyphIndex,
@@ -365,7 +365,7 @@ TextRenderer::MeasureInfo TextRenderer::MeasureText(std::wstring text, int bound
 			}
 			previous = fontGlyph->GlyphIndex;
 			pen_x = pen_x + kerning + fontGlyph->Advance;
-		
+
 		}
 	}
 	total_width = total_width + pen_x;
@@ -379,11 +379,11 @@ TextRenderer::MeasureInfo TextRenderer::MeasureText(std::wstring text, int bound
 	return info;
 }
 
-void TextRenderer::DrawTextC(const char* cstr, int x, int y, Alighment align, int bound_width, glm::vec3 color , bool showEmotion)
+void TextRenderer::DrawTextC(const char* cstr, int x, int y, Alighment align, int bound_width, glm::vec3 color, bool showEmotion)
 {
 	std::string str = utils::Utf8ToGB2312(cstr);
 	std::wstring text = utils::StringToWstring(str);
-	DrawTextW(text, x, y, align, bound_width, color,showEmotion);
+	DrawTextW(text, x, y, align, bound_width, color, showEmotion);
 }
 
 /**
@@ -398,9 +398,9 @@ In the second pass the application should use only the color channels of the fon
 
 With a two-pass rendering like this it is also very easy to apply different colors to the border and the internal characters dynamically without the need to pre-color the font in the texture. The application simply needs to multiply the transparency value the desired color before blending it to the screen.
 **/
-void TextRenderer::DrawTextW(std::wstring text,int x,int y, Alighment align,int bound_width,glm::vec3 color,bool showEmotion)
+void TextRenderer::DrawTextW(std::wstring text, int x, int y, Alighment align, int bound_width, glm::vec3 color, bool showEmotion)
 {
-	EnsureLoadText(text,showEmotion);
+	EnsureLoadText(text, showEmotion);
 
 	for (size_t i = 0; i < text.size(); i++)
 	{
@@ -430,14 +430,14 @@ void TextRenderer::DrawTextW(std::wstring text,int x,int y, Alighment align,int 
 			uint32_t charcode = -1;
 			int cnt = GetCharcode(text, i, charcode, showEmotion);
 			i += cnt;
-			
+
 			auto* fontGlyph = m_FontGlyphs[charcode];
 			if ((charcode == '\n') ||
-				(bound_width > 0 &&pen_x + fontGlyph->Advance+ kerning >= bound_width+x))
+				(bound_width > 0 && pen_x + fontGlyph->Advance + kerning >= bound_width + x))
 			{
 				pen_x = x;
 				pen_y += m_FontHeight;
-				
+
 				previous = 0;
 				kerning = 0;
 				if (charcode != '\n')i--;
@@ -453,7 +453,7 @@ void TextRenderer::DrawTextW(std::wstring text,int x,int y, Alighment align,int 
 					GLfloat w = (float)fontGlyph->Width;
 					DrawGlyphTexture(fontGlyph->Texture->GetTextureID(), xpos, ypos, w, h);
 
-					if (m_bUseKerning && previous &&fontGlyph->GlyphIndex)
+					if (m_bUseKerning && previous && fontGlyph->GlyphIndex)
 					{
 						FT_Vector  delta;
 						FT_Get_Kerning(m_FtFace, previous, fontGlyph->GlyphIndex,
@@ -477,12 +477,12 @@ void TextRenderer::DrawTextW(std::wstring text,int x,int y, Alighment align,int 
 			}
 		}
 	}
-		break;
+	break;
 	case TextRenderer::CENTER:
 	{
 		MeasureInfo info = MeasureText(text, bound_width);
 		int pen_x = x - info.MaxWidth / 2;
-		int pen_y = y + m_BearingY - info.MaxHeight /2;
+		int pen_y = y + m_BearingY - info.MaxHeight / 2;
 		int kerning = 0;
 		int previous = 0;
 		for (size_t i = 0; i < text.size(); i++)
@@ -493,7 +493,7 @@ void TextRenderer::DrawTextW(std::wstring text,int x,int y, Alighment align,int 
 
 			auto* fontGlyph = m_FontGlyphs[charcode];
 			if ((charcode == '\n') ||
-			 ( bound_width > 0 &&pen_x + fontGlyph->Advance + kerning >= bound_width + x))
+				(bound_width > 0 && pen_x + fontGlyph->Advance + kerning >= bound_width + x))
 			{
 				int width = MeasureRange(text, (int)i, (int)(text.size() - 1));
 				if (width > bound_width) width = bound_width;
@@ -505,7 +505,7 @@ void TextRenderer::DrawTextW(std::wstring text,int x,int y, Alighment align,int 
 			}
 			else
 			{
-				
+
 				if (!fontGlyph->IsEmotion)
 				{
 					GLfloat xpos = (float)(pen_x + fontGlyph->Left);
@@ -514,7 +514,7 @@ void TextRenderer::DrawTextW(std::wstring text,int x,int y, Alighment align,int 
 					GLfloat w = (float)fontGlyph->Width;
 					DrawGlyphTexture(fontGlyph->Texture->GetTextureID(), xpos, ypos, w, h);
 
-					if (m_bUseKerning && previous &&fontGlyph->GlyphIndex)
+					if (m_bUseKerning && previous && fontGlyph->GlyphIndex)
 					{
 						FT_Vector  delta;
 						FT_Get_Kerning(m_FtFace, previous, fontGlyph->GlyphIndex,
@@ -538,7 +538,7 @@ void TextRenderer::DrawTextW(std::wstring text,int x,int y, Alighment align,int 
 			}
 		}
 	}
-		break;
+	break;
 	case TextRenderer::RIGHT:
 		break;
 	case TextRenderer::TOP:
@@ -553,21 +553,21 @@ void TextRenderer::DrawTextW(std::wstring text,int x,int y, Alighment align,int 
 
 void TextRenderer::RenderText(std::wstring text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
 {
-	
+
 }
 
-void TextRenderer::RenderFontText(std::string path,std::wstring text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
+void TextRenderer::RenderFontText(std::string path, std::wstring text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color)
 {
-	
+
 }
 
 void TextRenderer::RenderPlotText(std::wstring text, GLfloat x, GLfloat y)
 {
-	RenderFontText( FileSystem::GetGameFontPath(), text,
-	 x,y,0.35f,	glm::vec3(1.0f, 1.0f,1.0f) );
+	RenderFontText(FileSystem::GetGameFontPath(), text,
+		x, y, 0.35f, glm::vec3(1.0f, 1.0f, 1.0f));
 }
 
-void text_renderer_draw_text(const char* str,int x,int y)
+void text_renderer_draw_text(const char* str, int x, int y)
 {
 	TextRenderer::GetInstance()->DrawTextC(str, x, y, TextRenderer::LEFT, 0, { 128,128,128 });
 }

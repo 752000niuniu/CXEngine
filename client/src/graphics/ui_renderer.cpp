@@ -493,6 +493,14 @@ int ui_textview_set_width(lua_State*L){
 	return 0;
 }
 
+
+int ui_textview_draw(lua_State* L) {
+	UITextView* tv = lua_check_pointer<UITextView>(L, 1);
+	tv->Draw();
+	return 0;
+}
+
+
 luaL_Reg MT_UI_TEXTVIEW[] = {
 	{ "SetWidth", ui_textview_set_width},
 	{ "SetText",ui_textview_set_text},
@@ -500,6 +508,7 @@ luaL_Reg MT_UI_TEXTVIEW[] = {
 	{ "SetColor",ui_textview_set_color},
 	{ "SetBGColor",ui_textview_set_bg_color},
 	{ "SetTextSize",ui_textview_set_text_size},
+	{ "Draw",ui_textview_draw},
 	{NULL,NULL}
 };
 
@@ -513,6 +522,13 @@ int ui_textview_create(lua_State* L)
 	}
 	lua_setmetatable(L, -2);
 	return 1;
+}
+
+int ui_textview_destroy(lua_State* L)
+{
+	auto* ptr = lua_check_pointer<UITextView>(L, 1);
+	delete ptr;
+	return 0;
 }
 void ui_renderer_clear(){
 	UIRenderer::GetInstance()->Clear();
@@ -559,6 +575,7 @@ void luaopen_ui_renderer(lua_State* L)
 {
 	script_system_register_luac_function(L, ne_imageview_create);
 	script_system_register_luac_function(L, ui_textview_create);
+	script_system_register_luac_function(L, ui_textview_destroy);
 	script_system_register_luac_function(L, ui_renderer_add_to_draw);
 	script_system_register_function(L, ui_renderer_clear);
 	script_system_register_luac_function(L, npc_dialog_show);
