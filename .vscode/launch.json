@@ -67,5 +67,13 @@
                 "-Debug"
             ]
         },
+        {
+            "name": "Example",
+            "type": "cxlua",
+            "request": "attach",
+            "ip": "127.0.0.1",
+            "port": 9610,
+            "cwd": "${workspaceFolder}\\",
+        },
     ]
 }

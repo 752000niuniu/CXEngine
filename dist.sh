@@ -1,7 +1,7 @@
 rm -rf dist
 mkdir -p dist/bin
-cp bin/Release/SimpleServer.exe dist/bin/
-cp bin/Release/SimpleEngine.exe dist/bin/
+cp bin/Release/CXServer.exe dist/bin/
+cp bin/Release/CXEngine.exe dist/bin/
 cp bin/Release/cxluax.exe dist/bin/
 
 mkdir -p dist/res

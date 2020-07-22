@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.10)
-project (SimpleEngine LANGUAGES C CXX)
+project (CXEngine LANGUAGES C CXX)
 
 find_package(CXLua)
 find_package(GLEW CONFIG)
@@ -21,7 +21,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX "Source Files"  FILES $
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../common/src PREFIX "Source Files"  FILES ${GAME_SOURCES_CPP})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../common/src PREFIX "Source Files"  FILES ${GAME_SOURCES_HEADER})
 
-add_executable(SimpleEngine
+add_executable(CXEngine
     ${SOURCES_HEADER_PRI}
     src/animation/sprite.cpp
     src/camera.cpp
@@ -52,13 +52,13 @@ add_executable(SimpleEngine
 )
 
 if(MSVC)
-    target_compile_options(SimpleEngine PRIVATE /wd4819 )
-#   target_compile_options(SimpleEngine PRIVATE /W4 /WX /wd4324 /wd4201 /wd4819 /wd4267)
+    target_compile_options(CXEngine PRIVATE /wd4819 )
+#   target_compile_options(CXEngine PRIVATE /W4 /WX /wd4324 /wd4201 /wd4819 /wd4267)
 else()
-#   target_compile_options(SimpleEngine PRIVATE -Wall -Wextra -pedantic -Werror)
+#   target_compile_options(CXEngine PRIVATE -Wall -Wextra -pedantic -Werror)
 endif(MSVC)
 
-target_include_directories(SimpleEngine
+target_include_directories(CXEngine
     PUBLIC
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -68,7 +68,7 @@ target_include_directories(SimpleEngine
 )
 
 
-target_compile_definitions(SimpleEngine 
+target_compile_definitions(CXEngine 
   PRIVATE
     -DTW_STATIC
     -DTW_NO_LIB_PRAGMA
@@ -81,7 +81,7 @@ target_compile_definitions(SimpleEngine
     -DSIMPLE_ENGINE 
 )
 if(WIN32)
-target_compile_definitions(SimpleEngine 
+target_compile_definitions(CXEngine 
   PRIVATE
     -DZLIB_WINAPI
     -DNOMINMAX
@@ -92,10 +92,10 @@ target_compile_definitions(SimpleEngine
 )
 endif(WIN32)
 
-set_target_properties(SimpleEngine PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "src/pch/precompile.h")
-cotire(SimpleEngine)
+set_target_properties(CXEngine PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "src/pch/precompile.h")
+cotire(CXEngine)
 
-target_link_libraries(SimpleEngine
+target_link_libraries(CXEngine
   PRIVATE 
     glfw
     GLEW
@@ -110,7 +110,7 @@ target_link_libraries(SimpleEngine
     moongl
 )
 
-# add_custom_command(TARGET SimpleEngine
+# add_custom_command(TARGET CXEngine
 #     PRE_LINK
 #     COMMAND ${CMAKE_COMMAND} -E copy ${ENGINE_DIR}/externals/dist/bin/luadbg.dll ${ENGINE_DIR}/bin/$<CONFIG>/
 # )

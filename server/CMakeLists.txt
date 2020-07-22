@@ -1,6 +1,6 @@
 # CMake entry point
 cmake_minimum_required(VERSION 3.10)
-project(SimpleServer)
+project(CXServer)
 
 find_package(CXLua)
 # find_package(SOIL)
@@ -19,7 +19,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../common/src PREFIX "Source Files
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../common/src PREFIX "Source Files"  FILES ${GAME_SOURCES_HEADER})
 
 
-add_executable(SimpleServer 
+add_executable(CXServer 
   ${PRIVATE_HEADERS}
   ${GAME_SOURCES_HEADER}
   ${GAME_COMMON_SRCS}
@@ -28,12 +28,12 @@ add_executable(SimpleServer
 )
 
 if(MSVC)
-  target_compile_options(SimpleServer PRIVATE /wd4324 /wd4201 /wd4819  )
+  target_compile_options(CXServer PRIVATE /wd4324 /wd4201 /wd4819  )
 else()
-  # target_compile_options(SimpleServer PRIVATE -Wall -Wextra -pedantic -Werror)
+  # target_compile_options(CXServer PRIVATE -Wall -Wextra -pedantic -Werror)
 endif(MSVC)
 
-target_include_directories(SimpleServer
+target_include_directories(CXServer
     PUBLIC
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -43,7 +43,7 @@ target_include_directories(SimpleServer
         ${CMAKE_CURRENT_SOURCE_DIR}/../external/dist/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../external/dist/include/freetype2
 )
-target_compile_definitions(SimpleServer 
+target_compile_definitions(CXServer 
   PRIVATE 
     -DGLEW_STATIC
     -DIMGUI_IMPL_OPENGL_LOADER_GLEW
@@ -51,9 +51,9 @@ target_compile_definitions(SimpleServer
     -DSIMPLE_SERVER 
 )
 
-set_target_properties(SimpleServer PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "src/pch/precompile.h")
-cotire(SimpleServer)
-target_link_libraries(SimpleServer
+set_target_properties(CXServer PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "src/pch/precompile.h")
+cotire(CXServer)
+target_link_libraries(CXServer
 PRIVATE
   glfw
   GLEW

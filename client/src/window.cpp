@@ -222,7 +222,7 @@ void iw_init(int w, int h)
 	std::string floatConfig = command_arg_opt_str("window_float", "0");;
 	glfwWindowHint(GLFW_FLOATING, floatConfig == "1");
 
-	m_pWindow = glfwCreateWindow(w, h, "SimpleEngine", nullptr, nullptr);
+	m_pWindow = glfwCreateWindow(w, h, "CXEngine", nullptr, nullptr);
 	if (m_pWindow == nullptr)
 	{
 		cxlog_err("glfwCreateWindow failed!");
@@ -359,6 +359,33 @@ void iw_function_to_restore_shader_or_blend_state(const ImDrawList* parent_list,
 	glEnable(GL_BLEND);
 }
 
+//	shader_clear(0xff00ff00);
+		// float x = 0;
+		// float y = 0;
+		// float w = 160;
+		// float h = 160;
+		// uint32_t color = 0xff0000ff;
+		// struct vertex_pack vp[4];
+		// vp[0].vx = x;
+		// vp[0].vy = y;
+		// vp[1].vx = x + w;
+		// vp[1].vy = y;
+		// vp[2].vx = x + w;
+		// vp[2].vy = y + h;
+		// vp[3].vx = x;
+		// vp[3].vy = y + h;
+
+		// int i;
+		// for (i = 0; i < 4; i++) {
+		// 	vp[i].tx = 0;
+		// 	vp[i].ty = 0;
+		// 	screen_trans(&vp[i].vx, &vp[i].vy);
+		// }
+
+		// shader_program(0, nullptr);
+		// shader_draw(vp, color, 0);
+
+		// shader_flush();
 
 int iw_render(lua_State* L)
 {
@@ -376,48 +403,39 @@ int iw_render(lua_State* L)
 
 		glfwPollEvents();
 
+		glViewport(0, 0, m_Width, m_Height);
+		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, WINDOW_INSTANCE->GetFrameBuffer());
+
+		SpriteRenderer::GetInstance()->ResetDrawCall();
 
 		glViewport(0, 0, m_Width, m_Height);
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		
-
-
-		//	shader_clear(0xff00ff00);
-			// float x = 0;
-			// float y = 0;
-			// float w = 160;
-			// float h = 160;
-			// uint32_t color = 0xff0000ff;
-			// struct vertex_pack vp[4];
-			// vp[0].vx = x;
-			// vp[0].vy = y;
-			// vp[1].vx = x + w;
-			// vp[1].vy = y;
-			// vp[2].vx = x + w;
-			// vp[2].vy = y + h;
-			// vp[3].vx = x;
-			// vp[3].vy = y + h;
-
-			// int i;
-			// for (i = 0; i < 4; i++) {
-			// 	vp[i].tx = 0;
-			// 	vp[i].ty = 0;
-			// 	screen_trans(&vp[i].vx, &vp[i].vy);
-			// }
-
-			// shader_program(0, nullptr);
-			// shader_draw(vp, color, 0);
-
-			// shader_flush();
-
-
-		
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+
+		ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(viewport->Pos);
+		ImGui::SetNextWindowSize(viewport->Size);
+		ImGui::SetNextWindowViewport(viewport->ID);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		ImGui::Begin("Game", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking);
+		ImGui::PopStyleVar();
+
+		auto cs_pos = ImGui::GetCursorPos();
+		auto css_pos = ImGui::GetCursorScreenPos();
+		ImGui::GetWindowDrawList()->AddCallback(iw_function_to_select_shader_or_blend_state, nullptr);
+		auto m_TextureColor = WINDOW_INSTANCE->GetRenderTexture();
+		ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_TextureColor, css_pos, ImVec2(css_pos.x + m_Width, css_pos.y+ m_Height), ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::GetWindowDrawList()->AddCallback(iw_function_to_restore_shader_or_blend_state, nullptr);
+		ImGui::SetCursorPos(cs_pos);
 
 		if (ref != -1) {
 			lua_State* L = script_system_get_luastate();
@@ -425,7 +443,8 @@ int iw_render(lua_State* L)
 			int res = lua_pcall(L, 0, 0, 0);
 			check_lua_error(L, res);
 		}
-		
+
+		ImGui::End();
 
 		ImGui::Render();
 		int display_w, display_h;
