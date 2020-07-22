@@ -303,7 +303,7 @@ void iw_init(int w, int h)
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	UIRenderer::GetInstance();
+	//UIRenderer::GetInstance();
 
 	// shader_init();
 	// shader_load(0, sprite_fs, sprite_vs, 0, nullptr);

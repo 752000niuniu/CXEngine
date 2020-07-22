@@ -40,7 +40,7 @@ Actor::Actor(uint64_t pid)
 	m_SayWidget->PaddingHorizontal = 4;
 	m_SayWidget->PaddingVertical = 2;
 	m_SayWidget->ShowEmotion = true;
-	m_SayWidget->BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WZIFEWDF, 0xEF073E43 /* 0xA4120EA9*/);
+	// m_SayWidget->BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WZIFEWDF, 0xEF073E43 /* 0xA4120EA9*/);
 
 	m_SayDuration = 0;
 	m_ASM = new ActionStateMachine(this);  

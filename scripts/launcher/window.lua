@@ -1,5 +1,7 @@
-script_system_dofile('../generator/sound_tsv_parser.lua')
-script_system_dofile('summon_handle.lua')
+if not command_arg_check('Debug') then
+    script_system_dofile('../generator/sound_tsv_parser.lua')
+    script_system_dofile('summon_handle.lua')
+end
 
 local AccountSB = imgui.CreateStrbuf('simulator', 256)
 local PasswordSB = imgui.CreateStrbuf('123456', 256)
