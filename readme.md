@@ -10,11 +10,11 @@ https://pan.baidu.com/s/18S0OKkdUJIRutJ5MuaLEug 提取码：3ppy
 
 ### 构建方法：
 
-1. git clone --recursive https://github.com/oceancx/YZXY
+1. git clone --recursive https://github.com/oceancx/CXEngine
 
-2. 构建external工程。用cmake.exe打开YZXY/external/CMakeLists.txt，配置构建的binaries目录为YZXY/external/build, vs版本请选择Visual Studio 15 2017 之后的64位版本，之后全部采用默认配置，点击生成，直到vs工程生成。然后用IDE打开工程，构建INSTALL目标，这个构建完成后会自动安装libs还有include文件到YZXY/external/dist目录下
+2. 构建external工程。用cmake.exe打开CXEngine/external/CMakeLists.txt，配置构建的binaries目录为CXEngine/external/build, vs版本请选择Visual Studio 15 2017 之后的64位版本，之后全部采用默认配置，点击生成，直到vs工程生成。然后用IDE打开工程，构建INSTALL目标，这个构建完成后会自动安装libs还有include文件到CXEngine/external/dist目录下
 
-3. 构建SimpleEngineAll工程。用cmake.exe打开YZXY/CMakeLists.txt，配置构建的binaries目录为YZXY/build。 vs版本请选择Visual Studio 15 2017 之后的64位版本，之后全部采用默认配置，点击生成，直到vs工程生成。然后用IDE打开工程，构建SimpleEngineAll目标。成功构建完成后，YZXY/bin/Debug或者YZXY/bin/Release下会生成SimpleEngine.exe, SimpleServer.exe, cxlua.exe。
+3. 构建CXEngineAll工程。用cmake.exe打开CXEngine/CMakeLists.txt，配置构建的binaries目录为CXEngine/build。 vs版本请选择Visual Studio 15 2017 之后的64位版本，之后全部采用默认配置，点击生成，直到vs工程生成。然后用IDE打开工程，构建CXEngineAll目标。成功构建完成后，CXEngine/bin/Debug或者CXEngine/bin/Release下会生成CXEngine.exe, CXServer.exe, cxlua.exe。
 
 4. sh launcher.bat。即可打开launcher，从而启动服务端客户端或者配置资源目录。
 
