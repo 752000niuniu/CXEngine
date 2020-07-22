@@ -32,7 +32,7 @@ do
 	luadbg_enable_log(false)
 
 	iw_init()
-	iw_set_font(vfs_get_workdir()..'/res/font/msyhl.ttc')
+	iw_set_font(vfs_get_workdir()..'/res/font/simsun.ttc')
 
 	event_loop = ez_event_loop_create()
 	cx_client = ez_tcp_client_create(event_loop, '127.0.0.1',45000,'Launcher')

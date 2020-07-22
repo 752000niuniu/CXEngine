@@ -303,7 +303,7 @@ void iw_init(int w, int h)
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	//UIRenderer::GetInstance();
+	UIRenderer::GetInstance();
 
 	// shader_init();
 	// shader_load(0, sprite_fs, sprite_vs, 0, nullptr);
@@ -414,12 +414,16 @@ int iw_render(lua_State* L)
 		glViewport(0, 0, m_Width, m_Height);
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
+		UIRenderer::GetInstance()->Begin();
+		UIRenderer::GetInstance()->Draw();
+		UIRenderer::GetInstance()->End();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+
+		
 
 		ImGuiViewport* viewport = ImGui::GetMainViewport();
 		ImGui::SetNextWindowPos(viewport->Pos);
@@ -435,6 +439,9 @@ int iw_render(lua_State* L)
 		auto m_TextureColor = WINDOW_INSTANCE->GetRenderTexture();
 		ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_TextureColor, css_pos, ImVec2(css_pos.x + m_Width, css_pos.y+ m_Height), ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::GetWindowDrawList()->AddCallback(iw_function_to_restore_shader_or_blend_state, nullptr);
+
+		
+
 		ImGui::SetCursorPos(cs_pos);
 
 		if (ref != -1) {
@@ -444,6 +451,7 @@ int iw_render(lua_State* L)
 			check_lua_error(L, res);
 		}
 
+		
 		ImGui::End();
 
 		ImGui::Render();

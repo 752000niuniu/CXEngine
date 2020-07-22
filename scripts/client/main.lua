@@ -85,7 +85,7 @@ do
     io_service_context_init()
     luadbg_listen(DBG_PORT)
     iw_init(SCREEN_WIDTH,SCREEN_HEIGHT)
-    iw_set_font(vfs_get_workdir()..'/res/font/msyhl.ttc')
+    iw_set_font(vfs_get_workdir()..'/res/font/simsun.ttc')
     on_script_system_init()
     iw_render(on_script_system_update)
     on_script_system_deinit()

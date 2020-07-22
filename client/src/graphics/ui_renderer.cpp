@@ -59,10 +59,10 @@ UIRenderer::UIRenderer()
 	}
 
 	int res = 0;
-	res = nvgCreateFont(vg, "MSYH", FileSystem::GetFontPath("msyh.ttf").c_str());
-	assert(res >= 0);
-	res = nvgCreateFont(vg, "MSHT", FileSystem::GetFontPath("msht.ttf").c_str());
-	assert(res >= 0);
+	/*res = nvgCreateFont(vg, "MSYH", FileSystem::GetFontPath("msyh.ttf").c_str());
+	assert(res >= 0);*/
+	/*res = nvgCreateFont(vg, "MSHT", FileSystem::GetFontPath("msht.ttf").c_str());
+	assert(res >= 0);*/
 	res = nvgCreateFont(vg, "SIMSUN", FileSystem::GetFontPath("simsun.ttc").c_str());
 	assert(res >= 0);
 	m_Dialog = new NPCDialog();
@@ -83,6 +83,7 @@ void UIRenderer::Draw()
 {
 	
 	//script_system_call_function(script_system_get_luastate(), "on_ui_renderer_draw");
+
 	for (UIObject*& obj:m_Objects){
 		if (obj&&!obj->MarkRemove) {
 			obj->Draw();
@@ -186,7 +187,7 @@ void NEImageView::Draw()
 
 UITextView::UITextView()
 	:Text(""),
-	Font("MSYH"),
+	Font("SIMSUN"),
 	Size(14.f),
 	Color(nvgRGBA(255, 255, 255, 255)),
 	BGColor(nvgRGBA(0, 0, 0, 0)),

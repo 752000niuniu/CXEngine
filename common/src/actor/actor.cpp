@@ -40,7 +40,7 @@ Actor::Actor(uint64_t pid)
 	m_SayWidget->PaddingHorizontal = 4;
 	m_SayWidget->PaddingVertical = 2;
 	m_SayWidget->ShowEmotion = true;
-	// m_SayWidget->BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WZIFEWDF, 0xEF073E43 /* 0xA4120EA9*/);
+	 m_SayWidget->BackgroundResID = RESOURCE_MANAGER_INSTANCE->EncodeWAS(WZIFEWDF, 0xEF073E43 /* 0xA4120EA9*/);
 
 	m_SayDuration = 0;
 	m_ASM = new ActionStateMachine(this);  
@@ -54,7 +54,7 @@ Actor::Actor(uint64_t pid)
 	m_NameTV->Size = 16.f;
 	m_NameTV->Align = NVG_ALIGN_CENTER;
 	m_NameTV->Color = nvgRGBA(118, 253, 140, 255);
-	//UIRenderer::GetInstance()->AddToDraw(m_NameTV);
+	UIRenderer::GetInstance()->AddToDraw(m_NameTV);
 
 	m_SayTV = new UITextView();
 	m_SayTV->Font = "SIMSUN";
@@ -63,7 +63,7 @@ Actor::Actor(uint64_t pid)
 	m_SayTV->Color = nvgRGBA(255, 255, 255, 255); // text color
 	m_SayTV->BGColor = nvgRGBA(30, 30, 30, 128);
 	m_SayTV->WrapWidth = 100;
-	//UIRenderer::GetInstance()->AddToDraw(m_SayTV);
+	UIRenderer::GetInstance()->AddToDraw(m_SayTV);
 #endif
 }
 
@@ -76,8 +76,8 @@ Actor::~Actor()
 	INPUT_MANAGER_INSTANCE->UnRegisterView(this);
 	SafeDelete(m_ASM);
 	SafeDelete(m_SayWidget);
-	//UIRenderer::GetInstance()->RemoveToDraw(m_NameTV);
-	//UIRenderer::GetInstance()->RemoveToDraw(m_SayTV);
+	UIRenderer::GetInstance()->RemoveToDraw(m_NameTV);
+	UIRenderer::GetInstance()->RemoveToDraw(m_SayTV);
 #endif
 }
 
