@@ -61,14 +61,14 @@ function game_dispatch_message(pt)
 	end
 end
 
-USER_ACCOUNT = command_arg_opt_str('user', 'oceancx')
+USER_ACCOUNT = command_arg_opt_str('user', 'yzxy')
 USER_PASSWORD = command_arg_opt_str('pass', '123456')
 function game_server_on_connection(connected)
 	if connected then
 		local msg = {}
 		msg.account = USER_ACCOUNT
 		msg.password = USER_PASSWORD
-		msg.name = 'Ocean藏心'
+		msg.name = 'yzxy'
 		msg.scene_id = -105
 		msg.role_id = 1
 		msg.weapon_id = 40
