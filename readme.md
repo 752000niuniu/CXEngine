@@ -1,10 +1,6 @@
 # 关于这个项目：
 
-原罪西游（YZXY）是一款MMORPG类型的2D回合制开源游戏，这个项目包含了服务端和客户端以及相关工具的所有源代码。
-
-这个项目支持读写梦幻西游经典版的资源（2.0.186以前），但是这个项目本身并不提供任何梦幻西游经典版的资源。另外本项目仅供个人学习用途，不得用于商业用途。
-
-如果要玩原罪西游，请确保你的磁盘上有2.0.186以前的梦幻西游客户端，或者相关资源文件。
+CXEngine是一个方便大家使用lua+imgui做游戏的游戏引擎
 
 ### 已构建完成的库下载
 
@@ -20,7 +16,7 @@ https://pan.baidu.com/s/18S0OKkdUJIRutJ5MuaLEug 提取码：3ppy
 
 3. 构建SimpleEngineAll工程。用cmake.exe打开YZXY/CMakeLists.txt，配置构建的binaries目录为YZXY/build。 vs版本请选择Visual Studio 15 2017 之后的64位版本，之后全部采用默认配置，点击生成，直到vs工程生成。然后用IDE打开工程，构建SimpleEngineAll目标。成功构建完成后，YZXY/bin/Debug或者YZXY/bin/Release下会生成SimpleEngine.exe, SimpleServer.exe, cxlua.exe。
 
-4. sh launcher.sh。即可打开launcher，从而启动服务端客户端或者配置资源目录。
+4. sh launcher.bat。即可打开launcher，从而启动服务端客户端或者配置资源目录。
 
 
 ### 源码介绍
@@ -47,25 +43,25 @@ internals目录下的库全是作者引用的内部库，意味着作者随时�
 
 9. nanovg 2D矢量图形库 https://github.com/memononen/nanovg
 
-下面是YZXY/下剩余目录的介绍
+下面是CXEngine/下剩余目录的介绍
 
 1. .vscode保存的是项目的lua调试器配置，关于本项目调试器的构建安装请看launcher里的说明
 2. bin/目录 是默认的exe构建生成目录
-3. common/目录下的.cpp/.h文件会同时参与SimpleEngine和SimpleServer的构建。
-4. client/仅用于SimpleEngine的cpp/h
-5. server/仅用于SimpleServer的cpp/h
+3. common/目录下的.cpp/.h文件会同时参与CXEngine和CXServer的构建。
+4. client/仅用于CXEngine的cpp/h
+5. server/仅用于CXServer的cpp/h
 6. data/梦幻西游资源存放目录
 7. cxluax是launcher项目
 8. res/目录下是一些其他资源，例如字体，图标，tsv行列表
-9. scripts/是YZXY用到的所有lua文件，scripts/share/目录下的lua文件共享于launcher/SimpleEngine/SimpleServer，scripts/client/仅SimpleEngine使用，scripts/server仅SimpleServer使用
+9. scripts/是CXEngine用到的所有lua文件，scripts/share/目录下的lua文件共享于launcher/CXEngine/CXServer，scripts/client/仅CXEngine使用，scripts/server仅CXServer使用
 
 
-SimpleEngine，SimpleServer，以及launcher主要逻辑都由lua实现，其lua入口为各自的main.lua文件。
+CXEngine，CXServer，以及launcher主要逻辑都由lua实现，其lua入口为各自的main.lua文件。
 
 enums_protocol.lua 定义了所有客户端服务端之间的协议
 
 
-### 原罪西游介绍
+### 目前CXEngine开发介绍
 
 <img src="https://github.com/oceancx/SimpleEngine/blob/master/res/icon/1.jpg" width="50%" height="50%">
 <img src="https://github.com/oceancx/SimpleEngine/blob/master/res/icon/2.jpg" width="50%" height="50%">
@@ -80,8 +76,7 @@ ALT+W 可以编辑场景里玩家以及召唤兽的属性，包括玩家属性�
 ALT+R 仅战斗中会显示/隐藏，可以编辑当前战斗中所有对象的战斗指令。攻击/法术/防御/逃跑等
 
 
-原罪西游会朝着尽可能还原梦幻西游经典版的方向开发，目前技术方面已经无压力，后续功能基本上用lua便可实现。目前正在完善战斗部分，已经有了基础的战斗控制编辑器，以及actor属性编辑器。
-
+ 
 欢迎对此项目感兴趣的朋友加Q群讨论：983630090
 
 
