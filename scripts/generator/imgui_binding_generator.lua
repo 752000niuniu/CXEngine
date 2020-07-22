@@ -916,7 +916,9 @@ int cximgui_PlotLines_8_stisnnv2i(lua_State* L) {
 	float* values = new float[values_count];
 	for (int i = 0; i < values_count; i++)
 	{
-		values[i] = lua_geti(L, table_index, i + 1); lua_pop(L, 1);
+		lua_geti(L, table_index, i + 1);
+		values[i] = (float)lua_tonumber(L, -1);
+		lua_pop(L, 1);
 	}
 	int values_offset = (int)luaL_optinteger(L, __argi__++, 0);
 	const char* overlay_text = luaL_optstring(L, __argi__++, NULL);
@@ -928,8 +930,8 @@ int cximgui_PlotLines_8_stisnnv2i(lua_State* L) {
 	graph_size.y = (float)luaL_optnumber(L, __argi__ + 1, graph_size_def.y);
 	if (graph_size.x != graph_size_def.x || graph_size.y != graph_size_def.y) __argi__ += 2;
 	int stride = (int)luaL_optinteger(L, __argi__++, sizeof(float));
-    ImGui::PlotLines(label, values, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size, stride);
-    delete[]values;
+	ImGui::PlotLines(label, values, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size, stride);
+	delete[]values;
 	return 0;
 };
 
@@ -941,7 +943,9 @@ int cximgui_PlotHistogram_8_sntisnnv2i(lua_State* L) {
 	float* values = new float[values_count];
 	for (int i = 0; i < values_count; i++)
 	{
-		values[i] = lua_geti(L, table_index, i + 1); lua_pop(L, 1);
+		lua_geti(L, table_index, i + 1);
+		values[i] = (float)lua_tonumber(L, -1);
+		lua_pop(L, 1);
 	}
 	int values_offset = (int)luaL_optinteger(L, __argi__++, 0);
 	const char* overlay_text = luaL_optstring(L, __argi__++, NULL);
@@ -957,7 +961,6 @@ int cximgui_PlotHistogram_8_sntisnnv2i(lua_State* L) {
 	delete[]values;
 	return 0;
 };
-
 luaL_Reg cximgui_extra_methods[] = {
 	{ "CreateStrbuf", cximgui_strbuf_create },
 { "DestroyStrbuf", cximgui_strbuf_destroy },
