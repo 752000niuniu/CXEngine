@@ -47,27 +47,13 @@ function on_script_system_init()
 end
 
 function on_script_system_update()
-    local vid,x,y,w,h = imgui.GetMainViewport()
-    imgui.SetNextWindowPos(x,y)
-    imgui.SetNextWindowSize(w,h)
-    imgui.SetNextWindowViewport(vid)
-    imgui.PushStyleVar2(ImGuiStyleVar_WindowPadding,0,0)
-    imgui.Begin('Game', ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking)
-    imgui.PopStyleVar()
-    
     input_manager_update()
     net_manager_update()
     timer_manager_update(window_system_get_dt())
     resource_manager_update()
     scene_manager_update()
     scene_manager_draw()
-
-    local cs_x,cs_y = imgui.GetCursorPos()
-    local css_x,css_y = imgui.GetCursorScreenPos()
-    scene_manager_draw_imgui(css_x,css_y)
-    imgui.SetCursorPos(cs_x,cs_y)
-    
-    imgui.End()
+    on_game_imgui_update()
 end
 
 
