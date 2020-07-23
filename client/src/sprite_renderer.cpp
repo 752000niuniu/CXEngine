@@ -15,6 +15,8 @@
 SpriteRenderer::SpriteRenderer()
 {
 	// Configure shaders
+	glBindFramebuffer(GL_FRAMEBUFFER, WINDOW_INSTANCE->GetFrameBuffer());
+
 	m_pShader = new Shader("sprite.vs", "sprite.fs");
 	m_pShader->Bind();
 	glUniform1i(glGetUniformLocation(m_pShader->GetProgramID(), "image"), 0);
@@ -24,6 +26,9 @@ SpriteRenderer::SpriteRenderer()
 
 	initRenderData();
 	m_pShader->Unbind();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 }
 
 SpriteRenderer::~SpriteRenderer()
@@ -205,6 +210,8 @@ void SpriteRenderer::DrawFrameSprite(unsigned int textureID, glm::vec2 position,
 
 void SpriteRenderer::DrawMapSprite(Texture* texture, glm::vec2 position, glm::vec2 size, GLfloat rotate, GLfloat alpha)
 {
+	glBindFramebuffer(GL_FRAMEBUFFER, WINDOW_INSTANCE->GetFrameBuffer());
+
 	// Prepare transformations
 	m_pShader->Bind();
 
@@ -237,6 +244,9 @@ void SpriteRenderer::DrawMapSprite(Texture* texture, glm::vec2 position, glm::ve
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBlendEquation(GL_FUNC_ADD);
 	m_pShader->Unbind();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 }
 
 
