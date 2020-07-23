@@ -23,18 +23,19 @@ MoveHandle::~MoveHandle()
 void MoveHandle::Update()
 {
 	if (!m_Actor->GetProperty(PROP_CAN_MOVE).toBool())return;
-	if(m_bMove){
+	if (m_bMove) {
 		Pos moveTo = m_Actor->GetMoveToPos();
 		Pos pos = m_Actor->GetPos();
 		if (moveTo.x != pos.x || moveTo.y != pos.y) {
 			float dt = WINDOW_INSTANCE->GetDeltaTime();
 			float localVelocity = 0.f;
-			if(m_bMoveWithDuration){
-				localVelocity = m_MoveVelocity*dt;
-			}else{
-				localVelocity = m_Actor->GetProperty(PROP_MOVE_VELOCITY).toFloat()*dt;
+			if (m_bMoveWithDuration) {
+				localVelocity = m_MoveVelocity * dt;
 			}
-			
+			else {
+				localVelocity = m_Actor->GetProperty(PROP_MOVE_VELOCITY).toFloat() * dt;
+			}
+
 			bool useMoveList = !m_MoveList.empty();
 			Pos dest;
 			if (useMoveList)
@@ -49,14 +50,14 @@ void MoveHandle::Update()
 				dest.y = m_Actor->GetMoveToPos().y;
 			}
 
-			if (m_Actor->GetMoveDestDistSquare(dest) > localVelocity*localVelocity) {
+			if (m_Actor->GetMoveDestDistSquare(dest) > localVelocity * localVelocity) {
 				float degree = m_Actor->GetMoveDestAngle(dest);
 				int m_Dir = m_Actor->GetDirByDegree(degree);
 				float stepRangeX = cos(DegreeToRadian(degree));
 				float stepRangeY = sin(DegreeToRadian(degree));
 				m_Actor->TranslateX(stepRangeX * localVelocity);
 				m_Actor->TranslateY(stepRangeY * localVelocity);
-				if(!m_bKeepDir){
+				if (!m_bKeepDir) {
 					m_Actor->SetDir(m_Dir);
 				}
 			}
@@ -87,7 +88,7 @@ void MoveHandle::Update()
 			}
 		}
 	}
-	
+
 }
 
 void MoveHandle::MoveOnScreen(float x, float y)
@@ -97,12 +98,12 @@ void MoveHandle::MoveOnScreen(float x, float y)
 	m_bMove = true;
 }
 
-void MoveHandle::MoveOnScreenWithDuration(Pos offset, float move_dur,bool keepdir)
+void MoveHandle::MoveOnScreenWithDuration(Pos offset, float move_dur, bool keepdir)
 {
 	Pos src = m_Actor->GetPos();
 	Pos dest = src + offset;
-	cxlog_info("%s move on screen %.1f,%.1f => %.1f,%.1f dur %.1f keepdir %d moveList %d\n",	
-		m_Actor->GetLogName(), src.x, src.y, dest.x, dest.y, move_dur,keepdir, m_MoveList.size());
+	cxlog_info("%s move on screen %.1f,%.1f => %.1f,%.1f dur %.1f keepdir %d moveList %d\n",
+		m_Actor->GetLogName(), src.x, src.y, dest.x, dest.y, move_dur, keepdir, m_MoveList.size());
 	m_MoveDuration = move_dur;
 	m_Actor->SetMoveToPos(dest);
 	float dist = std::sqrt(m_Actor->GetMoveDestDistSquare(dest));
@@ -121,36 +122,59 @@ void MoveHandle::MoveTo(float x, float y)
 		m_MoveList.clear();
 		return;
 	}
-
-	if (!m_Actor->GetScene())return;
 	if (!m_Actor->GetProperty(PROP_CAN_MOVE).toBool())return;
-	GameMap* map = m_Actor->GetScene()->GetGameMap();
-	if (!map)return;
-	
-	if(m_Actor->IsCombat()){
+	if (m_Actor->IsCombat()) {
 		m_BackupMoveList.clear();
 		m_MoveList.clear();
+		return;
 	}
-	else {
+	if (m_Actor->GetScene() != nullptr && m_Actor->GetScene()->GetGameMap() != nullptr) {
+		auto* map = m_Actor->GetScene()->GetGameMap();
 		m_BackupMoveList.clear();
 		m_BackupMoveList = map->Move(m_Actor->GetBoxX(), m_Actor->GetBoxY(), (int)(x / 20), (int)(y / 20));
 		if (m_BackupMoveList.size() < 2)return;
 		m_BackupMoveList.pop_front();
 		m_BackupMoveList.pop_back();
 		m_MoveList = m_BackupMoveList;
+		m_Actor->SetMoveToPos({ x,y });
+		if (!m_Actor->IsCombat()) {
+			m_Actor->GetASM()->ClearAction();
+			ActionInfo info;
+			info.actionID = ACTION_WALK;
+			m_Actor->GetASM()->PushAction(info);
+		}
+		m_bMoveWithDuration = false;
+		m_bKeepDir = false;
+		m_bMove = true;
 	}
-	
+	else {
+		m_BackupMoveList.clear();
+		float sx = m_Actor->GetBoxX();
+		float sy = m_Actor->GetBoxY();
+		float dx = (int)(x / 20);
+		float dy = (int)(y / 20);
+		Pos src(sx, sy);
+		Pos dst(dx, dy);
+		m_BackupMoveList.push_back(src);
+		m_BackupMoveList.push_back(dst);
 
-	m_Actor->SetMoveToPos({ x,y });
-	if(!m_Actor->IsCombat()){
-		m_Actor->GetASM()->ClearAction();
-		ActionInfo info;
-		info.actionID = ACTION_WALK;
-		m_Actor->GetASM()->PushAction(info);
+		m_BackupMoveList.pop_front();
+		m_BackupMoveList.pop_back();
+		m_MoveList = m_BackupMoveList;
+		m_Actor->SetMoveToPos({ x,y });
+		if (!m_Actor->IsCombat()) {
+			m_Actor->GetASM()->ClearAction();
+			ActionInfo info;
+			info.actionID = ACTION_WALK;
+			m_Actor->GetASM()->PushAction(info);
+		}
+		m_bMoveWithDuration = false;
+		m_bKeepDir = false;
+		m_bMove = true;
 	}
-	m_bMoveWithDuration = false;
-	m_bKeepDir = false;
-	m_bMove = true;
+
+
+
 }
 
 void MoveHandle::StopMove()

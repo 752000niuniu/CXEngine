@@ -21,6 +21,7 @@ function init()
     actor:ResetASM()                --ResetASM是重新设置actor的动作状态机，目前需要这么手动调用一下
 
     actor:SetPos(100, 100)                  --设置玩家的世界坐标
+
 end
 
 function update()
@@ -29,7 +30,7 @@ function update()
         local mx,my = input_manager_get_mouse_pos()
         local x,y = imgui.GetMousePos()
         print(x,y , mx, my)
-        actor:MoveTo(x,y) 
+        actor:MoveTo(mx,my) 
     end
 
     actor:Update()
