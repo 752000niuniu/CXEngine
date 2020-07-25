@@ -23,6 +23,7 @@ stub[PTO_S2C_GM] = function(req)
         account_infos = req
     end
 end
+
 stub[PTO_C2C_PLAYER_ENTER] = function()
     
     end
@@ -118,15 +119,6 @@ function launcher_update()
 梦幻西游经典版目录下的所有资源放到data/目录下
 
 有问题请加群：983630090]]
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         
         
@@ -284,7 +276,6 @@ function launcher_update()
     
     if imgui.Button('更新帐号信息') then
         net_send_message(PTO_C2S_GM, cjson.encode({type = 'account_info'}))
-    
     end
     
     if imgui.Button('注册帐号') then
@@ -352,4 +343,12 @@ function launcher_update()
         end)
     end
     imgui.End()
+end
+
+
+function cx_client_on_connected()
+    net_send_message(PTO_C2S_GM, cjson.encode({type = 'account_info'}))
+end
+
+function cx_client_on_disconnected()
 end

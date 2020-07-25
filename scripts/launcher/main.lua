@@ -39,6 +39,11 @@ do
 	shared_netq = net_thread_queue_create()
 	cx_client:set_on_connection(function(conn)
 		-- cxlog_info('conn-connected : ', conn:connected())
+		if conn:connected() then
+			cx_client_on_connected()
+		else
+			cx_client_on_disconnected()
+		end
 	end)
 	cx_client:set_on_message(function(conn, buf, ts)
 		while buf:readable_size() >= CX_MSG_HEADER_LEN do
