@@ -4,9 +4,7 @@ local ACTOR_ID_COUNTER = 1
 local actor_table = {}
 
 
-function actor_manager_init()
-    
-end
+
 
 function actor_manager_deinit()
     

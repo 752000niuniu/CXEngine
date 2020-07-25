@@ -51,7 +51,7 @@ Actor::Actor(uint64_t pid)
 
 	m_NameTV = new UITextView();
 	m_NameTV->Font = "SIMSUN";
-	m_NameTV->Size = 16.f;
+ 	m_NameTV->Size = 16.f;
 	m_NameTV->Align = NVG_ALIGN_CENTER;
 	m_NameTV->Color = nvgRGBA(118, 253, 140, 255);
 	UIRenderer::GetInstance()->AddToDraw(m_NameTV);
@@ -64,6 +64,8 @@ Actor::Actor(uint64_t pid)
 	m_SayTV->BGColor = nvgRGBA(30, 30, 30, 128);
 	m_SayTV->WrapWidth = 100;
 	UIRenderer::GetInstance()->AddToDraw(m_SayTV);
+
+	GetASM()->Reset();
 #endif
 }
 

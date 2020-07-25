@@ -259,6 +259,8 @@ end
 local stub = net_manager_stub()
 
 stub[PTO_S2C_COMBAT_CREATE] = function(resp)
+    ui_renderer_clear()
+    
     battle = BattleMT:new()
     battle:Deserialize(resp.battle)
 
@@ -323,13 +325,11 @@ end
 
 
 function on_battle_prepare(self)
-    ui_renderer_clear()
     reset_actor_pos(self)
 end
 
 
 function on_battle_start(self)
-    ui_renderer_clear()
     reset_actor_pos(self)
     local player = actor_manager_fetch_local_player()
     player:StopMove()

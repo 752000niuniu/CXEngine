@@ -201,7 +201,7 @@ void SceneManager::Draw()
 
 	if (m_pCurrentScene) {
 		m_pCurrentScene->Draw();
-		//script_system_call_function(script_system_get_luastate(), "on_scene_manager_draw", m_pCurrentScene->GetName());
+		script_system_call_function(script_system_get_luastate(), "on_scene_manager_draw", m_pCurrentScene->GetName());
 	}
 
 	UIRenderer::GetInstance()->Begin();

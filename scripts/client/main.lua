@@ -31,47 +31,43 @@ SERVER_HOST = command_arg_opt_str('host','127.0.0.1')
 SERVER_PORT = command_arg_opt_int('port', 45000)
 DBG_PORT = command_arg_opt_int('dbg_port', 9600)
 
-function on_script_system_init()
+function init()
+    at_exit_manager_init()
+    io_service_context_init()
+    luadbg_listen(DBG_PORT)
+
+    iw_init(SCREEN_WIDTH,SCREEN_HEIGHT)   
+    iw_set_font(vfs_get_workdir()..'/res/font/simsun.ttc')
+
     content_system_init()
-    text_renderer_init()
     timer_manager_init()
-    input_manager_init()
     resource_manager_init()
     sprite_renderer_init()
-    imgui_init()
-    scene_manager_init()
-	actor_manager_init()
 	combat_system_init()
-    load_all_addons()
     net_manager_init(SERVER_HOST, SERVER_PORT)
+
+    load_all_addons()
 end
 
-function on_script_system_update()
-    input_manager_update()
+function update()
     net_manager_update()
     timer_manager_update(window_system_get_dt())
-    resource_manager_update()
-    on_game_imgui_update()
 end
 
 
-function on_script_system_deinit()
+function deinit()
     net_manager_deinit()
     timer_manager_deinit()
     input_manager_deinit()
     resource_manager_deinit()
     scene_manager_deinit()
     actor_manager_deinit()
+
+    iw_deinit()               
 end
 
 do
-	at_exit_manager_init()
-    io_service_context_init()
-    luadbg_listen(DBG_PORT)
-    iw_init(SCREEN_WIDTH,SCREEN_HEIGHT)
-    iw_set_font(vfs_get_workdir()..'/res/font/simsun.ttc')
-    on_script_system_init()
-    iw_render(on_script_system_update)
-    on_script_system_deinit()
-    iw_deinit()
+    init()                    
+    iw_render(update)         
+    deinit()   
 end

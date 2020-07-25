@@ -62,12 +62,7 @@ void ImageView::OnHover(float x, float y)
 	m_HoverY = y - Y - 15;
 }
 
-void imgui_init()
-{
-	
-}
 
 void luaopen_ui(lua_State* L)
 {
-	script_system_register_function(L, imgui_init);
 }

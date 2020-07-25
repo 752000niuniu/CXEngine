@@ -97,6 +97,8 @@ function on_scene_manager_init_scene(name)
 end
 
 function on_scene_manager_update(name)
+    on_game_imgui_update()
+
     if scene_list[name] then
         scene_list[name].OnSceneUpdate()
     end
