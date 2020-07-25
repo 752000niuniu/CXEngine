@@ -52,6 +52,8 @@ void UINEImageView::Draw()
 NVGcontext* vg = NULL;
 UIRenderer::UIRenderer()
 {
+	glBindFramebuffer(GL_FRAMEBUFFER, WINDOW_INSTANCE->GetFrameBuffer());
+
 	vg = nvgCreateGL3(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
 	if (vg == NULL) {
 		cxlog_info("Could not init nanovg.\n");
@@ -66,6 +68,9 @@ UIRenderer::UIRenderer()
 	res = nvgCreateFont(vg, "SIMSUN", FileSystem::GetFontPath("simsun.ttc").c_str());
 	assert(res >= 0);
 	m_Dialog = new NPCDialog();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 }
 
 UIRenderer::~UIRenderer()
@@ -572,6 +577,15 @@ bool npc_dialog_is_show(){
 	return dlg->Visible;
 }
 
+void ui_renderer_update() {
+	UIRenderer::GetInstance()->Update();
+}
+
+void ui_renderer_draw() {
+	UIRenderer::GetInstance()->Draw();
+
+}
+
 void luaopen_ui_renderer(lua_State* L)
 {
 	script_system_register_luac_function(L, ne_imageview_create);
@@ -582,4 +596,8 @@ void luaopen_ui_renderer(lua_State* L)
 	script_system_register_luac_function(L, npc_dialog_show);
 	script_system_register_function(L, npc_dialog_is_show);
 	script_system_register_function(L, npc_dialog_set_xy);
+
+	script_system_register_function(L, ui_renderer_update);
+	script_system_register_function(L, ui_renderer_draw);
+
 };

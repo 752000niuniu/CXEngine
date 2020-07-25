@@ -35,7 +35,6 @@ function update()
 
     actor:Update()
     actor:Draw()
-
 end
 
 do

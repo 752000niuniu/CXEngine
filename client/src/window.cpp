@@ -395,6 +395,9 @@ int iw_render(lua_State* L)
 	double lag = 0;
 	double delta = 0;
 	ImGuiIO& io = ImGui::GetIO();
+
+	SCENE_MANAGER_INSTANCE->Init();
+
 	while (!glfwWindowShouldClose(m_pWindow))
 	{
 		auto now = glfwGetTime();
@@ -403,28 +406,13 @@ int iw_render(lua_State* L)
 
 		glfwPollEvents();
 
-		glViewport(0, 0, m_Width, m_Height);
+		/*glViewport(0, 0, m_Width, m_Height);
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, WINDOW_INSTANCE->GetFrameBuffer());
-
-		SpriteRenderer::GetInstance()->ResetDrawCall();
-
-		glViewport(0, 0, m_Width, m_Height);
-		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		UIRenderer::GetInstance()->Begin();
-		UIRenderer::GetInstance()->Draw();
-		UIRenderer::GetInstance()->End();
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);*/
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
+	
 		ImGui::NewFrame();
-
-		
-
 		ImGuiViewport* viewport = ImGui::GetMainViewport();
 		ImGui::SetNextWindowPos(viewport->Pos);
 		ImGui::SetNextWindowSize(viewport->Size);
@@ -437,22 +425,26 @@ int iw_render(lua_State* L)
 		auto css_pos = ImGui::GetCursorScreenPos();
 		ImGui::GetWindowDrawList()->AddCallback(iw_function_to_select_shader_or_blend_state, nullptr);
 		auto m_TextureColor = WINDOW_INSTANCE->GetRenderTexture();
-		ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_TextureColor, css_pos, ImVec2(css_pos.x + m_Width, css_pos.y+ m_Height), ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_TextureColor, css_pos, ImVec2(css_pos.x + m_Width, css_pos.y + m_Height), ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::GetWindowDrawList()->AddCallback(iw_function_to_restore_shader_or_blend_state, nullptr);
-
-		
 
 		ImGui::SetCursorPos(cs_pos);
 
+		SCENE_MANAGER_INSTANCE->Update();
+		SCENE_MANAGER_INSTANCE->Draw();
+
+		glBindFramebuffer(GL_FRAMEBUFFER, WINDOW_INSTANCE->GetFrameBuffer());
 		if (ref != -1) {
 			lua_State* L = script_system_get_luastate();
 			lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
 			int res = lua_pcall(L, 0, 0, 0);
 			check_lua_error(L, res);
 		}
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		
 		ImGui::End();
+		
+
 
 		ImGui::Render();
 		int display_w, display_h;

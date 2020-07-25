@@ -16,8 +16,6 @@ local player = nil
 function init()
     content_system_init()--这个函数在content_system.lua里面定义，会加载各种数据表(tables/*.tsv)，游戏内容基本上是由表来定义的
     
-    scene_manager_init()
-
     local scene_tbl = content_system_get_table('scene')
     for id, row in pairs(scene_tbl) do
         scene_manager_add_custom_scene(id, row.name, row.map_id)
@@ -26,6 +24,7 @@ function init()
     player = actor_manager_create_actor(1)
     player:ResetASM()
     player:SetPos(400,300)
+    player:SetProperty(PROP_NAME,"Fish")
     actor_manager_set_local_player(player:GetID())
 
     local player = actor_manager_fetch_local_player()
@@ -41,15 +40,6 @@ function update()
         local dest_x, dest_y = util_screen_pos_to_map_pos(mx, my)
         player:MoveTo(dest_x,dest_y)
     end
-    
-    
-    actor_manager_update()
-    scene_manager_update()
-
-    -- actor_manager_draw()
-    -- scene_manager_draw()
-
-  
 end
 
 do

@@ -1,7 +1,7 @@
 rm -rf example
 mkdir -p example/bin
-cp bin/Debug/CXEngine.exe example/bin/
-cp bin/Debug/cxluax.exe example/bin/
+cp bin/Release/CXEngine.exe example/bin/
+cp bin/Release/cxluax.exe example/bin/
 
 mkdir -p example/res
 cp -r res/font example/res/

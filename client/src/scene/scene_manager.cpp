@@ -19,7 +19,7 @@
 #include "texture_manager.h"
 
 
-static bool s_DrawMask, s_DrawStrider, s_DrawCell, s_DrawMap= true, s_DrawAnnouncement, s_AutoRun;
+static bool s_DrawMask, s_DrawStrider = true, s_DrawCell, s_DrawMap= true, s_DrawAnnouncement, s_AutoRun;
 static int sLastDrawCall = 0;
 /*
 lua 尽快完成tsv解析  然后把scene创建放在lua
@@ -192,23 +192,27 @@ void SceneManager::Draw()
 	if (m_SwitchingScene)return;
 	glBindFramebuffer(GL_FRAMEBUFFER, WINDOW_INSTANCE->GetFrameBuffer());
 
-	/*SpriteRenderer::GetInstance()->ResetDrawCall();
+	SpriteRenderer::GetInstance()->ResetDrawCall();
 	int gameWidth = WINDOW_INSTANCE->GetWidth();
 	int gameHeight = WINDOW_INSTANCE->GetHeight();
 	glViewport(0, 0, gameWidth, gameHeight);
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);*/
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	if (m_pCurrentScene) {
 		m_pCurrentScene->Draw();
 		//script_system_call_function(script_system_get_luastate(), "on_scene_manager_draw", m_pCurrentScene->GetName());
 	}
-	/*UIRenderer::GetInstance()->Begin();
+
+	UIRenderer::GetInstance()->Begin();
 	UIRenderer::GetInstance()->Draw();
-	UIRenderer::GetInstance()->End();*/
-	//sLastDrawCall = SpriteRenderer::GetInstance()->GetDrawCall();
+	UIRenderer::GetInstance()->End();
+
+	sLastDrawCall = SpriteRenderer::GetInstance()->GetDrawCall();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
 };
 
 
