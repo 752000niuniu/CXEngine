@@ -5,6 +5,35 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launcher",
+            "type": "cxlua",
+            "request": "launch",
+            "ip": "127.0.0.1",
+            "port": 9400,
+            "cwd": "${workspaceFolder}\\",
+            "program": "bin\\Debug\\cxluax.exe",
+            "args": [
+                "--script_path=scripts/launcher/",
+                "--dbg_port=9400",
+                "-Debug"
+            ]
+        },
+        {
+            "name": "Example",
+            "type": "cxlua",
+            "request": "launch",
+            "ip": "127.0.0.1",
+            "port": 10086,
+            "cwd": "${workspaceFolder}\\",
+            "stopOnEntry": true,
+            "program": "bin\\Debug\\CXEngine.exe",
+            "args": [
+                "--script_path=scripts/examples/",
+                "--dbg_port=10086",
+                "--luapath=_debugger.lua",
+            ]
+        },
+        {
             "name": "Server",
             "type": "cxlua",
             "request": "attach",
@@ -21,58 +50,11 @@
             "cwd": "${workspaceFolder}\\"
         },
         {
-            "name": "Launcher",
+            "name": "Attach",
             "type": "cxlua",
             "request": "attach",
             "ip": "127.0.0.1",
-            "port": 9400,
-            "cwd": "${workspaceFolder}\\",
-        },
-        {
-            "name": "ClientLaunch",
-            "type": "cxlua",
-            "request": "launch",
-            "ip": "127.0.0.1",
-            "port": 9600,
-            "cwd": "${workspaceFolder}\\",
-            "program" : "bin\\Debug\\SimpleEngine.exe",
-            "stopOnEntry" : true,
-            "args" : [
-                "--script_path=scripts/client/"
-            ]
-        },
-        {
-            "name": "ServerLaunch",
-            "type": "cxlua",
-            "request": "launch",
-            "ip": "127.0.0.1",
-            "port": 9500,
-            "stopOnEntry" : true,
-            "cwd": "${workspaceFolder}\\",
-            "program" : "bin\\Debug\\SimpleServer.exe",
-            "args" : [
-                "--script_path=scripts/server/"
-            ] 
-        },
-        {
-            "name": "LauncherLaunch",
-            "type": "cxlua",
-            "request": "launch",
-            "ip": "127.0.0.1",
-            "port": 9400,
-            "cwd": "${workspaceFolder}\\",
-            "program": "bin\\Debug\\cxluax.exe",
-            "args": [
-                "--script_path=scripts/launcher/",
-                "-Debug"
-            ]
-        },
-        {
-            "name": "Example",
-            "type": "cxlua",
-            "request": "attach",
-            "ip": "127.0.0.1",
-            "port": 9610,
+            "port": 10086,
             "cwd": "${workspaceFolder}\\",
         },
     ]

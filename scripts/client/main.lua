@@ -51,8 +51,6 @@ function on_script_system_update()
     net_manager_update()
     timer_manager_update(window_system_get_dt())
     resource_manager_update()
-    scene_manager_update()
-    scene_manager_draw()
     on_game_imgui_update()
 end
 

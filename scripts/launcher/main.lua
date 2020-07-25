@@ -28,8 +28,8 @@ local show_demo = false
 do
 	at_exit_manager_init()
 	io_service_context_init()
-	luadbg_listen(9400)
-	luadbg_enable_log(false)
+	local dbg_port = command_arg_opt_int('dbg_port', 9400)
+    luadbg_listen(dbg_port)   
 
 	iw_init()
 	iw_set_font(vfs_get_workdir()..'/res/font/simsun.ttc')

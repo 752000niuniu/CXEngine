@@ -1,4 +1,8 @@
 rm -rf dist
+
+mkdir -p dist/.vscode
+cp launch.json dist/.vscode
+
 mkdir -p dist/bin
 cp bin/Release/CXServer.exe dist/bin/
 cp bin/Release/CXEngine.exe dist/bin/
@@ -65,3 +69,4 @@ cp imgui.ini dist/
 touch dist/launcher.bat
 echo 'start bin/cxluax.exe  --cwd=%cd%/ --script_path=scripts/launcher/' > dist/launcher.bat
 
+mv data/* dist/data
