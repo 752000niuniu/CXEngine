@@ -181,9 +181,9 @@ function launcher_update()
     if imgui.Button('启动服务器') then
         local exepath
         if command_arg_check('Debug') then
-            exepath = vfs_get_workdir() .. 'bin/Debug/SimpleServer.exe'
+            exepath = vfs_get_workdir() .. 'bin/Debug/CXServer.exe'
         else
-            exepath = vfs_get_workdir() .. 'bin/SimpleServer.exe'
+            exepath = vfs_get_workdir() .. 'bin/CXServer.exe'
         end
         
         local cmd = string.format('start %s --cwd=%s', exepath, vfs_get_workdir())
