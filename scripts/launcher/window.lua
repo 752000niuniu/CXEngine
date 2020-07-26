@@ -150,13 +150,12 @@ function launcher_update()
     end
     
     
+    res, show_demo = imgui.Checkbox('Demo', show_demo)
+    if show_demo then
+        imgui.ShowDemoWindow()
+    end
+
     if command_arg_check('Debug') then
-        
-        res, show_demo = imgui.Checkbox('Demo', show_demo)
-        if show_demo then
-            imgui.ShowDemoWindow()
-        end
-        
         
         imgui.Text('Server:')
         imgui.InputTextMultiline('##source', SourceSB, 300, 50, ImGuiInputTextFlags_AllowTabInput)
