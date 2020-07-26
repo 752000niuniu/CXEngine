@@ -574,14 +574,14 @@ void BeatNumber::Update()
 				float dur = m_PlayTime - start_time;
 				auto& anim = m_ShowHeal ? m_HealAnim : m_HitAnim;
 				dig.y = (anim.m_pSprite->Height * m_BeatHeights / m_BeatTime) * dur;
-				if (dig.y > anim.m_pSprite->Height* m_BeatHeights * 2) {
+				if (dig.y > anim.m_pSprite->Height * m_BeatHeights * 2) {
 					dig.y = 0;
 					if (i == m_Digits.size() - 1) {
 						m_bBeat = false;
 						m_PlayTime = -m_PauseTime;
 					}
 				}
-				else if (dig.y > anim.m_pSprite->Height* m_BeatHeights) {
+				else if (dig.y > anim.m_pSprite->Height * m_BeatHeights) {
 					dig.y = anim.m_pSprite->Height * m_BeatHeights * 2 - dig.y;
 				}
 			}
@@ -1274,9 +1274,20 @@ void lua_push_animation(lua_State* L, Animation* sprite)
 
 int animation_create(lua_State* L)
 {
-	uint32_t pack = (uint32_t)lua_tointeger(L, 1);
-	uint32_t wasid = (uint32_t)lua_tointeger(L, 2);
-	lua_push_animation(L, new Animation(pack, wasid));
+	int argn = lua_gettop(L);
+	if (argn == 2) {
+		uint32_t pack = (uint32_t)lua_tointeger(L, 1);
+		uint32_t wasid = (uint32_t)lua_tointeger(L, 2);
+		lua_push_animation(L, new Animation(pack, wasid));
+	}
+	else if (argn == 1) {
+		uint64_t resid = (uint64_t)lua_tointeger(L, 1);
+		lua_push_animation(L, new Animation(resid));
+	}
+	else {
+		return 0;
+	}
+
 	return 1;
 }
 

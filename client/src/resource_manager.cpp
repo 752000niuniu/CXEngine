@@ -327,13 +327,20 @@ void resource_manager_deinit()
 int res_get_was(lua_State* L) {
 	uint32_t pack = (uint32_t)lua_tointeger(L, 1);
 	uint32_t wasid = (uint32_t)lua_tointeger(L, 2);
-	const char* path = lua_tostring(L, 3);
 
 	uint8_t* pData;
 	size_t size;
 	int type = RESOURCE_MANAGER_INSTANCE->LoadWDFData(res_encode_was(pack, wasid), pData, size);
 	lua_pushinteger(L, type);
 	return 1;
+}
+
+int res_export_was(lua_State* L) {
+	uint32_t pack = (uint32_t)lua_tointeger(L, 1);
+	uint32_t wasid = (uint32_t)lua_tointeger(L, 2);
+	std::string path = lua_tostring(L, 3);
+	RESOURCE_MANAGER_INSTANCE->ExportWas(res_encode_was(pack, wasid), path);
+	return 0;
 }
 
 
@@ -381,5 +388,6 @@ void luaopen_resource_manager(lua_State* L)
 
 
 	script_system_register_luac_function(L, res_get_was);
-
+	script_system_register_luac_function(L, res_export_was);
+	
 }
