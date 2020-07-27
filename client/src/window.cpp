@@ -112,6 +112,29 @@ static void glfw_character_callback(GLFWwindow* window, unsigned int charcode)
 	INPUT_MANAGER_INSTANCE->CharacterInputCallback(window, charcode);
 }
 
+static bool s_WindowFocused = false;
+
+static std::vector<CXString>  s_DropFiles;
+static bool s_DropTriggered = false;
+static void glfw_drog_function(GLFWwindow* window, int path_count, const char* paths[])
+{
+	s_DropTriggered = true;
+	s_DropFiles.clear();
+	//printf("%d \n", path_count);
+	for (int i = 0; i < path_count; i++) {
+		//printf("%s \n", paths[i]);
+		s_DropFiles.push_back(paths[i]);
+	}
+	if (!s_WindowFocused) {
+		glfwFocusWindow(window);
+	}
+}
+
+static void glfw_focus_function(GLFWwindow* window, int focused) {
+	s_WindowFocused = focused != 0;
+}
+
+
 static void glfw_error_callback(int error, const char* description) {
 	cxlog_err("Error: %d %s\n", error, description);
 }
@@ -277,9 +300,11 @@ void iw_init(int w, int h)
 	glfwSetKeyCallback(m_pWindow, glfw_key_callback);
 	glfwSetScrollCallback(m_pWindow, glfw_scroll_callback);
 	glfwSetCharCallback(m_pWindow, glfw_character_callback);
+	glfwSetDropCallback(m_pWindow, glfw_drog_function);
+	glfwSetWindowFocusCallback(m_pWindow, glfw_focus_function);
+
 	glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	glfwSetWindowOpacity(m_pWindow, 1.0f);
-
 
 	glGenFramebuffers(1, &m_Fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_Fbo);
@@ -406,12 +431,12 @@ int iw_render(lua_State* L)
 
 		glfwPollEvents();
 
-		/*glViewport(0, 0, m_Width, m_Height);
-		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);*/
+		SCENE_MANAGER_INSTANCE->Update();
+		SCENE_MANAGER_INSTANCE->Draw();
+
+
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
-	
 		ImGui::NewFrame();
 		ImGuiViewport* viewport = ImGui::GetMainViewport();
 		ImGui::SetNextWindowPos(viewport->Pos);
@@ -427,12 +452,7 @@ int iw_render(lua_State* L)
 		auto m_TextureColor = WINDOW_INSTANCE->GetRenderTexture();
 		ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_TextureColor, css_pos, ImVec2(css_pos.x + m_Width, css_pos.y + m_Height), ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::GetWindowDrawList()->AddCallback(iw_function_to_restore_shader_or_blend_state, nullptr);
-
 		ImGui::SetCursorPos(cs_pos);
-
-		SCENE_MANAGER_INSTANCE->Update();
-		SCENE_MANAGER_INSTANCE->Draw();
-
 		glBindFramebuffer(GL_FRAMEBUFFER, WINDOW_INSTANCE->GetFrameBuffer());
 		if (ref != -1) {
 			lua_State* L = script_system_get_luastate();
@@ -441,12 +461,10 @@ int iw_render(lua_State* L)
 			check_lua_error(L, res);
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 		ImGui::End();
-		
-
-
 		ImGui::Render();
+
+
 		int display_w, display_h;
 		glfwGetFramebufferSize(m_pWindow, &display_w, &display_h);
 		glViewport(0, 0, display_w, display_h);
@@ -469,6 +487,25 @@ int iw_render(lua_State* L)
 
 }
 
+bool iw_is_dropped() {
+	return s_DropTriggered;
+}
+
+void iw_set_dropped(bool dropped) {
+	s_DropTriggered = dropped;
+
+}
+
+int iw_get_drop_files(lua_State* L) {
+	lua_newtable(L);
+	for (int i = 0; i < s_DropFiles.size(); i++) {
+		lua_pushlstring(L, s_DropFiles[i].c_str(), s_DropFiles[i].size());
+		lua_seti(L, -2, i + 1);
+	}
+	return 1;
+}
+
+
 void luaopen_window(lua_State* L)
 {
 	script_system_register_function(L, window_system_set_floating);
@@ -488,4 +525,7 @@ void luaopen_window(lua_State* L)
 
 	script_system_register_luac_function(L, iw_render);
 
+	script_system_register_function(L, iw_is_dropped);
+	script_system_register_function(L, iw_set_dropped);
+	script_system_register_luac_function(L, iw_get_drop_files);
 }

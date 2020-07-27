@@ -48,7 +48,6 @@ SceneManager::~SceneManager()
 void SceneManager::Init()
 {
 	script_system_call_function(script_system_get_luastate(), "on_scene_manager_init");
-
 };
 
 void SceneManager::SwitchScene(String name)
@@ -173,7 +172,6 @@ void SceneManager::DrawImGui(float css_x, float css_y)
 {
 	int gameWidth = WINDOW_INSTANCE->GetWidth();
 	int gameHeight = WINDOW_INSTANCE->GetHeight();
-
 	m_ImGuiCursorPos = Pos(css_x, css_y);
 	ImGui::GetWindowDrawList()->AddCallback(function_to_select_shader_or_blend_state, nullptr);
 	auto m_TextureColor = WINDOW_INSTANCE->GetRenderTexture();
@@ -182,10 +180,7 @@ void SceneManager::DrawImGui(float css_x, float css_y)
 	if (m_pCurrentScene) {
 		script_system_call_function(script_system_get_luastate(), "on_game_imgui_update", m_pCurrentScene->GetName());
 	}
-
 }
-
-
 
 void SceneManager::Draw()
 {
@@ -211,8 +206,6 @@ void SceneManager::Draw()
 	sLastDrawCall = SpriteRenderer::GetInstance()->GetDrawCall();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-
 };
 
 

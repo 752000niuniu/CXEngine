@@ -16,10 +16,33 @@ static const float MS_PER_UPDATE = 1000 / 60.f / 1000;
 #define GAME_SCREEN_HEIGHT 600
 static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+
+static bool s_WindowFocused = false;
+
+static std::vector<CXString>  s_DropFiles;
+static bool s_DropTriggered = false;
+static void glfw_drog_function(GLFWwindow* window, int path_count, const char* paths[])
+{
+	s_DropTriggered = true;
+	s_DropFiles.clear();
+	//printf("%d \n", path_count);
+	for (int i = 0; i < path_count; i++) {
+		//printf("%s \n", paths[i]);
+		s_DropFiles.push_back(paths[i]);
+	}
+	if (!s_WindowFocused) {
+		glfwFocusWindow(window);
+	}
+}
+
+static void glfw_focus_function(GLFWwindow* window, int focused) {
+	s_WindowFocused = focused != 0;
+}
+
 static void glfw_error_callback(int error, const char* description) {
 	cxlog_err("Error: %d %s\n", error, description);
 }
-
+ 
 static GLFWwindow* s_pWindow = nullptr;
 bool iw_should_close()
 {
@@ -131,6 +154,9 @@ void iw_init() {
 	}
 
 	ImGui_ImplGlfw_InitForOpenGL(s_pWindow, true);
+	glfwSetDropCallback(m_pWindow, glfw_drog_function);
+	glfwSetWindowFocusCallback(m_pWindow, glfw_focus_function);
+
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
 	glfwSetInputMode(s_pWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
@@ -151,6 +177,26 @@ void iw_set_font(const char* path) {
 	io.Fonts->AddFontFromFileTTF(path, 14.0f, NULL, io.Fonts->GetGlyphRangesChineseFull());
 }
 
+
+bool iw_is_dropped() {
+	return s_DropTriggered;
+}
+
+void iw_set_dropped(bool dropped) {
+	s_DropTriggered = dropped;
+
+}
+
+int iw_get_drop_files(lua_State* L) {
+	lua_newtable(L);
+	for (int i = 0; i < s_DropFiles.size(); i++) {
+		lua_pushlstring(L, s_DropFiles[i].c_str(), s_DropFiles[i].size());
+		lua_seti(L, -2, i + 1);
+	}
+	return 1;
+}
+
+
 void luaopen_window(lua_State* L)
 {
 	script_system_register_function(L, iw_init);
@@ -160,4 +206,7 @@ void luaopen_window(lua_State* L)
 	script_system_register_function(L, iw_end_render);
 
 	script_system_register_function(L, iw_set_font);
+	script_system_register_function(L, iw_is_dropped);
+	script_system_register_function(L, iw_set_dropped);
+	script_system_register_luac_function(L, iw_get_drop_files);
 }

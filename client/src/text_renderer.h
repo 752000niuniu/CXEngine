@@ -15,7 +15,6 @@
 #include FT_GLYPH_H
 #include FT_BBOX_H
 
-class FrameAnimation;
 
 class TextRenderer : public Singleton<TextRenderer>
 {
