@@ -389,5 +389,7 @@ void luaopen_resource_manager(lua_State* L)
 
 	script_system_register_luac_function(L, res_get_was);
 	script_system_register_luac_function(L, res_export_was);
+
+
 	
 }

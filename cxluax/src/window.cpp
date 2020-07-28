@@ -154,8 +154,8 @@ void iw_init() {
 	}
 
 	ImGui_ImplGlfw_InitForOpenGL(s_pWindow, true);
-	glfwSetDropCallback(m_pWindow, glfw_drog_function);
-	glfwSetWindowFocusCallback(m_pWindow, glfw_focus_function);
+	glfwSetDropCallback(s_pWindow, glfw_drog_function);
+	glfwSetWindowFocusCallback(s_pWindow, glfw_focus_function);
 
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
