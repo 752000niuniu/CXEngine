@@ -525,6 +525,27 @@ imgui.InputTextEx = function(name, sb, width)
     end
 end
 
+
+
+imgui.DropInputText = function(name, sb, width)
+	local res 
+    if width then
+        imgui.PushItemWidth(width)
+        res = imgui.InputText(name, sb)
+        imgui.PopItemWidth()
+    else
+        res = imgui.InputText(name, sb)
+	end
+	
+	if iw_is_dropped() and (imgui.IsItemHovered() or imgui.IsItemActive()) then
+		local files = iw_get_drop_files()
+		sb:reset(files[1])
+		iw_set_dropped(false)
+	end
+	return res
+end
+
+
 utils_parse_tsv = function(name, columns)
     return utils_parse_tsv_file(vfs_get_tsvpath(name), columns)
 end
@@ -567,3 +588,5 @@ function utils_get_action_res_id(avatar_type, id, action_id)
         return resid
     end
 end
+
+
