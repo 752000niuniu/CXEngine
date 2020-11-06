@@ -486,9 +486,6 @@ void Animation::Update()
 				}
 			}
 		}
-
-
-
 	}
 	else if (m_State == ANIMATION_STOP) {
 

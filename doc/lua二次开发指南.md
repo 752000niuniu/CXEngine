@@ -17,11 +17,3 @@ dist下还有一个launcher.bat文件，这里面就一行命令，用来启动�
 
 `` start bin/cxluax.exe  --cwd=%cd%/ --script_path=scripts/launcher/``
 
-
-
-
-
-
-
-
-

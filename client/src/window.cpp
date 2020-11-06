@@ -18,6 +18,7 @@
 extern "C" {
 #include <shader.h>
 #include <screen.h>
+#include <material.h>
 	void font_size(const char* str, int unicode, struct font_context* ctx) {}
 	void font_glyph(const char* str, int unicode, void* buffer, struct font_context* ctx) {}
 	void font_create(int font_size, struct font_context* ctx) {}
@@ -217,9 +218,12 @@ void main() {
 	v_additive = additive;
 })";
 
+ 
 
+struct material;
 void iw_init(int w, int h)
 {
+
 	if (!glfwInit()) {
 		cxlog_err("glfwInit error!");
 		exit(EXIT_FAILURE);
@@ -333,6 +337,22 @@ void iw_init(int w, int h)
 	// shader_init();
 	// shader_load(0, sprite_fs, sprite_vs, 0, nullptr);
 	// screen_init(screenWidth, screenHeight, 1.f);
+	
+	char* nss[] = { "asd", "asdsd" };
+	shader_init();
+	shader_load(0, sprite_fs, sprite_vs, 0, nullptr);
+	screen_init(screenWidth, screenHeight, 1.f);
+
+	shader_adduniform(0, "X1", UNIFORM_FLOAT1);
+	shader_adduniform(0, "X2", UNIFORM_FLOAT1);
+	shader_adduniform(0, "X3", UNIFORM_FLOAT1);
+
+	int sz = material_size(0);
+	struct material* m = (struct material*)malloc(sz);
+	material_init(m, sz, 0);
+
+
+
 }
 
 void window_system_set_floating(int opt, int value)
@@ -431,10 +451,6 @@ int iw_render(lua_State* L)
 
 		glfwPollEvents();
 
-		SCENE_MANAGER_INSTANCE->Update();
-		SCENE_MANAGER_INSTANCE->Draw();
-
-
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -445,6 +461,9 @@ int iw_render(lua_State* L)
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImGui::Begin("Game", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking);
 		ImGui::PopStyleVar();
+
+		SCENE_MANAGER_INSTANCE->Update();
+		SCENE_MANAGER_INSTANCE->Draw();
 
 		auto cs_pos = ImGui::GetCursorPos();
 		auto css_pos = ImGui::GetCursorScreenPos();

@@ -87,7 +87,6 @@ void script_system_prepare_init()
 	luaL_requirelib(L, "gl", luaopen_moongl);
 #endif
 #ifdef SIMPLE_SERVER
-
 	luaopen_game_server(L);
 #endif // !SIMPLE_SERVER
 
