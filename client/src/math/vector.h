@@ -187,14 +187,14 @@ namespace cx
 		void SetColumn(int index, Vector4 column);
 		void SetRow(int index, Vector4 row);
 		void SetTRS(Vector3 pos, Quaternion q, Vector3 s);
-		override string ToString();
+		/*override string ToString();
 		string ToString(string format);
-		Plane TransformPlane(Plane plane);
+		Plane TransformPlane(Plane plane);*/
 		bool ValidTRS();
-		static Vector4 operator *(Matrix4x4 lhs, Vector4 vector);
+		/*static Vector4 operator *(Matrix4x4 lhs, Vector4 vector);
 		static Matrix4x4 operator *(Matrix4x4 lhs, Matrix4x4 rhs);
 		static bool operator ==(Matrix4x4 lhs, Matrix4x4 rhs);
-		static bool operator !=(Matrix4x4 lhs, Matrix4x4 rhs);
+		static bool operator !=(Matrix4x4 lhs, Matrix4x4 rhs);*/
 
 	};
 
