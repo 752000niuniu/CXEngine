@@ -218,7 +218,7 @@ void main() {
 	v_additive = additive;
 })";
 
- 
+
 
 struct material;
 void iw_init(int w, int h)
@@ -337,7 +337,7 @@ void iw_init(int w, int h)
 	// shader_init();
 	// shader_load(0, sprite_fs, sprite_vs, 0, nullptr);
 	// screen_init(screenWidth, screenHeight, 1.f);
-	
+
 	char* nss[] = { "asd", "asdsd" };
 	shader_init();
 	shader_load(0, sprite_fs, sprite_vs, 0, nullptr);
@@ -474,7 +474,6 @@ int iw_render(lua_State* L)
 		ImGui::SetCursorPos(cs_pos);
 		glBindFramebuffer(GL_FRAMEBUFFER, WINDOW_INSTANCE->GetFrameBuffer());
 		if (ref != -1) {
-			lua_State* L = script_system_get_luastate();
 			lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
 			int res = lua_pcall(L, 0, 0, 0);
 			check_lua_error(L, res);

@@ -1,21 +1,96 @@
-#include <window.h>
+#include "window.h"
 
-#include <file_system.h>
-#include <imgui.h>
-#include <imgui/imgui_impl_glfw.h>
-#include <imgui/imgui_impl_opengl3.h>
+#include "file_system.h"
+#include "imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+#include "time/time.h"
 #include <script_system.h>
-#include <file_loading.h>
-#include <logger.h>
+#include "file_loading.h"
+#include "logger.h"
 #include "cxlua.h"
 
-static int m_WindowWidth;
-static int m_WindowHeight;
-static const float MS_PER_UPDATE = 1000 / 60.f / 1000;
 #define GAME_SCREEN_WIDTH 800
 #define GAME_SCREEN_HEIGHT 600
+static const float MS_PER_UPDATE = 1000 / 60.f / 1000;
+int m_Width = 0;
+int m_Height = 0;
+int m_WindowWidth;
+int m_WindowHeight;
+float m_FPS = MS_PER_UPDATE;
+GLFWwindow* m_pWindow = nullptr;
 static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+
+unsigned int m_Fbo;
+unsigned int m_Rbo;
+unsigned int m_TextureColor;
+
+GLFWwindow* Window::GetGLFWwindow() { return m_pWindow; };
+int Window::GetWidth() { return m_Width; };
+int Window::GetHeight() { return m_Height; };
+int Window::GetWindowWidth() { return m_WindowWidth; };
+int Window::GetWindowHeight() { return m_WindowHeight; };
+float Window::GetCenterX() { return GetWidth() / 2.f; }
+float Window::GetCenterY() { return GetHeight() / 2.f; }
+float Window::GetFPS() { return m_FPS; }
+
+int Window::GetRenderTexture() { return m_TextureColor; }
+int Window::GetFrameBuffer() { return m_Fbo; }
+static void glfw_framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	m_WindowWidth = width;
+	m_WindowHeight = height;
+	m_Width = width;
+	m_Height = height;
+
+	glBindFramebuffer(GL_FRAMEBUFFER, m_Fbo);
+
+	int screenWidth = WINDOW_INSTANCE->GetWidth();
+	int screenHeight = WINDOW_INSTANCE->GetHeight();
+	glGenTextures(1, &m_TextureColor);
+	glBindTexture(GL_TEXTURE_2D, m_TextureColor);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, screenWidth, screenHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TextureColor, 0);
+
+	glGenRenderbuffers(1, &m_Rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, m_Rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screenWidth, screenHeight);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_Rbo);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		cxlog_err("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+	}
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+	glViewport(0, 0, m_WindowWidth, m_WindowHeight);
+}
+
+static void glfw_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
+}
+
+static void glfw_key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
+{
+	ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mode);
+}
+static void glfw_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
+}
+
+static void glfw_mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+}
+
+static void glfw_character_callback(GLFWwindow* window, unsigned int charcode)
+{
+	ImGui_ImplGlfw_CharCallback(window, charcode);
+}
 
 static bool s_WindowFocused = false;
 
@@ -39,48 +114,95 @@ static void glfw_focus_function(GLFWwindow* window, int focused) {
 	s_WindowFocused = focused != 0;
 }
 
+
 static void glfw_error_callback(int error, const char* description) {
 	cxlog_err("Error: %d %s\n", error, description);
 }
- 
-static GLFWwindow* s_pWindow = nullptr;
-bool iw_should_close()
+
+Window::Window()
 {
-	return glfwWindowShouldClose(s_pWindow);
+
 }
 
-void iw_begin_render()
-{
-	glfwPollEvents();
+Window::~Window() {
 
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
 }
 
-void iw_end_render()
+void Window::Init(int w, int h)
 {
-	ImGui::Render();
-	int display_w, display_h;
-	glfwGetFramebufferSize(s_pWindow, &display_w, &display_h);
-	glViewport(0, 0, display_w, display_h);
-	glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-	glClear(GL_COLOR_BUFFER_BIT);
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
 
+void Window::Destroy()
+{
+
+}
+
+void Window::Show()
+{
+
+}
+
+float Window::GetDeltaTime()
+{
+	return m_FPS;
+}
+
+
+float Window::GetDeltaTimeMilliseconds()
+{
+	return m_FPS * 1000.f;
+}
+
+void Window::OnFrameBufferSizeCallback(int width, int height)
+{
+
+}
+
+void iw_set_font(const char* path) {
 	ImGuiIO& io = ImGui::GetIO();
-	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	{
-		GLFWwindow* backup_current_context = glfwGetCurrentContext();
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
-		glfwMakeContextCurrent(backup_current_context);
-	}
-
-	glfwSwapBuffers(s_pWindow);
+	io.Fonts->AddFontFromFileTTF(path, 14.0f, NULL, io.Fonts->GetGlyphRangesChineseFull());
 }
 
-void iw_init() {
+const char* sprite_fs = R"(#version 100
+precision lowp float;
+varying vec2 v_texcoord;
+varying vec4 v_color;
+varying vec4 v_additive;
+uniform sampler2D texture0;
+
+void main() {
+	gl_FragColor = v_color;
+	/*vec4 tmp = texture2D(texture0, v_texcoord);
+	gl_FragColor.xyz = tmp.xyz * v_color.xyz;
+	gl_FragColor.w = tmp.w;
+	gl_FragColor *= v_color.w;
+	gl_FragColor.xyz += v_additive.xyz * tmp.w;*/
+})";
+
+const char* sprite_vs = R"(#version 100
+precision lowp float;
+attribute vec4 position;
+attribute vec2 texcoord;
+attribute vec4 color;
+attribute vec4 additive;
+
+varying vec2 v_texcoord;
+varying vec4 v_color;
+varying vec4 v_additive;
+
+void main() {
+	gl_Position = position; //+ vec4(-1.0, 1.0, 0, 0);
+	v_texcoord = texcoord;
+	v_color = color;
+	v_additive = additive;
+})";
+
+
+
+struct material;
+void iw_init( int w, int h)
+{
+
 	if (!glfwInit()) {
 		cxlog_err("glfwInit error!");
 		exit(EXIT_FAILURE);
@@ -103,26 +225,27 @@ void iw_init() {
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 #endif
 	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-	std::string floatConfig = command_arg_opt_str("window_float", "0");
+	std::string floatConfig = command_arg_opt_str("window_float", "0");;
 	glfwWindowHint(GLFW_FLOATING, floatConfig == "1");
 
-	s_pWindow = glfwCreateWindow(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT, "CXLUAX", nullptr, nullptr);
-	if (s_pWindow == nullptr)
+	m_pWindow = glfwCreateWindow(w, h, "CXEngine", nullptr, nullptr);
+	if (m_pWindow == nullptr)
 	{
 		cxlog_err("glfwCreateWindow failed!");
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
-	glfwGetWindowSize(s_pWindow, &m_WindowWidth, &m_WindowHeight);
+	glfwGetWindowSize(m_pWindow, &m_WindowWidth, &m_WindowHeight);
+	m_Width = m_WindowWidth;
+	m_Height = m_WindowHeight;
 
 	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 	int monitorW = 0, monitorH = 0;
 	glfwGetMonitorWorkarea(monitor, nullptr, nullptr, &monitorW, &monitorH);
-	glfwSetWindowPos(s_pWindow, (monitorW - m_WindowWidth) / 2, (monitorH - m_WindowHeight) / 2);
+	glfwSetWindowPos(m_pWindow, (monitorW - m_WindowWidth) / 2, (monitorH - m_WindowHeight) / 2);
 
-	glfwMakeContextCurrent(s_pWindow);
-	glfwSwapInterval(1);// Enable vsync
-
+	glfwMakeContextCurrent(m_pWindow);
+	glfwSwapInterval(1);
 	GLenum err = glewInit();
 	if (GLEW_OK != err) {
 		cxlog_err("glewInit error! %s\n", glewGetErrorString(err));
@@ -141,10 +264,7 @@ void iw_init() {
 	//io.ConfigViewportsNoAutoMerge = true;
 	//io.ConfigViewportsNoTaskBarIcon = true;
 
-	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsClassic();
-
 	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
 	ImGuiStyle& style = ImGui::GetStyle();
 	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -153,14 +273,71 @@ void iw_init() {
 		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 	}
 
-	ImGui_ImplGlfw_InitForOpenGL(s_pWindow, true);
-	glfwSetDropCallback(s_pWindow, glfw_drog_function);
-	glfwSetWindowFocusCallback(s_pWindow, glfw_focus_function);
-
+	ImGui_ImplGlfw_InitForOpenGL(m_pWindow, false);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
-	glfwSetInputMode(s_pWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-	//glfwSetWindowOpacity(s_pWindow, 1.0f);
+
+	glfwSetFramebufferSizeCallback(m_pWindow, glfw_framebuffer_size_callback);
+	glfwSetCursorPosCallback(m_pWindow, glfw_mouse_callback);
+	glfwSetMouseButtonCallback(m_pWindow, glfw_button_callback);
+	glfwSetKeyCallback(m_pWindow, glfw_key_callback);
+	glfwSetScrollCallback(m_pWindow, glfw_scroll_callback);
+	glfwSetCharCallback(m_pWindow, glfw_character_callback);
+	glfwSetDropCallback(m_pWindow, glfw_drog_function);
+	glfwSetWindowFocusCallback(m_pWindow, glfw_focus_function);
+
+	glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	glfwSetWindowOpacity(m_pWindow, 1.0f);
+
+	glGenFramebuffers(1, &m_Fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_Fbo);
+
+	int screenWidth = WINDOW_INSTANCE->GetWidth();
+	int screenHeight = WINDOW_INSTANCE->GetHeight();
+	glGenTextures(1, &m_TextureColor);
+	glBindTexture(GL_TEXTURE_2D, m_TextureColor);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, screenWidth, screenHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TextureColor, 0);
+
+	glGenRenderbuffers(1, &m_Rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, m_Rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screenWidth, screenHeight);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_Rbo);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		cxlog_err("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+	}
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void window_system_set_floating(int opt, int value)
+{
+	WINDOW_INSTANCE;
+	glfwWindowHint(opt, value);
+}
+
+float window_system_get_dt()
+{
+	return WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
+}
+
+float window_system_get_fps()
+{
+	return WINDOW_INSTANCE->GetFPS();
+}
+
+int game_get_width() {
+	return WINDOW_INSTANCE->GetWidth();
+}
+int game_get_height() {
+	return WINDOW_INSTANCE->GetHeight();
+}
+
+bool iw_should_close()
+{
+	return glfwWindowShouldClose(WINDOW_INSTANCE->GetGLFWwindow());
 }
 
 void iw_deinit() {
@@ -168,15 +345,91 @@ void iw_deinit() {
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 
-	glfwDestroyWindow(s_pWindow);
+	glfwDestroyWindow(m_pWindow);
 	glfwTerminate();
 
-}
-void iw_set_font(const char* path) {
-	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontFromFileTTF(path, 14.0f, NULL, io.Fonts->GetGlyphRangesChineseFull());
+	auto* ne_thread = file_loading_thread();
+	delete ne_thread;
+	ne_thread = nullptr;
 }
 
+void iw_function_to_select_shader_or_blend_state(const ImDrawList* parent_list, const ImDrawCmd* cmd) {
+	glDisable(GL_BLEND);
+}
+
+void iw_function_to_restore_shader_or_blend_state(const ImDrawList* parent_list, const ImDrawCmd* cmd) {
+	glEnable(GL_BLEND);
+}
+
+int iw_render(lua_State* L)
+{
+	lua_pushvalue(L, 1);
+	int ref = luaL_ref(L, LUA_REGISTRYINDEX);
+	double previous = glfwGetTime();
+	double lag = 0;
+	double delta = 0;
+	ImGuiIO& io = ImGui::GetIO();
+
+
+	while (!glfwWindowShouldClose(m_pWindow))
+	{
+		auto now = glfwGetTime();
+		m_FPS = (float)(now - previous);
+		previous = now;
+
+		glfwPollEvents();
+
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(viewport->Pos);
+		ImGui::SetNextWindowSize(viewport->Size);
+		ImGui::SetNextWindowViewport(viewport->ID);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		ImGui::Begin("Game", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking);
+		ImGui::PopStyleVar();
+
+
+		auto cs_pos = ImGui::GetCursorPos();
+		auto css_pos = ImGui::GetCursorScreenPos();
+		ImGui::GetWindowDrawList()->AddCallback(iw_function_to_select_shader_or_blend_state, nullptr);
+		auto m_TextureColor = WINDOW_INSTANCE->GetRenderTexture();
+		ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_TextureColor, css_pos, ImVec2(css_pos.x + m_Width, css_pos.y + m_Height), ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::GetWindowDrawList()->AddCallback(iw_function_to_restore_shader_or_blend_state, nullptr);
+		ImGui::SetCursorPos(cs_pos);
+		glBindFramebuffer(GL_FRAMEBUFFER, WINDOW_INSTANCE->GetFrameBuffer());
+		if (ref != -1) {
+			lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
+			int res = lua_pcall(L, 0, 0, 0);
+			check_lua_error(L, res);
+		}
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		ImGui::End();
+		ImGui::Render();
+
+
+		int display_w, display_h;
+		glfwGetFramebufferSize(m_pWindow, &display_w, &display_h);
+		glViewport(0, 0, display_w, display_h);
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			GLFWwindow* backup_current_context = glfwGetCurrentContext();
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+			glfwMakeContextCurrent(backup_current_context);
+		}
+
+		glfwSwapBuffers(m_pWindow);
+	}
+
+	luaL_unref(L, LUA_REGISTRYINDEX, ref);
+	ref = -1;
+	return 0;
+
+}
 
 bool iw_is_dropped() {
 	return s_DropTriggered;
@@ -199,13 +452,23 @@ int iw_get_drop_files(lua_State* L) {
 
 void luaopen_window(lua_State* L)
 {
-	script_system_register_function(L, iw_init);
+	script_system_register_function(L, window_system_set_floating);
+	script_system_register_function(L, window_system_get_dt);
+	script_system_register_function(L, window_system_get_fps);
+
+	script_system_register_function(L, game_get_width);
+	script_system_register_function(L, game_get_height);
+
+
 	script_system_register_function(L, iw_deinit);
 	script_system_register_function(L, iw_should_close);
-	script_system_register_function(L, iw_begin_render);
-	script_system_register_function(L, iw_end_render);
 
 	script_system_register_function(L, iw_set_font);
+
+	script_system_register_function(L, iw_init);
+
+	script_system_register_luac_function(L, iw_render);
+
 	script_system_register_function(L, iw_is_dropped);
 	script_system_register_function(L, iw_set_dropped);
 	script_system_register_luac_function(L, iw_get_drop_files);
