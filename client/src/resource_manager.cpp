@@ -10,9 +10,6 @@
 #include "texture_manager.h"
 #include "game.h"
 
-
-
-
 static std::map<uint32_t, std::string> s_PackPathMap =
 {
 	{ ADDONWDF,    "addon.wdf" },

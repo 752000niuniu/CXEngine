@@ -160,27 +160,6 @@ void SceneManager::Update()
 	}
 };
 
-void function_to_select_shader_or_blend_state(const ImDrawList* parent_list, const ImDrawCmd* cmd) {
-	glDisable(GL_BLEND);
-}
-
-void function_to_restore_shader_or_blend_state(const ImDrawList* parent_list, const ImDrawCmd* cmd) {
-	glEnable(GL_BLEND);
-}
-
-void SceneManager::DrawImGui(float css_x, float css_y)
-{
-	int gameWidth = WINDOW_INSTANCE->GetWidth();
-	int gameHeight = WINDOW_INSTANCE->GetHeight();
-	m_ImGuiCursorPos = Pos(css_x, css_y);
-	ImGui::GetWindowDrawList()->AddCallback(function_to_select_shader_or_blend_state, nullptr);
-	auto m_TextureColor = WINDOW_INSTANCE->GetRenderTexture();
-	ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_TextureColor, ImVec2(css_x, css_y), ImVec2(css_x + gameWidth, css_y + gameHeight), ImVec2(0, 1), ImVec2(1, 0));
-	ImGui::GetWindowDrawList()->AddCallback(function_to_restore_shader_or_blend_state, nullptr);
-	if (m_pCurrentScene) {
-		script_system_call_function(script_system_get_luastate(), "on_game_imgui_update", m_pCurrentScene->GetName());
-	}
-}
 
 void SceneManager::Draw()
 {
@@ -230,13 +209,7 @@ void scene_manager_update()
 	SCENE_MANAGER_INSTANCE->Update();
 }
 
-int scene_manager_draw_imgui(lua_State* L)
-{
-	float x = (float)lua_tonumber(L, 1);
-	float y = (float)lua_tonumber(L, 2);
-	SCENE_MANAGER_INSTANCE->DrawImGui(x, y);
-	return 0;
-}
+ 
 
 void scene_manager_draw()
 {
@@ -275,7 +248,7 @@ void scene_manager_add_custom_scene(int scene_id, const char* name, int map_id)
 	scene->SetMapID(map_id);
 	SCENE_MANAGER_INSTANCE->AddScene(scene);
 }
-
+ 
 
 
 
@@ -393,9 +366,7 @@ void luaopen_scene_manager(lua_State* L)
 	script_system_register_function(L, scene_manager_init);
 	script_system_register_function(L, scene_manager_update);
 	script_system_register_function(L, scene_manager_draw);
-
-	script_system_register_luac_function(L, scene_manager_draw_imgui);
-
+	 
 
 	script_system_register_function(L, scene_manager_deinit);
 	script_system_register_function(L, scene_manager_add_scene);

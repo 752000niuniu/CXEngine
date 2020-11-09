@@ -18,7 +18,6 @@ public:
 	
 
 	void Update();
-		void DrawImGui(float css_x, float css_y);
 	void Draw();
 
 	BaseScene* GetCurrentScene();

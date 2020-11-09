@@ -334,7 +334,13 @@ void iw_init(int w, int h)
 
 	UIRenderer::GetInstance();
 
-	// shader_init();
+	 shader_init();
+
+	 int sz = material_size(0);
+	 struct material* m = (struct material*)malloc(sz);
+	 material_init(m, sz, 0);
+	 
+
 	// shader_load(0, sprite_fs, sprite_vs, 0, nullptr);
 	// screen_init(screenWidth, screenHeight, 1.f);
 
@@ -472,6 +478,9 @@ int iw_render(lua_State* L)
 		ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_TextureColor, css_pos, ImVec2(css_pos.x + m_Width, css_pos.y + m_Height), ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::GetWindowDrawList()->AddCallback(iw_function_to_restore_shader_or_blend_state, nullptr);
 		ImGui::SetCursorPos(cs_pos);
+
+		SCENE_MANAGER_INSTANCE->Update();
+		
 		glBindFramebuffer(GL_FRAMEBUFFER, WINDOW_INSTANCE->GetFrameBuffer());
 		if (ref != -1) {
 			lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
@@ -479,6 +488,8 @@ int iw_render(lua_State* L)
 			check_lua_error(L, res);
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		SCENE_MANAGER_INSTANCE->Draw();
 		ImGui::End();
 		ImGui::Render();
 
