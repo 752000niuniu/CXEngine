@@ -352,13 +352,6 @@ void iw_init(int w, int h)
 	shader_adduniform(0, "X1", UNIFORM_FLOAT1);
 	shader_adduniform(0, "X2", UNIFORM_FLOAT1);
 	shader_adduniform(0, "X3", UNIFORM_FLOAT1);
-
-	int sz = material_size(0);
-	struct material* m = (struct material*)malloc(sz);
-	material_init(m, sz, 0);
-
-
-
 }
 
 void window_system_set_floating(int opt, int value)
