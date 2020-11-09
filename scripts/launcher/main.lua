@@ -31,7 +31,7 @@ do
 	local dbg_port = command_arg_opt_int('dbg_port', 9400)
     luadbg_listen(dbg_port)   
 
-	iw_init()
+	iw_init(800,600)
 	iw_set_font(vfs_get_workdir()..'/res/font/simsun.ttc')
 
 	event_loop = ez_event_loop_create()

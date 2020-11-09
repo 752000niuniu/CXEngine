@@ -334,13 +334,7 @@ void iw_init(int w, int h)
 
 	UIRenderer::GetInstance();
 
-	 shader_init();
-
-	 int sz = material_size(0);
-	 struct material* m = (struct material*)malloc(sz);
-	 material_init(m, sz, 0);
-	 
-
+	// shader_init();
 	// shader_load(0, sprite_fs, sprite_vs, 0, nullptr);
 	// screen_init(screenWidth, screenHeight, 1.f);
 
@@ -352,6 +346,13 @@ void iw_init(int w, int h)
 	shader_adduniform(0, "X1", UNIFORM_FLOAT1);
 	shader_adduniform(0, "X2", UNIFORM_FLOAT1);
 	shader_adduniform(0, "X3", UNIFORM_FLOAT1);
+
+	int sz = material_size(0);
+	struct material* m = (struct material*)malloc(sz);
+	material_init(m, sz, 0);
+
+
+
 }
 
 void window_system_set_floating(int opt, int value)
@@ -459,11 +460,7 @@ int iw_render(lua_State* L)
 		ImGui::SetNextWindowViewport(viewport->ID);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImGui::Begin("Game", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking);
-		ImGui::PopStyleVar();
-
-		SCENE_MANAGER_INSTANCE->Update();
-		SCENE_MANAGER_INSTANCE->Draw();
-
+		ImGui::PopStyleVar(); 
 		auto cs_pos = ImGui::GetCursorPos();
 		auto css_pos = ImGui::GetCursorScreenPos();
 		ImGui::GetWindowDrawList()->AddCallback(iw_function_to_select_shader_or_blend_state, nullptr);
@@ -471,9 +468,6 @@ int iw_render(lua_State* L)
 		ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_TextureColor, css_pos, ImVec2(css_pos.x + m_Width, css_pos.y + m_Height), ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::GetWindowDrawList()->AddCallback(iw_function_to_restore_shader_or_blend_state, nullptr);
 		ImGui::SetCursorPos(cs_pos);
-
-		SCENE_MANAGER_INSTANCE->Update();
-		
 		glBindFramebuffer(GL_FRAMEBUFFER, WINDOW_INSTANCE->GetFrameBuffer());
 		if (ref != -1) {
 			lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
@@ -481,8 +475,6 @@ int iw_render(lua_State* L)
 			check_lua_error(L, res);
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		SCENE_MANAGER_INSTANCE->Draw();
 		ImGui::End();
 		ImGui::Render();
 
