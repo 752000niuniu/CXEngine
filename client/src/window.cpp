@@ -32,7 +32,7 @@ int m_Width = 0;
 int m_Height = 0;
 int m_WindowWidth;
 int m_WindowHeight;
-float m_FPS = MS_PER_UPDATE;
+float g_DeltaTime = MS_PER_UPDATE;
 GLFWwindow* m_pWindow = nullptr;
 static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -48,7 +48,7 @@ int Window::GetWindowWidth() { return m_WindowWidth; };
 int Window::GetWindowHeight() { return m_WindowHeight; };
 float Window::GetCenterX() { return GetWidth() / 2.f; }
 float Window::GetCenterY() { return GetHeight() / 2.f; }
-float Window::GetFPS() { return m_FPS; }
+float Window::GetFPS() { return g_DeltaTime; }
 
 int Window::GetRenderTexture() { return m_TextureColor; }
 int Window::GetFrameBuffer() { return m_Fbo; }
@@ -165,13 +165,13 @@ void Window::Show()
 
 float Window::GetDeltaTime()
 {
-	return m_FPS;
+	return g_DeltaTime;
 }
 
 
 float Window::GetDeltaTimeMilliseconds()
 {
-	return m_FPS * 1000.f;
+	return g_DeltaTime * 1000.f;
 }
 
 void Window::OnFrameBufferSizeCallback(int width, int height)
@@ -446,7 +446,7 @@ int iw_render(lua_State* L)
 	while (!glfwWindowShouldClose(m_pWindow))
 	{
 		auto now = glfwGetTime();
-		m_FPS = (float)(now - previous);
+		g_DeltaTime = (float)(now - previous);
 		previous = now;
 
 		glfwPollEvents();

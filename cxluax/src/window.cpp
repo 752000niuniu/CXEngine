@@ -17,7 +17,8 @@ int m_Width = 0;
 int m_Height = 0;
 int m_WindowWidth;
 int m_WindowHeight;
-float m_FPS = MS_PER_UPDATE;
+float g_DeltaTime = 0;
+float g_LastTime = 0;
 GLFWwindow* m_pWindow = nullptr;
 static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -33,7 +34,7 @@ int Window::GetWindowWidth() { return m_WindowWidth; };
 int Window::GetWindowHeight() { return m_WindowHeight; };
 float Window::GetCenterX() { return GetWidth() / 2.f; }
 float Window::GetCenterY() { return GetHeight() / 2.f; }
-float Window::GetFPS() { return m_FPS; }
+float Window::GetFPS() { return g_DeltaTime; }
 
 int Window::GetRenderTexture() { return m_TextureColor; }
 int Window::GetFrameBuffer() { return m_Fbo; }
@@ -60,7 +61,7 @@ static void glfw_framebuffer_size_callback(GLFWwindow* window, int width, int he
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screenWidth, screenHeight);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_Rbo);
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		cxlog_err("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+		cxlog_err("ERROR::FRAMEBUFFER:: Framebuffer is not complete!\n");
 	}
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -144,13 +145,13 @@ void Window::Show()
 
 float Window::GetDeltaTime()
 {
-	return m_FPS;
+	return g_DeltaTime;
 }
 
 
 float Window::GetDeltaTimeMilliseconds()
 {
-	return m_FPS * 1000.f;
+	return g_DeltaTime * 1000.f;
 }
 
 void Window::OnFrameBufferSizeCallback(int width, int height)
@@ -200,7 +201,7 @@ void main() {
 
 
 struct material;
-void iw_init( int w, int h)
+void iw_init(int w, int h)
 {
 
 	if (!glfwInit()) {
@@ -318,7 +319,7 @@ void window_system_set_floating(int opt, int value)
 	glfwWindowHint(opt, value);
 }
 
-float window_system_get_dt()
+float delta_time()
 {
 	return WINDOW_INSTANCE->GetDeltaTimeMilliseconds();
 }
@@ -361,68 +362,78 @@ void iw_function_to_restore_shader_or_blend_state(const ImDrawList* parent_list,
 	glEnable(GL_BLEND);
 }
 
+
+int iw_begin_render(lua_State* L)
+{
+	auto now = glfwGetTime();
+	if (g_LastTime == 0) {
+		g_LastTime = now;
+	}
+	g_DeltaTime = (float)(now - g_LastTime);
+	g_LastTime = now;
+
+	glfwPollEvents();
+
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+	ImGui::SetNextWindowPos(viewport->Pos);
+	ImGui::SetNextWindowSize(viewport->Size);
+	ImGui::SetNextWindowViewport(viewport->ID);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+	ImGui::Begin("Game", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking);
+	ImGui::PopStyleVar();
+
+
+	auto cs_pos = ImGui::GetCursorPos();
+	auto css_pos = ImGui::GetCursorScreenPos();
+	ImGui::GetWindowDrawList()->AddCallback(iw_function_to_select_shader_or_blend_state, nullptr);
+	auto m_TextureColor = WINDOW_INSTANCE->GetRenderTexture();
+	ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_TextureColor, css_pos, ImVec2(css_pos.x + m_Width, css_pos.y + m_Height), ImVec2(0, 1), ImVec2(1, 0));
+	ImGui::GetWindowDrawList()->AddCallback(iw_function_to_restore_shader_or_blend_state, nullptr);
+	ImGui::SetCursorPos(cs_pos);
+	glBindFramebuffer(GL_FRAMEBUFFER, WINDOW_INSTANCE->GetFrameBuffer());
+	return 0;
+}
+
+int iw_end_render(lua_State* L)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	ImGui::End();
+	ImGui::Render();
+
+
+	int display_w, display_h;
+	glfwGetFramebufferSize(m_pWindow, &display_w, &display_h);
+	glViewport(0, 0, display_w, display_h);
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	ImGuiIO& io = ImGui::GetIO();
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		GLFWwindow* backup_current_context = glfwGetCurrentContext();
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		glfwMakeContextCurrent(backup_current_context);
+	}
+
+	glfwSwapBuffers(m_pWindow);
+	return 0;
+}
+
 int iw_render(lua_State* L)
 {
 	lua_pushvalue(L, 1);
 	int ref = luaL_ref(L, LUA_REGISTRYINDEX);
-	double previous = glfwGetTime();
-	double lag = 0;
-	double delta = 0;
-	ImGuiIO& io = ImGui::GetIO();
-
-
 	while (!glfwWindowShouldClose(m_pWindow))
 	{
-		auto now = glfwGetTime();
-		m_FPS = (float)(now - previous);
-		previous = now;
-
-		glfwPollEvents();
-
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-		ImGuiViewport* viewport = ImGui::GetMainViewport();
-		ImGui::SetNextWindowPos(viewport->Pos);
-		ImGui::SetNextWindowSize(viewport->Size);
-		ImGui::SetNextWindowViewport(viewport->ID);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-		ImGui::Begin("Game", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoDocking);
-		ImGui::PopStyleVar();
-
-
-		auto cs_pos = ImGui::GetCursorPos();
-		auto css_pos = ImGui::GetCursorScreenPos();
-		ImGui::GetWindowDrawList()->AddCallback(iw_function_to_select_shader_or_blend_state, nullptr);
-		auto m_TextureColor = WINDOW_INSTANCE->GetRenderTexture();
-		ImGui::GetWindowDrawList()->AddImage((void*)(uint64_t)m_TextureColor, css_pos, ImVec2(css_pos.x + m_Width, css_pos.y + m_Height), ImVec2(0, 1), ImVec2(1, 0));
-		ImGui::GetWindowDrawList()->AddCallback(iw_function_to_restore_shader_or_blend_state, nullptr);
-		ImGui::SetCursorPos(cs_pos);
-		glBindFramebuffer(GL_FRAMEBUFFER, WINDOW_INSTANCE->GetFrameBuffer());
+		iw_begin_render(L);
 		if (ref != -1) {
 			lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
 			int res = lua_pcall(L, 0, 0, 0);
 			check_lua_error(L, res);
 		}
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		ImGui::End();
-		ImGui::Render();
-
-
-		int display_w, display_h;
-		glfwGetFramebufferSize(m_pWindow, &display_w, &display_h);
-		glViewport(0, 0, display_w, display_h);
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-		{
-			GLFWwindow* backup_current_context = glfwGetCurrentContext();
-			ImGui::UpdatePlatformWindows();
-			ImGui::RenderPlatformWindowsDefault();
-			glfwMakeContextCurrent(backup_current_context);
-		}
-
-		glfwSwapBuffers(m_pWindow);
+		iw_end_render(L);
 	}
 
 	luaL_unref(L, LUA_REGISTRYINDEX, ref);
@@ -453,7 +464,7 @@ int iw_get_drop_files(lua_State* L) {
 void luaopen_window(lua_State* L)
 {
 	script_system_register_function(L, window_system_set_floating);
-	script_system_register_function(L, window_system_get_dt);
+	script_system_register_function(L, delta_time);
 	script_system_register_function(L, window_system_get_fps);
 
 	script_system_register_function(L, game_get_width);
@@ -468,6 +479,11 @@ void luaopen_window(lua_State* L)
 	script_system_register_function(L, iw_init);
 
 	script_system_register_luac_function(L, iw_render);
+
+	script_system_register_luac_function(L, iw_begin_render);
+	script_system_register_luac_function(L, iw_end_render);
+
+
 
 	script_system_register_function(L, iw_is_dropped);
 	script_system_register_function(L, iw_set_dropped);
