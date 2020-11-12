@@ -503,7 +503,7 @@ end
 __uids__ = __uids__ or {}
 function utils_next_uid(ns)
     if not __uids__[ns] then
-        __uids__[ns] = os.time()
+        __uids__[ns] = os.time() % 0xFFFFFFFF
     end
     __uids__[ns] = __uids__[ns] + 1
     return __uids__[ns]
