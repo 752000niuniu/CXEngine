@@ -28,18 +28,25 @@ function net_send_jsonobj(conn, type, obj)
     ezio_buffer_destroy(buf)
 end
 
+local phone_idmap = {}
+
 local phone_infos = {}
 function on_iphone_reg(js, conn)
     local info = cjson.decode(js)
-    local phone_id = utils_next_uid('phone_id')
-    info.id = phone_id
+    local address = conn:tohostport():match('(.+:)')
+    cxlog_info('on_iphone_reg ' .. address .. ' id ' ..  tostring(phone_idmap[address]) )
+    if phone_idmap[address] == nil then
+        local id = utils_next_uid('phone_id')
+        phone_idmap[address] = id
+    end
+    info.id = phone_idmap[address]
     info.conn = conn
     if phone_infos[info.id] == nil then phone_infos[info.id] = {} end
     phone_infos[info.id].frames = {}
     phone_infos[info.id] = info
 
     local msg = {}
-    msg.id = phone_id
+    msg.id = info.id
     net_send_jsonobj(conn, PT_TYPE_ARKIT_IPHONE_REG_OK, msg)
 end
 
@@ -70,30 +77,41 @@ end
     收到phone的faceframe之后就发送给u3d
     把收到的faceframe 按此frame的发送时间排序
     每10ms向u3d广播一帧
+    发送端发送时间不能提前
+    接收端可以通过丢弃接收数据 往前追赶
 ]] --
- 
-function on_face_frame(buf, conn)
-    local id = buf:ReadAsInt() 
-    local tm = buf:ReadAsInt64() 
-    local frame = {}
-    frame.tm = tm
-    frame.bs = {}
+function on_face_frame(buf, conn, len)
+    -- local frame = {}
+    -- frame.tm = tm
+    -- frame.bs = {}
+    -- for i = 1, 52 do
+    --     local bsloc = buf:ReadAsInt()
+    --     local val = buf:ReadAsFloat()
+    --     frame.bs[bsloc] = val
+    -- end
+    -- if phone_infos[id].frames == nil then phone_infos[id].frames = {} end
+    -- table.insert(phone_infos[id].frames, frame)
+    -- send_to_u3d = true
+    local sendbuf = ezio_buffer_create()
+    sendbuf:WriteInt(PROTO_BYTES)
+    sendbuf:WriteInt(PT_TYPE_ARKIT_U3D_FACE_FRAME)
+    sendbuf:WriteBuffer(buf, len)
+    buf:Consume(len)
 
-    for i = 1, 52 do
-        local bsloc = buf:ReadAsInt()
-        local val = buf:ReadAsFloat()
-        frame.bs[bsloc] = val
+    local sz = sendbuf:readable_size()
+    sendbuf:PrependInt(sz)
+    for u_id, u_info in pairs(u3d_infos) do
+        local conn = u_info.conn
+        if conn and conn:connected() then conn:Send(sendbuf) end
     end
-    
-    if phone_infos[id].frames == nil then phone_infos[id].frames = {} end
-    table.insert(phone_infos[id].frames, frame)
-    send_to_u3d = true
+    ezio_buffer_destroy(sendbuf)
 end
 
 function handle_message(conn, buf, len)
-    local pt = buf:ReadAsInt() 
-    local type = buf:ReadAsInt()
+    local pt = buf:ReadAsInt()
+    cxlog_info('handle_message ' .. pt)
     if pt == PROTO_JSON then
+        local type = buf:ReadAsInt()
         local jslen = buf:ReadAsInt()
         local js = buf:ReadAsString(jslen)
         cxlog_info(jslen .. "  js " .. js)
@@ -103,9 +121,19 @@ function handle_message(conn, buf, len)
             on_u3d_reg(js, conn)
         end
     elseif pt == PROTO_BYTES then
+        local type = buf:ReadAsInt()
         if type == PT_TYPE_ARKIT_IPHONE_FACE_FRAME then
-            on_face_frame(buf ,conn) 
+            on_face_frame(buf, conn, len - 8)
         end
+    elseif pt == PROTO_HEART_BEAT then
+        local heartSendTime = buf:ReadAsInt64()
+        cxlog_info('heartbeat ' .. heartSendTime)
+        local sendbuf = ezio_buffer_create()
+        sendbuf:WriteInt(PROTO_HEART_BEAT)
+        local sz = sendbuf:readable_size()
+        sendbuf:PrependInt(sz)
+        conn:Send(sendbuf)
+        ezio_buffer_destroy(sendbuf)
     end
 end
 
@@ -123,6 +151,7 @@ function send_frame_update()
                 table.insert(sent_frames, finfo)
             end
         end
+        ---清空收到的frames
         for p_id, p_info in pairs(phone_infos) do p_info.frames = {} end
 
         local buf = ezio_buffer_create()
@@ -132,9 +161,8 @@ function send_frame_update()
         for i, finfo in ipairs(sent_frames) do
             buf:WriteInt(finfo.id)
             buf:WriteInt64(finfo.frame.tm)
-            for bi = 1, 52 do 
-                buf:WriteFloat(finfo.frame.bs[bi-1]) 
-                -- cxlog_info(BSEnums[bi] .. ' '  ..finfo.frame.bs[bi-1])
+            for bi, val in ipairs(finfo.frame.bs) do
+                buf:WriteFloat(val)
             end
         end
 
@@ -146,6 +174,8 @@ function send_frame_update()
         end
         ezio_buffer_destroy(buf)
         send_to_u3d = false
+
+        cxlog_info('send_frame_update ')
     end
 end
 
@@ -153,7 +183,7 @@ do
     at_exit_manager_init()
     io_service_context_init()
 
-    local dbg_port = command_arg_opt_int('dbg_port', 9400)
+    local dbg_port = command_arg_opt_int('dbg_port', 9403)
     luadbg_listen(dbg_port)
 
     event_loop = ez_event_loop_create()
@@ -169,6 +199,21 @@ do
         else
             for i, connection in ipairs(connections) do
                 if connection == conn then
+                    for u_id, u_info in pairs(u3d_infos) do
+                        if u_info.conn  == connection then
+                            u3d_infos[u_id] = nil
+                            u3d_infos[u_id].conn = nil
+                            break
+                        end
+                    end
+
+                    for p_id, p_info in pairs(phone_infos) do
+                        if p_info.conn == connection then
+                            p_info[u_id] = nil
+                            p_info[u_id].conn = nil
+                            break
+                        end
+                    end
                     table.remove(connections, i)
                     break
                 end
@@ -182,7 +227,7 @@ do
             -- cxlog_info('len : ', len)
             if buf:readable_size() >= len + CX_MSG_HEADER_LEN then
                 buf:Consume(CX_MSG_HEADER_LEN)
-                pcall(handle_message,conn, buf, len)
+                pcall(handle_message, conn, buf, len)
             else
                 break
             end
@@ -190,13 +235,9 @@ do
     end)
 
     cx_server:Start()
-    -- event_loop:RunTaskEvery(ui_update, 30)
-
-    event_loop:RunTaskEvery(send_frame_update, 16)
-
+    -- event_loop:RunTaskEvery(send_frame_update, 500)
     -- iw_init(800, 600)
     -- iw_set_font(vfs_get_workdir() .. '/res/font/simsun.ttc')
-
     event_loop:Run()
     -- iw_deinit()
 end
