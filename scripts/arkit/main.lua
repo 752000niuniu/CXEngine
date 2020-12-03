@@ -15,6 +15,7 @@ local send_to_u3d = false
 
 function net_send_jsonobj(conn, type, obj)
     local js = cjson.encode(obj)
+    cxlog_info('net_send_jsonobj ' .. js)
     local buf = ezio_buffer_create()
     buf:WriteInt(PROTO_JSON)
     buf:WriteInt(type)
@@ -28,39 +29,75 @@ function net_send_jsonobj(conn, type, obj)
     ezio_buffer_destroy(buf)
 end
 
-local phone_idmap = {}
+function net_send_proto(conn, proto)
+    local buf = ezio_buffer_create()
+    buf:WriteInt(proto)
+    local sz = buf:readable_size()
+    buf:PrependInt(sz)
+    conn:Send(buf)
+    ezio_buffer_destroy(buf)
+end
 
+local u3d_infos = {}
+local u3d_address = {}
 local phone_infos = {}
+local phone_address = {}
+
+function send_phone_info_to_u3d()
+    local msg = { infos = {}}
+    for id, v in pairs(phone_infos) do
+        local phone = {}
+        phone.accountID = v.accountID
+        phone.id = v.id
+        phone.ip = v.ip
+        phone.port = v.port
+        table.insert(msg.infos, phone)
+    end
+
+    for k, v in pairs(u3d_infos) do
+        if v.conn and v.conn:connected() then
+            net_send_jsonobj(v.conn, PT_TYPE_ARKIT_IPHONE_REG_OK, msg)
+        end
+    end
+end
+
 function on_iphone_reg(js, conn)
     local info = cjson.decode(js)
-    local address = conn:tohostport():match('(.+:)')
-    cxlog_info('on_iphone_reg ' .. address .. ' id ' ..  tostring(phone_idmap[address]) )
-    if phone_idmap[address] == nil then
-        local id = utils_next_uid('phone_id')
-        phone_idmap[address] = id
+
+    if phone_address[info.ip] == nil then
+        phone_address[info.ip] = utils_next_uid('phone')
     end
-    info.id = phone_idmap[address]
+    local id = phone_address[info.ip]
+    info.id = id
     info.conn = conn
-    if phone_infos[info.id] == nil then phone_infos[info.id] = {} end
-    phone_infos[info.id].frames = {}
+    info.frames = {}
+
     phone_infos[info.id] = info
 
     local msg = {}
     msg.id = info.id
     net_send_jsonobj(conn, PT_TYPE_ARKIT_IPHONE_REG_OK, msg)
+
+    send_phone_info_to_u3d()
 end
 
-local u3d_infos = {}
 function on_u3d_reg(js, conn)
     local info = cjson.decode(js)
-    local u3d_id = utils_next_uid('u3d_id')
-    info.id = u3d_id
+    if u3d_address[info.ip] == nil then
+        u3d_address[info.ip] = utils_next_uid('u3d')
+    end
+
+    local id = u3d_address[info.ip]
+    info.id = id
     info.conn = conn
+    info.frames = {}
     u3d_infos[info.id] = info
 
     local msg = {}
-    msg.id = u3d_id
+    msg.id = info.id
     net_send_jsonobj(conn, PT_TYPE_ARKIT_U3D_REG_OK, msg)
+
+    send_phone_info_to_u3d()
 end
 
 function ui_update()
@@ -81,17 +118,6 @@ end
     接收端可以通过丢弃接收数据 往前追赶
 ]] --
 function on_face_frame(buf, conn, len)
-    -- local frame = {}
-    -- frame.tm = tm
-    -- frame.bs = {}
-    -- for i = 1, 52 do
-    --     local bsloc = buf:ReadAsInt()
-    --     local val = buf:ReadAsFloat()
-    --     frame.bs[bsloc] = val
-    -- end
-    -- if phone_infos[id].frames == nil then phone_infos[id].frames = {} end
-    -- table.insert(phone_infos[id].frames, frame)
-    -- send_to_u3d = true
     local sendbuf = ezio_buffer_create()
     sendbuf:WriteInt(PROTO_BYTES)
     sendbuf:WriteInt(PT_TYPE_ARKIT_U3D_FACE_FRAME)
@@ -192,7 +218,7 @@ do
     shared_netq = net_thread_queue_create()
 
     cx_server:set_on_connection(function(conn)
-        cxlog_info('conn-connected : ', conn:connected())
+        cxlog_info('conn-connected : ', conn:connected(), conn:tohostport())
         if conn:connected() then
             conn:SetTCPNoDelay(true)
             table.insert(connections, conn)
@@ -200,17 +226,18 @@ do
             for i, connection in ipairs(connections) do
                 if connection == conn then
                     for u_id, u_info in pairs(u3d_infos) do
-                        if u_info.conn  == connection then
+                        if u_info.conn == connection then
+                            u_info.conn = nil
                             u3d_infos[u_id] = nil
-                            u3d_infos[u_id].conn = nil
                             break
                         end
                     end
 
                     for p_id, p_info in pairs(phone_infos) do
                         if p_info.conn == connection then
-                            p_info[u_id] = nil
-                            p_info[u_id].conn = nil
+                            p_info.conn = nil
+                            phone_infos[p_id] = nil
+                            send_phone_info_to_u3d()
                             break
                         end
                     end
@@ -235,10 +262,6 @@ do
     end)
 
     cx_server:Start()
-    -- event_loop:RunTaskEvery(send_frame_update, 500)
-    -- iw_init(800, 600)
-    -- iw_set_font(vfs_get_workdir() .. '/res/font/simsun.ttc')
     event_loop:Run()
-    -- iw_deinit()
 end
 

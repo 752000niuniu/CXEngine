@@ -22,7 +22,6 @@ int main(int argc, char* argv[])
 	handle_command_args(argc, argv);
 	FileSystem::InitWorkPath();
 
-
 	lua_State* L = luaL_newstate();
 	luaL_openlibs(L);
 	luaopen_luadbg(L);
