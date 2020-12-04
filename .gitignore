@@ -27,3 +27,4 @@ res/data
 .vscode/ipch
 dist/
 yzxy.cap
+arkit_server/
