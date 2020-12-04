@@ -51,7 +51,6 @@ function send_phone_info_to_u3d()
         phone.accountID = v.accountID
         phone.id = v.id
         phone.ip = v.ip
-        phone.port = v.port
         table.insert(infos, phone)
     end
     if #infos == 0 then return end
