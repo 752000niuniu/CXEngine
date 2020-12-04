@@ -44,15 +44,18 @@ local phone_infos = {}
 local phone_address = {}
 
 function send_phone_info_to_u3d()
-    local msg = { infos = {}}
+    local msg = { }
+    local infos = {}
     for id, v in pairs(phone_infos) do
         local phone = {}
         phone.accountID = v.accountID
         phone.id = v.id
         phone.ip = v.ip
         phone.port = v.port
-        table.insert(msg.infos, phone)
+        table.insert(infos, phone)
     end
+    if #infos == 0 then return end
+    msg.infos = infos
 
     for k, v in pairs(u3d_infos) do
         if v.conn and v.conn:connected() then
@@ -70,7 +73,6 @@ function on_iphone_reg(js, conn)
     local id = phone_address[info.ip]
     info.id = id
     info.conn = conn
-    info.frames = {}
 
     phone_infos[info.id] = info
 
@@ -90,7 +92,7 @@ function on_u3d_reg(js, conn)
     local id = u3d_address[info.ip]
     info.id = id
     info.conn = conn
-    info.frames = {}
+     
     u3d_infos[info.id] = info
 
     local msg = {}
