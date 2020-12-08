@@ -44,7 +44,7 @@ local phone_infos = {}
 local phone_address = {}
 
 function send_phone_info_to_u3d()
-    local msg = { }
+    local msg = {}
     local infos = {}
     for id, v in pairs(phone_infos) do
         local phone = {}
@@ -91,7 +91,7 @@ function on_u3d_reg(js, conn)
     local id = u3d_address[info.ip]
     info.id = id
     info.conn = conn
-     
+
     u3d_infos[info.id] = info
 
     local msg = {}
@@ -164,54 +164,14 @@ function handle_message(conn, buf, len)
     end
 end
 
---[[发送
-每10帧更新一次，把读到的最新帧发送给客户端，客户端收到后按帧时间回放
-]]
-function send_frame_update()
-    if send_to_u3d then
-        local sent_frames = {}
-        for p_id, p_info in pairs(phone_infos) do
-            for pi, frame in ipairs(p_info.frames) do
-                local finfo = {}
-                finfo.id = p_id
-                finfo.frame = frame
-                table.insert(sent_frames, finfo)
-            end
-        end
-        ---清空收到的frames
-        for p_id, p_info in pairs(phone_infos) do p_info.frames = {} end
-
-        local buf = ezio_buffer_create()
-        buf:WriteInt(PROTO_BYTES)
-        buf:WriteInt(PT_TYPE_ARKIT_U3D_FACE_FRAME)
-        buf:WriteInt(#sent_frames)
-        for i, finfo in ipairs(sent_frames) do
-            buf:WriteInt(finfo.id)
-            buf:WriteInt64(finfo.frame.tm)
-            for bi, val in ipairs(finfo.frame.bs) do
-                buf:WriteFloat(val)
-            end
-        end
-
-        local sz = buf:readable_size()
-        buf:PrependInt(sz)
-        for u_id, u_info in pairs(u3d_infos) do
-            local conn = u_info.conn
-            if conn and conn:connected() then conn:Send(buf) end
-        end
-        ezio_buffer_destroy(buf)
-        send_to_u3d = false
-
-        cxlog_info('send_frame_update ')
-    end
-end
-
 do
     at_exit_manager_init()
     io_service_context_init()
 
-    local dbg_port = command_arg_opt_int('dbg_port', 9403)
-    luadbg_listen(dbg_port)
+    if command_arg_check('Debug') then
+        local dbg_port = command_arg_opt_int('dbg_port', 9403)
+        luadbg_listen(dbg_port)
+    end
 
     event_loop = ez_event_loop_create()
     cx_server = ez_tcp_server_create(event_loop, 2701, 'ARKit')
