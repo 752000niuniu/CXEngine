@@ -136,8 +136,9 @@ end
 
 function handle_message(conn, buf, len)
     local pt = buf:ReadAsInt()
-    cxlog_info('handle_message ' .. pt)
     if pt == PROTO_JSON then
+        cxlog_info('handle_message ' .. pt)
+        
         local type = buf:ReadAsInt()
         local jslen = buf:ReadAsInt()
         local js = buf:ReadAsString(jslen)
@@ -154,7 +155,7 @@ function handle_message(conn, buf, len)
         end
     elseif pt == PROTO_HEART_BEAT then
         local heartSendTime = buf:ReadAsInt64()
-        cxlog_info('heartbeat ' .. heartSendTime)
+        -- cxlog_info('heartbeat ' .. heartSendTime)
         local sendbuf = ezio_buffer_create()
         sendbuf:WriteInt(PROTO_HEART_BEAT)
         local sz = sendbuf:readable_size()
@@ -165,6 +166,7 @@ function handle_message(conn, buf, len)
 end
 
 do
+    get_local_ips()
     at_exit_manager_init()
     io_service_context_init()
 
@@ -209,11 +211,18 @@ do
         end
     end)
 
+    last_tm = 0
     cx_server:set_on_message(function(conn, buf, ts)
         while buf:readable_size() >= CX_MSG_HEADER_LEN do
             local len = buf:PeekAsInt()
-            -- cxlog_info('len : ', len)
             if buf:readable_size() >= len + CX_MSG_HEADER_LEN then
+                -- local now =  time_now_ms()
+                -- if last_tm == 0 then
+                --     last_tm = now
+                -- end
+                -- cxlog_info('dt ' .. (now- last_tm))
+                -- last_tm = now
+
                 buf:Consume(CX_MSG_HEADER_LEN)
                 pcall(handle_message, conn, buf, len)
             else
