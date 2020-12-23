@@ -519,7 +519,7 @@ int iw_get_drop_files(lua_State* L) {
 	return 1;
 }
 
-
+ 
 void luaopen_window(lua_State* L)
 {
 	script_system_register_function(L, window_system_set_floating);
@@ -542,4 +542,7 @@ void luaopen_window(lua_State* L)
 	script_system_register_function(L, iw_is_dropped);
 	script_system_register_function(L, iw_set_dropped);
 	script_system_register_luac_function(L, iw_get_drop_files);
+	 
+
+	
 }

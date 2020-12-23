@@ -161,6 +161,22 @@ bool process_is_server() {
 
  
 
+uint64_t time_now() {
+	auto now = std::chrono::system_clock::now();
+	return  now.time_since_epoch().count() / 10000;
+}
+uint64_t time_now_nano() {
+	auto now = std::chrono::system_clock::now();
+	return  now.time_since_epoch().count();
+}
+
+
+int lua_time_now(lua_State* L) {
+	uint64_t  now = time_now();
+	lua_pushinteger(L, now);
+	return 1;
+}
+
 
 void luaopen_script_system(lua_State* L)
 {
@@ -178,5 +194,9 @@ void luaopen_script_system(lua_State* L)
 #undef REG_ENUM
 
 	script_system_register_function(L, process_is_server); 
+
+	script_system_register_luac_function_with_name(L, "time_now", lua_time_now);
+	script_system_register_luac_function_with_name(L, "time_now_ms", lua_time_now);
+	script_system_register_function(L, time_now_nano);
 
 }
